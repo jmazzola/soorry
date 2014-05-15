@@ -1,0 +1,447 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SGD Wrappers">
+      <UniqueIdentifier>{54ccf607-dc0d-4109-89b0-ab9fb3a420bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game States">
+      <UniqueIdentifier>{381417f0-bcea-4238-932f-633d61af542c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{ec9cee47-bd0e-4a3d-9f77-81085bacacf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World Manager">
+      <UniqueIdentifier>{20ac04b0-7b21-43d0-84cb-b5e7f7d42987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Particle Manager">
+      <UniqueIdentifier>{43285498-868a-4e0a-b699-f1fb02309480}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation Manager">
+      <UniqueIdentifier>{c0214916-cdea-489d-b63d-74e60a181fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures">
+      <UniqueIdentifier>{3761c733-ca6d-4a0e-9ada-dd1a227570dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Messages">
+      <UniqueIdentifier>{78859219-6e76-47a4-9624-52845bea04e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shop">
+      <UniqueIdentifier>{a154f189-dc01-484c-ad21-1ce2918df834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIComponent">
+      <UniqueIdentifier>{31625ef2-1e9a-451e-901e-17357752b64a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity Manager">
+      <UniqueIdentifier>{0b0dfdef-cbbe-4d65-a23e-f7fd10ee6763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Core">
+      <UniqueIdentifier>{99edd4cc-20dd-491d-a4f2-97e5f634b474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bitmap Font">
+      <UniqueIdentifier>{45ff2507-193a-41aa-bf09-437dbef2d0e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_Event.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_EventManager.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_Geometry.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_GraphicsManager.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_InputManager.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_Listener.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_Message.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="SGD Wrappers\SGD_MessageManager.cpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EntityManager.cpp">
+      <Filter>Entity Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Entity.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WinMain.cpp">
+      <Filter>Game Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Game.cpp">
+      <Filter>Game Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BitmapFont.cpp">
+      <Filter>Bitmap Font</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MainMenuState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameplayState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\IntroState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreditsState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\OptionsState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Player.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MenuFlyweight.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Sprite.cpp">
+      <Filter>Animation Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Enemy.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AIComponent.cpp">
+      <Filter>AIComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FastZombie.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SlowZombie.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BeaverZombie.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Projectile.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BearTrap.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mine.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Rocket.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ShotgunPellet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AssaultRifleBullet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Pickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AmmoPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FireRatePickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HealthPackPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SpeedPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WallPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WindowPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Grenade.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Weapon.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Inventory.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WorldManager.cpp">
+      <Filter>World Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Layer.cpp">
+      <Filter>World Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Tile.cpp">
+      <Filter>World Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Frame.cpp">
+      <Filter>Animation Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AnimationTimestamp.cpp">
+      <Filter>Animation Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AnimationManager.cpp">
+      <Filter>Animation Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ParticleManager.cpp">
+      <Filter>Particle Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ParticleFlyweight.cpp">
+      <Filter>Particle Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Particle.cpp">
+      <Filter>Particle Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Emitter.cpp">
+      <Filter>Particle Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Shop.cpp">
+      <Filter>Shop</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PurchaseMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateProjectileMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreatePlaceableMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreatePickupMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Cursor.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DestroyEntityMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Color.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Declarations.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Event.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_EventManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Geometry.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_GraphicsManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Handle.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_HandleManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_HandleManager.hpp">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_InputManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Key.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Listener.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_Message.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_MessageManager.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="SGD Wrappers\SGD_String.h">
+      <Filter>SGD Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EntityManager.h">
+      <Filter>Entity Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entity.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IEntity.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IGameState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Game.h">
+      <Filter>Game Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BitmapFont.h">
+      <Filter>Bitmap Font</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MainMenuState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameplayState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MessageID.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\IntroState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreditsState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\OptionsState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Player.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MenuFlyweight.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Sprite.h">
+      <Filter>Animation Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Enemy.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AIComponent.h">
+      <Filter>AIComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FastZombie.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SlowZombie.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BeaverZombie.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Projectile.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BearTrap.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mine.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Rocket.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ShotgunPellet.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AssaultRifleBullet.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Pickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WindowPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WallPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SpeedPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HealthPackPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FireRatePickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AmmoPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Grenade.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Weapon.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Inventory.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WorldManager.h">
+      <Filter>World Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Layer.h">
+      <Filter>World Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Tile.h">
+      <Filter>World Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Frame.h">
+      <Filter>Animation Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AnimationTimestamp.h">
+      <Filter>Animation Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\AnimationManager.h">
+      <Filter>Animation Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ParticleManager.h">
+      <Filter>Particle Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ParticleFlyweight.h">
+      <Filter>Particle Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Particle.h">
+      <Filter>Particle Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Emitter.h">
+      <Filter>Particle Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Shop.h">
+      <Filter>Shop</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PurchaseMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateProjectileMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreatePlaceableMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreatePickupMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Cursor.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DestroyEntityMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

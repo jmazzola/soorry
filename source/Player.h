@@ -1,0 +1,76 @@
+#pragma once
+
+#include "Entity.h"
+
+/**********************************************************/
+// Forward Declarations
+class Weapon;
+class Inventory;
+class Cursor;
+
+class Player : public Entity
+{
+public:
+
+	Player();
+	~Player();
+
+	/**********************************************************/
+	// Interface Methods
+	virtual void Update(float dt) override;
+	virtual void Render() override;
+	virtual SGD::Rectangle GetRect() const override;
+	virtual int GetType() const override;
+	virtual void HandleCollision(const IEntity* pOther) override;
+
+	/**********************************************************/
+	// Accessors
+	int GetMaxHealth() const;
+	int GetCurrHealth() const;
+	int GetCurrWeapon() const;
+	int GetCurrPowerup() const;
+	int GetCurrPlaceable() const;
+	unsigned int GetScore() const;
+	unsigned int GetEnemiesKilled() const;
+	float GetSpeed() const;
+	float GetMultiplier() const;
+	float GetTimeAlive() const;
+	Inventory* GetInventory() const;
+	Cursor* GetCursor() const;
+	Weapon* GetWeapons() const;
+
+	/**********************************************************/
+	// Mutators
+	void SetMaxHealth(int maxHealth);
+	void SetCurrHealth(int currHealth);
+	void SetCurrWeapon(int currWeapon);
+	void SetCurrPowerup(int currPowerup);
+	void SetCurrPlaceable(int currPlaceable);
+	void SetScore(unsigned int score);
+	void SetEnemiesKilled(unsigned int enemiesKilled);
+	void SetSpeed(float speed);
+	void SetMultiplier(float multiplier);
+	void SetTimeAlive(float timeAlive);
+	void SetInventory(Inventory* inventory);
+	void SetCursor(Cursor* cursor);
+	void SetWeapons(Weapon* weapons);
+
+protected:
+
+	/**********************************************************/
+	// Members
+	int m_nMaxHealth;
+	int m_nCurrHealth;
+	int m_nCurrWeapon;
+	int m_nCurrPowerup;
+	int m_nCurrPlaceable;
+	unsigned int m_unScore;
+	unsigned int m_unEnemiesKilled;
+	float m_fSpeed;
+	float m_fMultiplier;
+	float m_fTimeAlive;
+	Inventory* m_pInventory;
+	Cursor* m_pCursor;
+	Weapon* m_pWeapons;
+};
+
