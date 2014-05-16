@@ -6,5 +6,7 @@ public:
 
 	Sprite();
 	~Sprite();
+
+	// yeah!!!
 };
 
