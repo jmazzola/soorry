@@ -11,6 +11,8 @@ public:
 	Layer();
 	~Layer();
 
+	Tile* operator[](unsigned int index);
+
 protected:
 
 	/**********************************************************/
