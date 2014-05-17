@@ -71,6 +71,10 @@
     <ClCompile Include="source\WindowPickup.cpp" />
     <ClCompile Include="source\WinMain.cpp" />
     <ClCompile Include="source\WorldManager.cpp" />
+    <ClCompile Include="TinyXML\tinystr.cpp" />
+    <ClCompile Include="TinyXML\tinyxml.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
@@ -142,6 +146,8 @@
     <ClInclude Include="source\Weapon.h" />
     <ClInclude Include="source\WindowPickup.h" />
     <ClInclude Include="source\WorldManager.h" />
+    <ClInclude Include="TinyXML\tinystr.h" />
+    <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>
