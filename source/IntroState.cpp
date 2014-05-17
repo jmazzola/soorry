@@ -1,13 +1,16 @@
 /***************************************************************
 |	File:		IntroState.cpp
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will play an animation or video that
+|				attracts the player during idling OR when the game
+|				is first run.
 ***************************************************************/
 
 #include "IntroState.h"
 
 #include "Game.h"
+#include "MainMenuState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -127,6 +130,13 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 
+	// Press Escape to quit
+	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	{
+		pGame->ChangeState(MainMenuState::GetInstance());
+	}
+
+
 	return true;	// keep playing
 }
 
@@ -159,7 +169,8 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
-	
+	pGraphics->DrawString("Intro State", { 200, 200 }, { 255, 0, 255 });
+
 
 	// Render the entities
 	m_pEntities->RenderAll();

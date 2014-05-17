@@ -1,13 +1,15 @@
 /***************************************************************
 |	File:		CreditsState.cpp
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will show the player the credits
+|				of this game.
 ***************************************************************/
 
 #include "CreditsState.h"
 
 #include "Game.h"
+#include "MainMenuState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -126,7 +128,11 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-
+	// Press Escape to quit
+	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	{
+		pGame->ChangeState(MainMenuState::GetInstance());
+	}
 	return true;	// keep playing
 }
 
@@ -148,6 +154,7 @@ using namespace std;
 
 
 	// Check collisions
+
 }
 
 
@@ -158,7 +165,8 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
+	// Render the background [test]
+	pGraphics->DrawString("Credits State", { 200, 200 }, { 255, 0, 255 });
 	
 
 	// Render the entities

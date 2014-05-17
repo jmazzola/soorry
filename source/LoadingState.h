@@ -1,20 +1,16 @@
 /***************************************************************
-|	File:		IntroState.h
+|	File:		LoadingState.cpp
 |	Author:		Justin Mazzola
 |	Course:		SGP
-|	Purpose:	This state will play an animation or video that
-|				attracts the player during idling OR when the game
-|				is first run.
+|	Purpose:	The state where the player will be shown a
+|				"Loading.." screen to ensure the game hasnt frozen,
+|				and have their data loaded to start gameplay
 ***************************************************************/
 
-
-#ifndef INTROSTATE_H
-#define INTROSTATE_H
-
+#pragma once
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
-
 
 /**************************************************************/
 // Forward class declaration
@@ -26,50 +22,48 @@ class MenuFlyweight;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
-
-
 /**************************************************************/
-// IntroState class
+// LoadingState class
 //	- runs the game logic
 //	- SINGLETON! (Static allocation, not dynamic)
-class IntroState : public IGameState
+class LoadingState : public IGameState
 {
 public:
 	/**********************************************************/
 	// Singleton Accessor:
-	static IntroState* GetInstance( void );
+	static LoadingState* GetInstance(void);
 
-	
+
 	/**********************************************************/
 	// IGameState Interface:
-	virtual void	Enter	( void )				override;	// load resources
-	virtual void	Exit	( void )				override;	// unload resources
-													
-	virtual bool	Input	( void )				override;	// handle user input
-	virtual void	Update	( float elapsedTime )	override;	// update game entities / animations
-	virtual void	Render	( void )				override;	// render game entities / menus
-	
+	virtual void	Enter(void)				override;	// load resources
+	virtual void	Exit(void)				override;	// unload resources
+
+	virtual bool	Input(void)				override;	// handle user input
+	virtual void	Update(float elapsedTime)	override;	// update game entities / animations
+	virtual void	Render(void)				override;	// render game entities / menus
+
 private:
 
 	/**********************************************************/
 	// SINGLETON (not-dynamically allocated)
-	IntroState( void )			= default;	// default constructor
-	virtual ~IntroState( void )	= default;	// destructor
+	LoadingState(void) = default;	// default constructor
+	virtual ~LoadingState(void) = default;	// destructor
 
-	IntroState( const IntroState& )				= delete;	// copy constructor
-	IntroState& operator= ( const IntroState& )	= delete;	// assignment operator
+	LoadingState(const LoadingState&) = delete;	// copy constructor
+	LoadingState& operator= (const LoadingState&) = delete;	// assignment operator
 
-	
+
 	/**********************************************************/
 	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
+	EntityManager*			m_pEntities = nullptr;
 	Entity* m_pPlayer = nullptr;
-	
-	
+
+
 	/**********************************************************/
 	// Event & Message Managers
-	SGD::EventManager*		m_pEvents			= nullptr;
-	SGD::MessageManager*	m_pMessages			= nullptr;
+	SGD::EventManager*		m_pEvents = nullptr;
+	SGD::MessageManager*	m_pMessages = nullptr;
 
 
 	MenuFlyweight* m_pMenuFlyweight;
@@ -83,13 +77,11 @@ private:
 	/**********************************************************/
 	// Audio
 
-	
+
 	/**********************************************************/
 	// Factory Methods
 
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	static void MessageProc(const SGD::Message* pMsg);
 };
-
-#endif //INTROSTATE_H

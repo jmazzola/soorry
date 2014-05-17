@@ -1,3 +1,11 @@
+/***************************************************************
+|	File:		Player.h
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	Player class stores the data members for 
+|				the main character/controllable character
+***************************************************************/
+
 #pragma once
 
 #include "Entity.h"
@@ -33,7 +41,7 @@ public:
 	unsigned int GetScore() const;
 	unsigned int GetEnemiesKilled() const;
 	float GetSpeed() const;
-	float GetMultiplier() const;
+	float GetScoreMultiplier() const;
 	float GetTimeAlive() const;
 	Inventory* GetInventory() const;
 	Cursor* GetCursor() const;
@@ -49,7 +57,7 @@ public:
 	void SetScore(unsigned int score);
 	void SetEnemiesKilled(unsigned int enemiesKilled);
 	void SetSpeed(float speed);
-	void SetMultiplier(float multiplier);
+	void SetScoreMultiplier(float multiplier);
 	void SetTimeAlive(float timeAlive);
 	void SetInventory(Inventory* inventory);
 	void SetCursor(Cursor* cursor);
@@ -67,7 +75,7 @@ protected:
 	unsigned int m_unScore;
 	unsigned int m_unEnemiesKilled;
 	float m_fSpeed;
-	float m_fMultiplier;
+	float m_fScoreMultiplier;
 	float m_fTimeAlive;
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
