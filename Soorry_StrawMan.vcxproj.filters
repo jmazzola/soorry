@@ -52,6 +52,9 @@
     <Filter Include="Bitmap Font">
       <UniqueIdentifier>{45ff2507-193a-41aa-bf09-437dbef2d0e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TinyXML">
+      <UniqueIdentifier>{1f931c53-8928-498c-b80a-d746f217115e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -233,6 +236,18 @@
     </ClCompile>
     <ClCompile Include="source\DestroyEntityMessage.cpp">
       <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinystr.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp">
+      <Filter>TinyXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +457,12 @@
     </ClInclude>
     <ClInclude Include="source\DestroyEntityMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinystr.h">
+      <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyXML\tinyxml.h">
+      <Filter>TinyXML</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
