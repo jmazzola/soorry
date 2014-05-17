@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map worldWidth="4" worldHeight="4" tileWidth="32" tileHeight="32" tilesetWidth="16" image="resource/world/testTileset.png">
+  <layer>
+    <tile x="0" y="0" index="59" collider="false">
+      <initial_trigger id="TEST"/>
+      <collision_trigger id="TEST"/>
+      <collision id="0"/>
+    </tile>
+    <tile x="1" y="0" index="57" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="0" y="1" index="60" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="1" y="1" index="58" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="2" y="0" index="59" collider="false">
+      <initial_trigger id="TEST"/>
+      <collision_trigger id="TEST"/>
+      <collision id="0"/>
+    </tile>
+    <tile x="3" y="0" index="57" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="2" y="1" index="60" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="3" y="1" index="58" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="0" y="2" index="59" collider="false">
+      <initial_trigger id="TEST"/>
+      <collision_trigger id="TEST"/>
+      <collision id="0"/>
+    </tile>
+    <tile x="1" y="2" index="57" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="0" y="3" index="60" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="1" y="3" index="58" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="2" y="2" index="59" collider="false">
+      <initial_trigger id="TEST"/>
+      <collision_trigger id="TEST"/>
+      <collision id="0"/>
+    </tile>
+    <tile x="3" y="2" index="57" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="2" y="3" index="60" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+    <tile x="3" y="3" index="58" collider="false">
+      <initial_trigger id=""/>
+      <collision_trigger id=""/>
+      <collision id="0"/>
+    </tile>
+  </layer>
+</map>

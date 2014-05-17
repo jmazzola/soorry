@@ -27,6 +27,8 @@
 #include "EntityManager.h"
 #include "Player.h"
 
+#include "WorldManager.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -101,6 +103,10 @@ Player*	GameplayState::CreatePlayer() const
 	//m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 
+
+
+	// Load the world
+	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
 }
 
 
@@ -188,6 +194,11 @@ Player*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
+
+
+	// Render test world
+	WorldManager::GetInstance()->Render();
+	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
 

@@ -8,7 +8,7 @@ class Layer
 {
 public:
 
-	Layer();
+	Layer(unsigned int width, unsigned int height);
 	~Layer();
 
 	Tile* operator[](unsigned int index);

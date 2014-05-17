@@ -30,6 +30,7 @@ public:
 	int GetWorldHeight() const;
 	int GetTileWidth() const;
 	int GetTileHeight() const;
+	int GetTilesetWidth() const;
 	SGD::HTexture GetTilesetImage() const;
 
 	/**********************************************************/
@@ -38,6 +39,7 @@ public:
 	void SetWorldHeight(int worldHeight);
 	void SetTileWidth(int tileWidth);
 	void SetTileHeight(int tileHeight);
+	void SetTilesetWidth(int tilesetWidth);
 	void SetTilesetImage(SGD::HTexture tilesetImage);
 
 protected:
@@ -48,6 +50,7 @@ protected:
 	int m_nWorldHeight;
 	int m_nTileWidth;
 	int m_nTileHeight;
+	int m_nTilesetWidth;
 	vector<Layer> m_vLayers;
 	SGD::HTexture m_hTilesetImage;
 

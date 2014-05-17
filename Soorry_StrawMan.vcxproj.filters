@@ -477,4 +477,9 @@
       <Filter>TinyXML</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resource\world\testWorld.xml">
+      <Filter>World Manager</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>
