@@ -6,7 +6,6 @@
 class Particle
 {
 	
-	//Emitter* emitter;
 public:
 	Particle();
 	~Particle();

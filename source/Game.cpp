@@ -15,7 +15,12 @@
 
 #include "BitmapFont.h"
 #include "IGameState.h"
+
+#include "MainMenuState.h"
 #include "GameplayState.h"
+#include "CreditsState.h"
+#include "OptionsState.h"
+#include "IntroState.h"
 
 #include <ctime>
 #include <cstdlib>
@@ -85,7 +90,7 @@ bool Game::Initialize( int width, int height )
 
 
 	// Start the game in the Main Menu state
-	ChangeState( GameplayState::GetInstance() );
+	ChangeState( MainMenuState::GetInstance() );
 	
 
 	// Store the current time (in milliseconds)

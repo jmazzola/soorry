@@ -21,7 +21,6 @@ class Entity;
 class EntityManager;
 class Shop;
 class Player;
-class ParticleManager;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 
@@ -77,11 +76,10 @@ private:
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
-	//Test particles
-	ParticleManager* m_pparticleManager;
 
 	/**********************************************************/
 	// Textures
+	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 
 
 	/**********************************************************/
@@ -90,6 +88,9 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+
+	// Creates a player
+	Player*	CreatePlayer() const;
 
 
 	// Message Callback Function:

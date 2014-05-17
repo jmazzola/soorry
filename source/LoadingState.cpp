@@ -1,15 +1,15 @@
 /***************************************************************
-|	File:		GameplayState.cpp
+|	File:		LoadingState.cpp
 |	Author:		Justin Mazzola
-|	Course:		
-|	Purpose:	
+|	Course:		SGP
+|	Purpose:	The state where the player will be shown a 
+|				"Loading.." screen to ensure the game hasnt frozen,
+|				and have their data loaded to start gameplay
 ***************************************************************/
-
-#include "GameplayState.h"
+#include "LoadingState.h"
 
 #include "Game.h"
-#include "OptionsState.h"
-#include "MainMenuState.h"
+#include "GameplayState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -20,12 +20,12 @@
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_MessageManager.h"
 #include "../SGD Wrappers/SGD_Message.h"
-
 #include "MessageID.h"
+
 #include "BitmapFont.h"
+
 #include "Entity.h"
 #include "EntityManager.h"
-#include "Player.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -35,27 +35,17 @@ using namespace std;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include <cfloat>
 
+#include <cfloat>
 
 /**************************************************************/
 // GetInstance
 //	- allocate static global instance
 //	- return THE instance
-/*static*/ GameplayState* GameplayState::GetInstance(void)
+/*static*/ LoadingState* LoadingState::GetInstance(void)
 {
-	static GameplayState s_Instance;	// stored in global memory once
+	static LoadingState s_Instance;	// stored in global memory once
 	return &s_Instance;
-}
-
-/*************************************************************/
-// CreatePlayer
-//	- allocate a new player
-///	- set the player's properties
-Player*	GameplayState::CreatePlayer() const
-{
-	Player* player = new Player();
-	return player;
 }
 
 
@@ -64,7 +54,7 @@ Player*	GameplayState::CreatePlayer() const
 //	- reset game
 //	- load resources
 //	- set up entities
-/*virtual*/ void GameplayState::Enter(void)
+/*virtual*/ void LoadingState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
 
@@ -80,26 +70,17 @@ Player*	GameplayState::CreatePlayer() const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
+
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+
 
 	// Set background color
-	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
-
-
-	//// Create our player
-	//m_pPlayer = CreatePlayer();
-	//// Add it to the entity manager
-	//m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
-
-
+	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 }
 
 
@@ -107,7 +88,7 @@ Player*	GameplayState::CreatePlayer() const
 // Exit
 //	- deallocate entities
 //	- unload resources
-/*virtual*/ void GameplayState::Exit(void)
+/*virtual*/ void LoadingState::Exit(void)
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -121,9 +102,6 @@ Player*	GameplayState::CreatePlayer() const
 	m_pEntities->RemoveAll();
 	delete m_pEntities;
 	m_pEntities = nullptr;
-
-	// Unload Assets
-	pGraphics->UnloadTexture(m_hPlayerImg);
 
 
 	m_pMessages->Terminate();
@@ -142,7 +120,7 @@ Player*	GameplayState::CreatePlayer() const
 /**************************************************************/
 // Input
 //	- handle user input
-/*virtual*/ bool GameplayState::Input(void)
+/*virtual*/ bool LoadingState::Input(void)
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
@@ -152,7 +130,7 @@ Player*	GameplayState::CreatePlayer() const
 	// Press Escape to quit
 	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
 	{
-		pGame->ChangeState(MainMenuState::GetInstance());
+		pGame->ChangeState(GameplayState::GetInstance());
 	}
 
 	return true;	// keep playing
@@ -162,7 +140,7 @@ Player*	GameplayState::CreatePlayer() const
 /**************************************************************/
 // Update
 //	- update game entities
-/*virtual*/ void GameplayState::Update(float elapsedTime)
+/*virtual*/ void LoadingState::Update(float elapsedTime)
 {
 
 
@@ -182,12 +160,12 @@ Player*	GameplayState::CreatePlayer() const
 /**************************************************************/
 // Render
 //	- render the game entities
-/*virtual*/ void GameplayState::Render(void)
+/*virtual*/ void LoadingState::Render(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
-	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
+	pGraphics->DrawString("Loading...", { 200, 200 }, { 255, 0, 255 });
 
 
 	// Render the entities
@@ -201,7 +179,7 @@ Player*	GameplayState::CreatePlayer() const
 //	- STATIC METHOD
 //		- does NOT have invoking object!!!
 //		- must use singleton to access members
-/*static*/ void GameplayState::MessageProc(const SGD::Message* pMsg)
+/*static*/ void LoadingState::MessageProc(const SGD::Message* pMsg)
 {
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )

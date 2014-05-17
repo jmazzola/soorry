@@ -110,6 +110,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 	else
 		return false;
 }
+
 Emitter* createEmitter(std::string emitterID)
 {
 	return nullptr;

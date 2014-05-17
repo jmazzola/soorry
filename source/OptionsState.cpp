@@ -1,13 +1,15 @@
 /***************************************************************
 |	File:		OptionsState.cpp
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will allow the player to adjust 
+|				in-game variables such as game volume.
 ***************************************************************/
 
 #include "OptionsState.h"
 
 #include "Game.h"
+#include "MainMenuState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -126,6 +128,11 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	// Press Escape to quit
+	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	{
+		pGame->ChangeState(MainMenuState::GetInstance());
+	}
 
 	return true;	// keep playing
 }
@@ -159,7 +166,8 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
-	
+	pGraphics->DrawString("Options State", { 200, 200 }, { 255, 0, 255 });
+
 
 	// Render the entities
 	m_pEntities->RenderAll();
