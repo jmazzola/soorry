@@ -25,6 +25,8 @@
 #include "Entity.h"
 #include "EntityManager.h"
 
+#include "WorldManager.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -80,6 +82,10 @@ using namespace std;
 
 	// Set background color
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+
+
+	// Load the world
+	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
 }
 
 
@@ -159,6 +165,10 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
+
+
+	// Render test world
+	WorldManager::GetInstance()->Render();
 	
 
 	// Render the entities

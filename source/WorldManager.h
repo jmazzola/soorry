@@ -18,9 +18,6 @@ public:
 
 	static WorldManager* GetInstance();
 
-	WorldManager();
-	~WorldManager();
-
 	/**********************************************************/
 	// Interface
 	bool LoadWorld(string fileName);
