@@ -59,6 +59,11 @@ int WorldManager::GetTileHeight() const
 	return m_nTileHeight;
 }
 
+int WorldManager::GetTilesetWidth() const
+{
+	return m_nTilesetWidth;
+}
+
 SGD::HTexture WorldManager::GetTilesetImage() const
 {
 	return m_hTilesetImage;
@@ -85,6 +90,11 @@ void WorldManager::SetTileWidth(int _tileWidth)
 void WorldManager::SetTileHeight(int _tileHeight)
 {
 	m_nTileHeight = _tileHeight;
+}
+
+void WorldManager::SetTilesetWidth(int _tilesetWidth)
+{
+	m_nTilesetWidth = _tilesetWidth;
 }
 
 void WorldManager::SetTilesetImage(SGD::HTexture _tilesetImage)

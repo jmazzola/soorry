@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map width="150" height="150" image="resource/graphics/tileset.png" tileWidth="32" tileHeight="32">
+  <layer>
+    <tile x="0" y="0" index="10" collider="false">
+      <collision_trigger id="MALL"/>
+      <initial_trigger id="SPAWN_WALL"/>
+      <collision id="0"/>
+    </tile>
+    <tile x="50" y="50" index="4" collider="true">
+    </tile>
+  </layer>
+</map>
