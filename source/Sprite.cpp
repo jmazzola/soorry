@@ -13,5 +13,5 @@ Sprite::~Sprite()
 
 void Sprite::SetImage(const char * fileName)
 {
-	SGD::GraphicsManager::GetInstance()->LoadTexture(fileName);
+	m_htImage = SGD::GraphicsManager::GetInstance()->LoadTexture(fileName);
 }

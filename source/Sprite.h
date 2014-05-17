@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include "../SGD Wrappers/SGD_Handle.h"
-
+#include "Frame.h"
 
 class Frame;
 
@@ -25,7 +25,7 @@ public:
 	void SetImage(const char * fileName);
 	void SetSpriteID(std::string newID) { m_strSpriteID = newID; }
 	void SetLooping(bool cont) { m_bIsLooping = cont; }
-
+	void SetFrame(Frame f) { m_vFrames.push_back(f); }
 private:
 	/**********************************************************/
 	// Data Members
@@ -33,6 +33,5 @@ private:
 	SGD::HTexture m_htImage;
 	std::string m_strSpriteID;
 	bool m_bIsLooping;
-	std::map<std::string, Sprite> m_mFrames;
 };
 

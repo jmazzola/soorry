@@ -1,9 +1,18 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 
 class Sprite;
-class AnimationTimestamp;
+
+struct AnimationTimestamp
+{
+	/**********************************************************/
+	// Data Members
+	std::string m_nCurrAnimation;
+	int m_nCurrFrame;
+	float m_fTimeOnFrame;
+};
 
 class AnimationManager
 {
@@ -14,15 +23,15 @@ public:
 	// Interface
 	bool LoadSprites(std::string fileName);
 	void Update(AnimationTimestamp& ants, float dt);
-	void Render(AnimationTimestamp& ants, int x, int y);
+	void Render(AnimationTimestamp& ants, float x, float y);
 
 	/**********************************************************/
-	// Accessors
-	Sprite GetSprite(std::string id);
+	// Data Members
+	AnimationTimestamp m_sAnimationTS;
 
 private:
 	/**********************************************************/
 	// Data Members
-	std::vector<Sprite> m_vSprites;
+	std::map<std::string, Sprite> m_mSprites;
 };
 
