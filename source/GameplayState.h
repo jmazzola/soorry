@@ -81,6 +81,7 @@ private:
 
 	/**********************************************************/
 	// Textures
+	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 
 
 	/**********************************************************/
@@ -89,6 +90,9 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+
+	// Creates a player
+	Player*	CreatePlayer() const;
 
 
 	// Message Callback Function:

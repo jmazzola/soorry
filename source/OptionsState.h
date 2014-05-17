@@ -1,9 +1,11 @@
 /***************************************************************
 |	File:		OptionsState.h
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will allow the player to adjust
+|				in-game variables such as game volume.
 ***************************************************************/
+
 
 #ifndef OPTIONSSTATE_H
 #define OPTIONSSTATE_H

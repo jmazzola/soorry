@@ -1,9 +1,12 @@
 /***************************************************************
 |	File:		MainMenuState.h
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will be the main menu of the game,
+|				players will be shown a menu to allow for them to
+|				enter the options, load/save, or leave the game.
 ***************************************************************/
+
 
 #ifndef MAINMENUSTATE_H
 #define MAINMENUSTATE_H

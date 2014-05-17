@@ -1,8 +1,9 @@
 /***************************************************************
 |	File:		MenuFlyweight.cpp
-|	Author:
-|	Course:
-|	Purpose:
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	A flyweight to allow every menu to share the audio
+|				for selecting, and picking menu options.
 ***************************************************************/
 
 #include "MenuFlyweight.h"

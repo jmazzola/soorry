@@ -1,13 +1,17 @@
 /***************************************************************
 |	File:		MainMenuState.cpp
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will be the main menu of the game,
+|				players will be shown a menu to allow for them to
+|				enter the options, load/save, or leave the game.
 ***************************************************************/
 
 #include "MainMenuState.h"
 
 #include "Game.h"
+#include "LoadingState.h"
+#include "LoadSaveState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -127,6 +131,9 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 
+	if (pInput->IsKeyPressed(SGD::Key::Escape))
+		pGame->ChangeState(LoadSaveState::GetInstance());
+
 	return true;	// keep playing
 }
 
@@ -159,7 +166,8 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
-	
+	pGraphics->DrawString("Main Menu State", { 200, 200 }, { 255, 0, 255 });
+
 
 	// Render the entities
 	m_pEntities->RenderAll();
