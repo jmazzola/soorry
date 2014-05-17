@@ -21,6 +21,7 @@ public:
 	/**********************************************************/
 	// Interface
 	bool LoadWorld(string fileName);
+	void UnloadWorld();
 	void Render();
 	bool CheckCollision(IEntity* object);
 

@@ -133,6 +133,10 @@ Player*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hPlayerImg);
 
 
+	// Unload World Manager
+	WorldManager::GetInstance()->UnloadWorld();
+
+
 	m_pMessages->Terminate();
 	m_pMessages = nullptr;
 	SGD::MessageManager::DeleteInstance();

@@ -97,6 +97,19 @@ bool WorldManager::LoadWorld(string fileName)
 	return (m_vLayers.size() > 0);
 }
 
+void WorldManager::UnloadWorld()
+{
+	// Unload all tiles from all layers
+	for (unsigned int i = 0; i < m_vLayers.size(); i++)
+		m_vLayers[i].UnloadTiles();
+
+	// Clear out layers
+	m_vLayers.clear();
+
+	// Unload tilesetImage
+	SGD::GraphicsManager::GetInstance()->UnloadTexture(m_hTilesetImage);
+}
+
 void WorldManager::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
