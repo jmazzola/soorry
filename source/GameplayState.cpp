@@ -24,7 +24,7 @@
 
 #include "Entity.h"
 #include "EntityManager.h"
-
+#include "ParticleManager.h"
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -68,6 +68,10 @@ using namespace std;
 
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
+
+	//to be removed - just for testing the partcile XML
+	m_pparticleManager = new ParticleManager;
+	m_pparticleManager->loadEmitters("testparticle.xml");
 
 
 	// Load Textures

@@ -89,7 +89,7 @@ bool Game::Initialize( int width, int height )
 	
 
 	// Store the current time (in milliseconds)
-	m_ulGameTime	= GetTickCount();
+	m_ulGameTime = GetTickCount();
 
 	return true;	// success!
 }

@@ -5,6 +5,10 @@
 #include <string>
 class ParticleFlyweight
 {
+	
+public:
+	ParticleFlyweight();
+	~ParticleFlyweight();
 	SGD::HTexture image;
 	SGD::Vector startVelocity;
 	SGD::Vector endVelocity;
@@ -17,10 +21,9 @@ class ParticleFlyweight
 	float minLifeTime;
 	float maxLifeTime;
 	std::string particleID;
+	std::string fileName;
 	SGD::Vector direction;
 
-public:
-	ParticleFlyweight();
-	~ParticleFlyweight();
+
 };
 

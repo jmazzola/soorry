@@ -12,7 +12,7 @@ class ParticleManager
 public:
 	ParticleManager();
 	~ParticleManager();
-	void loadEmitters(std::string filName);
+	bool loadEmitters(std::string filName);
 	Emitter* CreateEmitter(std::string emitterID);
 };
 

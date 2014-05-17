@@ -5,18 +5,20 @@
 #include "Emitter.h"
 class Particle
 {
+	
+	//Emitter* emitter;
+public:
+	Particle();
+	~Particle();
 	ParticleFlyweight particleFlyweight;
 	SGD::Point position;
 	SGD::Vector velocity;
 	SGD::Color startColor;
 	SGD::Color endColor;
 	SGD::Size scale;
+	SGD::Size size;
 	float rotation;
 	float currLifeTime;
 	float maxLifeTime;
-	//Emitter* emitter;
-public:
-	Particle();
-	~Particle();
 };
 

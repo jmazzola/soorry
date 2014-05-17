@@ -21,7 +21,7 @@ class Entity;
 class EntityManager;
 class Shop;
 class Player;
-
+class ParticleManager;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 
@@ -77,7 +77,8 @@ private:
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
-
+	//Test particles
+	ParticleManager* m_pparticleManager;
 
 	/**********************************************************/
 	// Textures
