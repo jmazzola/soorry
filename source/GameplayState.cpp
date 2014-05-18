@@ -89,6 +89,8 @@ Player*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
+	//Load Particle Manager
+	//m_pParticleManager = 
 
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black

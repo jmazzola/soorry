@@ -9,7 +9,6 @@ class Particle;
 
 class Emitter
 {
-
 	
 public:
 	Emitter();
