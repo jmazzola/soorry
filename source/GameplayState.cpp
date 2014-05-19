@@ -169,6 +169,8 @@ Player*	GameplayState::CreatePlayer() const
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}
+	else if (pInput->IsKeyPressed(SGD::Key::Enter))
+		return false;
 
 	return true;	// keep playing
 }
