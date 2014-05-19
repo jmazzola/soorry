@@ -12,10 +12,27 @@ ParticleManager::~ParticleManager()
 {
 }
 
+
 ParticleManager* ParticleManager::GetInstance()
 {
 	static ParticleManager s_Instance;
 	return &s_Instance;
+}
+
+void ParticleManager::Update(float dt)
+{
+	for (unsigned int i = 0; i < activeEmitters.size(); i++)
+	{
+		activeEmitters[i]->Update(dt);
+	}
+}
+
+void ParticleManager::Render()
+{
+	for (unsigned int i = 0; i < activeEmitters.size(); i++)
+	{
+		activeEmitters[i]->Render();
+	}
 }
 
 bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
@@ -121,6 +138,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		emitterKeyPair.first = EmitterID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
+		activeEmitters.push_back(tempEmitter);
 		return true;
 	}
 	else

@@ -181,7 +181,7 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Update the entities
 	m_pEntities->UpdateAll(elapsedTime);
-
+	m_pParticleManager->Update(elapsedTime);
 
 	// Process the events & messages
 	m_pEvents->Update();
