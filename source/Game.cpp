@@ -90,9 +90,8 @@ bool Game::Initialize( int width, int height )
 
 
 	// Allocate & initialize the font
-	m_pFont = new BitmapFont;
-	m_pFont->Initialize();
-
+	   m_pFont = new BitmapFont;
+	   m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png","resource/data/BitmapFont_Roboto.fnt");
 
 	// Start the game in the Main Menu state
 	ChangeState( MainMenuState::GetInstance() );
