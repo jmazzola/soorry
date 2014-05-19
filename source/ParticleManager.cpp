@@ -87,6 +87,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		//Read XML for Emitter Shape
 		data = data->NextSiblingElement("shape");
 		data->Attribute("number", &tempInt);
+		tempEmitter->shape = tempInt;
 		//Start reading in flyweight data
 		flyweight = root->FirstChildElement("flyweight");
 		//Read XML for Flyweight velocity
@@ -142,6 +143,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		particleFlyweights.push_back(tempFlyweight);
 		//creating an iterator to emplace an emitter into the map
 		auto iter = loadedEmitters.end();
+		tempEmitter->particleFlyweight = *tempFlyweight;
 		std::pair<std::string, Emitter*> emitterKeyPair;
 		emitterKeyPair.first = EmitterID;
 		emitterKeyPair.second = tempEmitter;

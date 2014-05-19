@@ -27,5 +27,7 @@ public:
 	std::vector<Particle* > aliveParticles;
 	std::vector<Particle* > deadParticles;
 	std::string emitterID;
+	SGD::Rectangle square;
+	
 };
 

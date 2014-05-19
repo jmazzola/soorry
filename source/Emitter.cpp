@@ -1,20 +1,44 @@
 #include "Emitter.h"
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "Particle.h"
+#include <ctime>
 Emitter::Emitter()
 {
-	//Create all the particle needed for this emitter
-
 }
 
 Emitter::~Emitter()
 {
 
 }
+
 void Emitter::load()
 {
+	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
+		switch (shape)
+		{
+		case 0://square
+		{
+			SGD::Rectangle(position, size);
+		}
+			break;
+		case 1://circle
+		{
+
+		}
+			break;
+		case 2://line
+		{
+
+		}
+			break;
+		case 3://point
+		{
+
+		}
+			break;
+		}
 		for (int i = 0; i < maxParticles; i++)
 		{
 			//Create a new particle
@@ -36,6 +60,9 @@ void Emitter::load()
 			tempParticle->velocity = particleFlyweight.startVelocity;
 			tempParticle->velocityRateX = ((particleFlyweight.startVelocity.x - particleFlyweight.endVelocity.x) / maxLife);
 			tempParticle->velocityRateY = ((particleFlyweight.startVelocity.y - particleFlyweight.endVelocity.y) / maxLife);
+			//Randomize the position within the emitter NOTE: maybe need to add world offset
+			tempParticle->position.x = (float)(rand() % (int)size.width)+position.x;
+			tempParticle->position.y = (float)(rand() % (int)size.height)+position.y;
 			tempParticle->particleFlyweight = particleFlyweight;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
@@ -46,7 +73,6 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
-
 	//Loop for the amount of particles made every second
 	for (float i = 0; i < spawnRate; i++)
 	{
@@ -61,7 +87,14 @@ void Emitter::Update(float dt)
 	}
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
-		aliveParticles[i]->Update(dt);
+		//check if the particle is dead
+		if (!aliveParticles[i]->Update(dt))
+		{
+			//move the particle into the dead list
+			deadParticles.push_back(aliveParticles[i]);
+			aliveParticles.erase(aliveParticles.begin() + i);
+			i--;
+		}
 	}
 }
 void Emitter::Render()

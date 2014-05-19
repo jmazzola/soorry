@@ -28,6 +28,7 @@ bool Particle::Update(float dt)
 	position.x		+=	velocity.x;
 	position.y		+=	velocity.y;
 	currLifeTime	+=	dt;
+	//return true to signal that the particle is alive
 	return true;
 }
 
