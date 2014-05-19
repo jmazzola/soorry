@@ -9,6 +9,8 @@ class Particle;
 
 class Emitter
 {
+	//A bool for when all particles are loaded
+	bool allParticlesCreated = false;
 public:
 	Emitter();
 	~Emitter();
