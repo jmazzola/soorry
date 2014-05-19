@@ -234,6 +234,9 @@
     <ClCompile Include="source\DestroyEntityMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\LoadSaveState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
     <ClCompile Include="TinyXML\tinystr.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="TinyXML\tinyxmlparser.cpp">
       <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LoadingState.cpp">
+      <Filter>Game States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -452,11 +458,22 @@
     <ClInclude Include="source\DestroyEntityMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\LoadSaveState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LoadingState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">
       <Filter>TinyXML</Filter>
     </ClInclude>
     <ClInclude Include="TinyXML\tinyxml.h">
       <Filter>TinyXML</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resource\world\testWorld.xml">
+      <Filter>World Manager</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

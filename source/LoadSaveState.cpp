@@ -1,15 +1,15 @@
 /***************************************************************
-|	File:		OptionsState.cpp
+|	File:		LoadSaveState.cpp
 |	Author:		Justin Mazzola
 |	Course:		SGP
-|	Purpose:	This state will allow the player to adjust 
-|				in-game variables such as game volume.
+|	Purpose:	The state where the player will save and load
+|				gamesaves
 ***************************************************************/
-
-#include "OptionsState.h"
+#include "LoadSaveState.h"
 
 #include "Game.h"
 #include "MainMenuState.h"
+#include "LoadingState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -38,14 +38,13 @@ using namespace std;
 
 #include <cfloat>
 
-
 /**************************************************************/
 // GetInstance
 //	- allocate static global instance
 //	- return THE instance
-/*static*/ OptionsState* OptionsState::GetInstance(void)
+/*static*/ LoadSaveState* LoadSaveState::GetInstance(void)
 {
-	static OptionsState s_Instance;	// stored in global memory once
+	static LoadSaveState s_Instance;	// stored in global memory once
 	return &s_Instance;
 }
 
@@ -55,7 +54,7 @@ using namespace std;
 //	- reset game
 //	- load resources
 //	- set up entities
-/*virtual*/ void OptionsState::Enter(void)
+/*virtual*/ void LoadSaveState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
 
@@ -78,7 +77,7 @@ using namespace std;
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+
 
 	// Set background color
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -89,7 +88,7 @@ using namespace std;
 // Exit
 //	- deallocate entities
 //	- unload resources
-/*virtual*/ void OptionsState::Exit(void)
+/*virtual*/ void LoadSaveState::Exit(void)
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -121,7 +120,7 @@ using namespace std;
 /**************************************************************/
 // Input
 //	- handle user input
-/*virtual*/ bool OptionsState::Input(void)
+/*virtual*/ bool LoadSaveState::Input(void)
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
@@ -131,7 +130,7 @@ using namespace std;
 	// Press Escape to quit
 	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
 	{
-		pGame->ChangeState(MainMenuState::GetInstance());
+		pGame->ChangeState(LoadingState::GetInstance());
 	}
 
 	return true;	// keep playing
@@ -141,7 +140,7 @@ using namespace std;
 /**************************************************************/
 // Update
 //	- update game entities
-/*virtual*/ void OptionsState::Update(float elapsedTime)
+/*virtual*/ void LoadSaveState::Update(float elapsedTime)
 {
 
 
@@ -161,12 +160,12 @@ using namespace std;
 /**************************************************************/
 // Render
 //	- render the game entities
-/*virtual*/ void OptionsState::Render(void)
+/*virtual*/ void LoadSaveState::Render(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
-	pGraphics->DrawString("Options State", { 200, 200 }, { 255, 0, 255 });
+	pGraphics->DrawString("Load/Save State", { 200, 200 }, { 255, 0, 255 });
 
 
 	// Render the entities
@@ -180,7 +179,7 @@ using namespace std;
 //	- STATIC METHOD
 //		- does NOT have invoking object!!!
 //		- must use singleton to access members
-/*static*/ void OptionsState::MessageProc(const SGD::Message* pMsg)
+/*static*/ void LoadSaveState::MessageProc(const SGD::Message* pMsg)
 {
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )

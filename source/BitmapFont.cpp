@@ -17,18 +17,25 @@
 // Initialize
 //	- configure the font for "SGD_Font_Glow.png"
 //	- probably should have parameters / config file
-void BitmapFont::Initialize( void )
+//
+// [in] fileName - File path for the bitmap file image
+// [in] firstChar - First character in the file
+
+void BitmapFont::Initialize()
 {
 	// Load the image
 	/*m_hImage = SGD::GraphicsManager::GetInstance()->LoadTexture(
 				L"resource/graphics/JMP_font.png" );*/
 
-	m_nCharWidth		= 32;
-	m_nCharHeight		= 32;
-	m_nNumRows			= 6;
-	m_nNumCols			= 10;
+	// Set all the character widths to 0
+	m_nCharWidth = 0;
+	// Set all the character heights to 0
+	m_nCharHeight = 0;
 	
-	m_cFirstChar		= ' ';		// space
+	m_nNumRows = 6;
+	m_nNumCols = 10;
+	
+	m_cFirstChar		= ' ';
 	m_bOnlyUppercase	= true;
 }
 

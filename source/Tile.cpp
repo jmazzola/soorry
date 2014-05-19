@@ -3,13 +3,17 @@
 
 Tile::Tile()
 {
+	// Initialize data members
+	m_nTileID = 0;
+	m_nColliderID = 0;
+	m_bIsCollidable = false;
+	m_strTriggerInit.clear();
+	m_strTriggerCollision.clear();
 }
-
 
 Tile::~Tile()
 {
 }
-
 
 /**********************************************************/
 // Accessors

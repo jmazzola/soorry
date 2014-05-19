@@ -1,13 +1,12 @@
 /***************************************************************
 |	File:		CreditsState.h
-|	Author:		
-|	Course:		
-|	Purpose:	
+|	Author:		Justin Mazzola
+|	Course:		SGP
+|	Purpose:	This state will show the player the credits
+|				of this game.
 ***************************************************************/
 
-#ifndef CREDITSSTATE_H
-#define CREDITSSTATE_H
-
+#pragma once
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
@@ -87,5 +86,3 @@ private:
 	// Message Callback Function:
 	static void MessageProc( const SGD::Message* pMsg );
 };
-
-#endif //CREDITSSTATE_H
