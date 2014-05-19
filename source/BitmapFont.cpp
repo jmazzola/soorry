@@ -1,14 +1,17 @@
 /***************************************************************
 |	File:		BitmapFont.cpp
-|	Author:		Justin Patterson
-|	Course:		SGD 1403
-|	Purpose:	BitmapFont class draws text using an image
-|				of fixed-size character glyphs
+|	Author:		Justin Patterson, Justin Mazzola
+|	Course:		SGP
+|	Purpose:	BitmapFont class draws text using an image 
+|				of fixed-size character glyphs and xml file holding
+|				character info
 ***************************************************************/
 
 #include "BitmapFont.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "../TinyXML/tinyxml.h"
+
 #include <ctype.h>
 #include <cassert>
 
@@ -21,22 +24,37 @@
 // [in] fileName - File path for the bitmap file image
 // [in] firstChar - First character in the file
 
-void BitmapFont::Initialize()
+void BitmapFont::Initialize(const wchar_t* picFileName, const char* xmlFileName)
 {
 	// Load the image
-	/*m_hImage = SGD::GraphicsManager::GetInstance()->LoadTexture(
-				L"resource/graphics/JMP_font.png" );*/
+	m_hImage = SGD::GraphicsManager::GetInstance()->LoadTexture(picFileName);
 
-	// Set all the character widths to 0
-	m_nCharWidth = 0;
-	// Set all the character heights to 0
-	m_nCharHeight = 0;
-	
-	m_nNumRows = 6;
-	m_nNumCols = 10;
-	
-	m_cFirstChar		= ' ';
-	m_bOnlyUppercase	= true;
+	// Set characteristics
+	m_nCharWidth[255] = {};
+	m_nCharHeight[255] = {};
+	m_nCharX[255] = {};
+	m_nCharY[255] = {};
+	m_nCharXOffset[255] = {};
+	m_nCharYOffset[255] = {};
+	m_nCharXOffset[255] = {};
+
+	// Make a XMLDocument for the font data
+	TiXmlDocument doc;
+
+	// Attempt to load it, if it doesn't work, gtfo.
+	if (!doc.LoadFile(xmlFileName))
+		return;
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Make sure the root is there
+	if (pRoot == nullptr)
+		return;
+
+	// Grab the character data
+	TiXmlElement* pChars = pRoot->FirstChildElement("chars");
+
 }
 
 

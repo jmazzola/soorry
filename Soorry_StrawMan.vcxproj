@@ -156,6 +156,9 @@
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\data\BitmapFont_Roboto.fnt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>
     <RootNamespace>Soorry_StrawMan</RootNamespace>

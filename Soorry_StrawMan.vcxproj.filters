@@ -482,4 +482,9 @@
       <Filter>World Manager</Filter>
     </Xml>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\data\BitmapFont_Roboto.fnt">
+      <Filter>Bitmap Font</Filter>
+    </None>
+  </ItemGroup>
 </Project>
