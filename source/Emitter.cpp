@@ -2,11 +2,15 @@
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "Particle.h"
 Emitter::Emitter()
-{}
+{
+	//Create all the particle needed for this emitter
+
+}
 
 Emitter::~Emitter()
-{}
+{
 
+}
 void Emitter::load()
 {
 	if (allParticlesCreated != true)
@@ -42,13 +46,18 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
-	
+
 	//Loop for the amount of particles made every second
 	for (float i = 0; i < spawnRate; i++)
 	{
-			//switch a dead Particle to an AliveParticle
-		aliveParticles.push_back(deadParticles.front());
-		deadParticles.erase(deadParticles.begin());
+		//create Particle then add it to the alive particles
+		//Take data from patricle flyweight and send it to the particle
+		Particle* tempParticle = new Particle;
+		if (aliveParticles.size() < 500)
+		{
+			aliveParticles.push_back(deadParticles.front());
+			deadParticles.erase(deadParticles.begin());
+		}
 	}
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
