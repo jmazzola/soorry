@@ -8,13 +8,13 @@ class ParticleManager
 {
 	std::vector<ParticleFlyweight*> particleFlyweights;
 	std::vector<Emitter> activeEmitters;
-	std::vector<std::string> fileNames;
 	std::map<std::string, Emitter*> loadedEmitters;
 	int numOfEmitters = 0;
 public:
+	static ParticleManager* GetInstance();
 	ParticleManager();
 	~ParticleManager();
-	bool loadEmitters(std::string fileName);
+	bool loadEmitters(std::string fileName,std::string);
 	Emitter* createEmitter(std::string emitterID,std::string filename);
 };
 

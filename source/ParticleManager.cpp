@@ -12,7 +12,13 @@ ParticleManager::~ParticleManager()
 {
 }
 
-bool ParticleManager::loadEmitters(std::string fileName)
+ParticleManager* ParticleManager::GetInstance()
+{
+	static ParticleManager s_Instance;
+	return &s_Instance;
+}
+
+bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 {
 	TiXmlDocument doc(fileName.c_str());
 	if (doc.LoadFile())
@@ -20,6 +26,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		//Temporary variables for transfering data
 		double width, height, tempDouble, x, y, a, r, g, b;
 		int tempInt;
+		bool tempBool;
 		std::string tempStr; 
 		Emitter* tempEmitter = new Emitter;
 		ParticleFlyweight* tempFlyweight = new ParticleFlyweight;
@@ -31,7 +38,9 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		emitter = root->FirstChildElement("emitter");
 		data = emitter->FirstChildElement("isLooping");
 		data->Attribute("bool", &tempInt);
-		tempEmitter->isLooping = (bool)tempInt;
+		if (tempInt != 0) tempBool = true;
+		else tempBool = false;
+		tempEmitter->isLooping = tempBool;
 		//Read XML for Emitter Position
 		data = data->NextSiblingElement("position");
 		data->Attribute("x", &x);
@@ -109,7 +118,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		//creating an iterator to emplace an emitter into the map
 		auto iter = loadedEmitters.end();
 		std::pair<std::string, Emitter*> emitterKeyPair;
-		emitterKeyPair.first = fileName;
+		emitterKeyPair.first = EmitterID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
 		return true;
@@ -120,7 +129,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 
 Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filename)
 {
-	if (loadEmitters(filename))
+	if (loadEmitters(filename,emitterID))
 	{
 		return loadedEmitters[emitterID];
 	}

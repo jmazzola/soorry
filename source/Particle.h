@@ -12,9 +12,11 @@ public:
 	ParticleFlyweight particleFlyweight;
 	SGD::Point position;
 	SGD::Vector velocity;
-	SGD::Color startColor;
-	SGD::Color endColor;
+	float velocityRate;
+	SGD::Color Color;
+	float colorRate;
 	SGD::Size scale;
+	float scaleRate;
 	SGD::Size size;
 	float rotation;
 	float currLifeTime;
