@@ -34,13 +34,13 @@ public:
 	
 	/**********************************************************/
 	// Initialize & Terminate
-	void Initialize(const wchar_t* picFileName, string xmlFileName);
+	void Initialize(string picFileName, string xmlFileName);
 	void Terminate ( void );
 
 	
 	/**********************************************************/
 	// Draw
-	void Draw( const char* output, int x, int y,
+	void Draw( string output, int x, int y,
 			   float scale, SGD::Color color ) const;
 
 

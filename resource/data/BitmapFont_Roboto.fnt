@@ -5,7 +5,10 @@
   <pages>
     <page id="0" file="BitmapFont_Roboto_0.png" />
   </pages>
-  <chars count="90">
+  <chars count="93">
+    <char id="9" x="0" y="510" width="20" height="1" xoffset="0" yoffset="0" xadvance="20" />
+    <char id="10" x="0" y="510" width="0" height="50" xoffset="0" yoffset="0" xadvance="0" />
+    <char id="32" x="0" y="510" width="10" height="1" xoffset="0" yoffset="0" xadvance="10" />
     <char id="33" x="502" y="36" width="9" height="35" xoffset="2" yoffset="16" xadvance="13" page="0" chnl="15" />
     <char id="34" x="115" y="155" width="15" height="13" xoffset="0" yoffset="14" xadvance="16" page="0" chnl="15" />
     <char id="35" x="285" y="76" width="29" height="35" xoffset="0" yoffset="16" xadvance="29" page="0" chnl="15" />

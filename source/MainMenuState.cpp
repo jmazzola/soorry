@@ -168,6 +168,10 @@ using namespace std;
 	// Render the background
 	pGraphics->DrawString("Main Menu State", { 200, 200 }, { 255, 0, 255 });
 
+	// Get Font
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	pFont->Draw("Main Menu\nRow\tTabs!", 20, 200, 1.5f, { 255, 0, 255 });
+
 
 	// Render the entities
 	m_pEntities->RenderAll();
