@@ -5,6 +5,10 @@
 #include "../TinyXML/tinyxml.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "../SGD Wrappers/SGD_InputManager.h"
+
+#include <sstream>
+using namespace std;
 
 
 WorldManager* WorldManager::GetInstance()
@@ -110,30 +114,81 @@ void WorldManager::UnloadWorld()
 	SGD::GraphicsManager::GetInstance()->UnloadTexture(m_hTilesetImage);
 }
 
-void WorldManager::Render()
+void WorldManager::Render(SGD::Point _cameraPos)
 {
+	// NOTE: cameraPos to be replaced with _cameraPos
+#if !CAMERA_IMPLEMENTED
+
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+
+	const float speed = 0.5f;
+
+	// Move right
+	if (pInput->IsKeyDown(SGD::Key::D))
+		cameraPos.x += speed;
+
+	// Move up
+	if (pInput->IsKeyDown(SGD::Key::W))
+		cameraPos.y -= speed;
+
+	// Move left
+	if (pInput->IsKeyDown(SGD::Key::A))
+		cameraPos.x -= speed;
+
+	// Move down
+	if (pInput->IsKeyDown(SGD::Key::S))
+		cameraPos.y += speed;
+
+#endif
+
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Loop through each layer
-	for (int layer = 0; layer < m_vLayers.size(); layer++)
+	for (unsigned int layer = 0; layer < m_vLayers.size(); layer++)
 	{
+		// Get camera position in terms of tiles
+		int camTileX = (int)cameraPos.x / m_nTileWidth;
+		int camTileY = (int)cameraPos.y / m_nTileHeight;
+
+		// Get stop point for rendering
+		int stopX = camTileX + (int)ceil((800.0f / m_nTileWidth)) + 1;
+		int stopY = camTileY + (int)ceil((600.0f / m_nTileHeight)) + 1;
+
 		// Loop through ENTIRE tile array (to be replaced with culling)
-		for (int x = 0; x < m_nWorldWidth; x++)
+		for (int x = camTileX; x < stopX; x++)
 		{
-			for (int y = 0; y < m_nWorldHeight; y++)
+			for (int y = camTileY; y < stopY; y++)
 			{
+				// Don't render out-of-bounds index
+				if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
+					continue;
+
 				// Get tile information
 				int tileID = m_vLayers[layer][x][y].GetTileID();
 
+				// Check if tile is empty
+				if (tileID == 0)
+					continue;
+
 				// Cell algorithm
 				SGD::Rectangle sourceRect;
-				sourceRect.left = (tileID % m_nTilesetWidth) * m_nTileWidth;
-				sourceRect.top = (tileID / m_nTilesetWidth) * m_nTileHeight;
+				sourceRect.left = (float)((tileID - 1) % m_nTilesetWidth) * m_nTileWidth;
+				sourceRect.top = (float)((tileID - 1) / m_nTilesetWidth) * m_nTileHeight;
 				sourceRect.right = sourceRect.left + m_nTileWidth;
 				sourceRect.bottom = sourceRect.top + m_nTileHeight;
 
+				// Figure out where to draw to the screen
+				SGD::Point drawPos;
+				drawPos.x = x * (float)m_nTileWidth - cameraPos.x;
+				drawPos.y = y * (float)m_nTileHeight - cameraPos.y;
+
 				// Draw the tile
-				pGraphics->DrawTextureSection(m_hTilesetImage, SGD::Point(x * m_nTileWidth, y * m_nTileHeight), sourceRect);
+				pGraphics->DrawTextureSection(m_hTilesetImage, drawPos, sourceRect);
+
+				// FOR DEBUG PURPOSES ONLY!
+				/*wostringstream id;
+				id << tileID;
+				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth, y * (float)m_nTileHeight));*/
 			}
 		}
 	}

@@ -202,7 +202,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Render test world
-	WorldManager::GetInstance()->Render();
+	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
