@@ -24,12 +24,13 @@
 // [in] fileName - File path for the bitmap file image
 // [in] firstChar - First character in the file
 
-void BitmapFont::Initialize(const wchar_t* picFileName, const char* xmlFileName)
+void BitmapFont::Initialize(const wchar_t* picFileName, string xmlFileName)
 {
 	// Load the image
 	m_hImage = SGD::GraphicsManager::GetInstance()->LoadTexture(picFileName);
 
 	// Set characteristics
+	m_nCharCount = 0;
 	m_nCharWidth[255] = {};
 	m_nCharHeight[255] = {};
 	m_nCharX[255] = {};
@@ -42,7 +43,7 @@ void BitmapFont::Initialize(const wchar_t* picFileName, const char* xmlFileName)
 	TiXmlDocument doc;
 
 	// Attempt to load it, if it doesn't work, gtfo.
-	if (!doc.LoadFile(xmlFileName))
+	if (!doc.LoadFile(xmlFileName.c_str()))
 		return;
 
 	// Access the 'root' TinyXML Element
@@ -54,6 +55,11 @@ void BitmapFont::Initialize(const wchar_t* picFileName, const char* xmlFileName)
 
 	// Grab the character data
 	TiXmlElement* pChars = pRoot->FirstChildElement("chars");
+
+	// Get the number of characters
+	pChars->Attribute("count", &m_nCharCount);
+
+
 
 }
 
@@ -86,70 +92,4 @@ void BitmapFont::Draw( const char* output, int x, int y,
 
 	// Store the starting X position for newlines
 	int colX = x;
-
-	// Iterate through the characters in the string
-	for( int i = 0; output[ i ]; i++ )
-	{
-		// Get the current character
-		char ch = output[ i ];
-
-
-		// Check for whitespace
-		if( ch == ' ' )
-		{
-			// Move to the next position
-			x += (int)(m_nCharWidth * scale);
-			continue;
-		}
-		else if( ch == '\n' )
-		{
-			// Move to the next row
-			y += (int)(m_nCharHeight * scale);
-			x =  colX;
-			continue;
-		}
-		else if( ch == '\t' )
-		{
-			// Calculate the number of pixels from the start
-			int pixels = x - colX;
-
-			// Calculate the number of characters from the start
-			int diff = pixels / (int)(m_nCharWidth * scale);
-
-			// Calculate the number of characters to add
-			// to get a 4-space alignment
-			int spaces = 4 - (diff%4);
-
-			
-			// Move to the next position
-			x += spaces * (int)(m_nCharWidth * scale);
-			continue;
-		}
-
-
-		// Convert to uppercase?
-		if( m_bOnlyUppercase == true )
-			ch = toupper( ch );
-
-
-		// Calculate the tile ID for this character
-		int id = ch - m_cFirstChar;
-
-		// Calculate the source rect for that glyph
-		SGD::Rectangle cell;
-		cell.left	= (float)( (id % m_nNumCols) * m_nCharWidth  );
-		cell.top	= (float)( (id / m_nNumCols) * m_nCharHeight );
-		cell.right	= cell.left + m_nCharWidth;
-		cell.bottom	= cell.top  + m_nCharHeight;
-
-		// Draw the character
-		SGD::GraphicsManager::GetInstance()->DrawTextureSection(
-			m_hImage, { (float)x, (float)y }, 
-			cell, 0.0f, {}, 
-			color, {scale, scale} );
-
-		
-		// Move to the next position
-		x += (int)(m_nCharWidth * scale);
-	}
 }

@@ -34,7 +34,7 @@ public:
 	
 	/**********************************************************/
 	// Initialize & Terminate
-	void Initialize(const wchar_t* picFileName, const char* xmlFileName);
+	void Initialize(const wchar_t* picFileName, string xmlFileName);
 	void Terminate ( void );
 
 	
@@ -51,6 +51,7 @@ private:
 	SGD::HTexture m_hImage;
 
 	// character data
+	int m_nCharCount;
 
 	int	m_nCharWidth[255];
 	int	m_nCharHeight[255];
