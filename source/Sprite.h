@@ -10,6 +10,7 @@ class Frame;
 class Sprite
 {
 public:
+<<<<<<< HEAD
 	Sprite();
 	~Sprite();
 
@@ -33,5 +34,12 @@ private:
 	SGD::HTexture m_htImage;
 	std::string m_strSpriteID;
 	bool m_bIsLooping;
+=======
+	
+
+	Sprite();
+	~Sprite();
+
+>>>>>>> 2dbe1391729214bbd379499de64ca18be37e434d
 };
 

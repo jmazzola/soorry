@@ -12,7 +12,6 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 
-
 /**************************************************************/
 // Forward class declaration
 //	- tells the compiler that the type exists
@@ -21,7 +20,7 @@ class Entity;
 class EntityManager;
 class Shop;
 class Player;
-
+class ParticleManager;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 
@@ -67,7 +66,7 @@ private:
 	// Event & Message Managers
 	SGD::EventManager*		m_pEvents			= nullptr;
 	SGD::MessageManager*	m_pMessages			= nullptr;
-
+	ParticleManager*		m_pParticleManager	= nullptr;
 
 	/**********************************************************/
 	// Game Data
@@ -78,9 +77,9 @@ private:
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
 
-
 	/**********************************************************/
 	// Textures
+	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 
 
 	/**********************************************************/
@@ -89,6 +88,9 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+
+	// Creates a player
+	Player*	CreatePlayer() const;
 
 
 	// Message Callback Function:

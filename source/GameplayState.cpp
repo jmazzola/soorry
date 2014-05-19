@@ -1,6 +1,6 @@
 /***************************************************************
 |	File:		GameplayState.cpp
-|	Author:		
+|	Author:		Justin Mazzola
 |	Course:		
 |	Purpose:	
 ***************************************************************/
@@ -8,6 +8,8 @@
 #include "GameplayState.h"
 
 #include "Game.h"
+#include "OptionsState.h"
+#include "MainMenuState.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -18,12 +20,14 @@
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_MessageManager.h"
 #include "../SGD Wrappers/SGD_Message.h"
+
 #include "MessageID.h"
-
 #include "BitmapFont.h"
-
 #include "Entity.h"
 #include "EntityManager.h"
+#include "Player.h"
+
+#include "WorldManager.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -33,7 +37,6 @@ using namespace std;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-
 #include <cfloat>
 
 
@@ -45,6 +48,16 @@ using namespace std;
 {
 	static GameplayState s_Instance;	// stored in global memory once
 	return &s_Instance;
+}
+
+/*************************************************************/
+// CreatePlayer
+//	- allocate a new player
+///	- set the player's properties
+Player*	GameplayState::CreatePlayer() const
+{
+	Player* player = new Player();
+	return player;
 }
 
 
@@ -69,17 +82,32 @@ using namespace std;
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	// Load Tim
+	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
+	//Load Particle Manager
+	//m_pParticleManager = 
 
 	// Set background color
-	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+
+
+	//// Create our player
+	//m_pPlayer = CreatePlayer();
+	//// Add it to the entity manager
+	//m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
+
+
+
+
+	// Load the world
+	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
 }
 
 
@@ -101,6 +129,13 @@ using namespace std;
 	m_pEntities->RemoveAll();
 	delete m_pEntities;
 	m_pEntities = nullptr;
+
+	// Unload Assets
+	pGraphics->UnloadTexture(m_hPlayerImg);
+
+
+	// Unload World Manager
+	WorldManager::GetInstance()->UnloadWorld();
 
 
 	m_pMessages->Terminate();
@@ -126,6 +161,11 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	// Press Escape to quit
+	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	{
+		pGame->ChangeState(MainMenuState::GetInstance());
+	}
 
 	return true;	// keep playing
 }
@@ -159,7 +199,13 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the background
+
+
+	// Render test world
+	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
+	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
+
 
 	// Render the entities
 	m_pEntities->RenderAll();

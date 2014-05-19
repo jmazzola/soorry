@@ -47,6 +47,8 @@
     <ClCompile Include="source\IntroState.cpp" />
     <ClCompile Include="source\Inventory.cpp" />
     <ClCompile Include="source\Layer.cpp" />
+    <ClCompile Include="source\LoadingState.cpp" />
+    <ClCompile Include="source\LoadSaveState.cpp" />
     <ClCompile Include="source\MainMenuState.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
@@ -121,6 +123,8 @@
     <ClInclude Include="source\IntroState.h" />
     <ClInclude Include="source\Inventory.h" />
     <ClInclude Include="source\Layer.h" />
+    <ClInclude Include="source\LoadingState.h" />
+    <ClInclude Include="source\LoadSaveState.h" />
     <ClInclude Include="source\MainMenuState.h" />
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
@@ -146,6 +150,9 @@
     <ClInclude Include="source\WorldManager.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resource\world\testWorld.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>
@@ -175,7 +182,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>F:\Programming\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Programming\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
