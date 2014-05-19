@@ -26,7 +26,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "Player.h"
-
+#include "ParticleManager.h"
 #include "WorldManager.h"
 
 #include <cstdlib>
@@ -92,8 +92,9 @@ Player*	GameplayState::CreatePlayer() const
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
 	//Load Particle Manager
-	//m_pParticleManager = 
-
+	m_pParticleManager = ParticleManager::GetInstance();
+	//Load prest xml file
+	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 

@@ -115,7 +115,7 @@ void WorldManager::Render()
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Loop through each layer
-	for (int layer = 0; layer < m_vLayers.size(); layer++)
+	for (unsigned int layer = 0; layer < m_vLayers.size(); layer++)
 	{
 		// Loop through ENTIRE tile array (to be replaced with culling)
 		for (int x = 0; x < m_nWorldWidth; x++)

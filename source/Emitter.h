@@ -9,7 +9,6 @@ class Particle;
 
 class Emitter
 {
-	
 public:
 	Emitter();
 	~Emitter();
@@ -23,10 +22,8 @@ public:
 	int maxParticles;
 	float spawnRate;
 	int shape;
-	//std::vector<Particle* > particles;
-	//Particle[] particles;
-	std::list<Particle* > aliveParticles;
-	std::list<Particle* > deadParticles;
+	std::vector<Particle* > aliveParticles;
+	std::vector<Particle* > deadParticles;
 	std::string emitterID;
 };
 
