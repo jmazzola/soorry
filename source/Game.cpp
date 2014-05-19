@@ -105,8 +105,8 @@ bool Game::Initialize( int width, int height )
 
 	// Testing the loading for the animation
 	m_pAnimation = new AnimationManager;
-	m_pAnimation->LoadSprites("testAnimation.xml");
-
+	m_pAnimation->LoadSprites("resource/animation/testAnimation.xml");
+	// 
 	return true;	// success!
 }
 

@@ -30,9 +30,13 @@ bool AnimationManager::LoadSprites(std::string fileName)
 		{
 			if (spriteImg != nullptr)
 			{
-				std::string file = spriteImg->GetText();
-				if (file.c_str() != nullptr)
-					newSprite.SetImage(file.c_str());
+				//std::string file = spriteImg->GetText();
+				const char * file = spriteImg->GetText();
+				/*if (file.c_str() != nullptr)
+					newSprite.SetImage(file.c_str());*/
+				if (file != nullptr)
+					newSprite.SetImage(file);
+				
 			}
 			spriteImg = spriteImg->NextSiblingElement("spriteID");
 			if (spriteImg != nullptr)
