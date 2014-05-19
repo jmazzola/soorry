@@ -26,7 +26,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "Player.h"
-
+#include "ParticleManager.h"
 #include "WorldManager.h"
 
 #include <cstdlib>
@@ -82,7 +82,6 @@ Player*	GameplayState::CreatePlayer() const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -92,7 +91,10 @@ Player*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
-
+	//Load Particle Manager
+	m_pParticleManager = ParticleManager::GetInstance();
+	//Load prest xml file
+	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -131,6 +133,10 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Unload Assets
 	pGraphics->UnloadTexture(m_hPlayerImg);
+
+
+	// Unload World Manager
+	WorldManager::GetInstance()->UnloadWorld();
 
 
 	m_pMessages->Terminate();
@@ -197,7 +203,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Render test world
-	WorldManager::GetInstance()->Render();
+	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 

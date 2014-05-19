@@ -20,6 +20,7 @@ class IGameState;
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Handle.h"
 
+class AnimationManager;
 
 /**************************************************************/
 // Game class
@@ -104,6 +105,9 @@ private:
 
 	// Fullscreen
 	bool m_bFullscreen = true;
+
+	// Animation Manager
+	AnimationManager* m_pAnimation = nullptr;
 	
 };
 

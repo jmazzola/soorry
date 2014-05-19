@@ -5,8 +5,11 @@
 using namespace std;
 
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 #include "Layer.h"
+
+#define CAMERA_IMPLEMENTED 0
 
 /**********************************************************/
 // Forward Declarations
@@ -21,7 +24,8 @@ public:
 	/**********************************************************/
 	// Interface
 	bool LoadWorld(string fileName);
-	void Render();
+	void UnloadWorld();
+	void Render(SGD::Point cameraPosition);
 	bool CheckCollision(IEntity* object);
 
 	/**********************************************************/
@@ -53,6 +57,12 @@ protected:
 	int m_nTilesetWidth;
 	vector<Layer> m_vLayers;
 	SGD::HTexture m_hTilesetImage;
+
+#if !CAMERA_IMPLEMENTED
+
+	SGD::Point cameraPos = { 0, 0 };
+
+#endif
 
 private:
 

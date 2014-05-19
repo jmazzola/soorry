@@ -13,6 +13,10 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
 
+#include "AnimationManager.h"
+#include "Sprite.h"
+#include "Frame.h"
+
 #include "BitmapFont.h"
 #include "IGameState.h"
 
@@ -25,6 +29,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <cassert>
+#include <iostream>
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -94,7 +99,11 @@ bool Game::Initialize( int width, int height )
 	
 
 	// Store the current time (in milliseconds)
-	m_ulGameTime	= GetTickCount();
+	m_ulGameTime = GetTickCount();
+
+	// Testing the loading for the animation
+	m_pAnimation = new AnimationManager;
+	m_pAnimation->LoadSprites("testAnimation.xml");
 
 	return true;	// success!
 }
@@ -129,9 +138,15 @@ int Game::Main( void )
 		return 1;	// exit success!
 
 
+	// Testing the rending for the animation
+	m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "beaver";
+	m_pAnimation->m_sAnimationTS.m_nCurrFrame = 0;
+	m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
+
 	// Update & render the current state
 	m_pCurrState->Update( elapsedTime );
 	m_pCurrState->Render();
+	
 	return 0;		// keep playing!
 }
 

@@ -198,9 +198,6 @@
     <ClCompile Include="source\Frame.cpp">
       <Filter>Animation Manager</Filter>
     </ClCompile>
-    <ClCompile Include="source\AnimationTimestamp.cpp">
-      <Filter>Animation Manager</Filter>
-    </ClCompile>
     <ClCompile Include="source\AnimationManager.cpp">
       <Filter>Animation Manager</Filter>
     </ClCompile>
@@ -423,9 +420,6 @@
       <Filter>World Manager</Filter>
     </ClInclude>
     <ClInclude Include="source\Frame.h">
-      <Filter>Animation Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="source\AnimationTimestamp.h">
       <Filter>Animation Manager</Filter>
     </ClInclude>
     <ClInclude Include="source\AnimationManager.h">

@@ -13,10 +13,14 @@ public:
 
 	Tile* operator[](unsigned int index);
 
+	void UnloadTiles();
+
 protected:
 
 	/**********************************************************/
 	// Data Members
+	int m_nWidth;
+	int m_nHeight;
 	Tile** m_pTiles;
 };
 
