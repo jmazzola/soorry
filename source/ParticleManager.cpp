@@ -34,6 +34,14 @@ void ParticleManager::Render()
 		activeEmitters[i]->Render();
 	}
 }
+void ParticleManager::load()
+{
+	for (unsigned int i = 0; i < activeEmitters.size(); i++)
+	{
+		//NOTE for later: should switch to map so its not just the active emitters
+		activeEmitters[i]->load();
+	}
+}
 
 bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 {

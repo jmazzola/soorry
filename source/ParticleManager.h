@@ -13,7 +13,7 @@ class ParticleManager
 public:
 	void Update(float dt);
 	void Render();
-
+	void load();
 	static ParticleManager* GetInstance();
 	ParticleManager();
 	~ParticleManager();

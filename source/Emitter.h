@@ -16,7 +16,7 @@ public:
 	~Emitter();
 	void Update(float dt);
 	void Render();
-
+	void load();
 	ParticleFlyweight particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
