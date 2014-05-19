@@ -134,7 +134,9 @@ int Game::Main( void )
 
 
 	// Testing the rending for the animation
-
+	m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "beaver";
+	m_pAnimation->m_sAnimationTS.m_nCurrFrame = 0;
+	m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
 
 	// Update & render the current state
 	m_pCurrState->Update( elapsedTime );
