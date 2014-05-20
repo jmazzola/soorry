@@ -1,13 +1,14 @@
 #include "Particle.h"
-
-
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 Particle::Particle()
 {
+
 }
 
 
 Particle::~Particle()
 {
+	SGD::GraphicsManager::GetInstance()->UnloadTexture(image);
 }
 
 //Returns false if dead returns true if alive
@@ -21,7 +22,9 @@ bool Particle::Update(float dt)
 	Color.red		-=	(char)colorRateR;
 	Color.green		-=	(char)colorRateG;
 	Color.blue		-=	(char)colorRateB;
-	velocity.x		-=	velocityRateX;
+	if (velocity.x < particleFlyweight->endVelocity.x)
+		velocity.x	-=	velocityRateX;
+	if (velocity.y < particleFlyweight->endVelocity.y)
 	velocity.y		-=	velocityRateY;
 	scale.x			-=	scaleRateX;
 	scale.y			-=	scaleRateY;
@@ -34,7 +37,7 @@ bool Particle::Update(float dt)
 
 void Particle::Render()
 {
-
+	SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image, position);
 }
 
 

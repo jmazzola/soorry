@@ -5,8 +5,10 @@
 class Frame
 {
 public:
-	Frame();
-	~Frame();
+	Frame() = default;
+	~Frame() = default;
+	Frame(const Frame& cpy) = default;
+	Frame& operator= (const Frame& assign) = default;
 
 
 	/**********************************************************/

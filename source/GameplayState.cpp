@@ -127,6 +127,8 @@ Player*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	//Matt gets rid of the memory leaks
+	m_pParticleManager->unload();
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
@@ -211,6 +213,8 @@ Player*	GameplayState::CreatePlayer() const
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
+	//Render test particles
+	m_pParticleManager->Render();
 
 	// Render the entities
 	m_pEntities->RenderAll();

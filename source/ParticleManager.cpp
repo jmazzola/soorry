@@ -3,6 +3,7 @@
 #include "../TinyXML/tinystr.h"
 #include "Particle.h"
 #include "ParticleFlyweight.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 ParticleManager::ParticleManager()
 {
 }
@@ -10,6 +11,7 @@ ParticleManager::ParticleManager()
 
 ParticleManager::~ParticleManager()
 {
+
 }
 
 
@@ -138,16 +140,18 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
 		tempStr = data->Attribute("name");
-		tempFlyweight->fileName = tempStr;
+		tempFlyweight->image = SGD::GraphicsManager::GetInstance()->LoadTexture(tempStr.c_str());
 		//Adding flyweight to vector
 		particleFlyweights.push_back(tempFlyweight);
 		//creating an iterator to emplace an emitter into the map
 		auto iter = loadedEmitters.end();
-		tempEmitter->particleFlyweight = *tempFlyweight;
+		tempEmitter->particleFlyweight = tempFlyweight;
+		particleFlyweights.push_back(tempFlyweight);
 		std::pair<std::string, Emitter*> emitterKeyPair;
 		emitterKeyPair.first = EmitterID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
+		//NOTE: pushing to active emitters for testing
 		activeEmitters.push_back(tempEmitter);
 		return true;
 	}
@@ -162,4 +166,14 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 		return loadedEmitters[emitterID];
 	}
 	return nullptr;
+}
+
+void ParticleManager::unload()
+{
+	for (unsigned int i = activeEmitters.size(); i > 0; i--)
+	{
+		delete activeEmitters[i-1];
+	}
+	activeEmitters.clear();
+	loadedEmitters.clear();
 }
