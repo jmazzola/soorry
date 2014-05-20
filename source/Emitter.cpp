@@ -10,13 +10,13 @@ Emitter::~Emitter()
 {
 	for (unsigned int i = aliveParticles.size(); i > 0; i--)
 	{
-		delete aliveParticles[i-1];
+		delete aliveParticles[i - 1];
 	}
 	if (aliveParticles.size() != 0)
 		aliveParticles.clear();
 	for (unsigned int i = deadParticles.size(); i > 0; i--)
 	{
-		delete deadParticles[i-1];
+		delete deadParticles[i - 1];
 	}
 	if (deadParticles.size() != 0)
 		deadParticles.clear();
@@ -28,7 +28,7 @@ void Emitter::load()
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
-		
+
 		for (int i = 0; i < maxParticles; i++)
 		{
 			//Create a new particle
@@ -38,20 +38,20 @@ void Emitter::load()
 			//Take data from particle flyweight and send it to the particle
 			tempParticle->Color = particleFlyweight->startColor;
 			//Create rates to update particles
-			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
-			tempParticle->currLifeTime = 0;
-			tempParticle->colorRateA = (((float)particleFlyweight->startColor.alpha - (float)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (((float)particleFlyweight->startColor.red - (float)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
-			tempParticle->colorRateG = (((float)particleFlyweight->startColor.green - (float)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (((float)particleFlyweight->startColor.blue - (float)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
-			tempParticle->scale = particleFlyweight->startScale;
-			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
-			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
-			tempParticle->velocity = particleFlyweight->startVelocity;
-			tempParticle->velocityRateX = ((particleFlyweight->startVelocity.x - particleFlyweight->endVelocity.x) / tempParticle->maxLifeTime);
-			tempParticle->velocityRateY = ((particleFlyweight->startVelocity.y - particleFlyweight->endVelocity.y) / tempParticle->maxLifeTime);
-			tempParticle->rotation = particleFlyweight->startRotation;
-			tempParticle->rotationRate = ((particleFlyweight->startRotation - particleFlyweight->endRotation) / tempParticle->maxLifeTime);
+			tempParticle->maxLifeTime		=	rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
+			tempParticle->currLifeTime		=	0;
+			tempParticle->colorRateA		=	(((float)particleFlyweight->startColor.alpha - (float)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
+			tempParticle->colorRateR		=	(((float)particleFlyweight->startColor.red - (float)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
+			tempParticle->colorRateG		=	(((float)particleFlyweight->startColor.green - (float)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
+			tempParticle->colorRateB		=	(((float)particleFlyweight->startColor.blue - (float)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->scale				=	particleFlyweight->startScale;
+			tempParticle->scaleRateX		=	((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
+			tempParticle->scaleRateY		=	((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
+			tempParticle->velocity			=	particleFlyweight->startVelocity;
+			tempParticle->velocityRateX		=	((particleFlyweight->startVelocity.x - particleFlyweight->endVelocity.x) / tempParticle->maxLifeTime);
+			tempParticle->velocityRateY		=	((particleFlyweight->startVelocity.y - particleFlyweight->endVelocity.y) / tempParticle->maxLifeTime);
+			tempParticle->rotation			=	particleFlyweight->startRotation;
+			tempParticle->rotationRate		=	((particleFlyweight->startRotation - particleFlyweight->endRotation) / tempParticle->maxLifeTime);
 			//Randomize the position within the emitter NOTE: maybe need to add world offset
 			switch (shape)
 			{
@@ -80,7 +80,7 @@ void Emitter::load()
 			}
 				break;
 			}
-	
+
 			tempParticle->particleFlyweight = particleFlyweight;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
@@ -139,7 +139,7 @@ void Emitter::Update(float dt)
 		else if (!update &&!isLooping)
 		{
 			delete aliveParticles[i];
-			aliveParticles.erase(aliveParticles.begin()+i);
+			aliveParticles.erase(aliveParticles.begin() + i);
 			i--;
 		}
 	}

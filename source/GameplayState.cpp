@@ -110,7 +110,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Load the world
-	//WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
+	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
 }
 
 
@@ -140,7 +140,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Unload World Manager
-	//WorldManager::GetInstance()->UnloadWorld();
+	WorldManager::GetInstance()->UnloadWorld();
 
 
 	m_pMessages->Terminate();
@@ -208,7 +208,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Render test world
-	//WorldManager::GetInstance()->Render(SGD::Point(0,0));
+	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
