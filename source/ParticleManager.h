@@ -14,6 +14,7 @@ public:
 	void Update(float dt);
 	void Render();
 	void load();
+	void unload();
 	static ParticleManager* GetInstance();
 	ParticleManager();
 	~ParticleManager();

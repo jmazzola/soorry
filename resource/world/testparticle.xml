@@ -3,8 +3,8 @@
     <isLooping bool = "0"/>
     <position x = "5" y = "5"/>
     <size width= "32" height = "32"/>
-    <particles max = "500"/>
-    <spawn rate = "5"/>
+    <particles max = "0"/>
+    <spawn rate = "0"/>
     <shape number = "0"/>
   </emitter>
   <flyweight>
