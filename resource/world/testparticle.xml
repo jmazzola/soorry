@@ -3,17 +3,17 @@
     <isLooping bool = "0"/>
     <position x = "5" y = "5"/>
     <size width= "32" height = "32"/>
-    <particles max = "0"/>
-    <spawn rate = "0"/>
+    <particles max = "100"/>
+    <spawn rate = "1"/>
     <shape number = "0"/>
   </emitter>
   <flyweight>
-    <velocity startx = "15" starty = "25" endx = "0" endy = "0"/>
+    <velocity startx = "1" starty = "1" endx = "0" endy = "0"/>
     <direction x = "5" y = "5" />
     <color 	startA = "0" startR = "255" startG = "0" startB = "0" endA  = "0" endR = "0" endG = "255" endB = "255"/>
-    <scale startx = "1" starty = "1" endx = "0" endy = "0"/>
-    <lifetime max= "5" min = "5"/>
+    <scale startx = "1" starty = "1" endx = "1" endy = "1"/>
+    <lifetime max= "30" min = "30"/>
     <particleID> Awesome_Particle </particleID>
-    <image name= "resource/images/particles/testParticle1.jpg"/>
+    <image name= "resource\images\particles\testPartcile1.jpg"/>
   </flyweight>
 </ParticleManager>

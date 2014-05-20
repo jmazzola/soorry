@@ -8,8 +8,10 @@ Emitter::Emitter()
 
 Emitter::~Emitter()
 {
-	aliveParticles.clear();
-	deadParticles.clear();
+	if (aliveParticles.size() != 0)
+		aliveParticles.clear();
+	if (deadParticles.size() != 0)
+		deadParticles.clear();
 }
 
 void Emitter::load()
@@ -45,26 +47,26 @@ void Emitter::load()
 			//Create a new particle
 			Particle* tempParticle = new Particle;
 			//set values
-			float maxLife = particleFlyweight.maxLifeTime;
+			float maxLife = particleFlyweight->maxLifeTime;
 			//Take data from particle flyweight and send it to the particle
-			tempParticle->Color = particleFlyweight.startColor;
+			tempParticle->Color = particleFlyweight->startColor;
 			//Create rates to update particles
-			tempParticle->colorRateA = (((float)particleFlyweight.startColor.alpha - (float)particleFlyweight.endColor.alpha) / maxLife);
-			tempParticle->colorRateR = (((float)particleFlyweight.startColor.red - (float)particleFlyweight.endColor.red) / maxLife);
-			tempParticle->colorRateG = (((float)particleFlyweight.startColor.green - (float)particleFlyweight.endColor.green) / maxLife);
-			tempParticle->colorRateB = (((float)particleFlyweight.startColor.blue - (float)particleFlyweight.endColor.blue) / maxLife);
+			tempParticle->colorRateA = (((float)particleFlyweight->startColor.alpha - (float)particleFlyweight->endColor.alpha) / maxLife);
+			tempParticle->colorRateR = (((float)particleFlyweight->startColor.red - (float)particleFlyweight->endColor.red) / maxLife);
+			tempParticle->colorRateG = (((float)particleFlyweight->startColor.green - (float)particleFlyweight->endColor.green) / maxLife);
+			tempParticle->colorRateB = (((float)particleFlyweight->startColor.blue - (float)particleFlyweight->endColor.blue) / maxLife);
 			tempParticle->maxLifeTime = maxLife;
 			tempParticle->currLifeTime = 0;
-			tempParticle->scale = particleFlyweight.startScale;
-			tempParticle->scaleRateX = ((particleFlyweight.startScale.x - particleFlyweight.endScale.x) / maxLife);
-			tempParticle->scaleRateY = ((particleFlyweight.startScale.y - particleFlyweight.endScale.y) / maxLife);
-			tempParticle->velocity = particleFlyweight.startVelocity;
-			tempParticle->velocityRateX = ((particleFlyweight.startVelocity.x - particleFlyweight.endVelocity.x) / maxLife);
-			tempParticle->velocityRateY = ((particleFlyweight.startVelocity.y - particleFlyweight.endVelocity.y) / maxLife);
+			tempParticle->scale = particleFlyweight->startScale;
+			tempParticle->scaleRateX = ((particleFlyweight->startScale.x - particleFlyweight->endScale.x) / maxLife);
+			tempParticle->scaleRateY = ((particleFlyweight->startScale.y - particleFlyweight->endScale.y) / maxLife);
+			tempParticle->velocity = particleFlyweight->startVelocity;
+			tempParticle->velocityRateX = ((particleFlyweight->startVelocity.x + particleFlyweight->endVelocity.x) / maxLife);
+			tempParticle->velocityRateY = ((particleFlyweight->startVelocity.y + particleFlyweight->endVelocity.y) / maxLife);
 			//Randomize the position within the emitter NOTE: maybe need to add world offset
 			tempParticle->position.x = (float)(rand() % (int)size.width)+position.x;
 			tempParticle->position.y = (float)(rand() % (int)size.height)+position.y;
-			tempParticle->particleFlyweight = particleFlyweight;
+			tempParticle->particleFlyweight = *particleFlyweight;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
 		}
@@ -77,16 +79,21 @@ void Emitter::Update(float dt)
 	if (aliveParticles.size() == 0 && deadParticles.size() == 0)
 		return;
 	//Loop for the amount of particles made every second
-	for (float i = 0; i < spawnRate; i++)
+	if (spawnTimer < 0)
 	{
-		//create Particle then add it to the alive particles
-		//Take data from patricle flyweight and send it to the particle
-		if (aliveParticles.size() < 500)
+		for (float i = 0; i < spawnRate; i++)
 		{
-			aliveParticles.push_back(deadParticles.front());
-			deadParticles.erase(deadParticles.begin());
+			//create Particle then add it to the alive particles
+			//Take data from patricle flyweight and send it to the particle
+			if (aliveParticles.size() < maxParticles)
+			{
+				aliveParticles.push_back(deadParticles.front());
+				deadParticles.erase(deadParticles.begin());
+			}
 		}
+		spawnTimer = spawnRate;
 	}
+	spawnTimer -= dt;
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
 		//check if the particle is dead

@@ -11,13 +11,15 @@ class Emitter
 {
 	//A bool for when all particles are loaded
 	bool allParticlesCreated = false;
+	//timer for controling the spwn to run on a per second basis
+	float spawnTimer;
 public:
 	Emitter();
 	~Emitter();
 	void Update(float dt);
 	void Render();
 	void load();
-	ParticleFlyweight particleFlyweight;
+	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
 	SGD::Size size;

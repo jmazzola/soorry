@@ -213,6 +213,8 @@ Player*	GameplayState::CreatePlayer() const
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
+	//Render test particles
+	m_pParticleManager->Render();
 
 	// Render the entities
 	m_pEntities->RenderAll();

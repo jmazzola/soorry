@@ -10,6 +10,8 @@ ParticleManager::ParticleManager()
 
 ParticleManager::~ParticleManager()
 {
+	/*particleFlyweights.clear();
+	activeEmitters*/
 }
 
 
@@ -143,16 +145,14 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		particleFlyweights.push_back(tempFlyweight);
 		//creating an iterator to emplace an emitter into the map
 		auto iter = loadedEmitters.end();
-		tempEmitter->particleFlyweight = *tempFlyweight;
+		tempEmitter->particleFlyweight = tempFlyweight;
+		particleFlyweights.push_back(tempFlyweight);
 		std::pair<std::string, Emitter*> emitterKeyPair;
 		emitterKeyPair.first = EmitterID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
+		//NOTE: pushing to active emitters for testing
 		activeEmitters.push_back(tempEmitter);
-		delete tempEmitter;
-		tempEmitter = nullptr;
-		delete tempFlyweight;
-		tempFlyweight = nullptr;
 		return true;
 	}
 	else

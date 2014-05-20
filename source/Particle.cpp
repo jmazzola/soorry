@@ -1,8 +1,9 @@
 #include "Particle.h"
-
-
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 Particle::Particle()
 {
+
+	//particleFlyweight.image
 }
 
 
@@ -16,12 +17,16 @@ bool Particle::Update(float dt)
 	//if statement to determine if the particle is dead
 	if (currLifeTime > maxLifeTime)
 		return false;
+	//load in image
+	image = SGD::GraphicsManager::GetInstance()->LoadTexture(particleFlyweight.fileName.c_str(), { 255, 255, 255, 255 });
 	//change based on the rates
 	Color.alpha		-=	(char)colorRateA;
 	Color.red		-=	(char)colorRateR;
 	Color.green		-=	(char)colorRateG;
 	Color.blue		-=	(char)colorRateB;
-	velocity.x		-=	velocityRateX;
+	if (velocity.x < particleFlyweight.endVelocity.x)
+		velocity.x	-=	velocityRateX;
+	if (velocity.y < particleFlyweight.endVelocity.y)
 	velocity.y		-=	velocityRateY;
 	scale.x			-=	scaleRateX;
 	scale.y			-=	scaleRateY;
@@ -34,7 +39,7 @@ bool Particle::Update(float dt)
 
 void Particle::Render()
 {
-
+	SGD::GraphicsManager::GetInstance()->DrawTexture(image, position);
 }
 
 
