@@ -82,10 +82,6 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		data = data->NextSiblingElement("particles");
 		data->Attribute("max", &tempInt);
 		tempEmitter->maxParticles = tempInt;
-		//Read XML for Particle Spawn Rate
-		data = data->NextSiblingElement("spawn");
-		data->Attribute("rate", &tempDouble);
-		tempEmitter->spawnRate = (float)tempDouble;
 		//Read XML for Emitter Shape
 		data = data->NextSiblingElement("shape");
 		data->Attribute("number", &tempInt);
@@ -102,6 +98,12 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		data->Attribute("endx", &x);
 		data->Attribute("endy", &y);
 		tempFlyweight->endVelocity = SGD::Vector((float)x, (float)y);
+		//Read XML for flyweight rotation
+		data = data->NextSiblingElement("rotate");
+		data->Attribute("start", &tempDouble);
+		tempFlyweight->startRotation = (float)tempDouble;
+		data->Attribute("end", &tempDouble);
+		tempFlyweight->endRotation = (float)tempDouble;
 		//Read XML for Flyweight direction
 		data = data->NextSiblingElement("direction");
 		data->Attribute("x", &x);
@@ -123,10 +125,16 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		data = data->NextSiblingElement("scale");
 		data->Attribute("startx", &x);
 		data->Attribute("starty", &y);
-		tempFlyweight->startScale = SGD::Vector((float)x, (float)y);
+		tempFlyweight->startScale = SGD::Size((float)x, (float)y);
 		data->Attribute("endx", &x);
 		data->Attribute("endy", &y);
-		tempFlyweight->endScale = SGD::Vector((float)x, (float)y);
+		tempFlyweight->endScale = SGD::Size((float)x, (float)y);
+		//Read XML Flyweight image size
+		data = data->NextSiblingElement("size");
+		data->Attribute("width", &tempDouble);
+		tempFlyweight->imageSize.width = (float)tempDouble;
+		data->Attribute("height", &tempDouble);
+		tempFlyweight->imageSize.height = (float)tempDouble;
 		//Read XML Flyweight lifetiem
 		data = data->NextSiblingElement("lifetime");
 		data->Attribute("max", &tempDouble);

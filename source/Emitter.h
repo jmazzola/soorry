@@ -26,8 +26,8 @@ public:
 	int maxParticles;
 	float spawnRate;
 	int shape;
-	std::vector<Particle* > aliveParticles;
-	std::vector<Particle* > deadParticles;
+	std::vector<Particle*> aliveParticles;
+	std::vector<Particle*> deadParticles;
 	std::string emitterID;
 	SGD::Rectangle square;
 	

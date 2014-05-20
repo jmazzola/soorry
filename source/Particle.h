@@ -23,12 +23,13 @@ public:
 	float				colorRateR;
 	float				colorRateG;
 	float				colorRateB;
-	SGD::Vector			scale;
+	SGD::Size			scale;
 	float				scaleRateX;
 	float				scaleRateY;
 	SGD::Size			size;
-	float				rotation;
 	float				currLifeTime;
 	float				maxLifeTime;
+	float				rotation;
+	float				rotationRate;
 };
 

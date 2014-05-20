@@ -18,26 +18,26 @@ bool Particle::Update(float dt)
 	if (currLifeTime > maxLifeTime)
 		return false;
 	//change based on the rates
-	Color.alpha		-=	(char)colorRateA;
-	Color.red		-=	(char)colorRateR;
-	Color.green		-=	(char)colorRateG;
-	Color.blue		-=	(char)colorRateB;
-	if (velocity.x < particleFlyweight->endVelocity.x)
-		velocity.x	-=	velocityRateX;
-	if (velocity.y < particleFlyweight->endVelocity.y)
-	velocity.y		-=	velocityRateY;
-	scale.x			-=	scaleRateX;
-	scale.y			-=	scaleRateY;
-	position.x		+=	velocity.x;
-	position.y		+=	velocity.y;
-	currLifeTime	+=	dt;
+	Color.alpha		-=	(char)colorRateA*dt;
+	Color.red		-=	(char)colorRateR*dt;
+	Color.green		-=	(char)colorRateG*dt;
+	Color.blue		-=	(char)colorRateB*dt;
+	velocity.x		-=	velocityRateX*dt;
+	velocity.y		-=	velocityRateY*dt;
+	scale.width		-=	scaleRateX*dt;
+	scale.height	-=	scaleRateY*dt;
+	position.x		+=	velocity.x*dt;
+	position.y		+=	velocity.y*dt;
+	rotation		-=	rotationRate*dt;
 	//return true to signal that the particle is alive
+	currLifeTime	+=	dt;
 	return true;
 }
 
 void Particle::Render()
 {
-	SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image, position);
+	//Offset position based on scale
+	SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image, { position.x - (particleFlyweight->imageSize.width / 2)*scale.width, position.y - (particleFlyweight->imageSize.height / 2)*scale.height }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
 }
 
 

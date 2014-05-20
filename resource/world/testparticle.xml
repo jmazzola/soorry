@@ -1,18 +1,19 @@
 <ParticleManager>
   <emitter>
-    <isLooping bool = "0"/>
-    <position x = "5" y = "5"/>
-    <size width= "32" height = "32"/>
-    <particles max = "100"/>
-    <spawn rate = "1"/>
+    <isLooping bool = "1"/>
+    <position x = "100" y = "0"/>
+    <size width= "500" height = "500"/>
+    <particles max = "500"/>
     <shape number = "0"/>
   </emitter>
   <flyweight>
     <velocity startx = "1" starty = "1" endx = "0" endy = "0"/>
+    <rotate start = "0" end = "5"/>
     <direction x = "5" y = "5" />
-    <color 	startA = "0" startR = "255" startG = "0" startB = "0" endA  = "0" endR = "0" endG = "255" endB = "255"/>
-    <scale startx = "1" starty = "1" endx = "1" endy = "1"/>
-    <lifetime max= "30" min = "30"/>
+    <color 	startA = "255" startR = "255" startG = "255" startB = "255" endA  = "255" endR = "0" endG = "0" endB = "0"/>
+    <scale startx = "1" starty = "1" endx = "0" endy = "0"/>
+    <size width = "32" height ="32"/>
+    <lifetime max= "10" min = "2"/>
     <particleID> Awesome_Particle </particleID>
     <image name= "resource\images\particles\testPartcile1.jpg"/>
   </flyweight>

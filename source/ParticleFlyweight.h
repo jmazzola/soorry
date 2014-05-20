@@ -15,15 +15,15 @@ public:
 	SGD::Vector		endVelocity;
 	SGD::Color		startColor;
 	SGD::Color		endColor;
-	SGD::Vector		startScale;
-	SGD::Vector		endScale;
+	SGD::Size		startScale;
+	SGD::Size		endScale;
 	float			startRotation;
 	float			endRotation;
 	float			minLifeTime;
 	float			maxLifeTime;
 	std::string		particleID;
 	SGD::Vector		direction;
-
+	SGD::Size		imageSize;
 
 };
 
