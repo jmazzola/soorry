@@ -196,6 +196,8 @@ void WorldManager::Render(SGD::Point _cameraPos)
 
 bool WorldManager::CheckCollision(IEntity* object)
 {
+
+
 	return false;
 }
 
