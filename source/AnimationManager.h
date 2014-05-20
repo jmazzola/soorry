@@ -17,21 +17,36 @@ struct AnimationTimestamp
 class AnimationManager
 {
 public:
-	AnimationManager() = default;
-	~AnimationManager() = default;
+
+	static AnimationManager* GetInstance();
+	static void DeleteInstance();
+
 	/**********************************************************/
 	// Interface
 	bool LoadSprites(std::string fileName);
 	void Update(AnimationTimestamp& ants, float dt);
 	void Render(AnimationTimestamp& ants, float x, float y);
+	void UnloadSprites();
+
+	/**********************************************************/
+	// Accessor
+	AnimationTimestamp GetTimeStamp();
 
 	/**********************************************************/
 	// Data Members
 	AnimationTimestamp m_sAnimationTS;
-
-private:
+protected:
 	/**********************************************************/
 	// Data Members
-	std::map<std::string, Sprite> m_mSprites;
+	std::map<std::string, Sprite*> m_mSprites;
+	std::vector<std::string> m_vSpriteNames;
+	//std::vector<Sprite*> m_vSprites;
+	static AnimationManager*	s_pInstance;
+private:
+	AnimationManager() = default;
+	virtual ~AnimationManager() = default;
+	AnimationManager(const AnimationManager&) = delete;
+	AnimationManager& operator= (const AnimationManager&) = delete;
+
 };
 
