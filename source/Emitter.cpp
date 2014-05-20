@@ -74,6 +74,8 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
+	if (aliveParticles.size() == 0 && deadParticles.size() == 0)
+		return;
 	//Loop for the amount of particles made every second
 	for (float i = 0; i < spawnRate; i++)
 	{
