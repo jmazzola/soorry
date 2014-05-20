@@ -8,10 +8,19 @@ Emitter::Emitter()
 
 Emitter::~Emitter()
 {
+	for (unsigned int i = aliveParticles.size(); i > 0; i--)
+	{
+		delete aliveParticles[i-1];
+	}
 	if (aliveParticles.size() != 0)
 		aliveParticles.clear();
+	for (unsigned int i = deadParticles.size(); i > 0; i--)
+	{
+		delete deadParticles[i-1];
+	}
 	if (deadParticles.size() != 0)
 		deadParticles.clear();
+	delete particleFlyweight;
 }
 
 void Emitter::load()
@@ -28,11 +37,7 @@ void Emitter::load()
 			break;
 		case 1://circle
 		{
-<<<<<<< HEAD
 
-=======
-		
->>>>>>> Matt'sBranch
 		}
 			break;
 		case 2://line
@@ -89,7 +94,7 @@ void Emitter::Update(float dt)
 		{
 			//create Particle then add it to the alive particles
 			//Take data from patricle flyweight and send it to the particle
-			if (aliveParticles.size() < maxParticles)
+			if (aliveParticles.size() < (unsigned int) maxParticles)
 			{
 				aliveParticles.push_back(deadParticles.front());
 				deadParticles.erase(deadParticles.begin());

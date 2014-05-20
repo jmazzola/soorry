@@ -3,12 +3,12 @@
 Particle::Particle()
 {
 
-	//particleFlyweight.image
 }
 
 
 Particle::~Particle()
 {
+	SGD::GraphicsManager::GetInstance()->UnloadTexture(image);
 }
 
 //Returns false if dead returns true if alive
@@ -18,7 +18,7 @@ bool Particle::Update(float dt)
 	if (currLifeTime > maxLifeTime)
 		return false;
 	//load in image
-	image = SGD::GraphicsManager::GetInstance()->LoadTexture(particleFlyweight.fileName.c_str(), { 255, 255, 255, 255 });
+	image = SGD::GraphicsManager::GetInstance()->LoadTexture(particleFlyweight.fileName.c_str(), Color);
 	//change based on the rates
 	Color.alpha		-=	(char)colorRateA;
 	Color.red		-=	(char)colorRateR;

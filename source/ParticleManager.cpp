@@ -10,8 +10,7 @@ ParticleManager::ParticleManager()
 
 ParticleManager::~ParticleManager()
 {
-	/*particleFlyweights.clear();
-	activeEmitters*/
+
 }
 
 
@@ -170,6 +169,10 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 
 void ParticleManager::unload()
 {
+	for (unsigned int i = activeEmitters.size(); i > 0; i--)
+	{
+		delete activeEmitters[i-1];
+	}
 	activeEmitters.clear();
 	loadedEmitters.clear();
 }
