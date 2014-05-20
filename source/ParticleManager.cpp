@@ -149,6 +149,10 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
 		activeEmitters.push_back(tempEmitter);
+		delete tempEmitter;
+		tempEmitter = nullptr;
+		delete tempFlyweight;
+		tempFlyweight = nullptr;
 		return true;
 	}
 	else
@@ -162,4 +166,10 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 		return loadedEmitters[emitterID];
 	}
 	return nullptr;
+}
+
+void ParticleManager::unload()
+{
+	activeEmitters.clear();
+	loadedEmitters.clear();
 }

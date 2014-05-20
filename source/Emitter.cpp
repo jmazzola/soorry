@@ -8,7 +8,8 @@ Emitter::Emitter()
 
 Emitter::~Emitter()
 {
-
+	aliveParticles.clear();
+	deadParticles.clear();
 }
 
 void Emitter::load()
@@ -73,12 +74,13 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
+	if (aliveParticles.size() == 0 && deadParticles.size() == 0)
+		return;
 	//Loop for the amount of particles made every second
 	for (float i = 0; i < spawnRate; i++)
 	{
 		//create Particle then add it to the alive particles
 		//Take data from patricle flyweight and send it to the particle
-		Particle* tempParticle = new Particle;
 		if (aliveParticles.size() < 500)
 		{
 			aliveParticles.push_back(deadParticles.front());
@@ -104,3 +106,4 @@ void Emitter::Render()
 		aliveParticles[i]->Render();
 	}
 }
+
