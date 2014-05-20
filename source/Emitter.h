@@ -17,7 +17,7 @@ public:
 	void Update(float dt);
 	void Render();
 	void load();
-	ParticleFlyweight particleFlyweight;
+	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
 	SGD::Size size;
