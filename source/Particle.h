@@ -13,7 +13,7 @@ public:
 	SGD::HTexture		image;
 	bool				Update(float dt);
 	void				Render();
-	ParticleFlyweight	particleFlyweight;
+	ParticleFlyweight*	particleFlyweight;
 	SGD::Point			position;
 	SGD::Vector			velocity;
 	float				velocityRateX;

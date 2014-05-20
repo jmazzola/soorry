@@ -3,6 +3,7 @@
 #include "../TinyXML/tinystr.h"
 #include "Particle.h"
 #include "ParticleFlyweight.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 ParticleManager::ParticleManager()
 {
 }
@@ -139,7 +140,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
 		tempStr = data->Attribute("name");
-		tempFlyweight->fileName = tempStr;
+		tempFlyweight->image = SGD::GraphicsManager::GetInstance()->LoadTexture(tempStr.c_str());
 		//Adding flyweight to vector
 		particleFlyweights.push_back(tempFlyweight);
 		//creating an iterator to emplace an emitter into the map

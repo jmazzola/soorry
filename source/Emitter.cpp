@@ -75,7 +75,7 @@ void Emitter::load()
 			//Randomize the position within the emitter NOTE: maybe need to add world offset
 			tempParticle->position.x = (float)(rand() % (int)size.width)+position.x;
 			tempParticle->position.y = (float)(rand() % (int)size.height)+position.y;
-			tempParticle->particleFlyweight = *particleFlyweight;
+			tempParticle->particleFlyweight = particleFlyweight;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
 		}
