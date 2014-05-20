@@ -93,8 +93,10 @@ Player*	GameplayState::CreatePlayer() const
 	
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	//Load prest xml file
+	//Load preset xml file
 	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
+	//load emitters
+	m_pParticleManager->load();
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -167,6 +169,8 @@ Player*	GameplayState::CreatePlayer() const
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}
+	else if (pInput->IsKeyPressed(SGD::Key::Enter))
+		return false;
 
 	return true;	// keep playing
 }
@@ -181,7 +185,7 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Update the entities
 	m_pEntities->UpdateAll(elapsedTime);
-
+	m_pParticleManager->Update(elapsedTime);
 
 	// Process the events & messages
 	m_pEvents->Update();
