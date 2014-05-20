@@ -28,7 +28,11 @@ void Emitter::load()
 			break;
 		case 1://circle
 		{
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> Matt'sBranch
 		}
 			break;
 		case 2://line
