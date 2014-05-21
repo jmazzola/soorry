@@ -23,7 +23,7 @@ public:
 
 	/**********************************************************/
 	// Interface
-	bool LoadSprites(std::string fileName);
+	std::string LoadSprites(std::string fileName);
 	void Update(AnimationTimestamp& ants, float dt);
 	void Render(AnimationTimestamp& ants, float x, float y);
 	void UnloadSprites();
@@ -31,10 +31,12 @@ public:
 	/**********************************************************/
 	// Accessor
 	AnimationTimestamp GetTimeStamp();
+	Sprite* GetSprite(std::string nameID);
 
 	/**********************************************************/
 	// Data Members
 	AnimationTimestamp m_sAnimationTS;
+
 protected:
 	/**********************************************************/
 	// Data Members

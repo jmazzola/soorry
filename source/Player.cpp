@@ -2,14 +2,18 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "AnimationManager.h"
+#include "Frame.h"
+#include "Sprite.h"
 #include "Game.h"
-
+#include "AnimationID.h"
 
 Player::Player()
 {
 	// Entity
 	m_ptPosition = { 0, 20 };
 	m_vtVelocity = { 0, 0 };
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -25,6 +29,10 @@ Player::Player()
 	 //m_pInventory;
 	 //m_pCursor;
 	 //m_pWeapons;
+	m_antsAnimation.m_fTimeOnFrame = 0;
+	m_antsAnimation.m_nCurrFrame = 0;
+	m_CurrAnimation.LoadPlayerRun(m_CurrAnimation.PlayerRun);
+	m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
 }
 
 
@@ -77,7 +85,7 @@ void Player::Update(float dt)
 	if (m_ptPosition.y >= (float)pGame->GetScreenHeight())
 		m_ptPosition.y = (float)pGame->GetScreenHeight();
 	
-
+	AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 }
 
 /*********************************************************/
@@ -89,6 +97,8 @@ void Player::Render()
 
 	// Placeholder for the player
 	pGraphics->DrawRectangle({ 0, 0, m_ptPosition.x, m_ptPosition.y }, { 0, 255, 0 });
+
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
 }
 
 SGD::Rectangle Player::GetRect() const

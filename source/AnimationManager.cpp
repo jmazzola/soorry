@@ -24,7 +24,7 @@
 
 // LoadSprites
 //	- reading all the sprites from the XML file
-bool AnimationManager::LoadSprites(std::string fileName)
+std::string AnimationManager::LoadSprites(std::string fileName)
 {
 	TiXmlDocument animationDoc;
 
@@ -40,8 +40,8 @@ bool AnimationManager::LoadSprites(std::string fileName)
 		return false;
 	// Getting rid of any past data
 	m_mSprites.clear();
-	//m_vSprites.clear();
 
+	std::string ID;
 	TiXmlElement* spriteImg = root->FirstChildElement("sprite");
 	while (spriteImg != nullptr)
 	{
@@ -58,7 +58,10 @@ bool AnimationManager::LoadSprites(std::string fileName)
 		{
 			std::string id = spriteImg->GetText();
 			if (id.c_str() != nullptr)
+			{
 				newSprite->SetSpriteID(id);
+				ID = id;
+			}
 		}
 		spriteImg = spriteImg->NextSiblingElement("isLooping");
 		if (spriteImg != nullptr)
@@ -145,8 +148,10 @@ bool AnimationManager::LoadSprites(std::string fileName)
 		//m_vSprites.push_back(newSprite);
 		spriteImg = spriteImg->NextSiblingElement("sprite");
 	}
-	return (m_mSprites.size() > 0);
-	//return (m_vSprites.size() > 0);
+	if (m_mSprites.size() > 0)
+		return ID;
+	else
+		return nullptr;
 }
 
 void AnimationManager::UnloadSprites()
@@ -164,9 +169,30 @@ void AnimationManager::UnloadSprites()
 }
 
 
-
 void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 {
+	ants.m_fTimeOnFrame += dt;
+	// check to see if the frame duration is over
+	if (ants.m_fTimeOnFrame > m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetDuration())
+	{
+		ants.m_fTimeOnFrame -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetDuration();
+
+		// change to next frame
+		++ants.m_nCurrFrame;
+
+		// check to see if its the last frame
+		if (ants.m_nCurrFrame == m_mSprites[ants.m_nCurrAnimation]->GetFrameSize())
+		{
+			// if they are looping they will go back to the first frame
+			if (m_mSprites[ants.m_nCurrAnimation]->IsLooping())
+				ants.m_nCurrFrame = 0;
+			else
+			{
+				// if not stop at the last frame
+				--ants.m_nCurrFrame;
+			}
+		}
+	}
 }
 
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
@@ -175,16 +201,13 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 	{ (float)x, (float)y },
 	m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetFrameRect());
 
-	//for (size_t i = 0; i < m_vSprites.size(); i++)
-	//{
-	//	if (m_vSprites[i]->GetSpriteID() == ants.m_nCurrAnimation)
-	//	{
-	//		SGD::GraphicsManager::GetInstance()->DrawTextureSection(m_vSprites[i]->GetImage(),
-	//		{ (float)x, (float)y },
-	//		m_vSprites[i]->GetFrame((int)ants.m_fTimeOnFrame).GetFrameRect());
-	//	}
-	//}
-
 }
 
 
+Sprite* AnimationManager::GetSprite(std::string nameID)
+{
+	if (m_mSprites[nameID] != nullptr)
+		return m_mSprites[nameID];
+	else
+		return nullptr;
+}
