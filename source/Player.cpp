@@ -50,40 +50,40 @@ Player::~Player()
 //	- Handle input and move the character
 void Player::Update(float dt)
 {
-	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	Game* pGame = Game::GetInstance();
+	//SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	//Game* pGame = Game::GetInstance();
 
-	// Input
+	//// Input
 
-	if (pInput->IsKeyPressed(SGD::Key::A))
-		m_vtVelocity.x = -m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::D))
-		m_vtVelocity.x = m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::W))
-		m_vtVelocity.y = -m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::S))
-		m_vtVelocity.y = m_fSpeed;
-	else
-		m_vtVelocity = { 0, 0 };
+	//if (pInput->IsKeyPressed(SGD::Key::A))
+	//	m_vtVelocity.x = -m_fSpeed;
+	//else if (pInput->IsKeyPressed(SGD::Key::D))
+	//	m_vtVelocity.x = m_fSpeed;
+	//else if (pInput->IsKeyPressed(SGD::Key::W))
+	//	m_vtVelocity.y = -m_fSpeed;
+	//else if (pInput->IsKeyPressed(SGD::Key::S))
+	//	m_vtVelocity.y = m_fSpeed;
+	//else
+	//	m_vtVelocity = { 0, 0 };
 
-	// Move the player
-	m_ptPosition += m_vtVelocity * dt;
+	//// Move the player
+	//m_ptPosition += m_vtVelocity * dt;
 
-	// Prevent going off screen (left)
-	if (m_ptPosition.x <= 0)
-		m_ptPosition.x = 0;
-	
-	// Prevent going off screen (right)
-	if (m_ptPosition.x = (float)pGame->GetScreenWidth())
-		m_ptPosition.x = (float)pGame->GetScreenWidth();
+	//// Prevent going off screen (left)
+	//if (m_ptPosition.x <= 0)
+	//	m_ptPosition.x = 0;
+	//
+	//// Prevent going off screen (right)
+	//if (m_ptPosition.x = (float)pGame->GetScreenWidth())
+	//	m_ptPosition.x = (float)pGame->GetScreenWidth();
 
-	// Prevent going off screen (top)
-	if (m_ptPosition.y <= 0)
-		m_ptPosition.y = 0;
+	//// Prevent going off screen (top)
+	//if (m_ptPosition.y <= 0)
+	//	m_ptPosition.y = 0;
 
-	// Prevent going off screen (bottom)
-	if (m_ptPosition.y >= (float)pGame->GetScreenHeight())
-		m_ptPosition.y = (float)pGame->GetScreenHeight();
+	//// Prevent going off screen (bottom)
+	//if (m_ptPosition.y >= (float)pGame->GetScreenHeight())
+	//	m_ptPosition.y = (float)pGame->GetScreenHeight();
 	
 	AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 }
