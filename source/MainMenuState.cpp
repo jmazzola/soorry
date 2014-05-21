@@ -40,6 +40,8 @@
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
+#include <Windows.h>
+#include <XInput.h>
 using namespace std;
 
 
@@ -99,6 +101,9 @@ using namespace std;
 	// Setup the universal button
 	m_pButton = CreateButton();
 	m_pButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
+	// Grab the controllers
+	SGD::InputManager::GetInstance()->CheckForNewControllers();
 }
 
 
@@ -162,7 +167,7 @@ using namespace std;
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) down
-	if (pInput->IsKeyPressed(SGD::Key::Down))
+	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
@@ -173,7 +178,7 @@ using namespace std;
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) up
-	else if (pInput->IsKeyPressed(SGD::Key::Up))
+	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 	{
 		--m_nCursor;
 
@@ -185,7 +190,7 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter))
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
 		// Switch table for the item selected
 		switch (m_nCursor)
