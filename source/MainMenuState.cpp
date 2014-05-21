@@ -10,8 +10,16 @@
 #include "MainMenuState.h"
 
 #include "Game.h"
+#include "Entity.h"
+
+#include "CreditsState.h"
+#include "GameplayState.h"
+#include "IntroState.h"
 #include "LoadingState.h"
 #include "LoadSaveState.h"
+#include "OptionsState.h"
+
+#include "Button.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -51,6 +59,21 @@ using namespace std;
 	return &s_Instance;
 }
 
+/*************************************************************/
+// CreateButton
+// - factory method for buttons
+Button* MainMenuState::CreateButton() const
+{
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
+
+	return pButton;
+}
+
 
 /**************************************************************/
 // Enter
@@ -59,6 +82,7 @@ using namespace std;
 //	- set up entities
 /*virtual*/ void MainMenuState::Enter(void)
 {
+	// Game singleton
 	Game* pGame = Game::GetInstance();
 
 	// Initialize the Event Manager
@@ -66,8 +90,8 @@ using namespace std;
 	m_pEvents->Initialize();
 
 	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance();
-	m_pMessages->Initialize(&MessageProc);
+	//m_pMessages = SGD::MessageManager::GetInstance();
+	//m_pMessages->Initialize(&MessageProc);
 
 
 	// Allocate the Entity Manager
@@ -76,14 +100,21 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/mainMenuBG.png");
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
 
-	// Set background color
-	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+	// Set the cursor's index to the first option
+	m_nCursor = 0;
+
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
+
+	// Setup the universal button
+	m_pButton = CreateButton();
+	m_pButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 }
 
 
@@ -107,15 +138,19 @@ using namespace std;
 	m_pEntities = nullptr;
 
 
-	m_pMessages->Terminate();
-	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();
+	//m_pMessages->Terminate();
+	//m_pMessages = nullptr;
+	//SGD::MessageManager::DeleteInstance();
 
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
+
+	// Terminate & deallocate menu items
+	m_pButton->Terminate();
+	m_pButton = nullptr;
 
 }
 
@@ -125,14 +160,98 @@ using namespace std;
 //	- handle user input
 /*virtual*/ bool MainMenuState::Input(void)
 {
+	// Singletons
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-
+	// If ESCAPE is pressed
 	if (pInput->IsKeyPressed(SGD::Key::Escape))
-		pGame->ChangeState(LoadSaveState::GetInstance());
+	{
+		// Change the game state to the Intro
+		pGame->ChangeState(IntroState::GetInstance());
+	}
+
+
+	// --- Scrolling through options ---
+	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+	// Move the cursor (selected item) down
+	if (pInput->IsKeyPressed(SGD::Key::Down))
+	{
+		// TODO: Add sound fx for going up and down
+		++m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor > MENU_EXIT)
+			m_nCursor = MENU_START;
+	}
+	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+	// Move the cursor (selected item) up
+	else if (pInput->IsKeyPressed(SGD::Key::Up))
+	{
+		--m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor < MENU_START)
+			m_nCursor = MENU_EXIT;
+	}
+
+	// --- Selecting an option ---
+	// If the enter key (PC) or A button (Xbox 360) are pressed
+	// Select the item
+	if (pInput->IsKeyPressed(SGD::Key::Enter))
+	{
+		// Switch table for the item selected
+		switch (m_nCursor)
+		{
+			case MENU_START:
+			{
+				// Play Game
+				pGame->ChangeState(LoadSaveState::GetInstance());
+				// Leave immediately
+				return true;
+			}
+				break;
+
+			case MENU_HOWTOPLAY:
+			{
+				// How to Play (Gameplay loading tutorial level)
+				pGame->ChangeState(GameplayState::GetInstance());
+				// Leave immediately
+				return true;
+			}
+				break;
+
+			case MENU_OPTIONS:
+			{
+				// Options
+				pGame->ChangeState(OptionsState::GetInstance());
+				// Leave immediately
+				return true;
+			}
+				break;
+
+			case MENU_CREDITS:
+			{
+				// Credits
+				pGame->ChangeState(CreditsState::GetInstance());
+				// Leave immediately
+				return true;
+			}
+				break;
+
+			case MENU_EXIT:
+			{
+				// Exit the game
+				return false;
+			}
+
+				break;
+		}
+	}
+
+	
 
 	return true;	// keep playing
 }
@@ -151,7 +270,7 @@ using namespace std;
 
 	// Process the events & messages
 	m_pEvents->Update();
-	m_pMessages->Update();
+	//m_pMessages->Update();
 
 
 	// Check collisions
@@ -165,46 +284,41 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-	pGraphics->DrawString("Main Menu State", { 200, 200 }, { 255, 0, 255 });
-
-	// Get Font
-	BitmapFont* pFont = Game::GetInstance()->GetFont();
-	pFont->Draw("Main Menu\nRow\tTabs!", 20, 200, 1.5f, { 255, 0, 255 });
-
+	// Draw the background
+	pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
 	// Render the entities
 	m_pEntities->RenderAll();
+
+	// TODO: Add Strings to STRING TABLE for easy localization
+	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
+	if (m_nCursor == MENU_START)
+		m_pButton->Draw("Play Game", { 200, 200 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 0
+	else
+		m_pButton->Draw("Play Game", { 200, 200 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 0
+
+	if (m_nCursor == MENU_HOWTOPLAY)
+		m_pButton->Draw("How to Play", { 150, 270 }, { 255, 0, 0 }, { 1, 1 }, 0);	// 1
+	else
+		m_pButton->Draw("How to Play", { 150, 270 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 1
+
+	if (m_nCursor == MENU_OPTIONS)
+		m_pButton->Draw("Options", { 200, 340 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 2
+	else
+		m_pButton->Draw("Options", { 200, 340 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 2
+
+	if (m_nCursor == MENU_CREDITS)
+		m_pButton->Draw("Credits", { 230, 410 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 3
+	else
+		m_pButton->Draw("Credits", { 230, 410 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 3
+
+	if (m_nCursor == MENU_EXIT)
+		m_pButton->Draw("Exit Game", { 180, 480 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 4
+	else
+		m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
+
+
 }
-
-
-/**************************************************************/
-// MessageProc
-//	- process messages queued in the MessageManager
-//	- STATIC METHOD
-//		- does NOT have invoking object!!!
-//		- must use singleton to access members
-/*static*/ void MainMenuState::MessageProc(const SGD::Message* pMsg)
-{
-	/* Show warning when a Message ID enumerator is not handled */
-#pragma warning( push )
-#pragma warning( 1 : 4061 )
-
-	// What type of message?
-	switch (pMsg->GetMessageID())
-	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
-		break;
-	}
-
-
-	/* Restore previous warning levels */
-#pragma warning( pop )
-
-}
-
 
 /**************************************************************/
 // Factory Methods

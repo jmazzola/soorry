@@ -252,6 +252,9 @@
     <ClCompile Include="source\LoadingState.cpp">
       <Filter>Game States</Filter>
     </ClCompile>
+    <ClCompile Include="source\Button.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="TinyXML\tinyxml.h">
       <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Button.h">
+      <Filter>Game States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

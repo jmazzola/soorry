@@ -21,8 +21,8 @@
 //	- configure the font for "SGD_Font_Glow.png"
 //	- probably should have parameters / config file
 //
-// [in] fileName - File path for the bitmap file image
-// [in] firstChar - First character in the file
+// [in] fileName - File path for the bitmap font's file image
+// [in] xmlFileName - File path for the bitmap font's .fnt XML file.
 
 void BitmapFont::Initialize(string picFileName, string xmlFileName)
 {
@@ -97,6 +97,27 @@ void BitmapFont::Terminate( void )
 {
 	// Unload the image
 	SGD::GraphicsManager::GetInstance()->UnloadTexture( m_hImage );
+}
+
+/*************************************************************/
+// GetTextWidth
+// - return the text's width
+// [in] text - string to calculate
+int BitmapFont::GetTextWidth(string text)
+{
+	int totalWidth = 0;
+
+	// Loop through the string
+	for (int i = 0; text.c_str()[i]; i++)
+	{
+		// Grab the current character
+		char curChar = text[i];
+
+		// Add on the text width
+		totalWidth += m_nCharWidth[curChar];
+	}
+
+	return totalWidth;
 }
 
 
