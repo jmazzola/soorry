@@ -6,6 +6,9 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
+
+#include "CreatePlayerSpawnMessage.h"
 
 #include <sstream>
 using namespace std;
@@ -77,6 +80,8 @@ bool WorldManager::LoadWorld(string fileName)
 			pTile->FirstChildElement("collision")->Attribute("id", &collisionID);
 
 			// Set tile's values
+			tile.SetX(x);
+			tile.SetY(y);
 			tile.SetTileID(tileID);
 			(collider == "true") ? tile.SetCollidable(true) : tile.SetCollidable(false);
 			tile.SetColliderID(collisionID);
@@ -85,6 +90,10 @@ bool WorldManager::LoadWorld(string fileName)
 
 			// Place tile in layer
 			layer[x][y] = tile;
+
+			// Send initalize messages
+			if (triggerInit != "")
+				SendInitialTriggerMessage(tile);
 
 			// Move on to next tile
 			pTile = pTile->NextSiblingElement("tile");
@@ -194,11 +203,18 @@ void WorldManager::Render(SGD::Point _cameraPos)
 	}
 }
 
-bool WorldManager::CheckCollision(IEntity* object)
+bool WorldManager::CheckCollision(IEntity* _object)
 {
 
 
 	return false;
+}
+
+int WorldManager::ColliderIDAtPosition(int _x, int _y) const
+{
+	// Start with the top layer
+
+	return 0;
 }
 
 /**********************************************************/
@@ -265,4 +281,18 @@ void WorldManager::SetTilesetWidth(int _tilesetWidth)
 void WorldManager::SetTilesetImage(SGD::HTexture _tilesetImage)
 {
 	m_hTilesetImage = _tilesetImage;
+}
+
+/**********************************************************/
+// Helper Functions
+
+void WorldManager::SendInitialTriggerMessage(const Tile& _tile) const
+{
+	// PLAYER_SPAWN
+	if (_tile.GetTriggerInit() == "PLAYER_SPAWN")
+	{
+		CreatePlayerSpawnMessage* pMsg = new CreatePlayerSpawnMessage(_tile.GetX(), _tile.GetY());
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+	}
 }

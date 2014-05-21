@@ -11,6 +11,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
+#include "../SGD Wrappers/SGD_Listener.h"
 
 /**************************************************************/
 // Forward class declaration

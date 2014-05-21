@@ -12,7 +12,9 @@
 /**************************************************************/
 // MessageID enum
 //	- enumerated list of message identifiers
-enum class MessageID { MSG_UNKNOWN, };
+enum class MessageID { MSG_UNKNOWN, 
+						MSG_CREATE_PLAYER_SPAWN,
+};
 
 
 #endif //MESSAGEID_H
