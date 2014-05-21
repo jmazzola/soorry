@@ -18,6 +18,16 @@ Tile::~Tile()
 /**********************************************************/
 // Accessors
 
+int Tile::GetX() const
+{
+	return m_nX;
+}
+
+int Tile::GetY() const
+{
+	return m_nY;
+}
+
 int Tile::GetTileID() const
 {
 	return m_nTileID;
@@ -45,6 +55,16 @@ string Tile::GetTriggerCollision() const
 
 /**********************************************************/
 // Mutators
+
+void Tile::SetX(int _x)
+{
+	m_nX = _x;
+}
+
+void Tile::SetY(int _y)
+{
+	m_nY = _y;
+}
 
 void Tile::SetTileID(int _tileID)
 {
