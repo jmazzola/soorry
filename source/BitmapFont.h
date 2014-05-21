@@ -43,6 +43,7 @@ public:
 	void Draw( string output, int x, int y,
 			   float scale, SGD::Color color ) const;
 
+	int GetTextWidth(string text);
 
 private:
 	/**********************************************************/

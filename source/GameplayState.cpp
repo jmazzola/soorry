@@ -111,6 +111,10 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Load the world
 	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
+
+
+	// Load wave information
+	zombieFactory.LoadWaves("resource/data/wave.xml");
 }
 
 
@@ -167,11 +171,7 @@ Player*	GameplayState::CreatePlayer() const
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
-	{
-		pGame->ChangeState(MainMenuState::GetInstance());
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Enter))
+	if (pInput->IsKeyPressed(SGD::Key::Escape))
 		return false;
 
 	return true;	// keep playing
@@ -210,7 +210,9 @@ Player*	GameplayState::CreatePlayer() const
 	// Render test world
 	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
-	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
+#if _DEBUG
+	pGraphics->DrawString("Gameplay State | Escape to Quit", { 240, 0 }, { 255, 0, 255 });
+#endif
 
 	//Render test particles
 	m_pParticleManager->Render();

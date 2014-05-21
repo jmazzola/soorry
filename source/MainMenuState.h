@@ -23,6 +23,8 @@
 class Entity;
 class EntityManager;
 class MenuFlyweight;
+class BitmapFont;
+class Button;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
@@ -62,22 +64,32 @@ private:
 	
 	/**********************************************************/
 	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
+	EntityManager* m_pEntities = nullptr;
 	Entity* m_pPlayer = nullptr;
 	
 	
 	/**********************************************************/
 	// Event & Message Managers
-	SGD::EventManager*		m_pEvents			= nullptr;
-	SGD::MessageManager*	m_pMessages			= nullptr;
+	SGD::EventManager* m_pEvents = nullptr;
+	SGD::MessageManager* m_pMessages = nullptr;
 
 
 	MenuFlyweight* m_pMenuFlyweight;
 	float m_fAttractionTimer;
 
+	/**********************************************************/
+	// Cursor Index
+	int	m_nCursor;
+
+	/**********************************************************/
+	// Menu Items
+	Button* m_pButton;
+	BitmapFont* m_pFont;
+
 
 	/**********************************************************/
 	// Textures
+	SGD::HTexture m_hBackground;
 
 
 	/**********************************************************/
@@ -86,10 +98,15 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+	Button* CreateButton() const;
+
+	/**********************************************************/
+	// Enumerations
+	enum MenuOption { MENU_START, MENU_HOWTOPLAY, MENU_OPTIONS, MENU_CREDITS, MENU_EXIT };
 
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	//static void MessageProc( const SGD::Message* pMsg );
 };
 
 #endif //MAINMENUSTATE_H

@@ -27,6 +27,7 @@ public:
 	void UnloadWorld();
 	void Render(SGD::Point cameraPosition);
 	bool CheckCollision(IEntity* object);
+	int ColliderIDAtPosition(int x, int y) const;
 
 	/**********************************************************/
 	// Accessors
@@ -66,9 +67,14 @@ protected:
 
 private:
 
+	/**********************************************************/
+	// Helper Functions
+	void SendInitialTriggerMessage(const Tile& tile) const;
+
+	/**********************************************************/
+	// Singleton Business
 	WorldManager() = default;
 	virtual ~WorldManager() = default;
-
 	WorldManager(const WorldManager&) = delete;
 	WorldManager& operator= (const WorldManager&) = delete;
 };

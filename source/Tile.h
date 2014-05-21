@@ -12,6 +12,8 @@ public:
 
 	/**********************************************************/
 	// Accessors
+	int GetX() const;
+	int GetY() const;
 	int GetTileID() const;
 	int GetColliderID() const;
 	bool IsCollidable() const;
@@ -20,6 +22,8 @@ public:
 
 	/**********************************************************/
 	// Mutators
+	void SetX(int x);
+	void SetY(int y);
 	void SetTileID(int tileID);
 	void SetColliderID(int colliderID);
 	void SetCollidable(bool isCollidable);
@@ -30,6 +34,8 @@ protected:
 
 	/**********************************************************/
 	// Data Members
+	int m_nX;
+	int m_nY;
 	int m_nTileID;
 	int m_nColliderID;
 	bool m_bIsCollidable;

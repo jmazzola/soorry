@@ -47,13 +47,11 @@ bool AnimationManager::LoadSprites(std::string fileName)
 	{
 		if (spriteImg != nullptr)
 		{
-			//std::string file = spriteImg->GetText();
-			const char * file = spriteImg->GetText();
-			/*if (file.c_str() != nullptr)
-				newSprite.SetImage(file.c_str());*/
-			if (file != nullptr)
-				newSprite->SetImage(file);
-			
+			std::string file = "resource/animation/";
+			file += spriteImg->GetText();
+
+			if (file.c_str() != nullptr)
+				newSprite->SetImage(file.c_str());
 		}
 		spriteImg = spriteImg->NextSiblingElement("spriteID");
 		if (spriteImg != nullptr)
