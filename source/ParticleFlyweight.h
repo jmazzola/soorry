@@ -24,6 +24,6 @@ public:
 	std::string		particleID;
 	SGD::Vector		direction;
 	SGD::Size		imageSize;
-
+	bool			isSpread;
 };
 

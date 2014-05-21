@@ -98,6 +98,11 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		data->Attribute("endx", &x);
 		data->Attribute("endy", &y);
 		tempFlyweight->endVelocity = SGD::Vector((float)x, (float)y);
+		//get spread bool
+		data->Attribute("spread", &tempInt);
+		if (tempInt != 0) tempBool = true;
+		else tempBool = false;
+		tempFlyweight->isSpread = tempBool;
 		//Read XML for flyweight rotation
 		data = data->NextSiblingElement("rotate");
 		data->Attribute("start", &tempDouble);
