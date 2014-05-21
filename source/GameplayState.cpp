@@ -101,10 +101,10 @@ Player*	GameplayState::CreatePlayer() const
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
 
-	//// Create our player
-	//m_pPlayer = CreatePlayer();
-	//// Add it to the entity manager
-	//m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
+	// Create our player
+	m_pPlayer = CreatePlayer();
+	// Add it to the entity manager
+	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 
 

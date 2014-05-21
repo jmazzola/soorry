@@ -77,71 +77,71 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 		TiXmlElement* frames = spriteImg->NextSiblingElement("frame");
 		while (frames != nullptr)
 		{
-			frames = frames->FirstChildElement("collisionRect");
+			TiXmlElement* info = frames->FirstChildElement("collisionRect");
 			Frame* newFrame = new Frame();
-			if (frames != nullptr)
+			if (info != nullptr)
 			{
 				SGD::Rectangle collTemp;
 				double l, t, r, b;
-				frames->Attribute("left", &l);
+				info->Attribute("left", &l);
 				collTemp.left = (float)l;
-				frames->Attribute("right", &r);
+				info->Attribute("right", &r);
 				collTemp.right = (float)r;
-				frames->Attribute("top", &t);
+				info->Attribute("top", &t);
 				collTemp.top = (float)t;
-				frames->Attribute("bottom", &b);
+				info->Attribute("bottom", &b);
 				collTemp.bottom = (float)b;
 
 				newFrame->SetCollisionRect(collTemp);
 			}
 
-			frames = frames->NextSiblingElement("drawRect");
-			if (frames != nullptr)
+			info = info->NextSiblingElement("drawRect");
+			if (info != nullptr)
 			{
 				SGD::Rectangle drawTemp;
 				double l, t, r, b;
-				frames->Attribute("left", &l);
+				info->Attribute("left", &l);
 				drawTemp.left = (float)l;
-				frames->Attribute("right", &r);
+				info->Attribute("right", &r);
 				drawTemp.right = (float)r;
-				frames->Attribute("top", &t);
+				info->Attribute("top", &t);
 				drawTemp.top = (float)t;
-				frames->Attribute("bottom", &b);
+				info->Attribute("bottom", &b);
 				drawTemp.bottom = (float)b;
 
 				newFrame->SetFrameRect(drawTemp);
 			}
 
-			frames = frames->NextSiblingElement("duration");
-			if (frames != nullptr)
+			info = info->NextSiblingElement("duration");
+			if (info != nullptr)
 			{
 				double durtemp;
-				frames->Attribute("time", &durtemp);
+				info->Attribute("time", &durtemp);
 				newFrame->SetDuration((float)durtemp);
 
 			}
 
-			frames = frames->NextSiblingElement("anchorPoint");
-			if (frames != nullptr)
+			info = info->NextSiblingElement("anchorPoint");
+			if (info != nullptr)
 			{
 				SGD::Point pointTemp;
 				double x, y;
-				frames->Attribute("X", &x);
+				info->Attribute("X", &x);
 				pointTemp.x = (float)x;
-				frames->Attribute("Y", &y);
+				info->Attribute("Y", &y);
 				pointTemp.y = (float)y;
 				newFrame->SetAnchorPoint(pointTemp);
 			}
 
-			frames = frames->NextSiblingElement("triggerID");
-			if (frames != nullptr)
+			info = info->NextSiblingElement("triggerID");
+			if (info != nullptr)
 			{
-				std::string trigid = frames->GetText();
+				std::string trigid = info->GetText();
 				if (trigid.c_str() != nullptr)
 					newFrame->SetTriggerID(trigid);
 			}
 			newSprite->AddFrame(newFrame);
-			frames = frames->FirstChildElement("frames");
+			frames = frames->NextSiblingElement("frame");
 		}
 		m_mSprites[newSprite->GetSpriteID()] = newSprite;
 		m_vSpriteNames.push_back(newSprite->GetSpriteID());
