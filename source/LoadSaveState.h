@@ -17,6 +17,8 @@
 class Entity;
 class EntityManager;
 class MenuFlyweight;
+class Button;
+class BitmapFont;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
@@ -67,19 +69,31 @@ private:
 	MenuFlyweight* m_pMenuFlyweight;
 	float m_fTimeRemaining;
 
+	/**********************************************************/
+	// Cursor Index
+	int	m_nCursor;
 
 	/**********************************************************/
 	// Textures
-
+	SGD::HTexture m_hBackground;
 
 	/**********************************************************/
 	// Audio
 
+	/**********************************************************/
+	// Enumerations
+	enum MenuOption { MENU_SLOT1, MENU_SLOT2, MENU_SLOT3, MENU_GOBACK };
+
 
 	/**********************************************************/
 	// Factory Methods
+	Button* CreateButton() const;
 
+	/**********************************************************/
+	// Menu Items
+	Button* m_pMainButton;
+	BitmapFont* m_pFont;
 
 	// Message Callback Function:
-	static void MessageProc(const SGD::Message* pMsg);
+	//static void MessageProc(const SGD::Message* pMsg);
 };

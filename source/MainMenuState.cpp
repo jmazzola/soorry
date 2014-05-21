@@ -59,22 +59,6 @@ using namespace std;
 	return &s_Instance;
 }
 
-/*************************************************************/
-// CreateButton
-// - factory method for buttons
-Button* MainMenuState::CreateButton() const
-{
-	Button* pButton = new Button();
-	pButton->SetColor({ 0, 0, 0 });
-	pButton->SetPosition({ 0, 0 });
-	pButton->SetScale({ 1, 1 });
-	pButton->SetText("");
-	pButton->SetSize({ 314, 70 });
-
-	return pButton;
-}
-
-
 /**************************************************************/
 // Enter
 //	- reset game
@@ -126,7 +110,7 @@ Button* MainMenuState::CreateButton() const
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
+	pGraphics->UnloadTexture(m_hBackground);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -150,6 +134,7 @@ Button* MainMenuState::CreateButton() const
 
 	// Terminate & deallocate menu items
 	m_pButton->Terminate();
+	delete m_pButton;
 	m_pButton = nullptr;
 
 }
@@ -251,6 +236,39 @@ Button* MainMenuState::CreateButton() const
 		}
 	}
 
+#if _DEBUG	// if statement that says 'if we're running in debug mode' (Visual Studio goody :P)
+			// this won't work in release ;3
+
+	// Debugging so our team doesn't have to go through so many menus to test stuff
+
+	// 1	-	Forceload GameplayState
+	// 2	-	Forceload LoadSaveState
+	// 3	-	Forceload OptionsState
+	// 4	-	Forceload CreditsState
+
+	if (pInput->IsKeyPressed(SGD::Key::One))
+	{
+		pGame->ChangeState(GameplayState::GetInstance());
+		return true;
+	}
+	else if (pInput->IsKeyPressed(SGD::Key::Two))
+	{
+		pGame->ChangeState(LoadSaveState::GetInstance());
+		return true;
+	}
+	else if (pInput->IsKeyPressed(SGD::Key::Three))
+	{
+		pGame->ChangeState(OptionsState::GetInstance());
+		return true;
+	}
+	else if (pInput->IsKeyPressed(SGD::Key::Four))
+	{
+		pGame->ChangeState(OptionsState::GetInstance());
+		return true;
+	}
+
+#endif
+
 	
 
 	return true;	// keep playing
@@ -290,6 +308,12 @@ Button* MainMenuState::CreateButton() const
 	// Render the entities
 	m_pEntities->RenderAll();
 
+#if _DEBUG
+
+	pGraphics->DrawString("Debugging: TRUE: \n1 - Launch Gameplay\n2 - Launch LoadSave\n3 - Launch Options\n4 - Launch Credits", { 0, 0 }, { 0, 0, 0 });
+
+#endif
+
 	// TODO: Add Strings to STRING TABLE for easy localization
 	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
 	if (m_nCursor == MENU_START)
@@ -322,3 +346,17 @@ Button* MainMenuState::CreateButton() const
 
 /**************************************************************/
 // Factory Methods
+
+// CreateButton
+// - factory method for buttons
+Button* MainMenuState::CreateButton() const
+{
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
+
+	return pButton;
+}
