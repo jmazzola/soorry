@@ -512,6 +512,9 @@
     <ClInclude Include="source\ZombieFactory.h">
       <Filter>Zombie Factory</Filter>
     </ClInclude>
+    <ClInclude Include="source\AnimationID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">

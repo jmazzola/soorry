@@ -9,7 +9,8 @@
 #pragma once
 
 #include "Entity.h"
-
+#include "AnimationManager.h"
+#include "AnimationID.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -80,5 +81,7 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
+	AnimationTimestamp m_antsAnimation;
+	AnimationID m_CurrAnimation;
 };
 
