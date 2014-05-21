@@ -1,8 +1,8 @@
 /***********************************************************************\
 |																		|
 |	File:			SGD_Key.h  											|
-|	Author:			Douglas Monroe										|
-|	Last Modified:	2014-02-03											|
+|	Author:			Douglas Monroe & Justin Mazzola						|
+|	Last Modified:	2014-05-21											|
 |																		|
 |	Purpose:		Keyboard, mouse, and gamepad key identifiers		|
 |																		|
@@ -206,6 +206,21 @@ namespace SGD
 		DownRight			= 10,
 
 	};	// enum class DPad
+
+	enum class Button
+	{
+		A = 0,
+		B = 1,
+		X = 2,
+		Y = 3,
+		LB = 4,
+		RB = 5,
+		Back = 6,
+		Start = 7,
+		L3 = 8,
+		R3 = 9,
+
+	};
 
 }	// namespace SGD
 
