@@ -55,7 +55,7 @@
     <Filter Include="TinyXML">
       <UniqueIdentifier>{1f931c53-8928-498c-b80a-d746f217115e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Wave System">
+    <Filter Include="Zombie Factory">
       <UniqueIdentifier>{586b1d6f-5d2f-4fb5-a133-735640ac7459}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -261,9 +261,6 @@
     <ClCompile Include="source\CreatePlayerSpawnMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
-    <ClCompile Include="source\WaveSystem.cpp">
-      <Filter>Wave System</Filter>
-    </ClCompile>
     <ClCompile Include="source\CreateSlowZombieMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
@@ -272,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="source\CreateFastZombieMessage.cpp">
       <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ZombieFactory.cpp">
+      <Filter>Zombie Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -497,9 +497,6 @@
     <ClInclude Include="source\CreatePlayerSpawnMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
-    <ClInclude Include="source\WaveSystem.h">
-      <Filter>Wave System</Filter>
-    </ClInclude>
     <ClInclude Include="source\CreateSlowZombieMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
@@ -510,7 +507,10 @@
       <Filter>Messages</Filter>
     </ClInclude>
     <ClInclude Include="source\WaveData.h">
-      <Filter>Wave System</Filter>
+      <Filter>Zombie Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ZombieFactory.h">
+      <Filter>Zombie Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,7 +521,7 @@
       <Filter>World Manager</Filter>
     </Xml>
     <Xml Include="resource\data\wave.xml">
-      <Filter>Wave System</Filter>
+      <Filter>Zombie Factory</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

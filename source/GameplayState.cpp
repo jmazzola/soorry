@@ -111,6 +111,10 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Load the world
 	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
+
+
+	// Load wave information
+	zombieFactory.LoadWaves("resource/data/wave.xml");
 }
 
 

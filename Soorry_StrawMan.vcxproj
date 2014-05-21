@@ -73,7 +73,7 @@
     <ClCompile Include="source\Sprite.cpp" />
     <ClCompile Include="source\Tile.cpp" />
     <ClCompile Include="source\WallPickup.cpp" />
-    <ClCompile Include="source\WaveSystem.cpp" />
+    <ClCompile Include="source\ZombieFactory.cpp" />
     <ClCompile Include="source\Weapon.cpp" />
     <ClCompile Include="source\WindowPickup.cpp" />
     <ClCompile Include="source\WinMain.cpp" />
@@ -157,7 +157,7 @@
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\WallPickup.h" />
     <ClInclude Include="source\WaveData.h" />
-    <ClInclude Include="source\WaveSystem.h" />
+    <ClInclude Include="source\ZombieFactory.h" />
     <ClInclude Include="source\Weapon.h" />
     <ClInclude Include="source\WindowPickup.h" />
     <ClInclude Include="source\WorldManager.h" />

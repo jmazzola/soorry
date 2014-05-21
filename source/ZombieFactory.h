@@ -6,12 +6,12 @@
 #include <vector>
 using namespace std;
 
-class WaveSystem
+class ZombieFactory
 {
 public:
 
-	WaveSystem();
-	~WaveSystem();
+	ZombieFactory();
+	~ZombieFactory();
 
 	/**********************************************************/
 	// Interface
@@ -20,6 +20,7 @@ public:
 
 	/**********************************************************/
 	// Accessors
+	bool IsPaused() const;
 	bool IsBuildMode() const;
 	bool IsInfiniteBuildTime() const;
 	int GetWave() const;
@@ -34,6 +35,7 @@ public:
 
 	/**********************************************************/
 	// Mutators
+	void SetPaused(bool isPaused);
 	void SetBuildMode(bool buildMode);
 	void SetInfiniteBuildTime(bool infiniteBuildTime);
 	void SetWave(int wave);
@@ -50,6 +52,7 @@ protected:
 
 	/**********************************************************/
 	// Data Members
+	bool m_bIsPaused;
 	bool m_bBuildMode;
 	bool m_bInfiniteBuildTime;
 	int m_nWave;
