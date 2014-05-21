@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "MainMenuState.h"
 
+#include "Button.h"
+
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
@@ -50,6 +52,7 @@ using namespace std;
 }
 
 
+
 /**************************************************************/
 // Enter
 //	- reset game
@@ -63,9 +66,9 @@ using namespace std;
 	m_pEvents = SGD::EventManager::GetInstance();
 	m_pEvents->Initialize();
 
-	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance();
-	m_pMessages->Initialize(&MessageProc);
+	//// Initialize the Message Manager
+	//m_pMessages = SGD::MessageManager::GetInstance();
+	//m_pMessages->Initialize(&MessageProc);
 
 
 	// Allocate the Entity Manager
@@ -74,14 +77,24 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/optionsBG.png");
 
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
 
-	// Set background color
-	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+	// Set the cursor's index to the first option
+	m_nCursor = 0;
+
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
+
+	// Setup the main button (text)
+	m_pMainButton = CreateButton();
+	m_pMainButton->SetSize({ 350, 70 });
+	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
 }
 
 
@@ -93,7 +106,7 @@ using namespace std;
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
+	pGraphics->UnloadTexture(m_hBackground);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -105,15 +118,20 @@ using namespace std;
 	m_pEntities = nullptr;
 
 
-	m_pMessages->Terminate();
+	/*m_pMessages->Terminate();
 	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();
+	SGD::MessageManager::DeleteInstance();*/
 
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
+
+	// Terminate & deallocate menu items
+	m_pMainButton->Terminate();
+	delete m_pMainButton;
+	m_pMainButton = nullptr;
 
 }
 
@@ -128,10 +146,90 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	// --- Scrolling through options ---
+	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+	// Move the cursor (selected item) down
+	if (pInput->IsKeyPressed(SGD::Key::Down))
 	{
-		pGame->ChangeState(MainMenuState::GetInstance());
+		// TODO: Add sound fx for going up and down
+		++m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor > MENU_GOBACK)
+			m_nCursor = MENU_MUSICVOL;
+	}
+	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+	// Move the cursor (selected item) up
+	else if (pInput->IsKeyPressed(SGD::Key::Up))
+	{
+		--m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor < MENU_MUSICVOL)
+			m_nCursor = MENU_GOBACK;
+	}
+	// --- Selecting an option ---
+	// If the enter key (PC) or A button (Xbox 360) are pressed
+	// Select the item
+	if (pInput->IsKeyPressed(SGD::Key::Enter))
+	{
+		// Switch table for the item selected
+		switch (m_nCursor)
+		{
+
+			case MENU_GOBACK:
+			{
+				// Go Back to Main Menu
+				pGame->ChangeState(MainMenuState::GetInstance());
+				// Exit immediately
+				return true;
+			}
+			break;
+		}
+	}
+	// --- Increasing an option ---
+	// If the right key (PC) or right dpad (Xbox 360) are pressed
+	// Increase the value
+	if (pInput->IsKeyPressed(SGD::Key::Right))
+	{
+		switch (m_nCursor)
+		{
+			case MENU_MUSICVOL:
+			{
+				// Increase the music volume += 5
+				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+			}
+				break;
+
+			case MENU_SFXVOL:
+			{
+				// Increase the sound effects volume += 5
+				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+			}
+				break;
+		}
+	}
+	// --- Decreasing an option ---
+	// If the left key (PC) or left dpad (Xbox 360) are pressed
+	// Decrease the value
+	if (pInput->IsKeyPressed(SGD::Key::Left))
+	{
+		switch (m_nCursor)
+		{
+			case MENU_MUSICVOL:
+			{
+				// Increase the music volume -= 5
+				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+			}
+				break;
+
+			case MENU_SFXVOL:
+			{
+				// Increase the sound effects volume -= 5
+				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+			}
+				break;
+		}
 	}
 
 	return true;	// keep playing
@@ -151,7 +249,7 @@ using namespace std;
 
 	// Process the events & messages
 	m_pEvents->Update();
-	m_pMessages->Update();
+	//m_pMessages->Update();
 
 
 	// Check collisions
@@ -164,43 +262,59 @@ using namespace std;
 /*virtual*/ void OptionsState::Render(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// Render the background
-	pGraphics->DrawString("Options State", { 200, 200 }, { 255, 0, 255 });
+	pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
 
 	// Render the entities
 	m_pEntities->RenderAll();
+
+	// TODO: Add Strings to STRING TABLE for easy localization
+	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
+	
+	// Create the string for the button
+	string musicVol = "Music Vol: ";
+	// Grab the volume
+	int musicVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	// Add it to the string since C++ doesn't support [ string + "" ] 
+	musicVol.append(std::to_string(musicVolValue));
+
+	// Same stuff here for the sfx vol
+	string sfxVol = "SFX Vol: ";
+	int sfxVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+	sfxVol.append(std::to_string(sfxVolValue));
+
+	if (m_nCursor == MENU_MUSICVOL)
+		m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	else
+		m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+	if (m_nCursor == MENU_SFXVOL)
+		m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	else
+		m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+	if (m_nCursor == MENU_GOBACK)
+		m_pMainButton->Draw("Go Back", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	else
+		m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 }
-
-
-/**************************************************************/
-// MessageProc
-//	- process messages queued in the MessageManager
-//	- STATIC METHOD
-//		- does NOT have invoking object!!!
-//		- must use singleton to access members
-/*static*/ void OptionsState::MessageProc(const SGD::Message* pMsg)
-{
-	/* Show warning when a Message ID enumerator is not handled */
-#pragma warning( push )
-#pragma warning( 1 : 4061 )
-
-	// What type of message?
-	switch (pMsg->GetMessageID())
-	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
-		break;
-	}
-
-
-	/* Restore previous warning levels */
-#pragma warning( pop )
-
-}
-
 
 /**************************************************************/
 // Factory Methods
+
+// CreateButton
+// - factory method for buttons
+Button* OptionsState::CreateButton() const
+{
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
+
+	return pButton;
+}

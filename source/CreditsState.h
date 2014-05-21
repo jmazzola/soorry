@@ -10,6 +10,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 
 /**************************************************************/
@@ -19,6 +20,8 @@
 class Entity;
 class EntityManager;
 class MenuFlyweight;
+class Button;
+class BitmapFont;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
@@ -73,7 +76,7 @@ private:
 
 	/**********************************************************/
 	// Textures
-
+	SGD::HTexture m_hBackground;
 
 	/**********************************************************/
 	// Audio
@@ -81,8 +84,19 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+	Button* CreateButton() const;
 
+	/**********************************************************/
+	// Menu Items
+	Button* m_pMainButton;
+	BitmapFont* m_pFont;
+
+	/**********************************************************/
+	// Credits Items
+	SGD::Point textPosition;
+	int topMargin;
+	int bottomMargin;
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	//static void MessageProc( const SGD::Message* pMsg );
 };

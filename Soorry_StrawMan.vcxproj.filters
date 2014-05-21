@@ -255,6 +255,9 @@
     <ClCompile Include="source\LoadingState.cpp">
       <Filter>Game States</Filter>
     </ClCompile>
+    <ClCompile Include="source\Button.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
     <ClCompile Include="source\CreatePlayerSpawnMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
@@ -487,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="TinyXML\tinyxml.h">
       <Filter>TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Button.h">
+      <Filter>Game States</Filter>
     </ClInclude>
     <ClInclude Include="source\CreatePlayerSpawnMessage.h">
       <Filter>Messages</Filter>

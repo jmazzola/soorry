@@ -27,6 +27,7 @@
     <ClCompile Include="source\BearTrap.cpp" />
     <ClCompile Include="source\BeaverZombie.cpp" />
     <ClCompile Include="source\BitmapFont.cpp" />
+    <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="source\BearTrap.h" />
     <ClInclude Include="source\BeaverZombie.h" />
     <ClInclude Include="source\BitmapFont.h" />
+    <ClInclude Include="source\Button.h" />
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
     <ClInclude Include="source\CreatePickupMessage.h" />

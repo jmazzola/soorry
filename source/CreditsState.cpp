@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "MainMenuState.h"
 
+#include "Button.h"
+
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
@@ -38,6 +40,8 @@ using namespace std;
 
 #include <cfloat>
 
+#define SCROLL_SPEED 0.03f
+
 
 /**************************************************************/
 // GetInstance
@@ -64,8 +68,8 @@ using namespace std;
 	m_pEvents->Initialize();
 
 	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance();
-	m_pMessages->Initialize(&MessageProc);
+	//m_pMessages = SGD::MessageManager::GetInstance();
+	//m_pMessages->Initialize(&MessageProc);
 
 
 	// Allocate the Entity Manager
@@ -74,14 +78,28 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/CreditsBG.png");
 
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
 
-	// Set background color
-	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+	// Set the margins for the text
+	topMargin = 220;
+	bottomMargin = 474;
+
+	// Set and start the credits movement
+	textPosition.x = 180;
+	textPosition.y = bottomMargin + SCROLL_SPEED;
+
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
+
+	// Setup the main button (text)
+	m_pMainButton = CreateButton();
+	m_pMainButton->SetSize({ 350, 70 });
+	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 }
 
 
@@ -93,6 +111,7 @@ using namespace std;
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	pGraphics->UnloadTexture(m_hBackground);
 
 
 	// Release audio
@@ -105,15 +124,20 @@ using namespace std;
 	m_pEntities = nullptr;
 
 
-	m_pMessages->Terminate();
-	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();
+	//m_pMessages->Terminate();
+	//m_pMessages = nullptr;
+	//SGD::MessageManager::DeleteInstance();
 
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
+
+	// Terminate & deallocate menu items
+	m_pMainButton->Terminate();
+	delete m_pMainButton;
+	m_pMainButton = nullptr;
 
 }
 
@@ -128,11 +152,16 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	// --- Selecting an option ---
+	// If the enter key (PC) or A button (Xbox 360) are pressed
+	// Select the item
+	if (pInput->IsKeyPressed(SGD::Key::Enter))
 	{
+		// Since there's only one state..go back to main menu
 		pGame->ChangeState(MainMenuState::GetInstance());
+		return true;
 	}
+
 	return true;	// keep playing
 }
 
@@ -150,10 +179,14 @@ using namespace std;
 
 	// Process the events & messages
 	m_pEvents->Update();
-	m_pMessages->Update();
+	//m_pMessages->Update();
 
 
 	// Check collisions
+
+	// Move the credits
+	textPosition.x = 220;
+	textPosition.y -= SCROLL_SPEED;
 
 }
 
@@ -165,42 +198,67 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background [test]
-	pGraphics->DrawString("Credits State", { 200, 200 }, { 255, 0, 255 });
-	
+	// Draw the background
+	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+
+	// Draw the credits
+	// TODO: Load in a text file
+	string credits = "SOORRY\n\n\
+					 By Razor Balloon\n\n\
+					 Part of Heavy Square Studios\n\n\
+					 Associate Producer\n\
+					 Sean Hathaway\n\n\
+					 Executive Producer\n\
+					 John O' Leske\n\n\
+					 World Software Engineer\n\
+					 Justin Patterson\n\n\
+					 AI Programmer\n\
+					 Justin Patterson\n\n\
+					 Particle Software Engineer\n\
+					 Matthew Salow\n\n\
+					 Animation Software Engineer\n\
+					 James Sylvester\n\n\
+					 Game Core\n\
+					 Justin Mazzola\n\n\
+					 UI Programmer\n\
+					 Justin Mazzola\n\n\
+					 Artists\n\
+					 Gregory Bey\n\
+					 Caris Frazier\n\
+					 Justin Mazzola\n\n\
+					 Special Thanks\n\
+					 Todo.";
+
+	m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 255, 0, 0 });
+
+	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
+	// Draw rectangles to cut off the words to give an illusion of margins
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
+		SGD::Rectangle(0, 0, 800, 228), {}, {});
+
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
+		SGD::Rectangle(0, 475, 800, 600), {}, {});
+
+	// Render button
+	m_pMainButton->Draw("Go Back", { 200, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
 
 	// Render the entities
 	m_pEntities->RenderAll();
 }
 
-
-/**************************************************************/
-// MessageProc
-//	- process messages queued in the MessageManager
-//	- STATIC METHOD
-//		- does NOT have invoking object!!!
-//		- must use singleton to access members
-/*static*/ void CreditsState::MessageProc(const SGD::Message* pMsg)
-{
-	/* Show warning when a Message ID enumerator is not handled */
-#pragma warning( push )
-#pragma warning( 1 : 4061 )
-
-	// What type of message?
-	switch (pMsg->GetMessageID())
-	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
-		break;
-	}
-
-
-	/* Restore previous warning levels */
-#pragma warning( pop )
-
-}
-
-
 /**************************************************************/
 // Factory Methods
+
+// CreateButton
+// - factory method for buttons
+Button* CreditsState::CreateButton() const
+{
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
+
+	return pButton;
+}

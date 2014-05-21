@@ -104,6 +104,7 @@ bool Game::Initialize( int width, int height )
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadSprites("resource/animation/piggy2.xml");
 	
+	
 	return true;	// success!
 }
 
