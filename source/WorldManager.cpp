@@ -156,8 +156,8 @@ void WorldManager::Render(SGD::Point _cameraPos)
 	for (unsigned int layer = 0; layer < m_vLayers.size(); layer++)
 	{
 		// Get camera position in terms of tiles
-		int camTileX = (int)cameraPos.x / m_nTileWidth;
-		int camTileY = (int)cameraPos.y / m_nTileHeight;
+		int camTileX = (int)_cameraPos.x / m_nTileWidth;
+		int camTileY = (int)_cameraPos.y / m_nTileHeight;
 
 		// Get stop point for rendering
 		int stopX = camTileX + (int)ceil((800.0f / m_nTileWidth)) + 1;
@@ -188,8 +188,8 @@ void WorldManager::Render(SGD::Point _cameraPos)
 
 				// Figure out where to draw to the screen
 				SGD::Point drawPos;
-				drawPos.x = x * (float)m_nTileWidth - cameraPos.x;
-				drawPos.y = y * (float)m_nTileHeight - cameraPos.y;
+				drawPos.x = x * (float)m_nTileWidth - _cameraPos.x;
+				drawPos.y = y * (float)m_nTileHeight - _cameraPos.y;
 
 				// Draw the tile
 				pGraphics->DrawTextureSection(m_hTilesetImage, drawPos, sourceRect);
