@@ -513,7 +513,7 @@
       <Filter>Zombie Factory</Filter>
     </ClInclude>
     <ClInclude Include="source\AnimationID.h">
-      <Filter>Header Files</Filter>
+      <Filter>Animation Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
