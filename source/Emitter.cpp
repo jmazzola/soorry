@@ -97,9 +97,9 @@ void Emitter::load()
 				SGD::Point end = { size.width, size.height };
 				float slope = (start.y - end.y) / (start.x - end.x);
 				float x,y;
-				if (end.x == 0)
+				if (start.x != 0)
 					x = rand() % (int)start.x + end.x;
-				if (start.x == 0)
+				if (end.x != 0)
 					x = rand() % (int)end.x + start.x;
 				y = end.y+(slope*(x - end.x));
 				tempParticle->position = { x, y };
@@ -175,9 +175,9 @@ void Emitter::Update(float dt)
 					SGD::Point end = { size.width, size.height };
 					float slope = (start.y - end.y) / (start.x - end.x);
 					float x, y;
-					if (end.x == 0)
+					if (start.x != 0)
 						x = rand() % (int)start.x + end.x;
-					if (start.x == 0)
+					if (end.x != 0)
 						x = rand() % (int)end.x + start.x;
 					y = end.y+(slope*(x - end.x));
 					tempParticle->position = { x, y };
