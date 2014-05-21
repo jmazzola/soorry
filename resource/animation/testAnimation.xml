@@ -1,5 +1,5 @@
 <animation>
-  <sprite >resource/animation/TestBeaver.png</sprite>>
+  <sprite >TestBeaver.png</sprite>>
   <spriteID >beaver</spriteID>>
   <isLooping isIt = "0"></isLooping>>
   <frame>
