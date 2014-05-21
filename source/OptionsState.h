@@ -22,6 +22,8 @@
 class Entity;
 class EntityManager;
 class MenuFlyweight;
+class BitmapFont;
+class Button;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
@@ -78,10 +80,15 @@ private:
 	bool m_bMusicMute;
 	bool m_bSoundEffectsMute;
 
+	/**********************************************************/
+	// Cursor Index
+	int	m_nCursor;
+	
+
 
 	/**********************************************************/
 	// Textures
-
+	SGD::HTexture m_hBackground;
 
 	/**********************************************************/
 	// Audio
@@ -89,10 +96,20 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+	Button* CreateButton() const;
+
+	/**********************************************************/
+	// Enumerations
+	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_GOBACK };
+
+	/**********************************************************/
+	// Menu Items
+	Button* m_pMainButton;
+	BitmapFont* m_pFont;
 
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	/*static void MessageProc( const SGD::Message* pMsg );*/
 };
 
 #endif //OPTIONSSTATE_H
