@@ -154,6 +154,7 @@
     <ClInclude Include="source\Sprite.h" />
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\WallPickup.h" />
+    <ClInclude Include="source\WaveData.h" />
     <ClInclude Include="source\WaveSystem.h" />
     <ClInclude Include="source\Weapon.h" />
     <ClInclude Include="source\WindowPickup.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\bigWorld.xml" />
     <Xml Include="resource\world\testWorld.xml">
       <SubType>Designer</SubType>

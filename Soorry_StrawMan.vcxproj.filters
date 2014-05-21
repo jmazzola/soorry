@@ -503,6 +503,9 @@
     <ClInclude Include="source\CreateBeaverZombieMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\WaveData.h">
+      <Filter>Wave System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -510,6 +513,9 @@
     </Xml>
     <Xml Include="resource\world\bigWorld.xml">
       <Filter>World Manager</Filter>
+    </Xml>
+    <Xml Include="resource\data\wave.xml">
+      <Filter>Wave System</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>
