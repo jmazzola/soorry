@@ -101,9 +101,9 @@ bool Game::Initialize( int width, int height )
 	m_ulGameTime = GetTickCount();
 
 	// Testing the loading for the animation
-	m_pAnimation = new AnimationManager;
-	m_pAnimation->LoadSprites("resource/animation/testAnimation.xml");
-
+	m_pAnimation = AnimationManager::GetInstance();
+	m_pAnimation->LoadSprites("resource/animation/piggy2.xml");
+	
 	return true;	// success!
 }
 
@@ -138,9 +138,11 @@ int Game::Main( void )
 
 
 	// Testing the rending for the animation
-	m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "beaver";
+	m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "running";
 	m_pAnimation->m_sAnimationTS.m_nCurrFrame = 0;
 	m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
+
+
 
 	// Update & render the current state
 	m_pCurrState->Update( elapsedTime );
@@ -165,6 +167,9 @@ void Game::Terminate( void )
 	delete m_pFont;
 	m_pFont = nullptr;
 
+	m_pAnimation->UnloadSprites();
+	m_pAnimation = nullptr;
+	AnimationManager::DeleteInstance();
 
 	// Terminate & deallocate the SGD wrappers
 	m_pAudio->Terminate();
@@ -178,6 +183,7 @@ void Game::Terminate( void )
 	m_pInput->Terminate();
 	m_pInput = nullptr;
 	SGD::InputManager::DeleteInstance();
+
 }
 
 /**************************************************************/

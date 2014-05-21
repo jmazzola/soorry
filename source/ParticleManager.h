@@ -7,10 +7,14 @@
 class ParticleManager
 {
 	std::vector<ParticleFlyweight*> particleFlyweights;
-	std::vector<Emitter> activeEmitters;
+	std::vector<Emitter*> activeEmitters;
 	std::map<std::string, Emitter*> loadedEmitters;
 	int numOfEmitters = 0;
 public:
+	void Update(float dt);
+	void Render();
+	void load();
+	void unload();
 	static ParticleManager* GetInstance();
 	ParticleManager();
 	~ParticleManager();

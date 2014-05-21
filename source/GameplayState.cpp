@@ -93,8 +93,10 @@ Player*	GameplayState::CreatePlayer() const
 	
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	//Load prest xml file
+	//Load preset xml file
 	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
+	//load emitters
+	m_pParticleManager->load();
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -125,6 +127,8 @@ Player*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	//Matt gets rid of the memory leaks
+	m_pParticleManager->unload();
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
@@ -180,10 +184,9 @@ Player*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
 
-
 	// Update the entities
 	m_pEntities->UpdateAll(elapsedTime);
-
+	m_pParticleManager->Update(elapsedTime);
 
 	// Process the events & messages
 	m_pEvents->Update();
@@ -209,6 +212,8 @@ Player*	GameplayState::CreatePlayer() const
 	
 	pGraphics->DrawString("Gameplay State", { 200, 200 }, { 255, 0, 255 });
 
+	//Render test particles
+	m_pParticleManager->Render();
 
 	// Render the entities
 	m_pEntities->RenderAll();
