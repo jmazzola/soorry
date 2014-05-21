@@ -16,6 +16,8 @@ public:
 	/**********************************************************/
 	// Interface
 	bool LoadWaves(string fileName);
+	void Start();
+	void Stop();
 	void Update(float dt);
 
 	/**********************************************************/
