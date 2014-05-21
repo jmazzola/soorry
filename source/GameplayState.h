@@ -24,6 +24,8 @@ class Player;
 class ParticleManager;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
+#include "ZombieFactory.h"
+
 
 
 /**************************************************************/
@@ -77,6 +79,7 @@ private:
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
+	ZombieFactory zombieFactory;
 
 	/**********************************************************/
 	// Textures
