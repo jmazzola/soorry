@@ -47,6 +47,12 @@
 using namespace std;
 
 
+// Buckets
+#define BUCKET_PLAYER 0
+#define BUCKET_ENEMIES 1
+#define BUCKET_PROJECTILES 2
+
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <cfloat>
@@ -120,16 +126,18 @@ Entity*	GameplayState::CreatePlayer() const
 	// Create our player
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
-	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
+	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
 	// Load the world
-	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
-
-	// Load wave information
-	zombieFactory.LoadWaves("resource/data/wave.xml");
+	WorldManager* pWorld = WorldManager::GetInstance();
+	pWorld->LoadWorld("resource/world/colWorld.xml");
 
 	// Start Zombie Factory
+	zombieFactory.LoadWaves("resource/data/wave.xml");
 	zombieFactory.Start();
+	zombieFactory.SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
+	zombieFactory.SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
+
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
@@ -538,7 +546,7 @@ Entity*	GameplayState::CreatePlayer() const
 												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 												GameplayState* self = GameplayState::GetInstance();
 												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, 1);
+												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
 												beaver->Release();
 												beaver = nullptr;
 	}
@@ -548,7 +556,7 @@ Entity*	GameplayState::CreatePlayer() const
 											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -558,7 +566,7 @@ Entity*	GameplayState::CreatePlayer() const
 											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -568,7 +576,7 @@ Entity*	GameplayState::CreatePlayer() const
 											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
 											 GameplayState* self = GameplayState::GetInstance();
 											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-											 self->m_pEntities->AddEntity(bullet, 1);
+											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
 											 bullet->Release();
 											 bullet = nullptr;
 	}

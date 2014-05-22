@@ -1,6 +1,5 @@
 #include "SlowZombie.h"
 
-
 SlowZombie::SlowZombie()
 {
 	m_pSprite = AnimationManager::GetInstance()->GetSprite("fastZombie");

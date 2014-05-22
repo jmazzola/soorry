@@ -31,6 +31,9 @@
 	// Verify the image
 	//assert( m_hImage != SGD::INVALID_HANDLE && "Entity::Render - image was not set!" );
 	
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
 
 	SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
 
