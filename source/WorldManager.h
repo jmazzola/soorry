@@ -27,6 +27,7 @@ public:
 	void UnloadWorld();
 	void Render(SGD::Point cameraPosition);
 	bool CheckCollision(IEntity* object);
+	int CheckCollisionID(IEntity* object);
 	int ColliderIDAtPosition(int x, int y) const;
 
 	/**********************************************************/

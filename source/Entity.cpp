@@ -32,7 +32,7 @@
 	//assert( m_hImage != SGD::INVALID_HANDLE && "Entity::Render - image was not set!" );
 	
 
-	SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
+	//SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;

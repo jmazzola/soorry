@@ -151,6 +151,23 @@ void ZombieFactory::Update(float dt)
 			} while (invalid);
 
 			// Determine where to spawn
+			invalid = false;
+			do
+			{
+				// Determine which side
+				int side = rand() % 4;
+				switch (side)
+				{
+				case 0:
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				}
+			} while (invalid);
 
 			// Spawn the zombie
 			switch (zombieType)
@@ -158,16 +175,22 @@ void ZombieFactory::Update(float dt)
 			case 0:
 			{
 					  // Slow zombie
+					  CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(32, 32);
+					  pMsg->QueueMessage();
 			}
 				break;
 			case 1:
 			{
 					  // Fast zombie
+					  CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(128, 128);
+					  pMsg->QueueMessage();
 			}
 				break;
 			case 2:
 			{
 					  // Beaver zombie
+					  CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(64, 64);
+					  pMsg->QueueMessage();
 			}
 				break;
 			}
@@ -216,6 +239,16 @@ int ZombieFactory::GetFastZombiesToSpawn() const
 int ZombieFactory::GetBeaverZombiesToSpawn() const
 {
 	return m_nBeaverZombiesToSpawn;
+}
+
+int ZombieFactory::GetSpawnWidth() const
+{
+	return m_nSpawnWidth;
+}
+
+int ZombieFactory::GetSpawnHeight() const
+{
+	return m_nSpawnHeight;
 }
 
 float ZombieFactory::GetBuildTime() const
@@ -279,6 +312,16 @@ void ZombieFactory::SetFastZombiesToSpawn(int _fastZombiesToSpawn)
 void ZombieFactory::SetBeaverZombiesToSpawn(int _beaverZombiesToSpawn)
 {
 	m_nBeaverZombiesToSpawn = _beaverZombiesToSpawn;
+}
+
+void ZombieFactory::SetSpawnWidth(int _spawnWidth)
+{
+	m_nSpawnWidth = _spawnWidth;
+}
+
+void ZombieFactory::SetSpawnHeight(int _spawnHeight)
+{
+	m_nSpawnHeight = _spawnHeight;
 }
 
 void ZombieFactory::SetBuildTime(float _buildTime)
