@@ -208,7 +208,7 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 	{ (float)x, (float)y },
 	r);
 
-	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_fTimeOnFrame).GetTriggerID() == "ha")
+	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
 	{
 		g->DrawString("ha", { (float)x, (float)y });
 	}
