@@ -131,6 +131,19 @@ int Game::Main( void )
 	// Cap the elapsed time to 1/8th of a second
 	if( elapsedTime > 0.125f )
 		elapsedTime = 0.125f;
+
+	// Toggle fullscreen
+
+	if (SGD::InputManager::GetInstance()->IsKeyDown(SGD::Key::Alt) &&
+		SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::Enter))
+	{
+		// Stupid fix for single button press
+		SGD::GraphicsManager::GetInstance()->Resize({ 800, 600 }, !m_bFullscreen);
+		// Toggle the fullscreen
+		m_bFullscreen = !m_bFullscreen;
+		// Disable the 'Enter' input
+		return false;
+	}
 	
 
 	// Let the current state handle input

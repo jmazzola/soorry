@@ -165,6 +165,7 @@
     <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="resource\data\config.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\bigWorld.xml" />
     <Xml Include="resource\world\testWorld.xml">
