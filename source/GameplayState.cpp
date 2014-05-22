@@ -134,6 +134,14 @@ Player*	GameplayState::CreatePlayer() const
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
 
+
+	// Release the player
+	if (m_pPlayer != nullptr)
+	{
+		m_pPlayer->Release();
+		m_pPlayer = nullptr;
+	}
+
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
 	delete m_pEntities;

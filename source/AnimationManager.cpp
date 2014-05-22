@@ -14,13 +14,11 @@
 	return s_pInstance;
 }
 
-
 /*static*/ void AnimationManager::DeleteInstance()
 {
 	delete s_pInstance;
 	s_pInstance = nullptr;
 }
-
 
 // LoadSprites
 //	- reading all the sprites from the XML file
@@ -156,18 +154,11 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 
 void AnimationManager::UnloadSprites()
 {
-	//for (size_t i = 0; i < m_vSprites.size(); i++)
-	//{
-	//	delete m_vSprites[i];
-	//	m_vSprites[i] = nullptr;
-	//}
-
 	for (unsigned int i = 0; i < m_mSprites.size(); i++)
 	{
 		delete m_mSprites[m_vSpriteNames[i]];
 	}
 }
-
 
 void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 {
@@ -197,12 +188,22 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 {
+
+	SGD::GraphicsManager::GetInstance()->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+
+	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
+	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;
+
+	SGD::Rectangle r = m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetFrameRect();
+
+	// Getting the specific frame
+	r.right += r.left;
+	r.bottom += r.top;
+
 	SGD::GraphicsManager::GetInstance()->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
-	m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetFrameRect());
-
+	r);
 }
-
 
 Sprite* AnimationManager::GetSprite(std::string nameID)
 {

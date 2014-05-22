@@ -12,7 +12,7 @@
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 0, 20 };
+	m_ptPosition = { 100, 100 };
 	m_vtVelocity = { 0, 0 };
 
 
@@ -31,7 +31,7 @@ Player::Player()
 	m_nCurrPlaceable = -1;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
-	m_fSpeed = 5.0f;
+	m_fSpeed = 100.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 	 //m_pInventory;
@@ -64,8 +64,8 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
 
-		//if (pWorld->CheckCollision(this) == false)
-		//	m_ptPosition.x = oldpos;
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.x = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
@@ -74,8 +74,8 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
-		//if (pWorld->CheckCollision(this) == false)
-		//	m_ptPosition.x = oldpos;
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.x = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
@@ -84,8 +84,8 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.y -= m_fSpeed * dt;
 
-		//if (pWorld->CheckCollision(this) == false)
-		//	m_ptPosition.y = oldpos;
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.y = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
@@ -94,8 +94,8 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.y += m_fSpeed * dt;
 
-		//if (pWorld->CheckCollision(this) == false)
-		//	m_ptPosition.y = oldpos;
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.y = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
@@ -109,8 +109,6 @@ void Player::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Placeholder for the player
-	//pGraphics->DrawRectangle({ 0, 0, m_ptPosition.x, m_ptPosition.y }, { 0, 255, 0 });
 	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
 }
 
