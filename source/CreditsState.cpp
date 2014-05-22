@@ -40,7 +40,7 @@ using namespace std;
 
 #include <cfloat>
 
-#define SCROLL_SPEED 0.03f
+#define SCROLL_SPEED 0.04f;
 
 
 /**************************************************************/
@@ -227,7 +227,7 @@ using namespace std;
 					 Caris Frazier\n\
 					 Justin Mazzola\n\n\
 					 Special Thanks\n\
-					 Todo.";
+					 Jordan Butler for ideas.";
 
 	m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 255, 0, 0 });
 

@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "OptionsState.h"
 #include "MainMenuState.h"
+#include "Button.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -78,7 +79,6 @@ Player*	GameplayState::CreatePlayer() const
 	m_pMessages = SGD::MessageManager::GetInstance();
 	m_pMessages->Initialize(&MessageProc);
 
-
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
@@ -90,6 +90,7 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 	
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -115,6 +116,28 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Load wave information
 	zombieFactory.LoadWaves("resource/data/wave.xml");
+
+	// Load pause menu background
+	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
+	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
+
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
+
+	// Setup the main button (text)
+	m_pMainButton = CreateButton();
+	m_pMainButton->SetSize({ 350, 70 });
+	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
+	// Load menu stuff
+	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+
+	// Play the background music
+	pAudio->PlayAudio(m_hBackgroundMus, true);
+
+	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 }
 
 
@@ -130,6 +153,7 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	pAudio->UnloadAudio(m_hBackgroundMus);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -150,6 +174,13 @@ Player*	GameplayState::CreatePlayer() const
 	// Unload Assets
 	pGraphics->UnloadTexture(m_hPlayerImg);
 
+	// Unload pause menu
+	pGraphics->UnloadTexture(m_hPauseMainBackground);
+	pGraphics->UnloadTexture(m_hPauseOptionsBackground);
+
+	// Make sure pause isn't set
+	m_bIsPaused = false;
+
 
 	// Unload World Manager
 	WorldManager::GetInstance()->UnloadWorld();
@@ -165,6 +196,11 @@ Player*	GameplayState::CreatePlayer() const
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
 
+	// Terminate & deallocate menu items
+	m_pMainButton->Terminate();
+	delete m_pMainButton;
+	m_pMainButton = nullptr;
+
 }
 
 
@@ -178,9 +214,156 @@ Player*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape))
-		return false;
+	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
+	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
+		m_bIsPaused = !m_bIsPaused;
+
+#pragma region Pause Menu Navigation Clutter
+	// Handle pause menu input
+	// If we're paused
+	if (m_bIsPaused)
+	{
+		// --- Scrolling through options ---
+		// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) down
+		if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+		{
+			// TODO: Add sound fx for going up and down
+			++m_nPauseMenuCursor;
+
+			// Wrap around the options
+			if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+				m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+		}
+		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) up
+		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+		{
+			--m_nPauseMenuCursor;
+
+			// Wrap around the options
+			if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
+				m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+		}
+
+		//-----------------------------------------------------------------------
+		// --- Handling what tab we're in ---
+		// If we're in the Main menu OF the pause menu. 
+		if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+		{
+			// --- Selecting an option ---
+			// If the enter key (PC) or A button (Xbox 360) are pressed
+			// Select the item
+			if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+			{
+				// Switch table for the item selected
+				switch (m_nPauseMenuCursor)
+				{
+					case PauseMenuOption::PAUSE_RESUME:
+					{
+						// Resume gameplay
+						m_bIsPaused = false;
+						break;
+					}
+						break;
+
+					case PauseMenuOption::PAUSE_OPTION:
+					{
+						// Set the cursor to the first option in the options tab
+						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+						// Go to the options tab
+						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+						// Load the options
+						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+						break;
+					}
+						break;
+
+					case PauseMenuOption::PAUSE_EXIT:
+					{
+						//Go to Main Menu
+						pGame->ChangeState(MainMenuState::GetInstance());
+						// Exit immediately
+						return true;
+					}
+						break;
+				}
+			}		
+		}
+		// If we're in the main menu's options tab
+		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
+		{
+			// --- Increasing an option ---
+			// If the right key (PC) or right dpad (Xbox 360) are pressed
+			// Increase the value
+			if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
+			{
+				switch (m_nPauseMenuCursor)
+				{
+				case PauseMenuOptionsOption::OPTION_MUSIC:
+				{
+					// Increase the music volume += 5
+					pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+				}
+					break;
+
+				case PauseMenuOptionsOption::OPTION_SFX:
+				{
+					// Increase the sound effects volume += 5
+					pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+				}
+					break;
+				}
+			}
+			// --- Decreasing an option ---
+			// If the left key (PC) or left dpad (Xbox 360) are pressed
+			// Decrease the value
+			if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+			{
+				switch (m_nPauseMenuCursor)
+				{
+				case PauseMenuOptionsOption::OPTION_MUSIC:
+				{
+					// Increase the music volume -= 5
+					pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+				}
+					break;
+
+				case PauseMenuOptionsOption::OPTION_SFX:
+				{
+					// Increase the sound effects volume -= 5
+					pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+				}
+					break;
+				}
+			}
+
+			// --- Selecting an option ---
+			// If the enter key (PC) or A button (Xbox 360) are pressed
+			// Select the item
+			if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+			{
+				switch (m_nPauseMenuCursor)
+				{
+
+					case PauseMenuOptionsOption::OPTION_GOBACK:
+					{
+						// Go back to the pause menu's main menu
+						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+						// Make the highlighted option 'Options'
+						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+						// Save options
+						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+
+						break;
+					}
+					break;
+				}
+			}
+		}
+	
+	}
+#pragma endregion
 
 	return true;	// keep playing
 }
@@ -191,17 +374,23 @@ Player*	GameplayState::CreatePlayer() const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
+	// Grab the controllers
+	SGD::InputManager::GetInstance()->CheckForNewControllers();
 
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-	m_pParticleManager->Update(elapsedTime);
+	// If the game isn't paused
+	if (!m_bIsPaused)
+	{
+		// Update the entities
+		m_pEntities->UpdateAll(elapsedTime);
+		m_pParticleManager->Update(elapsedTime);
 
-	// Process the events & messages
-	m_pEvents->Update();
-	m_pMessages->Update();
+		// Process the events & messages
+		m_pEvents->Update();
+		m_pMessages->Update();
 
 
-	// Check collisions
+		// Check collisions
+	}
 }
 
 
@@ -219,7 +408,7 @@ Player*	GameplayState::CreatePlayer() const
 	WorldManager::GetInstance()->Render(SGD::Point(0,0));
 	
 #if _DEBUG
-	pGraphics->DrawString("Gameplay State | Escape to Quit", { 240, 0 }, { 255, 0, 255 });
+	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 #endif
 
 	//Render test particles
@@ -227,6 +416,66 @@ Player*	GameplayState::CreatePlayer() const
 
 	// Render the entities
 	m_pEntities->RenderAll();
+
+	// --- Pause Menu stuff ---
+	// If we're paused
+	if (m_bIsPaused)
+	{
+		if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+		{
+			// Draw the paused main menu background
+			pGraphics->DrawTexture(m_hPauseMainBackground, { 0, 0 });
+
+			// Draw the options
+			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME)
+				m_pMainButton->Draw("Resume Game", { 170, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Resume Game", { 170, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION)
+				m_pMainButton->Draw("Options", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Options", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT)
+				m_pMainButton->Draw("Exit Game", { 165, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Exit Game", { 165, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
+		{
+			// Draw the paused menu option's background
+			pGraphics->DrawTexture(m_hPauseOptionsBackground, { 0, 0 });
+
+			// Create the string for the button
+			string musicVol = "Music Vol: ";
+			// Grab the volume
+			int musicVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music);
+			// Add it to the string since C++ doesn't support [ string + "" ] 
+			musicVol.append(std::to_string(musicVolValue));
+
+			// Same stuff here for the sfx vol
+			string sfxVol = "SFX Vol: ";
+			int sfxVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+			sfxVol.append(std::to_string(sfxVolValue));
+
+			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_MUSIC)
+				m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_SFX)
+				m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
+				m_pMainButton->Draw("Go Back", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+	}
 }
 
 
@@ -260,3 +509,17 @@ Player*	GameplayState::CreatePlayer() const
 
 /**************************************************************/
 // Factory Methods
+
+// CreateButton
+// - factory method for buttons
+Button* GameplayState::CreateButton() const
+{
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
+
+	return pButton;
+}

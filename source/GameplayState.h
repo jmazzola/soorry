@@ -22,6 +22,8 @@ class EntityManager;
 class Shop;
 class Player;
 class ParticleManager;
+class Button;
+class BitmapFont;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 #include "ZombieFactory.h"
@@ -85,17 +87,34 @@ private:
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
-	// Audio
+	// Pause Menu Stuff
+	Button* m_pMainButton;
+	BitmapFont* m_pFont;
+
+	int m_nPauseMenuCursor;
+	int m_nPauseMenuTab;
+	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT };
+	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
+	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_GOBACK };
+
+
+	/**********************************************************/
+	// 
+	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
 
 	
 	/**********************************************************/
 	// Factory Methods
 
+	// Create a button
+	Button* CreateButton() const;
+
 	// Creates a player
 	Player*	CreatePlayer() const;
-
 
 	// Message Callback Function:
 	static void MessageProc( const SGD::Message* pMsg );

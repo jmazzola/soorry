@@ -526,6 +526,9 @@
     <Xml Include="resource\data\wave.xml">
       <Filter>Zombie Factory</Filter>
     </Xml>
+    <Xml Include="resource\data\config.xml">
+      <Filter>Game States</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt">

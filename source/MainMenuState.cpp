@@ -268,7 +268,7 @@ using namespace std;
 	}
 	else if (pInput->IsKeyPressed(SGD::Key::Four))
 	{
-		pGame->ChangeState(OptionsState::GetInstance());
+		pGame->ChangeState(CreditsState::GetInstance());
 		return true;
 	}
 
