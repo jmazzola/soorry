@@ -146,6 +146,8 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pPlayer = nullptr;
 	}
 
+
+
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
 	delete m_pEntities;

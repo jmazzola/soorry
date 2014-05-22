@@ -11,7 +11,7 @@
 
 
 #include "IEntity.h"
-
+#include "AnimationManager.h"
 
 /**********************************************************/
 // Forward Declarations
@@ -92,6 +92,7 @@ protected:
 	Sprite* m_pSprite;
 	SGD::Point m_ptPosition;
 	SGD::Vector m_vtVelocity;
+	AnimationTimestamp m_antsAnimation;
 
 private:
 
