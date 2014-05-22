@@ -62,7 +62,7 @@ bool ZombieFactory::LoadWaves(string _fileName)
 
 void ZombieFactory::Update(float dt)
 {
-
+	//loop for amount, account for spawn delay
 }
 
 /**********************************************************/
