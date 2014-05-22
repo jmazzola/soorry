@@ -16,7 +16,7 @@ Projectile::~Projectile()
 
 void Projectile::Update(float dt)
 {
-
+	Entity::Update(dt);
 }
 
 int Projectile::GetType() const
