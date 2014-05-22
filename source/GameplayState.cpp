@@ -102,7 +102,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
-	
+
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	//Load preset xml file
@@ -295,36 +295,36 @@ Entity*	GameplayState::CreatePlayer() const
 				// Switch table for the item selected
 				switch (m_nPauseMenuCursor)
 				{
-					case PauseMenuOption::PAUSE_RESUME:
-					{
-						// Resume gameplay
-						m_bIsPaused = false;
-						break;
-					}
-						break;
-
-					case PauseMenuOption::PAUSE_OPTION:
-					{
-						// Set the cursor to the first option in the options tab
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-						// Go to the options tab
-						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-						// Load the options
-						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-						break;
-					}
-						break;
-
-					case PauseMenuOption::PAUSE_EXIT:
-					{
-						//Go to Main Menu
-						pGame->ChangeState(MainMenuState::GetInstance());
-						// Exit immediately
-						return true;
-					}
-						break;
+				case PauseMenuOption::PAUSE_RESUME:
+				{
+													  // Resume gameplay
+													  m_bIsPaused = false;
+													  break;
 				}
-			}		
+					break;
+
+				case PauseMenuOption::PAUSE_OPTION:
+				{
+													  // Set the cursor to the first option in the options tab
+													  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+													  // Go to the options tab
+													  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+													  // Load the options
+													  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+													  break;
+				}
+					break;
+
+				case PauseMenuOption::PAUSE_EXIT:
+				{
+													//Go to Main Menu
+													pGame->ChangeState(MainMenuState::GetInstance());
+													// Exit immediately
+													return true;
+				}
+					break;
+				}
+			}
 		}
 		// If we're in the main menu's options tab
 		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
@@ -338,15 +338,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-					// Increase the music volume += 5
-					pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+															 // Increase the music volume += 5
+															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-					// Increase the sound effects volume += 5
-					pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+														   // Increase the sound effects volume += 5
+														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 				}
 					break;
 				}
@@ -360,15 +360,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-					// Increase the music volume -= 5
-					pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+															 // Increase the music volume -= 5
+															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-					// Increase the sound effects volume -= 5
-					pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+														   // Increase the sound effects volume -= 5
+														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 				}
 					break;
 				}
@@ -382,22 +382,22 @@ Entity*	GameplayState::CreatePlayer() const
 				switch (m_nPauseMenuCursor)
 				{
 
-					case PauseMenuOptionsOption::OPTION_GOBACK:
-					{
-						// Go back to the pause menu's main menu
-						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-						// Make the highlighted option 'Options'
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-						// Save options
-						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+				case PauseMenuOptionsOption::OPTION_GOBACK:
+				{
+															  // Go back to the pause menu's main menu
+															  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+															  // Make the highlighted option 'Options'
+															  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+															  // Save options
+															  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-						break;
-					}
+															  break;
+				}
 					break;
 				}
 			}
 		}
-	
+
 	}
 #pragma endregion
 
@@ -424,10 +424,11 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEvents->Update();
 		m_pMessages->Update();
 
-	// Update Zombie Factory
-	zombieFactory.Update(elapsedTime);
+		// Update Zombie Factory
+		zombieFactory.Update(elapsedTime);
 
 		// Check collisions
+		m_pEntities->CheckCollisions(0, 1);
 	}
 }
 
@@ -534,42 +535,42 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 	case MessageID::MSG_CREATE_BEAVER_ZOMBIE:
 	{
-		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance();
-		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(),pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(beaver, 1);
-		beaver->Release();
-		beaver = nullptr;
+												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
+												GameplayState* self = GameplayState::GetInstance();
+												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+												self->m_pEntities->AddEntity(beaver, 1);
+												beaver->Release();
+												beaver = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_FAST_ZOMBIE:
 	{
-		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance();
-		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(zambie, 1);
-		zambie->Release();
-		zambie = nullptr;
+											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
+											  GameplayState* self = GameplayState::GetInstance();
+											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+											  self->m_pEntities->AddEntity(zambie, 1);
+											  zambie->Release();
+											  zambie = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_SLOW_ZOMBIE:
 	{
-		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance();
-		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(zambie, 1);
-		zambie->Release();
-		zambie = nullptr;
+											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
+											  GameplayState* self = GameplayState::GetInstance();
+											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+											  self->m_pEntities->AddEntity(zambie, 1);
+											  zambie->Release();
+											  zambie = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_PROJECTILE:
 	{
-		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance();
-		Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-		self->m_pEntities->AddEntity(bullet, 1);
-		bullet->Release();
-		bullet = nullptr;
+											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+											 GameplayState* self = GameplayState::GetInstance();
+											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+											 self->m_pEntities->AddEntity(bullet, 1);
+											 bullet->Release();
+											 bullet = nullptr;
 	}
 		break;
 	}
@@ -652,44 +653,44 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 	{
 	case 0://Assault Rifle
 	{
-		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
-		tempProj->SetDamage(20);
-		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
-		tempProj->SetVelocity(vec); 
-		return tempProj;
+			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
+			   tempProj->SetDamage(20);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+			   vec *= 2;
+			   tempProj->SetVelocity(vec);
+			   return tempProj;
 	}
 		break;
 	case 1://Shotgun
 	{
-		ShotgunPellet* tempProj = new ShotgunPellet;
-		tempProj->SetDamage(20);
-		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
-		tempProj->SetVelocity(vec);
-		return tempProj;
+			   ShotgunPellet* tempProj = new ShotgunPellet;
+			   tempProj->SetDamage(20);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+			   vec *= 2;
+			   tempProj->SetVelocity(vec);
+			   return tempProj;
 	}
 		break;
 	case 2://Rocket launcher
 	{
-		Rocket* tempProj = new Rocket;
-		tempProj->SetDamage(150);
-		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
-		tempProj->SetVelocity(vec);
-		Sprite* bro = new Sprite;
-		Frame* frame = new Frame;
-		frame->SetFrameRect({ 0, 0, 32, 32 });
-		bro->AddFrame(frame);
-		bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
-		tempProj->SetSprite(bro);
-		return tempProj;
+			   Rocket* tempProj = new Rocket;
+			   tempProj->SetDamage(150);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+			   vec *= 2;
+			   tempProj->SetVelocity(vec);
+			   Sprite* bro = new Sprite;
+			   Frame* frame = new Frame;
+			   frame->SetFrameRect({ 0, 0, 32, 32 });
+			   bro->AddFrame(frame);
+			   bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
+			   tempProj->SetSprite(bro);
+			   return tempProj;
 	}
 		break;
 	case 3://Fire axe?

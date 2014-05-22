@@ -194,6 +194,9 @@ void ZombieFactory::Update(float dt)
 			}
 				break;
 			}
+
+			// Reset times
+			m_fNextSpawnTime = m_fSpawnInterval;
 		}
 	}
 }

@@ -229,7 +229,10 @@ int Player::GetType() const
 
 void Player::HandleCollision(const IEntity* pOther)
 {
-
+	if (pOther->GetType() == ENT_ZOMBIE_BEAVER)
+	{
+		m_nCurrHealth--;
+	}
 }
 
 /*virtual*/ void Player::Render()
