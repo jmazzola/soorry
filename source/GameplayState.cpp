@@ -671,6 +671,12 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
 		vec *= 2;
 		tempProj->SetVelocity(vec);
+		Sprite* bro = new Sprite;
+		Frame* frame = new Frame;
+		frame->SetFrameRect({ 0, 0, 32, 32 });
+		bro->AddFrame(frame);
+		bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
+		tempProj->SetSprite(bro);
 		return tempProj;
 	}
 		break;
