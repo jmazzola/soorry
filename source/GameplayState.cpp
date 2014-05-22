@@ -112,8 +112,10 @@ Entity*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
+
 	// Load all animation
-	AnimationManager::GetInstance()->LoadAll();
+	m_pAnimation = AnimationManager::GetInstance();
+	m_pAnimation->LoadAll();
 
 	// Create our player
 	m_pPlayer = CreatePlayer();
@@ -126,6 +128,8 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load wave information
 	zombieFactory.LoadWaves("resource/data/wave.xml");
 
+	// Start Zombie Factory
+	zombieFactory.Start();
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
@@ -160,6 +164,10 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 
+	m_pAnimation->UnloadSprites();
+	m_pAnimation = nullptr;
+	AnimationManager::DeleteInstance();
+
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
@@ -174,6 +182,8 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
 	}
+
+
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
@@ -414,6 +424,8 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEvents->Update();
 		m_pMessages->Update();
 
+	// Update Zombie Factory
+	zombieFactory.Update(elapsedTime);
 
 		// Check collisions
 	}

@@ -100,9 +100,6 @@ bool Game::Initialize( int width, int height )
 	// Store the current time (in milliseconds)
 	m_ulGameTime = GetTickCount();
 
-	// Testing the loading for the animation
-	m_pAnimation = AnimationManager::GetInstance();
-	//m_pAnimation->LoadSprites("resource/animation/piggy2.xml");
 	
 	
 	return true;	// success!
@@ -181,9 +178,6 @@ void Game::Terminate( void )
 	delete m_pFont;
 	m_pFont = nullptr;
 
-	m_pAnimation->UnloadSprites();
-	m_pAnimation = nullptr;
-	AnimationManager::DeleteInstance();
 
 	// Terminate & deallocate the SGD wrappers
 	m_pAudio->Terminate();
