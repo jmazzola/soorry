@@ -25,6 +25,7 @@
 #include "CreateFastZombieMessage.h"
 #include "CreateSlowZombieMessage.h"
 #include "CreateProjectileMessage.h"
+#include "CreatePlaceableMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -127,6 +128,12 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
+
+	//// Create our player
+	//m_pPuppet = CreatePlayer();
+	//m_pPuppet->SetPosition({ 200, 20 });
+	//// Add it to the entity manager
+	//m_pEntities->AddEntity(m_pPuppet, Entity::ENT_PLAYER);
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
@@ -571,6 +578,13 @@ Entity*	GameplayState::CreatePlayer() const
 											  zambie = nullptr;
 	}
 		break;
+
+	case MessageID::MSG_CREATE_PLACEABLE:
+	{
+		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+
+		//Entity* place = g->crea
 	case MessageID::MSG_CREATE_PROJECTILE:
 	{
 											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
@@ -653,6 +667,17 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	bro.SetImage("resource\images\tim\tim.png");
 	zambie->SetSprite(&bro);*/
 	return zambie;
+}
+
+Entity* GameplayState::CreateBearTrap(SGD::Point pt)
+{
+	return nullptr;
+}
+
+Entity* GameplayState::CreateMine(SGD::Point pt)
+{
+	return nullptr;
+
 }
 
 Entity* GameplayState::CreateProjectile(int _Weapon)
