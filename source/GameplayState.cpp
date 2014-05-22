@@ -24,8 +24,14 @@
 #include "CreateBeaverZombieMessage.h"
 #include "CreateFastZombieMessage.h"
 #include "CreateSlowZombieMessage.h"
+#include "CreateProjectileMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
+#include "FastZombie.h"
+#include "SlowZombie.h"
+#include "ShotgunPellet.h"
+#include "Rocket.h"
+#include "AssaultRifleBullet.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -530,7 +536,6 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
-
 		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(),pCreateMessage->GetY());
 		self->m_pEntities->AddEntity(beaver, 1);
 		beaver->Release();
@@ -541,7 +546,6 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
-
 		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
 		self->m_pEntities->AddEntity(zambie, 1);
 		zambie->Release();
@@ -552,11 +556,20 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
-
 		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
 		self->m_pEntities->AddEntity(zambie, 1);
 		zambie->Release();
 		zambie = nullptr;
+	}
+		break;
+	case MessageID::MSG_CREATE_PROJECTILE:
+	{
+		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+		self->m_pEntities->AddEntity(bullet, 1);
+		bullet->Release();
+		bullet = nullptr;
 	}
 		break;
 	}
@@ -604,7 +617,7 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 
 Entity* GameplayState::CreateFastZombie(int _x, int _y)
 {
-	BeaverZombie* zambie = new BeaverZombie;
+	FastZombie* zambie = new FastZombie;
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
@@ -619,7 +632,7 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 }
 Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 {
-	BeaverZombie* zambie = new BeaverZombie;
+	SlowZombie* zambie = new SlowZombie;
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
@@ -631,4 +644,58 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	bro.SetImage("resource\images\tim\tim.png");
 	zambie->SetSprite(&bro);*/
 	return zambie;
+}
+
+Entity* GameplayState::CreateProjectile(int _Weapon)
+{
+	switch (_Weapon)
+	{
+	case 0://Assault Rifle
+	{
+		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
+		tempProj->SetDamage(20);
+		tempProj->SetLifeTime(5);
+		tempProj->SetPosition(m_pPlayer->GetPosition());
+		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+		vec *= 2;
+		tempProj->SetVelocity(vec); 
+		return tempProj;
+	}
+		break;
+	case 1://Shotgun
+	{
+		ShotgunPellet* tempProj = new ShotgunPellet;
+		tempProj->SetDamage(20);
+		tempProj->SetLifeTime(5);
+		tempProj->SetPosition(m_pPlayer->GetPosition());
+		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+		vec *= 2;
+		tempProj->SetVelocity(vec);
+		return tempProj;
+	}
+		break;
+	case 2://Rocket launcher
+	{
+		Rocket* tempProj = new Rocket;
+		tempProj->SetDamage(150);
+		tempProj->SetLifeTime(5);
+		tempProj->SetPosition(m_pPlayer->GetPosition());
+		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
+		vec *= 2;
+		tempProj->SetVelocity(vec);
+		Sprite* bro = new Sprite;
+		Frame* frame = new Frame;
+		frame->SetFrameRect({ 0, 0, 32, 32 });
+		bro->AddFrame(frame);
+		bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
+		tempProj->SetSprite(bro);
+		return tempProj;
+	}
+		break;
+	case 3://Fire axe?
+	{
+
+	}
+		break;
+	}
 }

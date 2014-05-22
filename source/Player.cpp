@@ -7,7 +7,12 @@
 #include "Sprite.h"
 #include "Game.h"
 #include "WorldManager.h"
-
+#include "Weapon.h"
+#include "ShotgunPellet.h"
+#include "Rocket.h"
+#include "Projectile.h"
+#include "AssaultRifleBullet.h"
+#include "CreateProjectileMessage.h"
 Player::Player()
 {
 	// Entity
@@ -34,13 +39,64 @@ Player::Player()
 	m_fTimeAlive = 0.0f;
 	 //m_pInventory;
 	 //m_pCursor;
-	 //m_pWeapons;
+	//NOTE: Do I initialize this here? was this created right?
+	m_pWeapons = new Weapon[4];
+	//is three appropriate?
+	switch (3)
+	{
+		//NOTE:Will it hit this?
+	case 0: //Assault rifle
+	{
+		//NOTE: totally made up
+		Weapon tempWeapon = m_pWeapons[0];
+		tempWeapon.SetCurrAmmo(30);
+		//NOTE: totally made up
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetFireRate(.5);
+		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+	}
+		break;
+	case 1://Shotgun
+	{
+		//NOTE: totally made up
+		Weapon tempWeapon = m_pWeapons[1];
+		tempWeapon.SetCurrAmmo(10);
+		//NOTE: totally made up
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetFireRate(1);
+		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+
+	}
+		break;
+	case 2://rocket launcher
+	{
+		//NOTE: totally made up
+		Weapon tempWeapon = m_pWeapons[2];
+		tempWeapon.SetCurrAmmo(5);
+		//NOTE: totally made up
+		tempWeapon.SetMaxAmmo(50);
+		tempWeapon.SetFireRate(4);
+		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+	}
+		break;
+	case 3:
+	{
+		//NOTE: totally made up
+		Weapon tempWeapon = m_pWeapons[3];
+		tempWeapon.SetCurrAmmo(0);
+		//NOTE: totally made up
+		tempWeapon.SetMaxAmmo(0);
+		tempWeapon.SetFireRate(1);
+		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+	}
+		break;
+	}
 }
 
 
 Player::~Player()
 {
-
+		delete []m_pWeapons;
 }
 
 
@@ -55,8 +111,9 @@ void Player::Update(float dt)
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
+	//Update Timers
+		m_fShotTimer -= dt;
 	// Input
-
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
 	{
 		float oldpos = m_ptPosition.x;
@@ -97,7 +154,72 @@ void Player::Update(float dt)
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
-	
+	//GAH Weapons! - Arnold
+	if (pInput->IsKeyPressed(SGD::Key::One) == true)
+	{
+		m_nCurrWeapon = 0;
+		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	}
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true)
+	{
+		m_nCurrWeapon = 1;
+		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	}
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true)
+	{
+		m_nCurrWeapon = 2;
+		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	}
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true)
+	{
+		m_nCurrWeapon = 3;
+		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	}
+	//if (m_fShotTimer < 0)
+	//{
+	//	if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+	//	{
+	//		switch (m_nCurrWeapon)
+	//		{
+	//		case 0:
+	//		{
+	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+	//			msg->QueueMessage();
+	//			msg = nullptr;
+	//			//set the shot timer to the rate of fire
+	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	//		}
+	//			break;
+	//		case 1:
+	//		{
+	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+	//			msg->QueueMessage();
+	//			msg = nullptr;
+	//			//set the shot timer to the rate of fire
+	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	//		}
+	//			break;
+	//		case 2:
+	//		{
+	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+	//			msg->QueueMessage();
+	//			msg = nullptr;
+	//			//set the shot timer to the rate of fire
+	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	//		}
+	//			break;
+	//		case 3:
+	//		{
+	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+	//			msg->QueueMessage();
+	//			msg = nullptr;
+	//			//set the shot timer to the rate of fire
+	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+	//		}
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 int Player::GetType() const
