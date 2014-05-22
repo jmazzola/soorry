@@ -17,11 +17,11 @@ Player::Player()
 
 
 	// Animation/ Image
-	m_antsAnimation.m_fTimeOnFrame = 0;
-	m_antsAnimation.m_nCurrFrame = 0;
 	m_CurrAnimation.LoadPlayerRun(m_CurrAnimation.PlayerRun);
-	m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
 	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
+	m_pSprite->m_antsAnimation.m_fTimeOnFrame = 0;
+	m_pSprite->m_antsAnimation.m_nCurrFrame = 0;
+	m_pSprite->m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -67,7 +67,7 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.x = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::D) == true)
 	{
@@ -77,40 +77,31 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.x = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::W) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.y = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::S) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.y = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	
 }
 
-/*********************************************************/
-// Update
-//	- Draw the character
-void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-}
 
 SGD::Rectangle Player::GetRect() const
 {

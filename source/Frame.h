@@ -18,7 +18,6 @@ public:
 	float GetDuration() { return m_fDuration; }
 	SGD::Point GetAnchorPoint() { return m_pAnchorPoint; }
 	std::string GetTriggerID() { return m_strTriggerID; }
-
 	/**********************************************************/
 	// Mutators
 	void SetCollisionRect(SGD::Rectangle newRect) { m_rCollisionRect = newRect; }

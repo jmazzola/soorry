@@ -27,7 +27,7 @@ public:
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
-	virtual void Render() override;
+	//virtual void Render() override;
 	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
@@ -81,7 +81,8 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
-	AnimationTimestamp m_antsAnimation;
 	AnimationID m_CurrAnimation;
+
+
 };
 
