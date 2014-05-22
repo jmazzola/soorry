@@ -10,7 +10,6 @@
 
 #include "Entity.h"
 #include "AnimationManager.h"
-#include "AnimationID.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -29,6 +28,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
+	virtual void Render();
 
 	/**********************************************************/
 	// Accessors
@@ -79,8 +79,6 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
-	AnimationID m_CurrAnimation;
-
-
+	AnimationTimestamp m_antsAnimation;
 };
 

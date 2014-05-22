@@ -27,6 +27,7 @@ public:
 	void Update(AnimationTimestamp& ants, float dt);
 	void Render(AnimationTimestamp& ants, float x, float y);
 	void UnloadSprites();
+	void LoadAll();
 
 	/**********************************************************/
 	// Accessor
@@ -49,6 +50,7 @@ private:
 	virtual ~AnimationManager() = default;
 	AnimationManager(const AnimationManager&) = delete;
 	AnimationManager& operator= (const AnimationManager&) = delete;
+	bool made = false;
 
 };
 

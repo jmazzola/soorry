@@ -37,7 +37,11 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 	if (root == nullptr)
 		return false;
 	// Getting rid of any past data
-	m_mSprites.clear();
+	if (made == false)
+	{
+		m_mSprites.clear();
+		made = true;
+	}
 
 	std::string ID;
 	TiXmlElement* spriteImg = root->FirstChildElement("sprite");
@@ -204,7 +208,7 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 	{ (float)x, (float)y },
 	r);
 
-	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_fTimeOnFrame).GetTriggerID() == "ha")
+	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
 	{
 		g->DrawString("ha", { (float)x, (float)y });
 	}
@@ -218,3 +222,7 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 		return nullptr;
 }
 
+void AnimationManager::LoadAll()
+{
+	LoadSprites("resource/animation/piggy3.xml");
+}

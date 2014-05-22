@@ -105,6 +105,9 @@ Entity*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
+	// Load all animation
+	AnimationManager::GetInstance()->LoadAll();
+
 	// Create our player
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
