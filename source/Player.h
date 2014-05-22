@@ -10,7 +10,6 @@
 
 #include "Entity.h"
 #include "AnimationManager.h"
-#include "AnimationID.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -27,10 +26,9 @@ public:
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
-	virtual void Render() override;
-	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
+	virtual void Render();
 
 	/**********************************************************/
 	// Accessors
@@ -82,6 +80,5 @@ protected:
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
 	AnimationTimestamp m_antsAnimation;
-	AnimationID m_CurrAnimation;
 };
 

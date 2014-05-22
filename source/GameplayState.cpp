@@ -1,8 +1,6 @@
 /***************************************************************
 |	File:		GameplayState.cpp
 |	Author:		Justin Mazzola
-|	Course:		
-|	Purpose:	
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -21,6 +19,13 @@
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_MessageManager.h"
 #include "../SGD Wrappers/SGD_Message.h"
+#include "Sprite.h"
+//Message Includes
+#include "CreateBeaverZombieMessage.h"
+#include "CreateFastZombieMessage.h"
+#include "CreateSlowZombieMessage.h"
+//Object Includes
+#include "BeaverZombie.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -55,7 +60,7 @@ using namespace std;
 // CreatePlayer
 //	- allocate a new player
 ///	- set the player's properties
-Player*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
 	return player;
@@ -101,18 +106,16 @@ Player*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
+	// Load all animation
+	AnimationManager::GetInstance()->LoadAll();
 
 	// Create our player
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
-
-
-
 	// Load the world
-	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
-
+	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
 
 	// Load wave information
 	zombieFactory.LoadWaves("resource/data/wave.xml");
@@ -217,7 +220,24 @@ Player*	GameplayState::CreatePlayer() const
 	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
 		m_bIsPaused = !m_bIsPaused;
-
+	if (pInput->IsKeyPressed(SGD::Key::Z))
+	{
+		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
+	if (pInput->IsKeyPressed(SGD::Key::X))
+	{
+		CreateSlowZombieMessage* msg = new CreateSlowZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
+	if (pInput->IsKeyPressed(SGD::Key::C))
+	{
+		CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 #pragma region Pause Menu Navigation Clutter
 	// Handle pause menu input
 	// If we're paused
@@ -405,8 +425,8 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Render test world
-	WorldManager::GetInstance()->Render(SGD::Point(0,0));
-	
+	WorldManager::GetInstance()->Render(SGD::Point(0, 0));
+
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 #endif
@@ -494,9 +514,38 @@ Player*	GameplayState::CreatePlayer() const
 	// What type of message?
 	switch (pMsg->GetMessageID())
 	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
+	case MessageID::MSG_CREATE_BEAVER_ZOMBIE:
+	{
+		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+
+		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(),pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(beaver, 1);
+		beaver->Release();
+		beaver = nullptr;
+	}
+		break;
+	case MessageID::MSG_CREATE_FAST_ZOMBIE:
+	{
+		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+
+		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, 1);
+		zambie->Release();
+		zambie = nullptr;
+	}
+		break;
+	case MessageID::MSG_CREATE_SLOW_ZOMBIE:
+	{
+		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+
+		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, 1);
+		zambie->Release();
+		zambie = nullptr;
+	}
 		break;
 	}
 
@@ -522,4 +571,52 @@ Button* GameplayState::CreateButton() const
 	pButton->SetSize({ 314, 70 });
 
 	return pButton;
+}
+
+Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
+{
+	BeaverZombie* tempBeav = new BeaverZombie;
+	tempBeav->SetDamage(10);
+	tempBeav->SetPosition({ (float)_x, (float)_y });
+	tempBeav->SetAttackRange(1.0f);
+	tempBeav->SetMaxHealth(100);
+	tempBeav->SetCurrHealth(100);
+	tempBeav->SetSpeed(2.0f);
+	tempBeav->SetVelocity({ 0, 0 });
+	//NOTE: need to render only one image ask james how to do this
+	/*Sprite bro;
+	bro.SetImage("resource\animation\TestBeaver.png");
+	tempBeav->SetSprite(&bro);*/
+	return tempBeav;
+}
+
+Entity* GameplayState::CreateFastZombie(int _x, int _y)
+{
+	BeaverZombie* zambie = new BeaverZombie;
+	zambie->SetDamage(10);
+	zambie->SetPosition({ (float)_x, (float)_y });
+	zambie->SetAttackRange(1.0f);
+	zambie->SetMaxHealth(100);
+	zambie->SetCurrHealth(100);
+	zambie->SetSpeed(1.0f);
+	zambie->SetVelocity({ 0, 0 });
+	/*Sprite bro;
+	bro.SetImage("resource\images\tim\tim.png");
+	zambie->SetSprite(&bro);*/
+	return zambie;
+}
+Entity* GameplayState::CreateSlowZombie(int _x, int _y)
+{
+	BeaverZombie* zambie = new BeaverZombie;
+	zambie->SetDamage(10);
+	zambie->SetPosition({ (float)_x, (float)_y });
+	zambie->SetAttackRange(1.0f);
+	zambie->SetMaxHealth(100);
+	zambie->SetCurrHealth(100);
+	zambie->SetSpeed(.5f);
+	zambie->SetVelocity({ 0, 0 });
+	/*Sprite bro;
+	bro.SetImage("resource\images\tim\tim.png");
+	zambie->SetSprite(&bro);*/
+	return zambie;
 }

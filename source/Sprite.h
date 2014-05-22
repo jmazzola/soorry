@@ -4,6 +4,7 @@
 #include <string>
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "Frame.h"
+#include "AnimationManager.h"
 
 class Frame;
 
@@ -21,7 +22,8 @@ public:
 	SGD::HTexture GetImage() { return m_htImage; }
 	std::string GetSpriteID() { return m_strSpriteID; }
 	bool IsLooping() { return m_bIsLooping; }
-	Frame& GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
+	//Frame& GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
+	Frame GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
 	int GetFrameSize() { return m_vFrames.size(); }
 
 	/**********************************************************/
@@ -33,6 +35,10 @@ public:
 	/**********************************************************/
 	// Interface
 	void AddFrame(Frame* f) { m_vFrames.push_back(f); }
+
+	/**********************************************************/
+	// Data Members
+
 private:
 	/**********************************************************/
 	// Data Members
@@ -40,6 +46,5 @@ private:
 	SGD::HTexture m_htImage = SGD::INVALID_HANDLE;
 	std::string m_strSpriteID;
 	bool m_bIsLooping;
-
 };
 

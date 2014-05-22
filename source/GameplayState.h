@@ -3,6 +3,9 @@
 |	Author:		
 |	Course:		
 |	Purpose:	
+|	Author:
+|	Course:
+|	Purpose:
 ***************************************************************/
 
 #ifndef GAMEPLAYSTATE_H
@@ -39,45 +42,45 @@ class GameplayState : public IGameState
 public:
 	/**********************************************************/
 	// Singleton Accessor:
-	static GameplayState* GetInstance( void );
+	static GameplayState* GetInstance(void);
 
-	
+
 	/**********************************************************/
 	// IGameState Interface:
-	virtual void	Enter	( void )				override;	// load resources
-	virtual void	Exit	( void )				override;	// unload resources
-													
-	virtual bool	Input	( void )				override;	// handle user input
-	virtual void	Update	( float elapsedTime )	override;	// update game entities / animations
-	virtual void	Render	( void )				override;	// render game entities / menus
-	
+	virtual void	Enter(void)				override;	// load resources
+	virtual void	Exit(void)				override;	// unload resources
+
+	virtual bool	Input(void)				override;	// handle user input
+	virtual void	Update(float elapsedTime)	override;	// update game entities / animations
+	virtual void	Render(void)				override;	// render game entities / menus
+
 private:
 
 	/**********************************************************/
 	// SINGLETON (not-dynamically allocated)
-	GameplayState( void )			= default;	// default constructor
-	virtual ~GameplayState( void )	= default;	// destructor
+	GameplayState(void) = default;	// default constructor
+	virtual ~GameplayState(void) = default;	// destructor
 
-	GameplayState( const GameplayState& )				= delete;	// copy constructor
-	GameplayState& operator= ( const GameplayState& )	= delete;	// assignment operator
+	GameplayState(const GameplayState&) = delete;	// copy constructor
+	GameplayState& operator= (const GameplayState&) = delete;	// assignment operator
 
-	
+
 	/**********************************************************/
 	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
-	
-	
+	EntityManager*			m_pEntities = nullptr;
+
+
 	/**********************************************************/
 	// Event & Message Managers
-	SGD::EventManager*		m_pEvents			= nullptr;
-	SGD::MessageManager*	m_pMessages			= nullptr;
-	ParticleManager*		m_pParticleManager	= nullptr;
+	SGD::EventManager*		m_pEvents = nullptr;
+	SGD::MessageManager*	m_pMessages = nullptr;
+	ParticleManager*		m_pParticleManager = nullptr;
 
 	/**********************************************************/
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Player* m_pPlayer;
+	Entity* m_pPlayer;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -86,6 +89,7 @@ private:
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hBeaverImg = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
@@ -109,15 +113,17 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
-
+	Entity* CreateBeaverZombie(int _x, int _y);
+	Entity* CreateFastZombie(int _x, int _y);
+	Entity* CreateSlowZombie(int _x, int _y);
 	// Create a button
 	Button* CreateButton() const;
 
 	// Creates a player
-	Player*	CreatePlayer() const;
+	Entity*	CreatePlayer() const;
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	static void MessageProc(const SGD::Message* pMsg);
 };
 
 #endif //GAMEPLAYSTATE_H

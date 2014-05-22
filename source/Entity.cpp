@@ -32,11 +32,13 @@
 	//assert( m_hImage != SGD::INVALID_HANDLE && "Entity::Render - image was not set!" );
 	
 
+	SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
+
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;
 
 	// Draw the image
-	
+
 }
 
 
@@ -45,7 +47,12 @@
 //	- calculate the entity's bounding rectangle
 /*virtual*/ SGD::Rectangle Entity::GetRect( void ) const
 {
-	return SGD::Rectangle();
+	SGD::Rectangle rect = m_pSprite->GetFrame(0).GetCollisionRect();
+	rect.left += m_ptPosition.x;
+	rect.top += m_ptPosition.y;
+	rect.right += m_ptPosition.x;
+	rect.bottom += m_ptPosition.y;
+	return rect;
 }
 
 

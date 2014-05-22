@@ -6,22 +6,20 @@
 #include "Frame.h"
 #include "Sprite.h"
 #include "Game.h"
-#include "AnimationID.h"
 #include "WorldManager.h"
 
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 100, 100 };
+	m_ptPosition = { 50, 100 };
 	m_vtVelocity = { 0, 0 };
 
 
 	// Animation/ Image
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
-	m_CurrAnimation.LoadPlayerRun(m_CurrAnimation.PlayerRun);
-	m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
-	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
+	m_antsAnimation.m_nCurrAnimation = "running";
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -81,7 +79,7 @@ void Player::Update(float dt)
 	}
 	if (pInput->IsKeyDown(SGD::Key::W) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
@@ -91,7 +89,7 @@ void Player::Update(float dt)
 	}
 	if (pInput->IsKeyDown(SGD::Key::S) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
@@ -100,21 +98,6 @@ void Player::Update(float dt)
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	
-}
-
-/*********************************************************/
-// Update
-//	- Draw the character
-void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-}
-
-SGD::Rectangle Player::GetRect() const
-{
-	return SGD::Rectangle();
 }
 
 int Player::GetType() const
@@ -126,6 +109,16 @@ void Player::HandleCollision(const IEntity* pOther)
 {
 
 }
+
+/*virtual*/ void Player::Render()
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
+
+	Entity::Render();
+}
+
 
 /**********************************************************/
 // Accessors
