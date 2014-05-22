@@ -12,16 +12,16 @@
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 100, 100 };
+	m_ptPosition = { 0, 100 };
 	m_vtVelocity = { 0, 0 };
 
 
 	// Animation/ Image
-	m_antsAnimation.m_fTimeOnFrame = 0;
-	m_antsAnimation.m_nCurrFrame = 0;
 	m_CurrAnimation.LoadPlayerRun(m_CurrAnimation.PlayerRun);
-	m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
 	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
+	m_pSprite->m_antsAnimation.m_fTimeOnFrame = 0;
+	m_pSprite->m_antsAnimation.m_nCurrFrame = 0;
+	m_pSprite->m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -67,7 +67,7 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.x = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::D) == true)
 	{
@@ -77,7 +77,7 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.x = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::W) == true)
 	{
@@ -87,7 +87,7 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.y = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::S) == true)
 	{
@@ -97,7 +97,7 @@ void Player::Update(float dt)
 		if (pWorld->CheckCollision(this) == true)
 			m_ptPosition.y = oldpos;
 
-		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+		AnimationManager::GetInstance()->Update(m_pSprite->m_antsAnimation, dt);
 	}
 	
 }

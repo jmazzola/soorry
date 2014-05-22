@@ -188,8 +188,8 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 {
-
-	SGD::GraphicsManager::GetInstance()->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
+	g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
 
 	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
 	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;
@@ -200,9 +200,14 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 	r.right += r.left;
 	r.bottom += r.top;
 
-	SGD::GraphicsManager::GetInstance()->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
+	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
 	r);
+
+	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_fTimeOnFrame).GetTriggerID() == "ha")
+	{
+		g->DrawString("ha", { (float)x, (float)y });
+	}
 }
 
 Sprite* AnimationManager::GetSprite(std::string nameID)
@@ -212,3 +217,4 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 	else
 		return nullptr;
 }
+
