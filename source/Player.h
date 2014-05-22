@@ -68,6 +68,7 @@ protected:
 
 	/**********************************************************/
 	// Members
+	float m_fShotTimer;
 	int m_nMaxHealth;
 	int m_nCurrHealth;
 	int m_nCurrWeapon;

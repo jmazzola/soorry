@@ -6,5 +6,7 @@ class AssaultRifleBullet :
 public:
 	AssaultRifleBullet();
 	~AssaultRifleBullet();
+protected:
+	EntityType m_nType;
 };
 
