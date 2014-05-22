@@ -106,8 +106,6 @@ private:
 	// Fullscreen
 	bool m_bFullscreen = true;
 
-	// Animation Manager
-	AnimationManager* m_pAnimation = nullptr;
 	
 };
 

@@ -15,6 +15,7 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "AnimationManager.h"
 
 /**************************************************************/
 // Forward class declaration
@@ -124,6 +125,10 @@ private:
 
 	// Message Callback Function:
 	static void MessageProc(const SGD::Message* pMsg);
+
+	// Animation Manager
+	AnimationManager* m_pAnimation = nullptr;
+
 };
 
 #endif //GAMEPLAYSTATE_H

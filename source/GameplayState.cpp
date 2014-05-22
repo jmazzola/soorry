@@ -106,8 +106,10 @@ Entity*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
+
 	// Load all animation
-	AnimationManager::GetInstance()->LoadAll();
+	m_pAnimation = AnimationManager::GetInstance();
+	m_pAnimation->LoadAll();
 
 	// Create our player
 	m_pPlayer = CreatePlayer();
@@ -153,6 +155,10 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+
+	m_pAnimation->UnloadSprites();
+	m_pAnimation = nullptr;
+	AnimationManager::DeleteInstance();
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
