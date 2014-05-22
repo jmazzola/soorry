@@ -156,7 +156,6 @@ void ZombieFactory::Update(float dt)
 			{
 				// Determine which side
 				int side = rand() % 4;
-
 				switch (side)
 				{
 				case 0:
