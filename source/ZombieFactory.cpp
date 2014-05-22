@@ -1,5 +1,9 @@
 #include "ZombieFactory.h"
 
+#include "CreateSlowZombieMessage.h"
+#include "CreateFastZombieMessage.h"
+#include "CreateBeaverZombieMessage.h"
+
 #include "../TinyXML/tinyxml.h"
 
 
@@ -60,9 +64,115 @@ bool ZombieFactory::LoadWaves(string _fileName)
 	}
 }
 
+void ZombieFactory::Start()
+{
+	// Default start behavior
+	m_bIsPaused = false;
+	m_bBuildMode = true;
+
+	// Start at wave one
+	m_nWave = 1;
+	m_bInfiniteBuildTime = waveData[m_nWave - 1].infiniteBuildTime;
+	m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
+	m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
+	m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
+	m_nEnemiesRemaining = m_nSlowZombiesToSpawn + m_nFastZombiesToSpawn + m_nBeaverZombiesToSpawn;
+	m_fBuildTime = waveData[m_nWave - 1].buildTime;
+	m_fBuildTimeRemaining = m_fBuildTime;
+	m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+	m_fNextSpawnTime = 0.0f;
+}
+
+void ZombieFactory::Stop()
+{
+
+}
+
 void ZombieFactory::Update(float dt)
 {
-	//loop for amount, account for spawn delay
+	// If paused, don't do anything
+	if (m_bIsPaused)
+		return;
+
+	// Build mode
+	if (m_bBuildMode)
+	{
+		// Update timers
+		m_fBuildTimeRemaining -= dt;
+
+		// Check to see if we leave build mode
+		if (m_fBuildTimeRemaining <= 0.0f)
+		{
+			m_bBuildMode = false;
+			return;
+		}
+	}
+
+	// Zombie mode
+	else
+	{
+		// Check if all enemies are dead
+		if (m_nEnemiesRemaining <= 0)
+		{
+			m_bBuildMode = true;
+			return;
+		}
+
+		// Update timers
+		m_fNextSpawnTime -= dt;
+
+		// Spawn zombies when ready
+		if (m_fNextSpawnTime <= 0.0f)
+		{
+			// Determine which zombie to spawn
+			int zombieType;
+			bool invalid = false;
+			do
+			{
+				zombieType = rand() % 3;
+				switch (zombieType)
+				{
+				case 0:
+					// Slow zombie
+					if (m_nSlowZombiesToSpawn <= 0)
+						invalid = true;
+					break;
+				case 1:
+					// Fast zombie
+					if (m_nFastZombiesToSpawn <= 0)
+						invalid = true;
+					break;
+				case 2:
+					// Beaver zombie
+					if (m_nBeaverZombiesToSpawn <= 0)
+						invalid = true;
+					break;
+				}
+			} while (invalid);
+
+			// Determine where to spawn
+
+			// Spawn the zombie
+			switch (zombieType)
+			{
+			case 0:
+			{
+					  // Slow zombie
+			}
+				break;
+			case 1:
+			{
+					  // Fast zombie
+			}
+				break;
+			case 2:
+			{
+					  // Beaver zombie
+			}
+				break;
+			}
+		}
+	}
 }
 
 /**********************************************************/

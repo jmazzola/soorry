@@ -22,6 +22,7 @@ public:
 	std::string GetSpriteID() { return m_strSpriteID; }
 	bool IsLooping() { return m_bIsLooping; }
 	Frame& GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
+	int GetFrameSize() { return m_vFrames.size(); }
 
 	/**********************************************************/
 	// Mutator

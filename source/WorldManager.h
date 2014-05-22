@@ -9,7 +9,7 @@ using namespace std;
 
 #include "Layer.h"
 
-#define CAMERA_IMPLEMENTED 0
+#define CAMERA_IMPLEMENTED 1
 
 /**********************************************************/
 // Forward Declarations

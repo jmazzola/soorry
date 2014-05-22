@@ -1,8 +1,6 @@
 /***************************************************************
 |	File:		GameplayState.cpp
 |	Author:		Justin Mazzola
-|	Course:
-|	Purpose:
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -107,10 +105,10 @@ Player*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
-	//// Create our player
-	//m_pPlayer = CreatePlayer();
-	//// Add it to the entity manager
-	//m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
+	// Create our player
+	m_pPlayer = CreatePlayer();
+	// Add it to the entity manager
+	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 	// Load the world
 	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
@@ -135,6 +133,14 @@ Player*	GameplayState::CreatePlayer() const
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
+
+
+	// Release the player
+	if (m_pPlayer != nullptr)
+	{
+		m_pPlayer->Release();
+		m_pPlayer = nullptr;
+	}
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
