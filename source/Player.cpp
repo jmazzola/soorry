@@ -12,7 +12,7 @@
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 100, 100 };
+	m_ptPosition = { 0, 100 };
 	m_vtVelocity = { 0, 0 };
 
 
@@ -102,15 +102,6 @@ void Player::Update(float dt)
 	
 }
 
-<<<<<<< HEAD
-
-SGD::Rectangle Player::GetRect() const
-{
-	return SGD::Rectangle();
-}
-
-=======
->>>>>>> b6d63cd62729f6f638f3816245376b16ccfa49d1
 int Player::GetType() const
 {
 	return ENT_PLAYER;
