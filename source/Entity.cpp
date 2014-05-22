@@ -31,13 +31,17 @@
 	// Verify the image
 	//assert( m_hImage != SGD::INVALID_HANDLE && "Entity::Render - image was not set!" );
 	
+
 	SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;
 
 	// Draw the image
-	
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	AnimationManager::GetInstance()->Render(m_pSprite->m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
+
 }
 
 

@@ -4,6 +4,7 @@
 #include <string>
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "Frame.h"
+#include "AnimationManager.h"
 
 class Frame;
 
@@ -23,6 +24,7 @@ public:
 	bool IsLooping() { return m_bIsLooping; }
 	Frame& GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
 	int GetFrameSize() { return m_vFrames.size(); }
+	int GetCurrFrame() { return m_antsAnimation.m_nCurrFrame; }
 
 	/**********************************************************/
 	// Mutator
@@ -33,6 +35,11 @@ public:
 	/**********************************************************/
 	// Interface
 	void AddFrame(Frame* f) { m_vFrames.push_back(f); }
+
+	/**********************************************************/
+	// Data Members
+	AnimationTimestamp m_antsAnimation;
+
 private:
 	/**********************************************************/
 	// Data Members
@@ -40,6 +47,5 @@ private:
 	SGD::HTexture m_htImage = SGD::INVALID_HANDLE;
 	std::string m_strSpriteID;
 	bool m_bIsLooping;
-
 };
 

@@ -79,7 +79,8 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
-	AnimationTimestamp m_antsAnimation;
 	AnimationID m_CurrAnimation;
+
+
 };
 

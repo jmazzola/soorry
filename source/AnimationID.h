@@ -8,6 +8,6 @@ struct AnimationID
 
 	void LoadPlayerRun(std::string& id)
 	{
-		id = AnimationManager::GetInstance()->LoadSprites("resource/animation/piggy2.xml");
+		id = AnimationManager::GetInstance()->LoadSprites("resource/animation/piggy3.xml");
 	}
 };
