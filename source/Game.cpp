@@ -133,6 +133,7 @@ int Game::Main( void )
 		elapsedTime = 0.125f;
 
 	// Toggle fullscreen
+
 	if (SGD::InputManager::GetInstance()->IsKeyDown(SGD::Key::Alt) &&
 		SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::Enter))
 	{
