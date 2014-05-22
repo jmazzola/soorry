@@ -51,14 +51,16 @@ void Emitter::load()
 			if (!particleFlyweight->isSpread)
 			{
 				tempParticle->velocity = particleFlyweight->startVelocity;
+				tempParticle->velocityRateX = ((particleFlyweight->startVelocity.x - particleFlyweight->endVelocity.x) / tempParticle->maxLifeTime);
+				tempParticle->velocityRateY = ((particleFlyweight->startVelocity.y - particleFlyweight->endVelocity.y) / tempParticle->maxLifeTime);
 			}
 			else
 			{
 				tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
 				tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
+				tempParticle->velocityRateX = 0;
+				tempParticle->velocityRateY = 0;
 			}
-			tempParticle->velocityRateX = ((particleFlyweight->startVelocity.x - particleFlyweight->endVelocity.x) / tempParticle->maxLifeTime);
-			tempParticle->velocityRateY = ((particleFlyweight->startVelocity.y - particleFlyweight->endVelocity.y) / tempParticle->maxLifeTime);
 			tempParticle->rotation = particleFlyweight->startRotation;
 			tempParticle->rotationRate = ((particleFlyweight->startRotation - particleFlyweight->endRotation) / tempParticle->maxLifeTime);
 			//Randomize the position within the emitter NOTE: maybe need to add world offset
@@ -72,8 +74,9 @@ void Emitter::load()
 				break;
 			case 1://circle
 			{
+				//MAFF very powerful
 				//NOTE:width == radius height is not used
-				float radius = size.width / 2;
+				float radius = rand() % (int)size.width / 2;
 				float x = size.width / 2;
 				float y = size.width / 2;
 				//Point for the center of the emitter
@@ -144,6 +147,8 @@ void Emitter::Update(float dt)
 				{
 					tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
 					tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
+					tempParticle->velocityRateX = 0;
+					tempParticle->velocityRateY = 0;
 				}
 				switch (shape)
 				{

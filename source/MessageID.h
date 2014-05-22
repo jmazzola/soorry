@@ -13,7 +13,7 @@
 // MessageID enum
 //	- enumerated list of message identifiers
 enum class MessageID { MSG_UNKNOWN, 
-						MSG_CREATE_PLAYER_SPAWN,
+						MSG_CREATE_PLAYER_SPAWN,MSG_CREATE_BEAVER_ZOMBIE, MSG_CREATE_FAST_ZOMBIE, MSG_CREATE_SLOW_ZOMBIE,
 };
 
 

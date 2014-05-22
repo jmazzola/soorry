@@ -102,12 +102,15 @@ void Player::Update(float dt)
 	
 }
 
+<<<<<<< HEAD
 
 SGD::Rectangle Player::GetRect() const
 {
 	return SGD::Rectangle();
 }
 
+=======
+>>>>>>> b6d63cd62729f6f638f3816245376b16ccfa49d1
 int Player::GetType() const
 {
 	return ENT_PLAYER;

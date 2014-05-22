@@ -27,8 +27,11 @@ public:
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
+<<<<<<< HEAD
 	//virtual void Render() override;
 	virtual SGD::Rectangle GetRect() const override;
+=======
+>>>>>>> b6d63cd62729f6f638f3816245376b16ccfa49d1
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
 
