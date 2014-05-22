@@ -216,8 +216,41 @@ bool WorldManager::CheckCollision(IEntity* _object)
 	int bottom = (int)rect.bottom / m_nTileHeight + 1;
 	int right = (int)rect.right / m_nTileWidth + 1;
 
-	// FOR DEBUG PURPOSES ONLY!
-	//SGD::GraphicsManager::GetInstance()->DrawRectangle(SGD::Rectangle((float)left, (float)top, (float)right, (float)bottom), SGD::Color(100, 0, 0, 0));
+	// Loop through tiles to check
+	for (int x = left; x < right; x++)
+	{
+		for (int y = top; y < bottom; y++)
+		{
+			// Go through each layer (starting on top)
+			for (int i = m_vLayers.size() - 1; i >= 0; i--)
+			{
+				// Check for collision triggers
+				if (m_vLayers[i][x][y].GetTriggerCollision() != "")
+				{
+					SGD::Event* pEvent = new SGD::Event(m_vLayers[i][x][y].GetTriggerCollision().c_str(), nullptr, this);
+					pEvent->QueueEvent();
+				}
+
+				// Check if collision
+				if (m_vLayers[i][x][y].IsCollidable())
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+int WorldManager::CheckCollisionID(IEntity* _object)
+{
+	// Get the object's collision rect
+	SGD::Rectangle rect = _object->GetRect();
+
+	// Set the tiles to check
+	int top = (int)rect.top / m_nTileHeight;
+	int left = (int)rect.left / m_nTileWidth;
+	int bottom = (int)rect.bottom / m_nTileHeight + 1;
+	int right = (int)rect.right / m_nTileWidth + 1;
 
 	// Loop through tiles to check
 	for (int x = left; x < right; x++)
@@ -227,14 +260,14 @@ bool WorldManager::CheckCollision(IEntity* _object)
 			// Go through each layer (starting on top)
 			for (int i = m_vLayers.size() - 1; i >= 0; i--)
 			{
-				// Check if collision
-				if (m_vLayers[i][x][y].IsCollidable())
-					return true;
+				// Check for collision ID
+				if (m_vLayers[i][x][y].GetColliderID() != 0)
+					return m_vLayers[i][x][y].GetColliderID();
 			}
 		}
 	}
 
-	return false;
+	return 0;
 }
 
 int WorldManager::ColliderIDAtPosition(int _x, int _y) const

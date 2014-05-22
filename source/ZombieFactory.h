@@ -30,6 +30,8 @@ public:
 	int GetSlowZombiesToSpawn() const;
 	int GetFastZombiesToSpawn() const;
 	int GetBeaverZombiesToSpawn() const;
+	int GetSpawnWidth() const;
+	int GetSpawnHeight() const;
 	float GetBuildTime() const;
 	float GetBuildTimeRemaining() const;
 	float GetSpawnInterval() const;
@@ -45,6 +47,8 @@ public:
 	void SetSlowZombiesToSpawn(int slowZombiesToSpawn);
 	void SetFastZombiesToSpawn(int fastZombiesToSpawn);
 	void SetBeaverZombiesToSpawn(int beaverZombiesToSpawn);
+	void SetSpawnWidth(int spawnWidth);
+	void SetSpawnHeight(int spawnHeight);
 	void SetBuildTime(float buildTime);
 	void SetBuildTImeRemaining(float buildTimeRemaining);
 	void SetSpawnInterval(float spawnInterval);
@@ -62,6 +66,8 @@ protected:
 	int m_nSlowZombiesToSpawn;
 	int m_nFastZombiesToSpawn;
 	int m_nBeaverZombiesToSpawn;
+	int m_nSpawnWidth;
+	int m_nSpawnHeight;
 	float m_fBuildTime;
 	float m_fBuildTimeRemaining;
 	float m_fSpawnInterval;
