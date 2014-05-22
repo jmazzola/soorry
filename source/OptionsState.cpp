@@ -10,9 +10,11 @@
 
 #include "Game.h"
 #include "MainMenuState.h"
+#include "GameplayState.h"
 
 #include "Button.h"
 
+#include "../TinyXML/tinyxml.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
@@ -40,6 +42,7 @@ using namespace std;
 
 #include <cfloat>
 
+#define STRING_CONFIGPATH "resource/data/config.xml"
 
 /**************************************************************/
 // GetInstance
@@ -95,6 +98,9 @@ using namespace std;
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 
+	// Load the Options
+	LoadOptions(STRING_CONFIGPATH);
+
 }
 
 
@@ -132,6 +138,9 @@ using namespace std;
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
+
+	// Save the options to a config file
+	SaveOptions(STRING_CONFIGPATH);
 
 }
 
@@ -179,10 +188,10 @@ using namespace std;
 
 			case MENU_GOBACK:
 			{
-				// Go Back to Main Menu
-				pGame->ChangeState(MainMenuState::GetInstance());
-				// Exit immediately
-				return true;
+					//Go to Main Menu
+					pGame->ChangeState(MainMenuState::GetInstance());
+					// Exit immediately
+					return true;
 			}
 			break;
 		}
@@ -317,4 +326,75 @@ Button* OptionsState::CreateButton() const
 	pButton->SetSize({ 314, 70 });
 
 	return pButton;
+}
+
+/*************************************************************/
+// Functions
+
+// LoadOptions
+//	- load options configuration (volumes and such)
+// [in] xmlSavegame - the file path to the savegame where you want to load it from
+void OptionsState::LoadOptions(string xmlSavegame)
+{
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load the file, if not gtfo
+	if (!doc.LoadFile(xmlSavegame.c_str()))
+		return;
+
+	// Access the root element (volume)
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Is the root there, if not, gtfo
+	if (pRoot == nullptr)
+		return;
+
+	// Get the volume
+	TiXmlElement* pVol = pRoot->FirstChildElement("vol");
+
+	// Grab the game volume according to the element
+	const char* gameVolume = pVol->Attribute("music");
+	// Set the game volume
+	SGD::AudioManager::GetInstance()->SetMasterVolume(SGD::AudioGroup::Music, atoi(gameVolume));
+
+	// Grab the sound effects volume according to the element
+	const char* sfxVolume = pVol->Attribute("sfx");
+	// Set the sfx volume
+	SGD::AudioManager::GetInstance()->SetMasterVolume(SGD::AudioGroup::SoundEffects, atoi(sfxVolume));
+
+}
+
+// SaveOptions
+//	- save the player's configuration to the xml file
+// [in] xmlSavegame - the file path to the savegame where you want to save to
+void OptionsState::SaveOptions(string xmlSavegame)
+{
+	// Create a TinyXML doc
+	TiXmlDocument doc;
+
+	// Allocate a Tiny XML Declaration
+	TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
+
+	// Attach the declaration to the document
+	doc.LinkEndChild(pDecl);
+
+	// Add a new element 'volume'
+	TiXmlElement* pRoot = new TiXmlElement("volume");
+
+	// Add a new element 'vol'
+	TiXmlElement* pVol = new TiXmlElement("vol");
+
+	// Attach vol to volume
+	pRoot->LinkEndChild(pVol);
+
+	// Set the vol's attributes to the settings set by the player
+	pVol->SetAttribute("music", SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music));
+	pVol->SetAttribute("sfx", SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects));
+
+	// Attach the root to the doc
+	doc.LinkEndChild(pRoot);
+
+	// Save and write the savegame
+	doc.SaveFile(xmlSavegame.c_str());
 }

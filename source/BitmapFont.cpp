@@ -158,7 +158,7 @@ void BitmapFont::Draw( string output, int x, int y,
 		{
 			// Move to the next row
 			y += (int)(m_nCharHeight[curChar] * scale);
-			x = colX * scale / 4;
+			x = colX * (int)scale / 4;
 			continue;
 		}
 
@@ -166,7 +166,7 @@ void BitmapFont::Draw( string output, int x, int y,
 		else if (curChar == '\t')
 		{
 			// Calculate the number of pixels from the start
-			int pixels = x - colX * scale;
+			int pixels = x - colX * (int)scale;
 
 			// Calculate the number of characters from the start
 			int diff = pixels / (int)(m_nCharWidth[curChar] * scale);

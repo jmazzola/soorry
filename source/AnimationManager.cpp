@@ -37,7 +37,11 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 	if (root == nullptr)
 		return false;
 	// Getting rid of any past data
-	m_mSprites.clear();
+	if (made == false)
+	{
+		m_mSprites.clear();
+		made = true;
+	}
 
 	std::string ID;
 	TiXmlElement* spriteImg = root->FirstChildElement("sprite");
@@ -188,8 +192,8 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 {
-
-	SGD::GraphicsManager::GetInstance()->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
+	g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
 
 	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
 	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;
@@ -200,9 +204,14 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 	r.right += r.left;
 	r.bottom += r.top;
 
-	SGD::GraphicsManager::GetInstance()->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
+	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
 	r);
+
+	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
+	{
+		g->DrawString("ha", { (float)x, (float)y });
+	}
 }
 
 Sprite* AnimationManager::GetSprite(std::string nameID)
@@ -211,4 +220,9 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 		return m_mSprites[nameID];
 	else
 		return nullptr;
+}
+
+void AnimationManager::LoadAll()
+{
+	LoadSprites("resource/animation/piggy3.xml");
 }

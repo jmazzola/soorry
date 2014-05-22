@@ -102,7 +102,6 @@
     <ClInclude Include="SGD Wrappers\SGD_String.h" />
     <ClInclude Include="source\AIComponent.h" />
     <ClInclude Include="source\AmmoPickup.h" />
-    <ClInclude Include="source\AnimationID.h" />
     <ClInclude Include="source\AnimationManager.h" />
     <ClInclude Include="source\AssaultRifleBullet.h" />
     <ClInclude Include="source\BearTrap.h" />
@@ -166,6 +165,7 @@
     <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="resource\data\config.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\bigWorld.xml" />
     <Xml Include="resource\world\testWorld.xml">

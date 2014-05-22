@@ -14,6 +14,9 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 
+#include <string>
+using namespace std;
+
 
 /**************************************************************/
 // Forward class declaration
@@ -49,6 +52,12 @@ public:
 	virtual bool	Input	( void )				override;	// handle user input
 	virtual void	Update	( float elapsedTime )	override;	// update game entities / animations
 	virtual void	Render	( void )				override;	// render game entities / menus
+
+
+	/**********************************************************/
+	// Load and Save XML
+	void LoadOptions(string xmlSavegame);
+	void SaveOptions(string xmlSavegame);
 	
 private:
 
@@ -106,6 +115,7 @@ private:
 	// Menu Items
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
+
 
 
 	// Message Callback Function:

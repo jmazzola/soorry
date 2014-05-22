@@ -1,5 +1,8 @@
 /***************************************************************
 |	File:		GameplayState.h
+|	Author:		
+|	Course:		
+|	Purpose:	
 |	Author:
 |	Course:
 |	Purpose:
@@ -22,7 +25,8 @@ class EntityManager;
 class Shop;
 class Player;
 class ParticleManager;
-class BeaverZombie;
+class Button;
+class BitmapFont;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 #include "ZombieFactory.h"
@@ -76,9 +80,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Player* m_pPlayer;
-	//NOTE: linked list is apparently better
-	vector<BeaverZombie*> m_vBeaverZombies;
+	Entity* m_pPlayer;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -89,19 +91,37 @@ private:
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBeaverImg = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
-	// Audio
+	// Pause Menu Stuff
+	Button* m_pMainButton;
+	BitmapFont* m_pFont;
+
+	int m_nPauseMenuCursor;
+	int m_nPauseMenuTab;
+	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT };
+	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
+	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_GOBACK };
 
 
+	/**********************************************************/
+	// 
+	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
+
+	
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y);
 	Entity* CreateFastZombie(int _x, int _y);
 	Entity* CreateSlowZombie(int _x, int _y);
 	Entity* CreateProjectile(int _Weapon);
-	// Creates a player
-	Player*	CreatePlayer() const;
+	// Create a button
+	Button* CreateButton() const;
 
+	// Creates a player
+	Entity*	CreatePlayer() const;
 
 	// Message Callback Function:
 	static void MessageProc(const SGD::Message* pMsg);
