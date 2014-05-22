@@ -75,7 +75,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Player* m_pPlayer;
+	Entity* m_pPlayer;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -94,7 +94,7 @@ private:
 	// Factory Methods
 
 	// Creates a player
-	Player*	CreatePlayer() const;
+	Entity*	CreatePlayer() const;
 
 
 	// Message Callback Function:

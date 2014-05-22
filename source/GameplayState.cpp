@@ -54,7 +54,7 @@ using namespace std;
 // CreatePlayer
 //	- allocate a new player
 ///	- set the player's properties
-Player*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
 	return player;
@@ -110,7 +110,7 @@ Player*	GameplayState::CreatePlayer() const
 
 
 	// Load the world
-	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
+	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
 
 
 	// Load wave information
