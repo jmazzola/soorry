@@ -175,51 +175,51 @@ void Player::Update(float dt)
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
-	//if (m_fShotTimer < 0)
-	//{
-	//	if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
-	//	{
-	//		switch (m_nCurrWeapon)
-	//		{
-	//		case 0:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 1:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 2:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 3:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		}
-	//	}
-	//}
+	if (m_fShotTimer < 0)
+	{
+		if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+		{
+			switch (m_nCurrWeapon)
+			{
+			case 0:
+			{
+				CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+				msg->QueueMessage();
+				msg = nullptr;
+				//set the shot timer to the rate of fire
+				m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+			}
+				break;
+			case 1:
+			{
+				CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+				msg->QueueMessage();
+				msg = nullptr;
+				//set the shot timer to the rate of fire
+				m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+			}
+				break;
+			case 2:
+			{
+				CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+				msg->QueueMessage();
+				msg = nullptr;
+				//set the shot timer to the rate of fire
+				m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+			}
+				break;
+			case 3:
+			{
+				CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+				msg->QueueMessage();
+				msg = nullptr;
+				//set the shot timer to the rate of fire
+				m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+			}
+				break;
+			}
+		}
+	}
 }
 
 int Player::GetType() const

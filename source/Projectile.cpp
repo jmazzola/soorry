@@ -1,5 +1,5 @@
 #include "Projectile.h"
-
+#include "DestroyEntityMessage.h"
 
 Projectile::Projectile()
 {
@@ -16,7 +16,14 @@ Projectile::~Projectile()
 
 void Projectile::Update(float dt)
 {
-
+	m_fLifeTime -= dt;
+	if (m_fLifeTime < 0)
+	{
+		DestroyEntityMessage* msg = new DestroyEntityMessage(this);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
+	Entity::Update(dt);
 }
 
 int Projectile::GetType() const

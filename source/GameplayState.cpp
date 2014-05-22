@@ -25,6 +25,7 @@
 #include "CreateFastZombieMessage.h"
 #include "CreateSlowZombieMessage.h"
 #include "CreateProjectileMessage.h"
+#include "DestroyEntityMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -381,7 +382,6 @@ Entity*	GameplayState::CreatePlayer() const
 			{
 				switch (m_nPauseMenuCursor)
 				{
-
 					case PauseMenuOptionsOption::OPTION_GOBACK:
 					{
 						// Go back to the pause menu's main menu
@@ -425,7 +425,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pMessages->Update();
 
 	// Update Zombie Factory
-	zombieFactory.Update(elapsedTime);
+	//zombieFactory.Update(elapsedTime);
 
 		// Check collisions
 	}
@@ -572,6 +572,21 @@ Entity*	GameplayState::CreatePlayer() const
 		bullet = nullptr;
 	}
 		break;
+	case MessageID::MSG_DESTROY_ENTITY:
+		{
+			// Downcast to the actual message type
+			const DestroyEntityMessage* pDestroyMsg =
+				dynamic_cast<const DestroyEntityMessage*>(pMsg);
+
+			assert(pDestroyMsg != nullptr
+				&& "Game::MessageProc - MSG_DESTROY_ENTITY is not actually a DestroyEntityMessage");
+
+			Entity* ptr = pDestroyMsg->GetEntity();
+
+			// Use the Game singleton to access members!
+			GameplayState::GetInstance()->m_pEntities->RemoveEntity(ptr);
+		}
+		break;
 	}
 
 
@@ -684,11 +699,13 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		vec *= 2;
 		tempProj->SetVelocity(vec);
 		Sprite* bro = new Sprite;
-		Frame* frame = new Frame;
+		Frame* frame = new Frame; 
 		frame->SetFrameRect({ 0, 0, 32, 32 });
 		bro->AddFrame(frame);
-		bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
+		bro->SetImage("resource/images/particles/testParticle1.jpg");
 		tempProj->SetSprite(bro);
+		delete frame;
+		frame = nullptr;
 		return tempProj;
 	}
 		break;
