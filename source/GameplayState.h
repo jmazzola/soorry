@@ -106,9 +106,8 @@ private:
 	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
 	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_GOBACK };
 
-
 	/**********************************************************/
-	// 
+	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
 
 	
