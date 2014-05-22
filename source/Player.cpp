@@ -12,7 +12,7 @@
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 0, 100 };
+	m_ptPosition = { 50, 100 };
 	m_vtVelocity = { 0, 0 };
 
 

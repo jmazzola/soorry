@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<animation>
+  <sprite>JMP_pig.png</sprite>
+  <spriteID>running</spriteID>
+  <isLooping isIt="1" />
+  <frame>
+    <collisionRect left="-32" right="32" top="-64" bottom="0" />
+    <drawRect left="0" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="32" right="32" top="-64" bottom="0" />
+    <drawRect left="64" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="96" right="32" top="-64" bottom="0" />
+    <drawRect left="128" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="160" right="32" top="-64" bottom="0" />
+    <drawRect left="192" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="224" right="32" top="-64" bottom="0" />
+    <drawRect left="256" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="288" right="32" top="-64" bottom="0" />
+    <drawRect left="320" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="352" right="32" top="-64" bottom="0" />
+    <drawRect left="384" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+  </frame>
+  <frame>
+    <collisionRect left="416" right="32" top="-64" bottom="0" />
+    <drawRect left="448" right="64" top="0" bottom="64" />
+    <duration time="0.1" />
+    <anchorPoint X="32" Y="64" />
+    <triggerID>ha</triggerID>
+  </frame>
+</animation>
