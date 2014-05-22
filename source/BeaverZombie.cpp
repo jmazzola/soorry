@@ -1,9 +1,10 @@
 #include "BeaverZombie.h"
 
+#include "AnimationManager.h"
 
 BeaverZombie::BeaverZombie()
 {
-
+	
 }
 
 

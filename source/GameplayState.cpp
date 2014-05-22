@@ -115,6 +115,9 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load wave information
 	zombieFactory.LoadWaves("resource/data/wave.xml");
+
+	// Start Zombie Factory
+	zombieFactory.Start();
 }
 
 
@@ -217,6 +220,8 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pEvents->Update();
 	m_pMessages->Update();
 
+	// Update Zombie Factory
+	zombieFactory.Update(elapsedTime);
 
 	// Check collisions
 }
