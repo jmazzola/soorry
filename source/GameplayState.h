@@ -82,6 +82,7 @@ private:
 	Shop* m_pShop;
 	bool m_bIsPaused;
 	Entity* m_pPlayer;
+	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -117,6 +118,8 @@ private:
 	Entity* CreateBeaverZombie(int _x, int _y);
 	Entity* CreateFastZombie(int _x, int _y);
 	Entity* CreateSlowZombie(int _x, int _y);
+	Entity* CreateBearTrap(SGD::Point pt);
+	Entity* CreateMine(SGD::Point pt);
 	// Create a button
 	Button* CreateButton() const;
 
