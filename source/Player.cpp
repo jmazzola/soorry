@@ -81,7 +81,7 @@ void Player::Update(float dt)
 	}
 	if (pInput->IsKeyDown(SGD::Key::W) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
@@ -91,7 +91,7 @@ void Player::Update(float dt)
 	}
 	if (pInput->IsKeyDown(SGD::Key::S) == true)
 	{
-		float oldpos = m_ptPosition.x;
+		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if (pWorld->CheckCollision(this) == true)
@@ -100,21 +100,6 @@ void Player::Update(float dt)
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	
-}
-
-/*********************************************************/
-// Update
-//	- Draw the character
-void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-}
-
-SGD::Rectangle Player::GetRect() const
-{
-	return SGD::Rectangle();
 }
 
 int Player::GetType() const

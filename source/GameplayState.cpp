@@ -59,7 +59,7 @@ using namespace std;
 // CreatePlayer
 //	- allocate a new player
 ///	- set the player's properties
-Player*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
 	return player;
@@ -111,7 +111,7 @@ Player*	GameplayState::CreatePlayer() const
 	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 	// Load the world
-	WorldManager::GetInstance()->LoadWorld("resource/world/testWorld.xml");
+	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
 
 	// Load wave information
 	zombieFactory.LoadWaves("resource/data/wave.xml");

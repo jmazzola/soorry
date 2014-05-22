@@ -1,5 +1,8 @@
 /***************************************************************
 |	File:		GameplayState.h
+|	Author:		
+|	Course:		
+|	Purpose:	
 |	Author:
 |	Course:
 |	Purpose:
@@ -22,7 +25,6 @@ class EntityManager;
 class Shop;
 class Player;
 class ParticleManager;
-class BeaverZombie;
 #include "../SGD Wrappers/SGD_Declarations.h"
 
 #include "ZombieFactory.h"
@@ -76,9 +78,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Player* m_pPlayer;
-	//NOTE: linked list is apparently better
-	vector<BeaverZombie*> m_vBeaverZombies;
+	Entity* m_pPlayer;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -99,7 +99,7 @@ private:
 	Entity* CreateFastZombie(int _x, int _y);
 	Entity* CreateSlowZombie(int _x, int _y);
 	// Creates a player
-	Player*	CreatePlayer() const;
+	Entity*	CreatePlayer() const;
 
 
 	// Message Callback Function:
