@@ -2,14 +2,26 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "AnimationManager.h"
+#include "Frame.h"
+#include "Sprite.h"
 #include "Game.h"
-
+#include "AnimationID.h"
+#include "WorldManager.h"
 
 Player::Player()
 {
 	// Entity
-	m_ptPosition = { 0, 20 };
+	m_ptPosition = { 100, 100 };
 	m_vtVelocity = { 0, 0 };
+
+
+	// Animation/ Image
+	m_antsAnimation.m_fTimeOnFrame = 0;
+	m_antsAnimation.m_nCurrFrame = 0;
+	m_CurrAnimation.LoadPlayerRun(m_CurrAnimation.PlayerRun);
+	m_antsAnimation.m_nCurrAnimation = m_CurrAnimation.PlayerRun;
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -19,7 +31,7 @@ Player::Player()
 	m_nCurrPlaceable = -1;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
-	m_fSpeed = 5.0f;
+	m_fSpeed = 100.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 	 //m_pInventory;
@@ -44,40 +56,50 @@ void Player::Update(float dt)
 {
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
-
+	WorldManager* pWorld = WorldManager::GetInstance();
 	// Input
 
-	if (pInput->IsKeyPressed(SGD::Key::A))
-		m_vtVelocity.x = -m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::D))
-		m_vtVelocity.x = m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::W))
-		m_vtVelocity.y = -m_fSpeed;
-	else if (pInput->IsKeyPressed(SGD::Key::S))
-		m_vtVelocity.y = m_fSpeed;
-	else
-		m_vtVelocity = { 0, 0 };
+	if (pInput->IsKeyDown(SGD::Key::A) == true)
+	{
+		float oldpos = m_ptPosition.x;
+		m_ptPosition.x -= m_fSpeed * dt;
 
-	// Move the player
-	m_ptPosition += m_vtVelocity * dt;
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.x = oldpos;
 
-	// Prevent going off screen (left)
-	if (m_ptPosition.x <= 0)
-		m_ptPosition.x = 0;
+		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+	}
+	if (pInput->IsKeyDown(SGD::Key::D) == true)
+	{
+		float oldpos = m_ptPosition.x;
+		m_ptPosition.x += m_fSpeed * dt;
+
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.x = oldpos;
+
+		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+	}
+	if (pInput->IsKeyDown(SGD::Key::W) == true)
+	{
+		float oldpos = m_ptPosition.x;
+		m_ptPosition.y -= m_fSpeed * dt;
+
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.y = oldpos;
+
+		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+	}
+	if (pInput->IsKeyDown(SGD::Key::S) == true)
+	{
+		float oldpos = m_ptPosition.x;
+		m_ptPosition.y += m_fSpeed * dt;
+
+		if (pWorld->CheckCollision(this) == true)
+			m_ptPosition.y = oldpos;
+
+		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
+	}
 	
-	// Prevent going off screen (right)
-	if (m_ptPosition.x = (float)pGame->GetScreenWidth())
-		m_ptPosition.x = (float)pGame->GetScreenWidth();
-
-	// Prevent going off screen (top)
-	if (m_ptPosition.y <= 0)
-		m_ptPosition.y = 0;
-
-	// Prevent going off screen (bottom)
-	if (m_ptPosition.y >= (float)pGame->GetScreenHeight())
-		m_ptPosition.y = (float)pGame->GetScreenHeight();
-	
-
 }
 
 /*********************************************************/
@@ -87,8 +109,7 @@ void Player::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Placeholder for the player
-	pGraphics->DrawRectangle({ 0, 0, m_ptPosition.x, m_ptPosition.y }, { 0, 255, 0 });
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
 }
 
 SGD::Rectangle Player::GetRect() const
