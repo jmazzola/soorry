@@ -38,9 +38,6 @@
 	//m_fRotation += 0.01f;
 
 	// Draw the image
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_pSprite->m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
 
 }
 
