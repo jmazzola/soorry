@@ -639,6 +639,7 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetSprite(&bro);*/
 	return zambie;
 }
+
 Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 {
 	SlowZombie* zambie = new SlowZombie;
@@ -666,7 +667,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-			   vec *= 2;
+			   vec *= -2;
 			   tempProj->SetVelocity(vec);
 			   return tempProj;
 	}
@@ -678,7 +679,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-			   vec *= 2;
+			   vec *= -2;
 			   tempProj->SetVelocity(vec);
 			   return tempProj;
 	}
@@ -690,14 +691,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-			   vec *= 2;
+			   vec *= -2;
 			   tempProj->SetVelocity(vec);
-			   Sprite* bro = new Sprite;
-			   Frame* frame = new Frame;
-			   frame->SetFrameRect({ 0, 0, 32, 32 });
-			   bro->AddFrame(frame);
-			   bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
-			   tempProj->SetSprite(bro);
 			   return tempProj;
 	}
 		break;

@@ -6,7 +6,7 @@
   <frame>
     <collisionRect left="-16" right="16" top="-16" bottom="16" />
     <drawRect left="0" right="32" top="0" bottom="32" />
-    <duration time="0.1" />
+    <duration time="1" />
     <anchorPoint X="16" Y="16" />
   </frame>
 </animation>
