@@ -1,11 +1,8 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		
-|	Course:		
-|	Purpose:	
-|	Author:
-|	Course:
-|	Purpose:
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Course:		SGP
+|	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
 
 #ifndef GAMEPLAYSTATE_H
@@ -81,6 +78,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
+	bool m_bIsShopping;
 	Entity* m_pPlayer;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
@@ -109,6 +107,13 @@ private:
 	/**********************************************************/
 	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
+
+	//*******************************************************************
+	// FPS
+	unsigned int m_unFPS = 60;
+	unsigned int m_unFrames = 0;
+	float m_fFPSTimer = 0.0f;
 
 	
 	/**********************************************************/
