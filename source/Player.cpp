@@ -13,6 +13,8 @@
 #include "Projectile.h"
 #include "AssaultRifleBullet.h"
 #include "CreateProjectileMessage.h"
+#include "Camera.h"
+
 Player::Player()
 {
 	// Entity
@@ -111,6 +113,11 @@ void Player::Update(float dt)
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
+
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
+
 	//Update Timers
 		m_fShotTimer -= dt;
 	// Input
@@ -234,16 +241,6 @@ void Player::HandleCollision(const IEntity* pOther)
 		m_nCurrHealth--;
 	}
 }
-
-/*virtual*/ void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-
-	Entity::Render();
-}
-
 
 /**********************************************************/
 // Accessors

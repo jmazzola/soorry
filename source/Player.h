@@ -28,7 +28,6 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
-	virtual void Render();
 
 	/**********************************************************/
 	// Accessors

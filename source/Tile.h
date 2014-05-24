@@ -3,6 +3,10 @@
 #include <string>
 using namespace std;
 
+#define EMPTY 0
+#define WINDOW 1
+#define WALL 2
+
 class Tile
 {
 public:

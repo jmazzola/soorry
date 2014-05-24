@@ -4,9 +4,9 @@
   <spriteID>beaver</spriteID>
   <isLooping isIt="0" />
   <frame>
-    <collisionRect left="-16" right="16" top="-16" bottom="16" />
+    <collisionRect left="0" right="32" top="0" bottom="32" />
     <drawRect left="0" right="32" top="0" bottom="32" />
     <duration time="0.1" />
-    <anchorPoint X="16" Y="16" />
+    <anchorPoint X="0" Y="0" />
   </frame>
 </animation>
