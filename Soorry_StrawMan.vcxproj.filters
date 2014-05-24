@@ -279,9 +279,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="source\Node.cpp">
-      <Filter>AIComponent</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -523,9 +520,6 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Node.h">
-      <Filter>AIComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

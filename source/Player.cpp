@@ -16,7 +16,7 @@
 #include "GameplayState.h"
 #include "CreatePlaceableMessage.h"
 #include "Inventory.h"
-
+#include "Tile.h"
 #include "Camera.h"
 
 Player::Player()
@@ -292,7 +292,11 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
 			{
-				//SetColliderID(int x, int y, 0);
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				WorldManager::GetInstance()->SetColliderID((int)pos.x, (int)pos.y, WALL);
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetWalls();
 				--newset;
@@ -300,7 +304,11 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
 			{
-				//SetColliderID(int x, int y, 1);
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				WorldManager::GetInstance()->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetWindows();
 				--newset;
