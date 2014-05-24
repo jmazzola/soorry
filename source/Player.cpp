@@ -15,6 +15,7 @@
 #include "CreateProjectileMessage.h"
 #include "GameplayState.h"
 #include "CreatePlaceableMessage.h"
+#include "Inventory.h"
 
 Player::Player()
 {
@@ -40,8 +41,16 @@ Player::Player()
 	m_fSpeed = 100.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
-	 //m_pInventory;
+
+	m_pInventory = new Inventory();
+	m_pInventory->SetBearTraps(10);
+	m_pInventory->SetGrenads(0);
+	m_pInventory->SetHealthPacks(0);
+	m_pInventory->SetMines(1);
+	m_pInventory->SetWalls(0);
+	m_pInventory->SetWindows(0);
 	 //m_pCursor;
+
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
 	//is three appropriate?
@@ -117,6 +126,8 @@ void Player::Update(float dt)
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update Timers
 		m_fShotTimer -= dt;
+		m_fPlaceTimer -= dt;
+
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
 	{
@@ -239,13 +250,36 @@ void Player::Update(float dt)
 		// Send a Message to Create either the mine 
 		if (m_nCurrPlaceable != -1)
 		{
-			if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
 			{
-				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
-				pmsg->QueueMessage();
-				pmsg = nullptr;
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
+				{
+					m_fPlaceTimer = 1;
+					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
+					pmsg->QueueMessage();
+					pmsg = nullptr;
+					unsigned int newset = m_pInventory->GetBearTraps();
+					--newset;
+					m_pInventory->SetBearTraps(newset);
+
+				}
 			}
+			if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
+			{
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				{
+					m_fPlaceTimer = 1;
+					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
+					pmsg->QueueMessage();
+					pmsg = nullptr;
+					unsigned int newset = m_pInventory->GetMines();
+					--newset;
+					m_pInventory->SetMines(newset);
+				}
+			}
+
 		}
+	
 	}
 }
 
