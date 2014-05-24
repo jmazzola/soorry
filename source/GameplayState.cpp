@@ -26,7 +26,6 @@
 #include "CreateFastZombieMessage.h"
 #include "CreateSlowZombieMessage.h"
 #include "CreateProjectileMessage.h"
-#include "DestroyEntityMessage.h"
 #include "CreatePlaceableMessage.h"
 #include "CreatePickupMessage.h"
 #include "DestroyEntityMessage.h"
@@ -541,6 +540,21 @@ Entity*	GameplayState::CreatePlayer() const
 				m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
+	}
+
+	// Draw wave info
+	if (zombieFactory.IsBuildMode())
+	{
+		string timeRemaining = "Time remaining: ";
+		timeRemaining.append(std::to_string(zombieFactory.GetBuildTimeRemaining()));
+		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
+	}
+
+	else
+	{
+		string enemiesRemaining = "Enemies Remaining: ";
+		enemiesRemaining.append(std::to_string(zombieFactory.GetEnemiesRemaining()));
+		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
 	}
 }
 

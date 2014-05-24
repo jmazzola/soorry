@@ -79,7 +79,7 @@ void ZombieFactory::Start()
 	m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
 	m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
 	m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
-	m_nEnemiesRemaining = m_nSlowZombiesToSpawn + m_nFastZombiesToSpawn + m_nBeaverZombiesToSpawn;
+	m_nEnemiesRemaining = 0;
 	m_fBuildTime = (float)waveData[m_nWave - 1].buildTime;
 	m_fBuildTimeRemaining = m_fBuildTime;
 	m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
