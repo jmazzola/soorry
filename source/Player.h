@@ -44,7 +44,6 @@ public:
 	float GetScoreMultiplier() const;
 	float GetTimeAlive() const;
 	Inventory* GetInventory() const;
-	Cursor* GetCursor() const;
 	Weapon* GetWeapons() const;
 
 	/**********************************************************/
@@ -60,7 +59,6 @@ public:
 	void SetScoreMultiplier(float multiplier);
 	void SetTimeAlive(float timeAlive);
 	void SetInventory(Inventory* inventory);
-	void SetCursor(Cursor* cursor);
 	void SetWeapons(Weapon* weapons);
 	void SetZombieFactory(ZombieFactory wave)  { m_pZombieWave = wave; }
 protected:
@@ -80,7 +78,6 @@ protected:
 	float m_fScoreMultiplier;
 	float m_fTimeAlive;
 	Inventory* m_pInventory;
-	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
 	ZombieFactory m_pZombieWave;
 };

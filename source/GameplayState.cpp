@@ -728,7 +728,10 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
-		trap->SetPosition(m_pPlayer->GetPosition());
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = pos.x - (int)pos.x % 32;
+		pos.y = pos.y - (int)pos.y % 32;
+		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);
@@ -739,7 +742,10 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	{
 		Mine* trap = new Mine();
 		trap->SetDamage(30);
-		trap->SetPosition(m_pPlayer->GetPosition());
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = pos.x - (int)pos.x % 32;
+		pos.y = pos.y - (int)pos.y % 32;
+		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);

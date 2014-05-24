@@ -42,14 +42,14 @@ Player::Player()
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 
+	// Player Inventory
 	m_pInventory = new Inventory();
-	m_pInventory->SetBearTraps(0);
+	m_pInventory->SetBearTraps(100);
 	m_pInventory->SetGrenads(0);
 	m_pInventory->SetHealthPacks(0);
-	m_pInventory->SetMines(0);
+	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(0);
 	m_pInventory->SetWindows(0);
-	 //m_pCursor;
 
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
@@ -59,47 +59,47 @@ Player::Player()
 		//NOTE:Will it hit this?
 	case 0: //Assault rifle
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[0];
-		tempWeapon.SetCurrAmmo(30);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.5);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+				//NOTE: totally made up
+				Weapon tempWeapon = m_pWeapons[0];
+				tempWeapon.SetCurrAmmo(30);
+				//NOTE: totally made up
+				tempWeapon.SetMaxAmmo(500);
+				tempWeapon.SetFireRate(.5);
+				tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	}
 		break;
 	case 1://Shotgun
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[1];
-		tempWeapon.SetCurrAmmo(10);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(1);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			   //NOTE: totally made up
+			   Weapon tempWeapon = m_pWeapons[1];
+			   tempWeapon.SetCurrAmmo(10);
+			   //NOTE: totally made up
+			   tempWeapon.SetMaxAmmo(500);
+			   tempWeapon.SetFireRate(1);
+			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 
 	}
 		break;
 	case 2://rocket launcher
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[2];
-		tempWeapon.SetCurrAmmo(5);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(50);
-		tempWeapon.SetFireRate(4);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			   //NOTE: totally made up
+			   Weapon tempWeapon = m_pWeapons[2];
+			   tempWeapon.SetCurrAmmo(5);
+			   //NOTE: totally made up
+			   tempWeapon.SetMaxAmmo(50);
+			   tempWeapon.SetFireRate(4);
+			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 	}
 		break;
 	case 3:
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[3];
-		tempWeapon.SetCurrAmmo(0);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(0);
-		tempWeapon.SetFireRate(1);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			  //NOTE: totally made up
+			  Weapon tempWeapon = m_pWeapons[3];
+			  tempWeapon.SetCurrAmmo(0);
+			  //NOTE: totally made up
+			  tempWeapon.SetMaxAmmo(0);
+			  tempWeapon.SetFireRate(1);
+			  tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	}
 		break;
 	}
@@ -109,8 +109,8 @@ Player::Player()
 
 Player::~Player()
 {
-		delete []m_pWeapons;
-		delete m_pInventory;
+	delete[]m_pWeapons;
+	delete m_pInventory;
 }
 
 
@@ -126,8 +126,8 @@ void Player::Update(float dt)
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update Timers
-		m_fShotTimer -= dt;
-		m_fPlaceTimer -= dt;
+	m_fShotTimer -= dt;
+	m_fPlaceTimer -= dt;
 
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
@@ -194,7 +194,7 @@ void Player::Update(float dt)
 	// Selecting Bear Trap
 	if (pInput->IsKeyPressed(SGD::Key::Nine) == true)
 		m_nCurrPlaceable = 0;
-	// Selecting Bear Trap
+	// Selecting Mine
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
 		m_nCurrPlaceable = 1;
 
@@ -248,39 +248,60 @@ void Player::Update(float dt)
 	}
 	else
 	{
-		// Send a Message to Create either the mine 
+		// Send a Message to Create a bear trap if the player has any
 		if (m_nCurrPlaceable != -1)
 		{
 			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
 				{
+					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
 					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
 					pmsg->QueueMessage();
 					pmsg = nullptr;
+					// Decreasing the amount of bear traps left for the player
 					unsigned int newset = m_pInventory->GetBearTraps();
 					--newset;
 					m_pInventory->SetBearTraps(newset);
 
 				}
 			}
-			if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
+			// Send a Message to Create a mine if the player has any
+			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
 				{
+					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
 					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
 					pmsg->QueueMessage();
 					pmsg = nullptr;
+					// Decreasing the amount of mines left for the player
 					unsigned int newset = m_pInventory->GetMines();
 					--newset;
 					m_pInventory->SetMines(newset);
 				}
 			}
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
+			{
+				//SetColliderID(int x, int y, 0);
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWalls();
+				--newset;
+				m_pInventory->SetWalls(newset);
+			}
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
+			{
+				//SetColliderID(int x, int y, 1);
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWindows();
+				--newset;
+				m_pInventory->SetWindows(newset);
+			}
 
 		}
-	
+
 	}
 }
 
@@ -358,10 +379,6 @@ Inventory* Player::GetInventory() const
 	return m_pInventory;
 }
 
-Cursor* Player::GetCursor() const
-{
-	return m_pCursor;
-}
 
 Weapon* Player::GetWeapons() const
 {
@@ -426,10 +443,6 @@ void Player::SetInventory(Inventory* _inventory)
 	m_pInventory = _inventory;
 }
 
-void Player::SetCursor(Cursor* _cursor)
-{
-	m_pCursor = _cursor;
-}
 
 void Player::SetWeapons(Weapon* _weapons)
 {

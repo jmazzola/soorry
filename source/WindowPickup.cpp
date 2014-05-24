@@ -1,11 +1,6 @@
 #include "WindowPickup.h"
 
-
-WindowPickup::WindowPickup()
+int WindowPickup::GetType() const
 {
-}
-
-
-WindowPickup::~WindowPickup()
-{
+	return ENT_PICKUP_WINDOW;
 }
