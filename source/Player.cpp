@@ -209,6 +209,35 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
 		m_nCurrPlaceable = 1;
 
+	if (pInput->IsKeyPressed(SGD::Key::N7) == true)
+		m_nCurrPlaceable = 2;
+	if (pInput->IsKeyPressed(SGD::Key::N8) == true)
+		m_nCurrPlaceable = 3;
+
+	if (pInput->IsKeyPressed(SGD::Key::Spacebar) == true)
+	{
+		m_ptPosition.x += 30;
+		 //Colliding with wall
+		if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WALL)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		else if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WINDOW)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		m_ptPosition.x -= 30;
+
+	}
+
 	if (m_pZombieWave.IsBuildMode() == true)
 	{
 		//if (m_fShotTimer < 0)
@@ -321,23 +350,6 @@ void Player::Update(float dt)
 
 		}
 
-	}
-	// Colliding with wall
-	if (WorldManager::GetInstance()->CheckCollision(this) == true && 
-		pWorld->CheckCollisionID(this) == WALL)
-	{
-		pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
-		CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
-		pmsg->QueueMessage();
-		pmsg = nullptr;
-	}
-	else if (WorldManager::GetInstance()->CheckCollision(this) == true && 
-		pWorld->CheckCollisionID(this) == WINDOW)
-	{
-		pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
-		CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
-		pmsg->QueueMessage();
-		pmsg = nullptr;
 	}
 
 }
