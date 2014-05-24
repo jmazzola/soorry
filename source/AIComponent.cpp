@@ -51,13 +51,13 @@ void AIComponent::Update(float dt)
 
 		// Start node
 		Node start;
-		start.x = (int)(m_pAgent->GetPosition().x + tileWidth / 2) / tileWidth;
-		start.y = (int)(m_pAgent->GetPosition().y + tileHeight / 2) / tileHeight;
+		start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
+		start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
 
 		// End node
 		Node end;
-		end.x = (int)(m_ptFindTarget.x + tileWidth / 2) / tileWidth;
-		end.y = (int)(m_ptFindTarget.y + tileHeight / 2) / tileHeight;
+		end.x = (int)(m_ptFindTarget.x) / tileWidth;
+		end.y = (int)(m_ptFindTarget.y) / tileHeight;
 
 		Pathfind(start, end);
 		m_fTimeToPathfind = 1.0f;
@@ -65,8 +65,8 @@ void AIComponent::Update(float dt)
 
 	// Find move target
 	int snapX, snapY;
-	snapX = (int)(m_pAgent->GetPosition().x + tileWidth / 2) / tileWidth;
-	snapY = (int)(m_pAgent->GetPosition().y + tileHeight / 2) / tileHeight;
+	snapX = (int)(m_pAgent->GetPosition().x) / tileWidth;
+	snapY = (int)(m_pAgent->GetPosition().y) / tileHeight;
 
 	// Determine direction
 	int smallestValue = INT_MAX;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <waves>
   <wave>
-    <infinite_build_time value="true"/>
-    <build_time value="0"/>
+    <infinite_build_time value="false"/>
+    <build_time value="10"/>
     <slow_zombies amount="4"/>
     <fast_zombies amount="8"/>
     <beaver_zombies amount="15"/>
