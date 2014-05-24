@@ -18,16 +18,6 @@ FastZombie::~FastZombie()
 }
 
 
-void FastZombie::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-
-	Entity::Render();
-}
-
-
 /**********************************************************/
 // Interface Methods
 
