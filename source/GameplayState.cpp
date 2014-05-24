@@ -14,6 +14,9 @@
 #include "Shop.h"
 #include "Camera.h"
 
+
+#include "Weapon.h"
+
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
@@ -142,6 +145,10 @@ Entity*	GameplayState::CreatePlayer() const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
+	// Debug
+	dynamic_cast<Player*>(m_pPlayer)->SetScore(13371011);
+
+
 	//// Create our player
 	//m_pPuppet = CreatePlayer();
 	//m_pPuppet->SetPosition({ 200, 20 });
@@ -171,16 +178,15 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 
+	// Load Store
+	m_pShop = new Shop;
+	m_pShop->SetShopStatus(false);
+	m_pShop->Enter(m_pPlayer);
+
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
 	m_bIsPaused = false;
-	m_bIsShopping = false;
-
-	// Load Store
-	m_pShop = new Shop;
-	m_pShop->SetShopStatus(false);
-	m_pShop->Enter();
 
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
@@ -276,7 +282,10 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
-		m_bIsPaused = !m_bIsPaused;
+	{
+		if (m_pShop->IsOpen() == false)
+			m_bIsPaused = !m_bIsPaused;
+	}
 
 	if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
@@ -304,8 +313,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
-		m_bIsShopping = true;
-		m_pShop->SetShopStatus(m_bIsShopping);
+		m_pShop->SetShopStatus(true);
 	}
 
 #pragma region Pause Menu Navigation Clutter
@@ -455,7 +463,7 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 #pragma endregion
 
-	if (m_bIsShopping)
+	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
 	return true;	// keep playing
@@ -498,11 +506,6 @@ Entity*	GameplayState::CreatePlayer() const
 		m_unFrames = 0;
 		m_fFPSTimer = 0.0f;
 	}
-
-	if (m_bIsShopping)
-	{
-		m_pShop->Update(elapsedTime);
-	}
 }
 
 
@@ -518,6 +521,22 @@ Entity*	GameplayState::CreatePlayer() const
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
+
+	Player* player = dynamic_cast<Player*>(m_pPlayer);
+	// Draw money
+	int money = player->GetScore();
+	string moneyy = "Current Money: " + std::to_string(money);
+	pGraphics->DrawString(moneyy.c_str(), { 100, 50 });
+
+	// Draw weapons
+	for (int i = 0; i < 4; i++)
+	{
+		Weapon* weapons = player->GetWeapons();
+		string weaponAmmo = "Weapon " + std::to_string(i); + ": ";
+		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
+		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + i * 20 ));
+		weaponAmmo.clear();
+	}
 #endif
 
 	//Render test particles
@@ -589,7 +608,7 @@ Entity*	GameplayState::CreatePlayer() const
 #pragma endregion
 
 	// If we're shopping
-	if (m_bIsShopping)
+	if (m_pShop->IsOpen())
 	{
 		m_pShop->Render();
 	}

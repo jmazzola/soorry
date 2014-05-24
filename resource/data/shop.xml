@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<shop>
+	<items wall = "100" window = "200" beartrap = "250" mine = "300" grenade = "350" ammo = "500"/>
+	<upgrades shotgun = "200" ar ="1000" rocketlauncher ="3000" grenade="400" fireaxe="30000" />
+</shop>
