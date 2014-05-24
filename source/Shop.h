@@ -11,6 +11,9 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 
+#include <string>
+using namespace std;
+
 class Shop
 {
 
@@ -25,6 +28,9 @@ public:
 	// Update
 	void Update(float dt);
 
+	// Load Prices
+	void LoadPrices(string xmlFileName);
+
 	// Price enumeration
 	enum Prices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, TOTAL_PRICES };
 
@@ -32,6 +38,9 @@ public:
 private:
 
 	// Data members
+	
+	// Is the shop open?
+	bool m_bIsOpen;
 
 	// Prices of the items
 	unsigned int prices[TOTAL_PRICES];

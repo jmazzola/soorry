@@ -37,8 +37,8 @@ Player::Player()
 	m_fSpeed = 100.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
-	 //m_pInventory;
-	 //m_pCursor;
+	//m_pInventory;
+	//m_pCursor;
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
 	//is three appropriate?
@@ -96,7 +96,7 @@ Player::Player()
 
 Player::~Player()
 {
-		delete []m_pWeapons;
+	delete[]m_pWeapons;
 }
 
 
@@ -112,7 +112,7 @@ void Player::Update(float dt)
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update Timers
-		m_fShotTimer -= dt;
+	m_fShotTimer -= dt;
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
 	{
