@@ -1,6 +1,8 @@
 /***************************************************************
 |	File:		GameplayState.cpp
-|	Author:		Justin Mazzola
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Course:		SGP
+|	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -9,6 +11,7 @@
 #include "OptionsState.h"
 #include "MainMenuState.h"
 #include "Button.h"
+#include "Shop.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -109,6 +112,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
+	m_hPistol = pAudio->LoadAudio(L"resource/audio/JPM_pistolShot.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -161,6 +165,8 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+	m_bIsPaused = false;
+	m_bIsShopping = false;
 
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
@@ -186,6 +192,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
+	pAudio->UnloadAudio(m_hPistol);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -251,6 +258,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
 		m_bIsPaused = !m_bIsPaused;
+
 	if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
 		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
@@ -269,6 +277,17 @@ Entity*	GameplayState::CreatePlayer() const
 		msg->QueueMessage();
 		msg = nullptr;
 	}
+
+	if (pInput->IsKeyPressed(SGD::Key::Space))
+	{
+		pAudio->PlayAudio(m_hPistol);
+	}
+
+	if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	{
+		m_bIsShopping = true;
+	}
+
 #pragma region Pause Menu Navigation Clutter
 	// Handle pause menu input
 	// If we're paused
@@ -445,6 +464,17 @@ Entity*	GameplayState::CreatePlayer() const
 		// Check collisions
 		m_pEntities->CheckCollisions(0, 1);
 	}
+
+	// Increase the FPS timer
+	m_fFPSTimer += elapsedTime;
+	m_unFrames++;
+
+	if (m_fFPSTimer >= 1.0f) // 1 second refresh rate
+	{
+		m_unFPS = m_unFrames;
+		m_unFrames = 0;
+		m_fFPSTimer = 0.0f;
+	}
 }
 
 
@@ -454,9 +484,6 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Render(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	// Render the background
-
 
 	// Render test world
 	WorldManager::GetInstance()->Render(SGD::Point(0, 0));
@@ -471,6 +498,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Render the entities
 	m_pEntities->RenderAll();
 
+#pragma region Pause Menu Rendering
 	// --- Pause Menu stuff ---
 	// If we're paused
 	if (m_bIsPaused)
@@ -530,6 +558,19 @@ Entity*	GameplayState::CreatePlayer() const
 		}
 
 	}
+#pragma endregion
+
+	// If we're shopping
+	if (m_bIsShopping)
+	{
+		m_pShop->Render();
+	}
+
+	// Draw the FPS
+	string fps = std::to_string(m_unFPS);
+	fps.append(" FPS");
+	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
+
 }
 
 
