@@ -121,7 +121,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
-	
+
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	//Load preset xml file
@@ -323,36 +323,36 @@ Entity*	GameplayState::CreatePlayer() const
 				// Switch table for the item selected
 				switch (m_nPauseMenuCursor)
 				{
-					case PauseMenuOption::PAUSE_RESUME:
-					{
-						// Resume gameplay
-						m_bIsPaused = false;
-						break;
-					}
-						break;
-
-					case PauseMenuOption::PAUSE_OPTION:
-					{
-						// Set the cursor to the first option in the options tab
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-						// Go to the options tab
-						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-						// Load the options
-						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-						break;
-					}
-						break;
-
-					case PauseMenuOption::PAUSE_EXIT:
-					{
-						//Go to Main Menu
-						pGame->ChangeState(MainMenuState::GetInstance());
-						// Exit immediately
-						return true;
-					}
-						break;
+				case PauseMenuOption::PAUSE_RESUME:
+				{
+					// Resume gameplay
+					m_bIsPaused = false;
+					break;
 				}
-			}		
+					break;
+
+				case PauseMenuOption::PAUSE_OPTION:
+				{
+					// Set the cursor to the first option in the options tab
+					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+					// Go to the options tab
+					m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+					// Load the options
+					OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+					break;
+				}
+					break;
+
+				case PauseMenuOption::PAUSE_EXIT:
+				{
+					//Go to Main Menu
+					pGame->ChangeState(MainMenuState::GetInstance());
+					// Exit immediately
+					return true;
+				}
+					break;
+				}
+			}
 		}
 		// If we're in the main menu's options tab
 		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
@@ -409,22 +409,22 @@ Entity*	GameplayState::CreatePlayer() const
 			{
 				switch (m_nPauseMenuCursor)
 				{
-					case PauseMenuOptionsOption::OPTION_GOBACK:
-					{
-						// Go back to the pause menu's main menu
-						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-						// Make the highlighted option 'Options'
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-						// Save options
-						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+				case PauseMenuOptionsOption::OPTION_GOBACK:
+				{
+					// Go back to the pause menu's main menu
+					m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+					// Make the highlighted option 'Options'
+					m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+					// Save options
+					OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-						break;
-					}
+					break;
+				}
 					break;
 				}
 			}
 		}
-	
+
 	}
 #pragma endregion
 
@@ -451,8 +451,8 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEvents->Update();
 		m_pMessages->Update();
 
-	// Update Zombie Factory
-	//zombieFactory.Update(elapsedTime);
+		// Update Zombie Factory
+		//zombieFactory.Update(elapsedTime);
 
 		// Check collisions
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
@@ -556,7 +556,7 @@ Entity*	GameplayState::CreatePlayer() const
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )
 #pragma warning( 1 : 4061 )
-	
+
 	// What type of message?
 	switch (pMsg->GetMessageID())
 	{
@@ -564,7 +564,7 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
-		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(),pCreateMessage->GetY());
+		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
 		self->m_pEntities->AddEntity(beaver, 1);
 		beaver->Release();
 		beaver = nullptr;
@@ -605,30 +605,15 @@ Entity*	GameplayState::CreatePlayer() const
 		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
-		{
-			const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-			GameplayState* g = GameplayState::GetInstance();
-			Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-			g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
-			place->Release();
-			place = nullptr;
+	{
+		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		place->Release();
+		place = nullptr;
 
-		}
-		break;
-	case MessageID::MSG_DESTROY_ENTITY:
-		{
-			// Downcast to the actual message type
-			const DestroyEntityMessage* pDestroyMsg =
-				dynamic_cast<const DestroyEntityMessage*>(pMsg);
-
-			assert(pDestroyMsg != nullptr
-				&& "Game::MessageProc - MSG_DESTROY_ENTITY is not actually a DestroyEntityMessage");
-
-			Entity* ptr = pDestroyMsg->GetEntity();
-
-			// Use the Game singleton to access members!
-			GameplayState::GetInstance()->m_pEntities->RemoveEntity(ptr);
-		}
+	}
 		break;
 
 	case MessageID::MSG_CREATE_PICKUP:
@@ -643,7 +628,7 @@ Entity*	GameplayState::CreatePlayer() const
 		break;
 	case MessageID::MSG_DESTROY_ENTITY:
 	{
-										  
+
 		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* ent = pCreateMessage->GetEntity();
@@ -780,8 +765,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
 		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
-		tempProj->SetVelocity(vec); 
+		vec *= -2;
+		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
 		break;
@@ -792,7 +777,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
 		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
+		vec *= -2;
 		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
@@ -804,10 +789,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
 		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
+		vec *= -2;
 		tempProj->SetVelocity(vec);
 		Sprite* bro = new Sprite;
-		Frame* frame = new Frame; 
+		Frame* frame = new Frame;
 		frame->SetFrameRect({ 0, 0, 32, 32 });
 		frame->SetAnchorPoint({ 0, 0 });
 		bro->AddFrame(frame);

@@ -59,7 +59,6 @@ Player::Player()
 
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
-<<<<<<< HEAD
 #pragma region Load Weapons
 
 
@@ -106,7 +105,6 @@ Player::Player()
 
 
 
-=======
 	//is three appropriate?
 	switch (3)
 	{
@@ -157,7 +155,6 @@ Player::Player()
 	}
 		break;
 	}
->>>>>>> 6de3b489bff8df87ca2dab9fffa4e024ab73df49
 
 }
 
@@ -165,11 +162,7 @@ Player::Player()
 Player::~Player()
 {
 	delete[]m_pWeapons;
-<<<<<<< HEAD
 		delete m_pInventory;
-=======
-	delete m_pInventory;
->>>>>>> 6de3b489bff8df87ca2dab9fffa4e024ab73df49
 }
 
 
