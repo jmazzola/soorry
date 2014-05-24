@@ -28,6 +28,8 @@
 #include "CreateProjectileMessage.h"
 #include "DestroyEntityMessage.h"
 #include "CreatePlaceableMessage.h"
+#include "CreatePickupMessage.h"
+#include "DestroyEntityMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -45,6 +47,9 @@
 #include "WorldManager.h"
 #include "Mine.h"
 #include "BearTrap.h"
+#include "Camera.h"
+#include "WallPickup.h"
+#include "WindowPickup.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -57,7 +62,7 @@ using namespace std;
 #define BUCKET_ENEMIES 1
 #define BUCKET_PROJECTILES 2
 #define BUCKET_PLACEABLE 3
-
+#define BUCKET_PICKUP 4
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -450,6 +455,7 @@ Entity*	GameplayState::CreatePlayer() const
 	//zombieFactory.Update(elapsedTime);
 
 		// Check collisions
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 	}
 }
 
@@ -596,7 +602,7 @@ Entity*	GameplayState::CreatePlayer() const
 		bullet->Release();
 		bullet = nullptr;
 	}
-
+		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
 		{
@@ -623,6 +629,26 @@ Entity*	GameplayState::CreatePlayer() const
 			// Use the Game singleton to access members!
 			GameplayState::GetInstance()->m_pEntities->RemoveEntity(ptr);
 		}
+		break;
+
+	case MessageID::MSG_CREATE_PICKUP:
+	{
+		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+		place->Release();
+		place = nullptr;
+	}
+		break;
+	case MessageID::MSG_DESTROY_ENTITY:
+	{
+										  
+		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* ent = pCreateMessage->GetEntity();
+		g->m_pEntities->RemoveEntity(ent);
+	}
 		break;
 	}
 
@@ -716,22 +742,28 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
-		trap->SetPosition(m_pPlayer->GetPosition());
-		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);
-		trap->SetCurrAnimation("eye");
+		trap->SetCurrAnimation("crab");
 		return trap;
 	}
 	else
 	{
 		Mine* trap = new Mine();
 		trap->SetDamage(30);
-		trap->SetPosition(m_pPlayer->GetPosition());
-		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);
-		trap->SetCurrAnimation("eye");
+		trap->SetCurrAnimation("crab");
 		return trap;
 	}
 }
@@ -789,5 +821,29 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 
 	}
 		break;
+	}
+}
+
+Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
+{
+	if (pick == 0)
+	{
+		WallPickup* wall = new WallPickup();
+		wall->SetPosition(pos);
+		wall->SetSprite(AnimationManager::GetInstance()->GetSprite("wall"));
+		wall->SetCurrFrame(0);
+		wall->SetTimeOfFrame(0);
+		wall->SetCurrAnimation("wall");
+		return wall;
+	}
+	else
+	{
+		WindowPickup* window = new WindowPickup();
+		window->SetPosition(pos);
+		window->SetSprite(AnimationManager::GetInstance()->GetSprite("window"));
+		window->SetCurrFrame(0);
+		window->SetTimeOfFrame(0);
+		window->SetCurrAnimation("window");
+		return window;
 	}
 }
