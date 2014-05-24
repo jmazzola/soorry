@@ -625,12 +625,6 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 		break;
 
-	case MessageID::MSG_CREATE_PLACEABLE:
-	{
-		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance();
-
-		//Entity* place = g->crea
 	case MessageID::MSG_CREATE_PROJECTILE:
 
 	{
