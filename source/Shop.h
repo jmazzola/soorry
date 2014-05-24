@@ -22,17 +22,33 @@ public:
 	Shop() = default;
 	virtual ~Shop() = default;
 
+	// Enter
+	void Enter();
+
+	// Exit
+	void Exit();
+
 	// Render
 	void Render();
 
 	// Update
 	void Update(float dt);
 
+	// Input
+	bool Input();
+
 	// Load Prices
 	void LoadPrices(string xmlFileName);
 
 	// Price enumeration
-	enum Prices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, TOTAL_PRICES };
+	enum ItemPrices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, TOTAL_ITEM_PRICES };
+	enum UpgradePrices{ SHOTGUN, AR, LAUNCHER, GRENADEUPGRADE, FIREAXE, TOTAL_UPGRADE_PRICES};
+
+	// Accessors
+	bool IsOpen();
+
+	// Mutators
+	void SetShopStatus(bool isOpen);
 
 
 private:
@@ -43,7 +59,10 @@ private:
 	bool m_bIsOpen;
 
 	// Prices of the items
-	unsigned int prices[TOTAL_PRICES];
+	unsigned int itemPrices[TOTAL_ITEM_PRICES];
+
+	// Prices of the upgrades
+	unsigned int upgradePrices[TOTAL_UPGRADE_PRICES];
 
 	// Textures
 	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;

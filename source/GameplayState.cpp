@@ -173,6 +173,11 @@ Entity*	GameplayState::CreatePlayer() const
 	m_bIsPaused = false;
 	m_bIsShopping = false;
 
+	// Load Store
+	m_pShop = new Shop;
+	m_pShop->SetShopStatus(false);
+	m_pShop->Enter();
+
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
 
@@ -247,6 +252,11 @@ Entity*	GameplayState::CreatePlayer() const
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
 
+	// Terminate & deallocate shop
+	m_pShop->Exit();
+	delete m_pShop;
+	m_pShop = nullptr;
+
 }
 
 
@@ -291,6 +301,7 @@ Entity*	GameplayState::CreatePlayer() const
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
 		m_bIsShopping = true;
+		m_pShop->SetShopStatus(m_bIsShopping);
 	}
 
 #pragma region Pause Menu Navigation Clutter
@@ -440,6 +451,9 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 #pragma endregion
 
+	if (m_bIsShopping)
+		m_pShop->Input();
+
 	return true;	// keep playing
 }
 
@@ -479,6 +493,11 @@ Entity*	GameplayState::CreatePlayer() const
 		m_unFPS = m_unFrames;
 		m_unFrames = 0;
 		m_fFPSTimer = 0.0f;
+	}
+
+	if (m_bIsShopping)
+	{
+		m_pShop->Update(elapsedTime);
 	}
 }
 
