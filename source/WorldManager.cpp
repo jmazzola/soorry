@@ -111,6 +111,30 @@ bool WorldManager::LoadWorld(string fileName)
 		pLayer = pLayer->NextSiblingElement("layer");
 	}
 
+	// Create wall/window layer
+	Layer layer(m_nWorldWidth, m_nWorldHeight);
+
+	// Loop through the tiles
+	for (int x = 0; x < m_nWorldWidth; x++)
+	{
+		for (int y = 0; y <m_nWorldHeight; y++)
+		{
+			Tile tile;
+
+			tile.SetX(x);
+			tile.SetY(y);
+			tile.SetColliderID(0);
+			tile.SetCollidable(false);
+			tile.SetTriggerCollision("");
+			tile.SetTriggerInit("");
+			tile.SetTileID(0);
+
+			//SetColliderID(x, y, WALL);
+		}
+	}
+
+	m_vLayers.push_back(layer);
+
 	// Are there any layers?
 	if (m_vLayers.size() > 0)
 	{
@@ -179,7 +203,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 		int stopX = camTileX + (int)ceil((800.0f / m_nTileWidth)) + 1;
 		int stopY = camTileY + (int)ceil((600.0f / m_nTileHeight)) + 1;
 
-		// Loop through ENTIRE tile array (to be replaced with culling)
+		// Loop through the viewport
 		for (int x = camTileX; x < stopX; x++)
 		{
 			for (int y = camTileY; y < stopY; y++)
@@ -326,7 +350,23 @@ bool WorldManager::IsSolidAtPosition(int _x, int _y) const
 
 void WorldManager::SetColliderID(int _x, int _y, int _id)
 {
+	if (_id == EMPTY)
+	{
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(EMPTY);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(0);
+	}
 
+	else if (_id == WINDOW)
+	{
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WINDOW);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(1);
+	}
+
+	else if (_id == WALL)
+	{
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WALL);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(2);
+	}
 }
 
 /**********************************************************/
@@ -426,9 +466,13 @@ void WorldManager::GenerateSolidsChart()
 			{
 				// Check if collidable
 				if (m_vLayers[i][x][y].IsCollidable())
+				{
 					m_bSolidsChart[x][y] = true;
+				}
 				else
+				{
 					m_bSolidsChart[x][y] = false;
+				}
 			}
 		}
 	}

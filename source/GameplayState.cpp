@@ -586,6 +586,21 @@ Entity*	GameplayState::CreatePlayer() const
 	fps.append(" FPS");
 	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
 
+
+	// Draw wave info
+	if (zombieFactory.IsBuildMode())
+	{
+		string timeRemaining = "Time remaining: ";
+		timeRemaining.append(std::to_string(zombieFactory.GetBuildTimeRemaining()));
+		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
+	}
+
+	else
+	{
+		string enemiesRemaining = "Enemies Remaining: ";
+		enemiesRemaining.append(std::to_string(zombieFactory.GetEnemiesRemaining()));
+		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
+	}
 }
 
 
