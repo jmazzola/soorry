@@ -31,6 +31,7 @@
 #include "CreateProjectileMessage.h"
 #include "CreatePlaceableMessage.h"
 #include "CreatePickupMessage.h"
+#include "DestroyEntityMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -476,6 +477,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 		// Check collisions
 		m_pEntities->CheckCollisions(0, 1);
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 	}
 
 	// Increase the FPS timer
@@ -667,6 +669,16 @@ Entity*	GameplayState::CreatePlayer() const
 		place->Release();
 		place = nullptr;
 	}
+		break;
+	case MessageID::MSG_DESTROY_ENTITY:
+	{
+										  
+		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* ent = pCreateMessage->GetEntity();
+		g->m_pEntities->RemoveEntity(ent);
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */

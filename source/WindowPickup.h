@@ -8,5 +8,7 @@ public:
 	~WindowPickup() = default;
 
 	int GetType() const;
+	virtual void HandleCollision(const IEntity* pOther);
+
 };
 
