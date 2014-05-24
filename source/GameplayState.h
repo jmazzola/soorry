@@ -123,6 +123,7 @@ private:
 	Entity* CreateSlowZombie(int _x, int _y);
 	Entity* CreateProjectile(int _Weapon);
 	Entity* CreatePlaceable(int trap);
+	Entity* CreatePickUp(int pick, SGD::Point pos);
 
 	// Create a button
 	Button* CreateButton() const;

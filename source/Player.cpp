@@ -16,8 +16,12 @@
 #include "GameplayState.h"
 #include "CreatePlaceableMessage.h"
 #include "Inventory.h"
-
+#include "Tile.h"
 #include "Camera.h"
+#include "CreatePickupMessage.h"
+
+#define WALLPICK 0
+#define WINDOWPICK 1
 
 Player::Player()
 {
@@ -44,64 +48,110 @@ Player::Player()
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 
+	// Player Inventory
 	m_pInventory = new Inventory();
-	m_pInventory->SetBearTraps(0);
+	m_pInventory->SetBearTraps(100);
 	m_pInventory->SetGrenads(0);
 	m_pInventory->SetHealthPacks(0);
-	m_pInventory->SetMines(0);
+	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(0);
 	m_pInventory->SetWindows(0);
-	 //m_pCursor;
 
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
+#pragma region Load Weapons
+
+
+	//Assault rifle
+	//NOTE: totally made up
+	Weapon tempWeapon;
+	tempWeapon.SetCurrAmmo(30);
+	//NOTE: totally made up
+	tempWeapon.SetMaxAmmo(500);
+	tempWeapon.SetFireRate(.2f);
+	tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+	m_pWeapons[0] = tempWeapon;
+
+	//Shotgun
+	//NOTE: totally made up
+	tempWeapon;
+	tempWeapon.SetCurrAmmo(10);
+	//NOTE: totally made up
+	tempWeapon.SetMaxAmmo(500);
+	tempWeapon.SetFireRate(.5f);
+	tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+	m_pWeapons[1] = tempWeapon;
+
+	//rocket launcher
+	//NOTE: totally made up
+	tempWeapon;
+	tempWeapon.SetCurrAmmo(5);
+	//NOTE: totally made up
+	tempWeapon.SetMaxAmmo(50);
+	tempWeapon.SetFireRate(2);
+	tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+	m_pWeapons[2] = tempWeapon;
+
+	//Fire Axe
+	//NOTE: totally made up
+	tempWeapon;
+	tempWeapon.SetCurrAmmo(0);
+	//NOTE: totally made up
+	tempWeapon.SetMaxAmmo(0);
+	tempWeapon.SetFireRate(.5f);
+	tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+	m_pWeapons[3] = tempWeapon;
+#pragma endregion
+
+
+
 	//is three appropriate?
 	switch (3)
 	{
 		//NOTE:Will it hit this?
 	case 0: //Assault rifle
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[0];
-		tempWeapon.SetCurrAmmo(30);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.5);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+				//NOTE: totally made up
+				Weapon tempWeapon = m_pWeapons[0];
+				tempWeapon.SetCurrAmmo(30);
+				//NOTE: totally made up
+				tempWeapon.SetMaxAmmo(500);
+				tempWeapon.SetFireRate(.5);
+				tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	}
 		break;
 	case 1://Shotgun
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[1];
-		tempWeapon.SetCurrAmmo(10);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(1);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			   //NOTE: totally made up
+			   Weapon tempWeapon = m_pWeapons[1];
+			   tempWeapon.SetCurrAmmo(10);
+			   //NOTE: totally made up
+			   tempWeapon.SetMaxAmmo(500);
+			   tempWeapon.SetFireRate(1);
+			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 
 	}
 		break;
 	case 2://rocket launcher
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[2];
-		tempWeapon.SetCurrAmmo(5);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(50);
-		tempWeapon.SetFireRate(4);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			   //NOTE: totally made up
+			   Weapon tempWeapon = m_pWeapons[2];
+			   tempWeapon.SetCurrAmmo(5);
+			   //NOTE: totally made up
+			   tempWeapon.SetMaxAmmo(50);
+			   tempWeapon.SetFireRate(4);
+			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 	}
 		break;
 	case 3:
 	{
-		//NOTE: totally made up
-		Weapon tempWeapon = m_pWeapons[3];
-		tempWeapon.SetCurrAmmo(0);
-		//NOTE: totally made up
-		tempWeapon.SetMaxAmmo(0);
-		tempWeapon.SetFireRate(1);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			  //NOTE: totally made up
+			  Weapon tempWeapon = m_pWeapons[3];
+			  tempWeapon.SetCurrAmmo(0);
+			  //NOTE: totally made up
+			  tempWeapon.SetMaxAmmo(0);
+			  tempWeapon.SetFireRate(1);
+			  tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	}
 		break;
 	}
@@ -127,14 +177,14 @@ void Player::Update(float dt)
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
+	//Update  all Timers
+	m_fShotTimer -= dt;
 
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
 
 	//Update Timers
-	m_fShotTimer -= dt;
-		m_fPlaceTimer -= dt;
 
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
@@ -198,12 +248,54 @@ void Player::Update(float dt)
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
+	if (m_fShotTimer < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0)
+	{
+		if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+		{
+			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+			msg->QueueMessage();
+			msg = nullptr;
+			//set the shot timer to the rate of fire
+			int tempInt = m_pWeapons[m_nCurrWeapon].GetCurrAmmo();
+			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+			m_pWeapons[m_nCurrWeapon].SetCurrAmmo((m_pWeapons[m_nCurrWeapon].GetCurrAmmo() - 1));
+		}
+	}
 	// Selecting Bear Trap
 	if (pInput->IsKeyPressed(SGD::Key::Nine) == true)
 		m_nCurrPlaceable = 0;
-	// Selecting Bear Trap
+	// Selecting Mine
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
 		m_nCurrPlaceable = 1;
+
+	if (pInput->IsKeyPressed(SGD::Key::N7) == true)
+		m_nCurrPlaceable = 2;
+	if (pInput->IsKeyPressed(SGD::Key::N8) == true)
+		m_nCurrPlaceable = 3;
+
+	if (pInput->IsKeyPressed(SGD::Key::Spacebar) == true)
+	{
+		m_ptPosition.x += 30;
+		 //Colliding with wall
+		if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WALL)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		else if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WINDOW)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		m_ptPosition.x -= 30;
+
+	}
 
 	if (m_pZombieWave.IsBuildMode() == true)
 	{
@@ -255,40 +347,70 @@ void Player::Update(float dt)
 	}
 	else
 	{
-		// Send a Message to Create either the mine 
+		// Send a Message to Create a bear trap if the player has any
 		if (m_nCurrPlaceable != -1)
 		{
 			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
 				{
+					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
 					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
 					pmsg->QueueMessage();
 					pmsg = nullptr;
+					// Decreasing the amount of bear traps left for the player
 					unsigned int newset = m_pInventory->GetBearTraps();
 					--newset;
 					m_pInventory->SetBearTraps(newset);
 
 				}
 			}
-			if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
+			// Send a Message to Create a mine if the player has any
+			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
 				{
+					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
 					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
 					pmsg->QueueMessage();
 					pmsg = nullptr;
+					// Decreasing the amount of mines left for the player
 					unsigned int newset = m_pInventory->GetMines();
 					--newset;
 					m_pInventory->SetMines(newset);
 				}
 			}
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
+			{
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWalls();
+				--newset;
+				m_pInventory->SetWalls(newset);
+			}
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
+			{
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWindows();
+				--newset;
+				m_pInventory->SetWindows(newset);
+			}
 
 		}
-	
+
 	}
+
 }
 
 int Player::GetType() const
@@ -301,6 +423,20 @@ void Player::HandleCollision(const IEntity* pOther)
 	if (pOther->GetType() == ENT_ZOMBIE_BEAVER)
 	{
 		m_nCurrHealth--;
+	}
+	if (pOther->GetType() == ENT_PICKUP_WALL)
+	{
+		unsigned int newset = m_pInventory->GetWalls();
+		++newset;
+		m_pInventory->SetWalls(newset);
+
+	}
+	if (pOther->GetType() == ENT_PICKUP_WINDOW)
+	{
+		unsigned int newset = m_pInventory->GetWindows();
+		++newset;
+		m_pInventory->SetWindows(newset);
+
 	}
 }
 
@@ -362,10 +498,6 @@ Inventory* Player::GetInventory() const
 	return m_pInventory;
 }
 
-Cursor* Player::GetCursor() const
-{
-	return m_pCursor;
-}
 
 Weapon* Player::GetWeapons() const
 {
@@ -430,10 +562,6 @@ void Player::SetInventory(Inventory* _inventory)
 	m_pInventory = _inventory;
 }
 
-void Player::SetCursor(Cursor* _cursor)
-{
-	m_pCursor = _cursor;
-}
 
 void Player::SetWeapons(Weapon* _weapons)
 {

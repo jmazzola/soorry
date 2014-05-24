@@ -1,8 +1,6 @@
 /***************************************************************
 |	File:		GameplayState.cpp
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
-|	Course:		SGP
-|	Purpose:	This state is the game. Like the whole game.
+|	Author:		Justin Mazzola
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -11,7 +9,6 @@
 #include "OptionsState.h"
 #include "MainMenuState.h"
 #include "Button.h"
-#include "Shop.h"
 #include "Camera.h"
 
 
@@ -33,6 +30,8 @@
 #include "CreateSlowZombieMessage.h"
 #include "CreateProjectileMessage.h"
 #include "CreatePlaceableMessage.h"
+#include "CreatePickupMessage.h"
+#include "DestroyEntityMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -50,6 +49,9 @@
 #include "WorldManager.h"
 #include "Mine.h"
 #include "BearTrap.h"
+#include "Camera.h"
+#include "WallPickup.h"
+#include "WindowPickup.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -62,7 +64,7 @@ using namespace std;
 #define BUCKET_ENEMIES 1
 #define BUCKET_PROJECTILES 2
 #define BUCKET_PLACEABLE 3
-
+#define BUCKET_PICKUP 4
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -121,14 +123,13 @@ Entity*	GameplayState::CreatePlayer() const
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
-	m_hPistol = pAudio->LoadAudio(L"resource/audio/JPM_pistolShot.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	//Load preset xml file
-	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
+	//m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
 	//load emitters
-	m_pParticleManager->load();
+	//m_pParticleManager->load();
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -143,7 +144,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Create our player
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
-	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
+	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 	// Debug
 	dynamic_cast<Player*>(m_pPlayer)->SetScore(13371011);
@@ -156,15 +157,13 @@ Entity*	GameplayState::CreatePlayer() const
 	//m_pEntities->AddEntity(m_pPuppet, Entity::ENT_PLAYER);
 
 	// Load the world
-	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/colWorld.xml");
+	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
+
+	// Load wave information
+	zombieFactory.LoadWaves("resource/data/wave.xml");
 
 	// Start Zombie Factory
-	zombieFactory.LoadWaves("resource/data/wave.xml");
 	zombieFactory.Start();
-	zombieFactory.SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
-	zombieFactory.SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
-
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
@@ -187,7 +186,6 @@ Entity*	GameplayState::CreatePlayer() const
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
 	m_bIsPaused = false;
-
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
 
@@ -212,7 +210,6 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
-	pAudio->UnloadAudio(m_hPistol);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -286,7 +283,6 @@ Entity*	GameplayState::CreatePlayer() const
 		if (m_pShop->IsOpen() == false)
 			m_bIsPaused = !m_bIsPaused;
 	}
-
 	if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
 		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
@@ -305,17 +301,6 @@ Entity*	GameplayState::CreatePlayer() const
 		msg->QueueMessage();
 		msg = nullptr;
 	}
-
-	if (pInput->IsKeyPressed(SGD::Key::Space))
-	{
-		pAudio->PlayAudio(m_hPistol);
-	}
-
-	if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	{
-		m_pShop->SetShopStatus(true);
-	}
-
 #pragma region Pause Menu Navigation Clutter
 	// Handle pause menu input
 	// If we're paused
@@ -443,7 +428,6 @@ Entity*	GameplayState::CreatePlayer() const
 			{
 				switch (m_nPauseMenuCursor)
 				{
-
 				case PauseMenuOptionsOption::OPTION_GOBACK:
 				{
 					// Go back to the pause menu's main menu
@@ -490,21 +474,10 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pMessages->Update();
 
 		// Update Zombie Factory
-		zombieFactory.Update(elapsedTime);
+		//zombieFactory.Update(elapsedTime);
 
 		// Check collisions
-		m_pEntities->CheckCollisions(0, 1);
-	}
-
-	// Increase the FPS timer
-	m_fFPSTimer += elapsedTime;
-	m_unFrames++;
-
-	if (m_fFPSTimer >= 1.0f) // 1 second refresh rate
-	{
-		m_unFPS = m_unFrames;
-		m_unFrames = 0;
-		m_fFPSTimer = 0.0f;
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 	}
 }
 
@@ -515,6 +488,9 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Render(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Render the background
+
 
 	// Render test world
 	WorldManager::GetInstance()->Render(SGD::Point(Camera::x, Camera::y));
@@ -545,7 +521,6 @@ Entity*	GameplayState::CreatePlayer() const
 	// Render the entities
 	m_pEntities->RenderAll();
 
-#pragma region Pause Menu Rendering
 	// --- Pause Menu stuff ---
 	// If we're paused
 	if (m_bIsPaused)
@@ -605,19 +580,23 @@ Entity*	GameplayState::CreatePlayer() const
 		}
 
 	}
-#pragma endregion
 
 	// If we're shopping
 	if (m_pShop->IsOpen())
+	// Draw wave info
+	if (zombieFactory.IsBuildMode())
 	{
-		m_pShop->Render();
+		string timeRemaining = "Time remaining: ";
+		timeRemaining.append(std::to_string(zombieFactory.GetBuildTimeRemaining()));
+		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
 	}
 
-	// Draw the FPS
-	string fps = std::to_string(m_unFPS);
-	fps.append(" FPS");
-	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
-
+	else
+	{
+		string enemiesRemaining = "Enemies Remaining: ";
+		enemiesRemaining.append(std::to_string(zombieFactory.GetEnemiesRemaining()));
+		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
+	}
 }
 
 
@@ -632,7 +611,7 @@ Entity*	GameplayState::CreatePlayer() const
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )
 #pragma warning( 1 : 4061 )
-	
+
 	// What type of message?
 	switch (pMsg->GetMessageID())
 	{
@@ -641,7 +620,7 @@ Entity*	GameplayState::CreatePlayer() const
 		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
 		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
+		self->m_pEntities->AddEntity(beaver, 1);
 		beaver->Release();
 		beaver = nullptr;
 	}
@@ -651,7 +630,7 @@ Entity*	GameplayState::CreatePlayer() const
 		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
 		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		self->m_pEntities->AddEntity(zambie, 1);
 		zambie->Release();
 		zambie = nullptr;
 	}
@@ -661,7 +640,7 @@ Entity*	GameplayState::CreatePlayer() const
 		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance();
 		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		self->m_pEntities->AddEntity(zambie, 1);
 		zambie->Release();
 		zambie = nullptr;
 	}
@@ -678,18 +657,38 @@ Entity*	GameplayState::CreatePlayer() const
 		bullet->Release();
 		bullet = nullptr;
 	}
-
+		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
-		{
-			const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-			GameplayState* g = GameplayState::GetInstance();
-			Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-			g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
-			place->Release();
-			place = nullptr;
+	{
+		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		place->Release();
+		place = nullptr;
 
-		}
+	}
+		break;
+
+	case MessageID::MSG_CREATE_PICKUP:
+	{
+		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+		place->Release();
+		place = nullptr;
+	}
+		break;
+	case MessageID::MSG_DESTROY_ENTITY:
+	{
+
+		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* ent = pCreateMessage->GetEntity();
+		g->m_pEntities->RemoveEntity(ent);
+	}
 		break;
 	}
 
@@ -783,22 +782,28 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
-		trap->SetPosition(m_pPlayer->GetPosition());
-		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);
-		trap->SetCurrAnimation("eye");
+		trap->SetCurrAnimation("crab");
 		return trap;
 	}
 	else
 	{
 		Mine* trap = new Mine();
 		trap->SetDamage(30);
-		trap->SetPosition(m_pPlayer->GetPosition());
-		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
 		trap->SetTimeOfFrame(0);
-		trap->SetCurrAnimation("eye");
+		trap->SetCurrAnimation("crab");
 		return trap;
 	}
 }
@@ -814,8 +819,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetDamage(20);
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x += Camera::x;
+		pos.y += Camera::y;
+		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
+		vec *= -1;
 		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
@@ -826,8 +834,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetDamage(20);
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x += Camera::x;
+		pos.y += Camera::y;
+		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
+		vec *= -1;
 		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
@@ -838,14 +849,18 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetDamage(150);
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
-		SGD::Vector vec = tempProj->GetPosition() - SGD::InputManager::GetInstance()->GetMousePosition();
-		vec *= 2;
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+		pos.x +=  Camera::x;
+		pos.y +=  Camera::y;
+		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
+		vec *= -1;
 		tempProj->SetVelocity(vec);
 		Sprite* bro = new Sprite;
 		Frame* frame = new Frame;
 		frame->SetFrameRect({ 0, 0, 32, 32 });
+		frame->SetAnchorPoint({ 0, 0 });
 		bro->AddFrame(frame);
-		bro->SetImage("resource\\images\\particles\\testParticle1.jpg");
+		bro->SetImage("resource/images/particles/testParticle1.jpg");
 		tempProj->SetSprite(bro);
 		return tempProj;
 	}
@@ -855,5 +870,29 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 
 	}
 		break;
+	}
+}
+
+Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
+{
+	if (pick == 0)
+	{
+		WallPickup* wall = new WallPickup();
+		wall->SetPosition(pos);
+		wall->SetSprite(AnimationManager::GetInstance()->GetSprite("wall"));
+		wall->SetCurrFrame(0);
+		wall->SetTimeOfFrame(0);
+		wall->SetCurrAnimation("wall");
+		return wall;
+	}
+	else
+	{
+		WindowPickup* window = new WindowPickup();
+		window->SetPosition(pos);
+		window->SetSprite(AnimationManager::GetInstance()->GetSprite("window"));
+		window->SetCurrFrame(0);
+		window->SetTimeOfFrame(0);
+		window->SetCurrAnimation("window");
+		return window;
 	}
 }

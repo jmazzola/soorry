@@ -7,7 +7,7 @@
 /**********************************************************/
 // Forward Declarations
 class Entity;
-struct Position;
+struct Node;
 
 class AIComponent
 {
@@ -39,6 +39,8 @@ protected:
 
 	/**********************************************************/
 	// Data Members
+	int m_nWorldWidth;
+	int m_nWorldHeight;
 	int** m_nNodeChart;
 	float m_fTimeToPathfind;
 	Entity* m_pAgent;
@@ -50,11 +52,23 @@ private:
 
 	/**********************************************************/
 	// Helper Functions
-	bool Pathfind(Position start, Position end);
+	bool Pathfind(Node start, Node end);
 };
 
 
-struct Position
+struct Node
 {
+	Node()
+	{
+		x = 0;
+		y = 0;
+	}
+
+	Node(int x, int y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+
 	int x, y;
 };

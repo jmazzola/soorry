@@ -87,10 +87,6 @@ void Emitter::load()
 				//put in the angle
 				tempParticle->position.x = center.x + (radius*cosf(randAngle));
 				tempParticle->position.y = center.y + (radius*sinf(randAngle));
-
-
-				//tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
-				//tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
 			}
 				break;
 			case 2://line
@@ -106,7 +102,6 @@ void Emitter::load()
 					x = rand() % (int)end.x + start.x;
 				y = end.y+(slope*(x - end.x));
 				tempParticle->position = { x, y };
-
 			}
 				break;
 			case 3://point

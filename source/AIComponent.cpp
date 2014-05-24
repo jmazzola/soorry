@@ -11,16 +11,23 @@ AIComponent::AIComponent()
 {
 	m_fTimeToPathfind = 0.0f;
 
-	// Create node chart
+	// Get world sizes
 	WorldManager* pWorld = WorldManager::GetInstance();
-	m_nNodeChart = new int*[pWorld->GetWorldWidth()];
-	for (unsigned int x = 0; x < pWorld->GetWorldWidth(); x++)
-		m_nNodeChart[x] = new int[pWorld->GetWorldHeight()];
+	m_nWorldWidth = pWorld->GetWorldWidth();
+	m_nWorldHeight = pWorld->GetWorldHeight();
+
+	// Create node chart
+	m_nNodeChart = new int*[m_nWorldWidth];
+	for (unsigned int x = 0; x < m_nWorldWidth; x++)
+		m_nNodeChart[x] = new int[m_nWorldHeight];
 }
 
 
 AIComponent::~AIComponent()
 {
+	for (int x = 0; x < m_nWorldWidth; x++)
+		delete[] m_nNodeChart[x];
+	delete[] m_nNodeChart;
 }
 
 
@@ -30,6 +37,8 @@ AIComponent::~AIComponent()
 void AIComponent::Update(float dt)
 {
 	WorldManager* pWorld = WorldManager::GetInstance();
+	int tileWidth = pWorld->GetTileWidth();
+	int tileHeight = pWorld->GetTileHeight();
 
 	// Update timers
 	m_fTimeToPathfind -= dt;
@@ -41,20 +50,46 @@ void AIComponent::Update(float dt)
 		m_ptFindTarget = m_pPlayer->GetPosition();
 
 		// Start node
-		Position start;
-		start.x = (int)(m_pAgent->GetPosition().x + pWorld->GetTileWidth() / 2) / pWorld->GetTileWidth();
-		start.y = (int)(m_pAgent->GetPosition().y + pWorld->GetTileHeight() / 2) / pWorld->GetTileHeight();
+		Node start;
+		start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
+		start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
 
 		// End node
-		Position end;
-		end.x = (int)(m_ptFindTarget.x + pWorld->GetTileWidth() / 2) / pWorld->GetTileWidth();
-		end.y = (int)(m_ptFindTarget.y + pWorld->GetTileHeight() / 2) / pWorld->GetTileHeight();
+		Node end;
+		end.x = (int)(m_ptFindTarget.x) / tileWidth;
+		end.y = (int)(m_ptFindTarget.y) / tileHeight;
 
 		Pathfind(start, end);
+		m_fTimeToPathfind = 1.0f;
 	}
 
-	// Go to player (testing)
-	m_ptMoveTarget = m_pPlayer->GetPosition();
+	// Find move target
+	int snapX, snapY;
+	snapX = (int)(m_pAgent->GetPosition().x) / tileWidth;
+	snapY = (int)(m_pAgent->GetPosition().y) / tileHeight;
+
+	// Determine direction
+	int smallestValue = INT_MAX;
+	if (snapX < m_nWorldWidth - 1 && m_nNodeChart[snapX + 1][snapY] < smallestValue && m_nNodeChart[snapX + 1][snapY] > 0)
+	{
+		smallestValue = m_nNodeChart[snapX + 1][snapY];
+		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(32, 0);
+	}
+	if (snapX > 0 && m_nNodeChart[snapX - 1][snapY] < smallestValue && m_nNodeChart[snapX - 1][snapY] > 0)
+	{
+		smallestValue = m_nNodeChart[snapX - 1][snapY];
+		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(-32, 0);
+	}
+	if (snapY < m_nWorldHeight - 1 && m_nNodeChart[snapX][snapY + 1] < smallestValue && m_nNodeChart[snapX][snapY + 1] > 0)
+	{
+		smallestValue = m_nNodeChart[snapX][snapY + 1];
+		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(0, 32);
+	}
+	if (snapY > 0 && m_nNodeChart[snapX][snapY - 1] < smallestValue && m_nNodeChart[snapX][snapY - 1] > 0)
+	{
+		smallestValue = m_nNodeChart[snapX][snapY - 1];
+		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(0, -32);
+	}
 
 	// Create move vector
 	SGD::Vector toTarget = m_ptMoveTarget - m_pAgent->GetPosition();
@@ -114,14 +149,14 @@ void AIComponent::SetPlayer(Entity* _player)
 /**********************************************************/
 // Helper Functions
 
-bool AIComponent::Pathfind(Position start, Position end)
+bool AIComponent::Pathfind(Node start, Node end)
 {
 	WorldManager* pWorld = WorldManager::GetInstance();
 
 	// Reset node chart
-	for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+	for (int x = 0; x < m_nWorldWidth; x++)
 	{
-		for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+		for (int y = 0; y < m_nWorldHeight; y++)
 		{
 			if (pWorld->IsSolidAtPosition(x, y))
 				m_nNodeChart[x][y] = -1;
@@ -130,7 +165,7 @@ bool AIComponent::Pathfind(Position start, Position end)
 		}
 	}
 
-	queue<Position> nodes;
+	queue<Node> nodes;
 
 	nodes.push(end);
 	m_nNodeChart[end.x][end.y] = 1;
@@ -139,13 +174,40 @@ bool AIComponent::Pathfind(Position start, Position end)
 
 	while (!nodes.empty())
 	{
-		Position node;
+		Node node;
 		node = nodes.front();
 		nodes.pop();
 
-		if (node.x == end.x && node.y == end.y)
+		if (node.x == start.x && node.y == start.y)
 			return true;
 
-		
+		if (node.x < 1 || node.y < 1 || node.x >= m_nWorldWidth - 1 || node.y >= m_nWorldHeight - 1)
+			continue;
+
+		if (m_nNodeChart[node.x - 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x - 1, node.y));
+			m_nNodeChart[node.x - 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (m_nNodeChart[node.x + 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x + 1, node.y));
+			m_nNodeChart[node.x + 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (m_nNodeChart[node.x][node.y + 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y + 1));
+			m_nNodeChart[node.x][node.y + 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (m_nNodeChart[node.x][node.y - 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y - 1));
+			m_nNodeChart[node.x][node.y - 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
 	}
+
+	return false;
 }

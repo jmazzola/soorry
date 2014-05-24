@@ -1,11 +1,17 @@
 #include "WallPickup.h"
+#include "DestroyEntityMessage.h"
 
-
-WallPickup::WallPickup()
+int WallPickup::GetType() const
 {
+	return ENT_PICKUP_WALL;
 }
 
-
-WallPickup::~WallPickup()
+/*virtual*/ void WallPickup::HandleCollision(const IEntity* pOther)
 {
+	if (pOther->GetType() == ENT_PLAYER)
+	{
+		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
+		pmsg->QueueMessage();
+		pmsg = nullptr;
+	}
 }
