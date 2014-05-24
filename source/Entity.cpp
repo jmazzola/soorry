@@ -9,6 +9,7 @@
 #include "Entity.h"
 
 #include "Sprite.h"
+#include "Camera.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include <cassert>
@@ -33,9 +34,14 @@
 	
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y);
 
-	SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
+	SGD::Rectangle drawRect = GetRect();
+	drawRect.left -= Camera::x;
+	drawRect.right -= Camera::x;
+	drawRect.top -= Camera::y;
+	drawRect.bottom -= Camera::y;
+	SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;

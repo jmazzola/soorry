@@ -28,6 +28,7 @@
     <ClCompile Include="source\BeaverZombie.cpp" />
     <ClCompile Include="source\BitmapFont.cpp" />
     <ClCompile Include="source\Button.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
@@ -57,6 +58,7 @@
     <ClCompile Include="source\MainMenuState.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
+    <ClCompile Include="source\Node.cpp" />
     <ClCompile Include="source\OptionsState.cpp" />
     <ClCompile Include="source\Particle.cpp" />
     <ClCompile Include="source\ParticleFlyweight.cpp" />
@@ -84,6 +86,7 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
@@ -140,6 +143,7 @@
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
     <ClInclude Include="source\Mine.h" />
+    <ClInclude Include="source\Node.h" />
     <ClInclude Include="source\OptionsState.h" />
     <ClInclude Include="source\Particle.h" />
     <ClInclude Include="source\ParticleFlyweight.h" />
