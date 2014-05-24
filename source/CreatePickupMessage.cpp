@@ -8,4 +8,5 @@ CreatePickupMessage::CreatePickupMessage()
 
 CreatePickupMessage::~CreatePickupMessage()
 {
+
 }

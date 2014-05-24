@@ -1,11 +1,7 @@
 #include "WallPickup.h"
 
 
-WallPickup::WallPickup()
+int WallPickup::GetType() const
 {
-}
-
-
-WallPickup::~WallPickup()
-{
+	return ENT_PICKUP_WALL;
 }

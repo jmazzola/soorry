@@ -236,7 +236,6 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 
 void AnimationManager::LoadAll()
 {
-	
 	LoadSprites("resource/animation/piggy3.xml");
 	LoadSprites("resource/animation/beaver.xml");
 	LoadSprites("resource/animation/fastZombie.xml");
