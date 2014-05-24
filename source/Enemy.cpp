@@ -5,6 +5,7 @@
 
 Enemy::Enemy()
 {
+	m_AIComponent.SetAgent(this);
 }
 
 
@@ -18,7 +19,7 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
-
+	m_AIComponent.Update(dt);
 }
 
 int Enemy::GetType() const
@@ -59,11 +60,6 @@ float Enemy::GetSpeed() const
 	return m_fSpeed;
 }
 
-AIComponent* Enemy::GetAIComponent() const
-{
-	return m_pAIComponent;
-}
-
 /**********************************************************/
 // Mutators
 
@@ -97,7 +93,7 @@ void Enemy::SetSpeed(float _speed)
 	m_fSpeed = _speed;
 }
 
-void Enemy::SetAIComponent(AIComponent* _aiComponent)
+void Enemy::SetPlayer(Entity* _player)
 {
-	m_pAIComponent = _aiComponent;
+	m_AIComponent.SetPlayer(_player);
 }

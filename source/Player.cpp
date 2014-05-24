@@ -17,6 +17,8 @@
 #include "CreatePlaceableMessage.h"
 #include "Inventory.h"
 
+#include "Camera.h"
+
 Player::Player()
 {
 	// Entity
@@ -125,6 +127,11 @@ void Player::Update(float dt)
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
+
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
+
 	//Update Timers
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
@@ -317,9 +324,6 @@ void Player::HandleCollision(const IEntity* pOther)
 		m_nCurrHealth--;
 	}
 }
-
-
-
 
 /**********************************************************/
 // Accessors

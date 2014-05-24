@@ -13,7 +13,10 @@
 #include "IEntity.h"
 
 #include <sstream>
+#include <cmath>
 using namespace std;
+
+#define CLOSED 0
 
 
 WorldManager* WorldManager::GetInstance()
@@ -109,7 +112,13 @@ bool WorldManager::LoadWorld(string fileName)
 	}
 
 	// Are there any layers?
-	return (m_vLayers.size() > 0);
+	if (m_vLayers.size() > 0)
+	{
+		GenerateSolidsChart();
+		return true;
+	}
+	else
+		return false;
 }
 
 void WorldManager::UnloadWorld()
@@ -123,6 +132,11 @@ void WorldManager::UnloadWorld()
 
 	// Unload tilesetImage
 	SGD::GraphicsManager::GetInstance()->UnloadTexture(m_hTilesetImage);
+
+	// Unload solids chart
+	for (int x = 0; x < m_nWorldWidth; x++)
+		delete[] m_bSolidsChart[x];
+	delete[] m_bSolidsChart;
 }
 
 void WorldManager::Render(SGD::Point _cameraPos)
@@ -216,6 +230,20 @@ bool WorldManager::CheckCollision(IEntity* _object)
 	int bottom = (int)rect.bottom / m_nTileHeight + 1;
 	int right = (int)rect.right / m_nTileWidth + 1;
 
+#if !CLOSED
+
+	// Bound within the world
+	if (top < 0) top = 0;
+	if (left < 0) left = 0;
+	if (bottom < 0) bottom = 0;
+	if (right < 0) right = 0;
+	if (top > m_nWorldHeight - 1) top = m_nWorldHeight;
+	if (bottom > m_nWorldHeight - 1) bottom = m_nWorldHeight;
+	if (left > m_nWorldWidth - 1) left = m_nWorldWidth;
+	if (right > m_nWorldWidth - 1) right = m_nWorldWidth;
+
+#endif
+
 	// Loop through tiles to check
 	for (int x = left; x < right; x++)
 	{
@@ -252,6 +280,20 @@ int WorldManager::CheckCollisionID(IEntity* _object)
 	int bottom = (int)rect.bottom / m_nTileHeight + 1;
 	int right = (int)rect.right / m_nTileWidth + 1;
 
+#if !CLOSED
+
+	// Bound within the world
+	if (top < 0) top = 0;
+	if (left < 0) left = 0;
+	if (bottom < 0) bottom = 0;
+	if (right < 0) right = 0;
+	if (top > m_nWorldHeight - 1) top = m_nWorldHeight;
+	if (bottom > m_nWorldHeight - 1) bottom = m_nWorldHeight;
+	if (left > m_nWorldWidth - 1) left = m_nWorldWidth;
+	if (right > m_nWorldWidth - 1) right = m_nWorldWidth;
+
+#endif
+
 	// Loop through tiles to check
 	for (int x = left; x < right; x++)
 	{
@@ -275,6 +317,16 @@ int WorldManager::ColliderIDAtPosition(int _x, int _y) const
 	// Start with the top layer
 
 	return 0;
+}
+
+bool WorldManager::IsSolidAtPosition(int _x, int _y) const
+{
+	return m_bSolidsChart[_x][_y];
+}
+
+void WorldManager::SetColliderID(int _x, int _y, int _id)
+{
+
 }
 
 /**********************************************************/
@@ -354,5 +406,30 @@ void WorldManager::SendInitialTriggerMessage(const Tile& _tile) const
 		CreatePlayerSpawnMessage* pMsg = new CreatePlayerSpawnMessage(_tile.GetX(), _tile.GetY());
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+	}
+}
+
+void WorldManager::GenerateSolidsChart()
+{
+	// Allocate new memory for the solids chart
+	m_bSolidsChart = new bool*[m_nWorldWidth];
+	for (int x = 0; x < m_nWorldWidth; x++)
+		m_bSolidsChart[x] = new bool[m_nWorldHeight];
+
+	// Loop through each of the layers
+	for (unsigned int i = 0; i < m_vLayers.size(); i++)
+	{
+		// Loop through each of the tiles
+		for (int x = 0; x < m_nWorldWidth; x++)
+		{
+			for (int y = 0; y < m_nWorldHeight; y++)
+			{
+				// Check if collidable
+				if (m_vLayers[i][x][y].IsCollidable())
+					m_bSolidsChart[x][y] = true;
+				else
+					m_bSolidsChart[x][y] = false;
+			}
+		}
 	}
 }

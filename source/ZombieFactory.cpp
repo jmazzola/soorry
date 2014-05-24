@@ -62,6 +62,9 @@ bool ZombieFactory::LoadWaves(string _fileName)
 		// Move on to next wave
 		pWave = pWave->NextSiblingElement("wave");
 	}
+
+	// Did we load anything?
+	return (waveData.size() > 0);
 }
 
 void ZombieFactory::Start()
@@ -152,6 +155,8 @@ void ZombieFactory::Update(float dt)
 
 			// Determine where to spawn
 			invalid = false;
+			int spawnX;
+			int spawnY;
 			do
 			{
 				// Determine which side
@@ -159,12 +164,24 @@ void ZombieFactory::Update(float dt)
 				switch (side)
 				{
 				case 0:
+					// Right edge
+					spawnX = m_nSpawnWidth - 32;
+					spawnY = rand() % (m_nSpawnHeight - 32);
 					break;
 				case 1:
+					// Top edge
+					spawnX = rand() % (m_nSpawnWidth - 32);
+					spawnY = 0;
 					break;
 				case 2:
+					// Left edge
+					spawnX = 0;
+					spawnY = rand() % (m_nSpawnHeight - 32);
 					break;
 				case 3:
+					// Bottom edge
+					spawnX = rand() % (m_nSpawnWidth - 32);
+					spawnY = m_nSpawnHeight - 32;
 					break;
 				}
 			} while (invalid);
@@ -175,21 +192,21 @@ void ZombieFactory::Update(float dt)
 			case 0:
 			{
 					  // Slow zombie
-					  CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(32, 32);
+					  CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
 			}
 				break;
 			case 1:
 			{
 					  // Fast zombie
-					  CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(128, 128);
+					  CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
 			}
 				break;
 			case 2:
 			{
 					  // Beaver zombie
-					  CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(64, 64);
+					  CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
 			}
 				break;

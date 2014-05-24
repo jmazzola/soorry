@@ -29,6 +29,8 @@ public:
 	bool CheckCollision(IEntity* object);
 	int CheckCollisionID(IEntity* object);
 	int ColliderIDAtPosition(int x, int y) const;
+	bool IsSolidAtPosition(int x, int y) const;
+	void SetColliderID(int x, int y, int id);
 
 	/**********************************************************/
 	// Accessors
@@ -57,6 +59,7 @@ protected:
 	int m_nTileWidth;
 	int m_nTileHeight;
 	int m_nTilesetWidth;
+	bool** m_bSolidsChart;
 	vector<Layer> m_vLayers;
 	SGD::HTexture m_hTilesetImage;
 
@@ -71,6 +74,7 @@ private:
 	/**********************************************************/
 	// Helper Functions
 	void SendInitialTriggerMessage(const Tile& tile) const;
+	void GenerateSolidsChart();
 
 	/**********************************************************/
 	// Singleton Business

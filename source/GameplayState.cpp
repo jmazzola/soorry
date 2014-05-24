@@ -12,6 +12,7 @@
 #include "MainMenuState.h"
 #include "Button.h"
 #include "Shop.h"
+#include "Camera.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -128,6 +129,9 @@ Entity*	GameplayState::CreatePlayer() const
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
+	// Camera
+	Camera::x = 0;
+	Camera::y = 0;
 
 	// Load all animation
 	m_pAnimation = AnimationManager::GetInstance();
@@ -491,7 +495,7 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render test world
-	WorldManager::GetInstance()->Render(SGD::Point(0, 0));
+	WorldManager::GetInstance()->Render(SGD::Point(Camera::x, Camera::y));
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
@@ -682,8 +686,12 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 	tempBeav->SetAttackRange(1.0f);
 	tempBeav->SetMaxHealth(100);
 	tempBeav->SetCurrHealth(100);
-	tempBeav->SetSpeed(2.0f);
+	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
+
+	// AIComponent
+	tempBeav->SetPlayer(m_pPlayer);
+
 	//NOTE: need to render only one image ask james how to do this
 	/*Sprite bro;
 	bro.SetImage("resource\animation\TestBeaver.png");
@@ -699,13 +707,18 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetAttackRange(1.0f);
 	zambie->SetMaxHealth(100);
 	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(1.0f);
+	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
+
+	// AIComponent
+	zambie->SetPlayer(m_pPlayer);
+
 	/*Sprite bro;
 	bro.SetImage("resource\images\tim\tim.png");
 	zambie->SetSprite(&bro);*/
 	return zambie;
 }
+
 Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 {
 	SlowZombie* zambie = new SlowZombie;
@@ -714,8 +727,12 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	zambie->SetAttackRange(1.0f);
 	zambie->SetMaxHealth(100);
 	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(.5f);
+	zambie->SetSpeed(50.0f);
 	zambie->SetVelocity({ 0, 0 });
+
+	// AIComponent
+	zambie->SetPlayer(m_pPlayer);
+
 	/*Sprite bro;
 	bro.SetImage("resource\images\tim\tim.png");
 	zambie->SetSprite(&bro);*/
