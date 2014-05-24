@@ -1,11 +1,11 @@
 #include "Mine.h"
 
-
-Mine::Mine()
+/*virtual*/ void Mine::Update(float dt) /*override*/
 {
+
 }
 
-
-Mine::~Mine()
+/*virtual*/ int Mine::GetType() const /*override*/
 {
+	return EntityType::ENT_TRAP_MINE;
 }

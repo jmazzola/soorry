@@ -44,6 +44,8 @@
 #include "Player.h"
 #include "ParticleManager.h"
 #include "WorldManager.h"
+#include "Mine.h"
+#include "BearTrap.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -55,6 +57,7 @@ using namespace std;
 #define BUCKET_PLAYER 0
 #define BUCKET_ENEMIES 1
 #define BUCKET_PROJECTILES 2
+#define BUCKET_PLACEABLE 3
 
 
 #define WIN32_LEAN_AND_MEAN
@@ -79,6 +82,8 @@ using namespace std;
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
+
+	player->SetZombieFactory(zombieFactory);
 	return player;
 }
 
@@ -585,7 +590,7 @@ Entity*	GameplayState::CreatePlayer() const
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )
 #pragma warning( 1 : 4061 )
-
+	
 	// What type of message?
 	switch (pMsg->GetMessageID())
 	{
@@ -627,17 +632,30 @@ Entity*	GameplayState::CreatePlayer() const
 
 		//Entity* place = g->crea
 	case MessageID::MSG_CREATE_PROJECTILE:
+
 	{
-											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
-											 GameplayState* self = GameplayState::GetInstance();
-											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-											 bullet->Release();
-											 bullet = nullptr;
-	}
-		break;
+
+		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+		self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
+		bullet = nullptr;
 	}
 
+
+	case MessageID::MSG_CREATE_PLACEABLE:
+		{
+			const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+			GameplayState* g = GameplayState::GetInstance();
+			Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+			g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+			place->Release();
+			place = nullptr;
+
+		}
+		break;
+	}
 
 	/* Restore previous warning levels */
 #pragma warning( pop )
@@ -710,16 +728,32 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	return zambie;
 }
 
-Entity* GameplayState::CreateBearTrap(SGD::Point pt)
+Entity* GameplayState::CreatePlaceable(int trap)
 {
-	return nullptr;
+	if (trap == 0)
+	{
+		BearTrap* trap = new BearTrap();
+		trap->SetTrap(false);
+		trap->SetPosition(m_pPlayer->GetPosition());
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		trap->SetCurrFrame(0);
+		trap->SetTimeOfFrame(0);
+		trap->SetCurrAnimation("eye");
+		return trap;
+	}
+	else
+	{
+		Mine* trap = new Mine();
+		trap->SetDamage(30);
+		trap->SetPosition(m_pPlayer->GetPosition());
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("eye"));
+		trap->SetCurrFrame(0);
+		trap->SetTimeOfFrame(0);
+		trap->SetCurrAnimation("eye");
+		return trap;
+	}
 }
 
-Entity* GameplayState::CreateMine(SGD::Point pt)
-{
-	return nullptr;
-
-}
 
 Entity* GameplayState::CreateProjectile(int _Weapon)
 {

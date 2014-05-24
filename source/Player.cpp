@@ -13,6 +13,9 @@
 #include "Projectile.h"
 #include "AssaultRifleBullet.h"
 #include "CreateProjectileMessage.h"
+#include "GameplayState.h"
+#include "CreatePlaceableMessage.h"
+
 Player::Player()
 {
 	// Entity
@@ -91,6 +94,7 @@ Player::Player()
 	}
 		break;
 	}
+
 }
 
 
@@ -175,51 +179,74 @@ void Player::Update(float dt)
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
-	//if (m_fShotTimer < 0)
-	//{
-	//	if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
-	//	{
-	//		switch (m_nCurrWeapon)
-	//		{
-	//		case 0:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 1:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 2:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		case 3:
-	//		{
-	//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
-	//			msg->QueueMessage();
-	//			msg = nullptr;
-	//			//set the shot timer to the rate of fire
-	//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
-	//		}
-	//			break;
-	//		}
-	//	}
-	//}
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Nine) == true)
+		m_nCurrPlaceable = 0;
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
+		m_nCurrPlaceable = 1;
+
+	if (m_pZombieWave.IsBuildMode() == true)
+	{
+		//if (m_fShotTimer < 0)
+		//{
+		//	if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+		//	{
+		//		switch (m_nCurrWeapon)
+		//		{
+		//		case 0:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 1:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 2:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 3:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		}
+		//	}
+		//}
+	}
+	else
+	{
+		// Send a Message to Create either the mine 
+		if (m_nCurrPlaceable != -1)
+		{
+			if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+			{
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
+				pmsg->QueueMessage();
+				pmsg = nullptr;
+			}
+		}
+	}
 }
 
 int Player::GetType() const
@@ -235,14 +262,7 @@ void Player::HandleCollision(const IEntity* pOther)
 	}
 }
 
-/*virtual*/ void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-
-	Entity::Render();
-}
 
 
 /**********************************************************/

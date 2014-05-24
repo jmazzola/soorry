@@ -8,7 +8,7 @@ public:
 	CreatePlaceableMessage(SGD::Point pt, int id);
 	~CreatePlaceableMessage() = default;
 
-	int GetPlaceableType() { return m_nPlaceableType; }
+	int GetPlaceableType() const { return m_nPlaceableType; }
 	SGD::Point GetPlaceablePos() { return m_ptPosition; }
 
 protected:
