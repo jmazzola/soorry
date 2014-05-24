@@ -39,9 +39,9 @@ Player::Player()
 	m_fTimeAlive = 0.0f;
 	//m_pInventory;
 	//m_pCursor;
-	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
-	//is three appropriate?
+#pragma region Load Weapons
+
 
 	//Assault rifle
 	//NOTE: totally made up
@@ -82,6 +82,7 @@ Player::Player()
 	tempWeapon.SetFireRate(.5f);
 	tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	m_pWeapons[3] = tempWeapon;
+#pragma endregion
 
 
 
@@ -105,7 +106,7 @@ void Player::Update(float dt)
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
-	//Update Timers
+	//Update  all Timers
 	m_fShotTimer -= dt;
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
