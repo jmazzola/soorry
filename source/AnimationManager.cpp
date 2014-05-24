@@ -85,9 +85,9 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 			{
 				spriteImg->Attribute("numbers", &numFrames);
 			}
+			TiXmlElement* frames = spriteImg->NextSiblingElement("frame");
 			for (int i = 0; i < numFrames; i++)
 			{
-				TiXmlElement* frames = spriteImg->NextSiblingElement("frame");
 				if (frames != nullptr)
 				{
 					TiXmlElement* info = frames->FirstChildElement("anchorPoint");
@@ -154,6 +154,7 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 							newFrame->SetTriggerID(trigid);
 					}
 					newSprite->AddFrame(newFrame);
+					//frames->
 					frames = frames->NextSiblingElement("frame");
 				}
 			}

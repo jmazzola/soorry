@@ -54,8 +54,8 @@ Player::Player()
 	m_pInventory->SetGrenads(0);
 	m_pInventory->SetHealthPacks(0);
 	m_pInventory->SetMines(1);
-	m_pInventory->SetWalls(0);
-	m_pInventory->SetWindows(0);
+	m_pInventory->SetWalls(100);
+	m_pInventory->SetWindows(100);
 
 	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
@@ -270,27 +270,33 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
 		m_nCurrPlaceable = 1;
 
-	if (pInput->IsKeyPressed(SGD::Key::N7) == true)
+	if (pInput->IsKeyPressed(SGD::Key::O) == true)
 		m_nCurrPlaceable = 2;
-	if (pInput->IsKeyPressed(SGD::Key::N8) == true)
+	if (pInput->IsKeyPressed(SGD::Key::P) == true)
 		m_nCurrPlaceable = 3;
 
-	if (pInput->IsKeyPressed(SGD::Key::Spacebar) == true)
+	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
 	{
 		m_ptPosition.x += 30;
 		 //Colliding with wall
-		if (WorldManager::GetInstance()->CheckCollision(this) == true &&
-			pWorld->CheckCollisionID(this) == WALL)
+		if (pWorld->CheckCollisionID(this) == WALL)
 		{
-			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
+			pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
+
+			pWorld->SetColliderID(pos.x, pos.y, EMPTY);
 			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
-		else if (WorldManager::GetInstance()->CheckCollision(this) == true &&
-			pWorld->CheckCollisionID(this) == WINDOW)
+		else if (pWorld->CheckCollisionID(this) == WINDOW)
 		{
-			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
+			pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
+
+			pWorld->SetColliderID(pos.x, pos.y, EMPTY);
 			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
 			pmsg->QueueMessage();
 			pmsg = nullptr;
@@ -386,27 +392,35 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
 			{
-				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				{
+					m_fPlaceTimer = 1;
+					SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+					pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
+					pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
 
-				pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
-				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWalls();
-				--newset;
-				m_pInventory->SetWalls(newset);
+					pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
+					// Decreasing the amount of mines left for the player
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
+				}
 			}
 			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
 			{
-				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				{
+					m_fPlaceTimer = 1;
+					SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+					pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+					pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 
-				pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
-				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWindows();
-				--newset;
-				m_pInventory->SetWindows(newset);
+					pWorld->SetColliderID((int)pos.x / 32, (int)pos.y / 32, WINDOW);
+					// Decreasing the amount of mines left for the player
+					unsigned int newset = m_pInventory->GetWindows();
+					--newset;
+					m_pInventory->SetWindows(newset);
+				}
 			}
 
 		}
