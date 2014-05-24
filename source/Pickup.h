@@ -9,6 +9,7 @@ public:
 
 	virtual void Update(float dt);
 	virtual int GetType() const;
+	//virtual void HandleCollision(const IEntity* pOther);
 
 
 private:

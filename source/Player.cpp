@@ -16,8 +16,12 @@
 #include "GameplayState.h"
 #include "CreatePlaceableMessage.h"
 #include "Inventory.h"
-
+#include "Tile.h"
 #include "Camera.h"
+#include "CreatePickupMessage.h"
+
+#define WALLPICK 0
+#define WINDOWPICK 1
 
 Player::Player()
 {
@@ -205,6 +209,35 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
 		m_nCurrPlaceable = 1;
 
+	if (pInput->IsKeyPressed(SGD::Key::N7) == true)
+		m_nCurrPlaceable = 2;
+	if (pInput->IsKeyPressed(SGD::Key::N8) == true)
+		m_nCurrPlaceable = 3;
+
+	if (pInput->IsKeyPressed(SGD::Key::Spacebar) == true)
+	{
+		m_ptPosition.x += 30;
+		 //Colliding with wall
+		if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WALL)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		else if (WorldManager::GetInstance()->CheckCollision(this) == true &&
+			pWorld->CheckCollisionID(this) == WINDOW)
+		{
+			pWorld->SetColliderID(m_ptPosition.x, m_ptPosition.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		m_ptPosition.x -= 30;
+
+	}
+
 	if (m_pZombieWave.IsBuildMode() == true)
 	{
 		//if (m_fShotTimer < 0)
@@ -292,7 +325,11 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
 			{
-				//SetColliderID(int x, int y, 0);
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetWalls();
 				--newset;
@@ -300,7 +337,11 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
 			{
-				//SetColliderID(int x, int y, 1);
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
+				pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
+
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetWindows();
 				--newset;
@@ -310,6 +351,7 @@ void Player::Update(float dt)
 		}
 
 	}
+
 }
 
 int Player::GetType() const
@@ -322,6 +364,20 @@ void Player::HandleCollision(const IEntity* pOther)
 	if (pOther->GetType() == ENT_ZOMBIE_BEAVER)
 	{
 		m_nCurrHealth--;
+	}
+	if (pOther->GetType() == ENT_PICKUP_WALL)
+	{
+		unsigned int newset = m_pInventory->GetWalls();
+		++newset;
+		m_pInventory->SetWalls(newset);
+
+	}
+	if (pOther->GetType() == ENT_PICKUP_WINDOW)
+	{
+		unsigned int newset = m_pInventory->GetWindows();
+		++newset;
+		m_pInventory->SetWindows(newset);
+
 	}
 }
 

@@ -239,5 +239,7 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/piggy3.xml");
 	LoadSprites("resource/animation/beaver.xml");
 	LoadSprites("resource/animation/fastZombie.xml");
-	LoadSprites("resource/animation/eyeball.xml");
+	LoadSprites("resource/animation/Crab.xml");
+	LoadSprites("resource/animation/Wall.xml");
+	LoadSprites("resource/animation/Window.xml");
 }
