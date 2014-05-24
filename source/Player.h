@@ -10,6 +10,8 @@
 
 #include "Entity.h"
 #include "AnimationManager.h"
+#include "ZombieFactory.h"
+
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -28,7 +30,6 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
-	virtual void Render();
 
 	/**********************************************************/
 	// Accessors
@@ -61,14 +62,15 @@ public:
 	void SetInventory(Inventory* inventory);
 	void SetCursor(Cursor* cursor);
 	void SetWeapons(Weapon* weapons);
-
+	void SetZombieFactory(ZombieFactory wave)  { m_pZombieWave = wave; }
 protected:
 
 	/**********************************************************/
 	// Members
+	float m_fShotTimer;
 	int m_nMaxHealth;
 	int m_nCurrHealth;
-	int m_nCurrWeapon;
+	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
 	unsigned int m_unScore;
@@ -79,5 +81,6 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
+	ZombieFactory m_pZombieWave;
 };
 

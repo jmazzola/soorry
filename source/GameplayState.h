@@ -118,8 +118,9 @@ private:
 	Entity* CreateBeaverZombie(int _x, int _y);
 	Entity* CreateFastZombie(int _x, int _y);
 	Entity* CreateSlowZombie(int _x, int _y);
-	Entity* CreateBearTrap(SGD::Point pt);
-	Entity* CreateMine(SGD::Point pt);
+	Entity* CreateProjectile(int _Weapon);
+	Entity* CreatePlaceable(int trap);
+
 	// Create a button
 	Button* CreateButton() const;
 

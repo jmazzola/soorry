@@ -43,7 +43,7 @@ protected:
 	// Data Members
 	std::map<std::string, Sprite*> m_mSprites;
 	std::vector<std::string> m_vSpriteNames;
-	//std::vector<Sprite*> m_vSprites;
+	//std::vector<Sprite> m_vSprites;
 	static AnimationManager*	s_pInstance;
 private:
 	AnimationManager() = default;
