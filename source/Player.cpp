@@ -43,10 +43,10 @@ Player::Player()
 	m_fTimeAlive = 0.0f;
 
 	m_pInventory = new Inventory();
-	m_pInventory->SetBearTraps(10);
+	m_pInventory->SetBearTraps(0);
 	m_pInventory->SetGrenads(0);
 	m_pInventory->SetHealthPacks(0);
-	m_pInventory->SetMines(1);
+	m_pInventory->SetMines(0);
 	m_pInventory->SetWalls(0);
 	m_pInventory->SetWindows(0);
 	 //m_pCursor;
@@ -110,6 +110,7 @@ Player::Player()
 Player::~Player()
 {
 		delete []m_pWeapons;
+		delete m_pInventory;
 }
 
 
