@@ -80,6 +80,7 @@ private:
 	bool m_bIsPaused;
 	bool m_bIsShopping;
 	Entity* m_pPlayer;
+	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
@@ -122,6 +123,8 @@ private:
 	Entity* CreateFastZombie(int _x, int _y);
 	Entity* CreateSlowZombie(int _x, int _y);
 	Entity* CreateProjectile(int _Weapon);
+	Entity* CreatePlaceable(int trap);
+
 	// Create a button
 	Button* CreateButton() const;
 

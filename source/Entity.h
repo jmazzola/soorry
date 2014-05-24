@@ -78,12 +78,17 @@ public:
 	Sprite* GetSprite() const;
 	SGD::Point GetPosition() const;
 	SGD::Vector GetVelocity() const;
-
+	float GetTimeOfFrame() const { return m_antsAnimation.m_fTimeOnFrame; }
+	int GeCurrFrame() const { return m_antsAnimation.m_nCurrFrame; }
+	std::string GetCurrAnimation() const{ return m_antsAnimation.m_nCurrAnimation; }
 	/**********************************************************/
 	// Mutators
 	void SetSprite(Sprite* sprite);
 	void SetPosition(SGD::Point position);
 	void SetVelocity(SGD::Vector velocity);
+	void SetTimeOfFrame(float time) { m_antsAnimation.m_fTimeOnFrame = time; }
+	void SetCurrFrame(int numframe) { m_antsAnimation.m_nCurrFrame = numframe; }
+	void SetCurrAnimation(std::string name) { m_antsAnimation.m_nCurrAnimation = name; }
 
 protected:
 

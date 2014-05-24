@@ -1,11 +1,11 @@
 #include "BearTrap.h"
 
 
-BearTrap::BearTrap()
+/*virtual*/ void BearTrap::Update(float dt) /*override*/
 {
+
 }
-
-
-BearTrap::~BearTrap()
+/*virtual*/ int BearTrap::GetType() const /*override*/
 {
+	return EntityType::ENT_TRAP_BEARTRAP;
 }
