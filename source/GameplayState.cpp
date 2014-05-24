@@ -124,9 +124,9 @@ Entity*	GameplayState::CreatePlayer() const
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	//Load preset xml file
-	m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
+	//m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
 	//load emitters
-	m_pParticleManager->load();
+	//m_pParticleManager->load();
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
