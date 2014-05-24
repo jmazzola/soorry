@@ -359,7 +359,7 @@ void WorldManager::SetColliderID(int _x, int _y, int _id)
 	else if (_id == WINDOW)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WINDOW);
-		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(1);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(3);
 	}
 
 	else if (_id == WALL)
