@@ -11,7 +11,6 @@ public:
 
 	/**********************************************************/
 	// Interface Methods
-	virtual void Render() override;
 	virtual int GetType() const override;
 };
 

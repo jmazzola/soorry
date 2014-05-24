@@ -2,9 +2,7 @@
 
 #include "Entity.h"
 
-/**********************************************************/
-// Forward Declarations
-class AIComponent;
+#include "AIComponent.h"
 
 class Enemy : public Entity
 {
@@ -26,7 +24,6 @@ public:
 	float GetAttackRate() const;
 	float GetAttackRange() const;
 	float GetSpeed() const;
-	AIComponent* GetAIComponent() const;
 
 	/**********************************************************/
 	// Mutators
@@ -36,7 +33,7 @@ public:
 	void SetAttackRate(float attackRate);
 	void SetAttackRange(float attackRange);
 	void SetSpeed(float speed);
-	void SetAIComponent(AIComponent* aiComponent);
+	void SetPlayer(Entity* player);
 
 protected:
 
@@ -48,6 +45,6 @@ protected:
 	float m_fAttackRate;
 	float m_fAttackRange;
 	float m_fSpeed;
-	AIComponent* m_pAIComponent;
+	AIComponent m_AIComponent;
 };
 

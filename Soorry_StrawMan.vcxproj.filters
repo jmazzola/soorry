@@ -58,6 +58,9 @@
     <Filter Include="Zombie Factory">
       <UniqueIdentifier>{586b1d6f-5d2f-4fb5-a133-735640ac7459}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{7dd5bce4-c73e-4998-ac86-cf87d298e452}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -272,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="source\ZombieFactory.cpp">
       <Filter>Zombie Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +517,9 @@
     </ClInclude>
     <ClInclude Include="source\ZombieFactory.h">
       <Filter>Zombie Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

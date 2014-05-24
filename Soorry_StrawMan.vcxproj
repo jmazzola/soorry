@@ -28,6 +28,7 @@
     <ClCompile Include="source\BeaverZombie.cpp" />
     <ClCompile Include="source\BitmapFont.cpp" />
     <ClCompile Include="source\Button.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />

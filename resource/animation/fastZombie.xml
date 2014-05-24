@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<animation>
+<animation Sprites="1">
   <sprite>fastZombie.png</sprite>
   <spriteID>fastZombie</spriteID>
   <isLooping isIt="0" />
+  <Frames numbers="1" />
   <frame>
-    <collisionRect left="-16" right="16" top="-16" bottom="16" />
+    <anchorPoint X="16" Y="16" />
     <drawRect left="0" right="32" top="0" bottom="32" />
     <duration time="0.1" />
-    <anchorPoint X="16" Y="16" />
   </frame>
 </animation>

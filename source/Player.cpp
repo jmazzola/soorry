@@ -13,6 +13,12 @@
 #include "Projectile.h"
 #include "AssaultRifleBullet.h"
 #include "CreateProjectileMessage.h"
+#include "GameplayState.h"
+#include "CreatePlaceableMessage.h"
+#include "Inventory.h"
+
+#include "Camera.h"
+
 Player::Player()
 {
 	// Entity
@@ -37,8 +43,17 @@ Player::Player()
 	m_fSpeed = 100.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
-	//m_pInventory;
-	//m_pCursor;
+
+	m_pInventory = new Inventory();
+	m_pInventory->SetBearTraps(0);
+	m_pInventory->SetGrenads(0);
+	m_pInventory->SetHealthPacks(0);
+	m_pInventory->SetMines(0);
+	m_pInventory->SetWalls(0);
+	m_pInventory->SetWindows(0);
+	 //m_pCursor;
+
+	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
 #pragma region Load Weapons
 
@@ -86,12 +101,14 @@ Player::Player()
 
 
 
+
 }
 
 
 Player::~Player()
 {
 	delete[]m_pWeapons;
+		delete m_pInventory;
 }
 
 
@@ -108,6 +125,15 @@ void Player::Update(float dt)
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update  all Timers
 	m_fShotTimer -= dt;
+
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
+
+	//Update Timers
+		m_fShotTimer -= dt;
+		m_fPlaceTimer -= dt;
+
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
 	{
@@ -183,6 +209,97 @@ void Player::Update(float dt)
 			m_pWeapons[m_nCurrWeapon].SetCurrAmmo((m_pWeapons[m_nCurrWeapon].GetCurrAmmo() - 1));
 		}
 	}
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Nine) == true)
+		m_nCurrPlaceable = 0;
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
+		m_nCurrPlaceable = 1;
+
+	if (m_pZombieWave.IsBuildMode() == true)
+	{
+		//if (m_fShotTimer < 0)
+		//{
+		//	if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+		//	{
+		//		switch (m_nCurrWeapon)
+		//		{
+		//		case 0:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 1:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 2:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		case 3:
+		//		{
+		//			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
+		//			msg->QueueMessage();
+		//			msg = nullptr;
+		//			//set the shot timer to the rate of fire
+		//			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
+		//		}
+		//			break;
+		//		}
+		//	}
+		//}
+	}
+	else
+	{
+		// Send a Message to Create either the mine 
+		if (m_nCurrPlaceable != -1)
+		{
+			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
+			{
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
+				{
+					m_fPlaceTimer = 1;
+					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
+					pmsg->QueueMessage();
+					pmsg = nullptr;
+					unsigned int newset = m_pInventory->GetBearTraps();
+					--newset;
+					m_pInventory->SetBearTraps(newset);
+
+				}
+			}
+			if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
+			{
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				{
+					m_fPlaceTimer = 1;
+					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage(m_ptPosition, m_nCurrPlaceable);
+					pmsg->QueueMessage();
+					pmsg = nullptr;
+					unsigned int newset = m_pInventory->GetMines();
+					--newset;
+					m_pInventory->SetMines(newset);
+				}
+			}
+
+		}
+	
+	}
 }
 
 int Player::GetType() const
@@ -197,16 +314,6 @@ void Player::HandleCollision(const IEntity* pOther)
 		m_nCurrHealth--;
 	}
 }
-
-/*virtual*/ void Player::Render()
-{
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x, m_ptPosition.y);
-
-	Entity::Render();
-}
-
 
 /**********************************************************/
 // Accessors
