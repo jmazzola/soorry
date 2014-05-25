@@ -1,11 +1,17 @@
 #include "AIComponent.h"
 
 #include "WorldManager.h"
+#include "GameplayState.h"
 #include "Enemy.h"
+#include "Camera.h"
+
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 
 #include <queue>
 using namespace std;
 
+#define BOXCAST_INTERVAL 16.0f
+#define BOXCAST_ITERATIONS 100
 
 AIComponent::AIComponent()
 {
@@ -20,6 +26,9 @@ AIComponent::AIComponent()
 	m_nNodeChart = new int*[m_nWorldWidth];
 	for (unsigned int x = 0; x < m_nWorldWidth; x++)
 		m_nNodeChart[x] = new int[m_nWorldHeight];
+
+	// Get the entity manager
+	m_pEntityManager = GameplayState::GetInstance()->GetEntityManager();
 }
 
 
@@ -36,6 +45,10 @@ AIComponent::~AIComponent()
 
 void AIComponent::Update(float dt)
 {
+	// Set camera (FOR DEBUG PURPOSES ONLY!)
+	/*Camera::x = (int)m_pAgent->GetPosition().x - 384;
+	Camera::y = (int)m_pAgent->GetPosition().y - 284;*/
+
 	WorldManager* pWorld = WorldManager::GetInstance();
 	int tileWidth = pWorld->GetTileWidth();
 	int tileHeight = pWorld->GetTileHeight();
@@ -43,53 +56,109 @@ void AIComponent::Update(float dt)
 	// Update timers
 	m_fTimeToPathfind -= dt;
 
-	// Pathfind
-	if (m_fTimeToPathfind <= 0.0f)
+	// JIT fix for this stupid, fucking bug
+	/*if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
+		m_pAgent->SetPosition({ 0, 0 });*/
+
+	// Check for direct route
+	SGD::Vector toPlayer = m_pPlayer->GetPosition() - m_pAgent->GetPosition();
+	toPlayer.Normalize();
+	if (false && BoxCast(toPlayer, m_pPlayer->GetPosition()))
 	{
-		// Pathfind to player
-		m_ptFindTarget = m_pPlayer->GetPosition();
-
-		// Start node
-		Node start;
-		start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
-		start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
-
-		// End node
-		Node end;
-		end.x = (int)(m_ptFindTarget.x) / tileWidth;
-		end.y = (int)(m_ptFindTarget.y) / tileHeight;
-
-		Pathfind(start, end);
-		m_fTimeToPathfind = 1.0f;
+		m_ptMoveTarget = m_pPlayer->GetPosition();
 	}
 
-	// Find move target
-	int snapX, snapY;
-	snapX = (int)(m_pAgent->GetPosition().x) / tileWidth;
-	snapY = (int)(m_pAgent->GetPosition().y) / tileHeight;
+	// No direct route, need to pathfind
+	else
+	{
+		// Check if we create a new path
+		if (m_fTimeToPathfind <= 0.0f)
+		{
+			// Pathfind to player
+			m_ptFindTarget = m_pPlayer->GetPosition();
 
-	// Determine direction
-	int smallestValue = INT_MAX;
-	if (snapX < m_nWorldWidth - 1 && m_nNodeChart[snapX + 1][snapY] < smallestValue && m_nNodeChart[snapX + 1][snapY] > 0)
-	{
-		smallestValue = m_nNodeChart[snapX + 1][snapY];
-		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(32, 0);
+			// Start node
+			Node start;
+			start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
+			start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
+
+			// End node
+			Node end;
+			end.x = (int)(m_ptFindTarget.x) / tileWidth;
+			end.y = (int)(m_ptFindTarget.y) / tileHeight;
+
+			Pathfind(start, end);
+
+			// Reset pathing timer
+			m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
+		}
+
+		if (m_pAgent->GetPosition().x == 0.2f || m_pAgent->GetPosition().y == 0.2f)
+			m_pAgent->SetPosition({ 0, 0 });
+
+		// Find move target
+		int snapX, snapY;
+		//float snapFX, snapFY;
+		snapX = (int)(m_pAgent->GetPosition().x + tileWidth / 2) / tileWidth;
+		snapY = (int)(m_pAgent->GetPosition().y + tileWidth / 2) / tileHeight;
+
+		// Determine direction
+		int smallestValue = m_nNodeChart[snapX][snapY];
+		int goX = snapX;
+		int goY = snapY;
+		if (snapX < m_nWorldWidth - 1 && m_nNodeChart[snapX + 1][snapY] < smallestValue && m_nNodeChart[snapX + 1][snapY] > 0)
+		{
+			smallestValue = m_nNodeChart[snapX + 1][snapY];
+			goX = snapX + 1;
+			goY = snapY;
+		}
+		if (snapX > 0 && m_nNodeChart[snapX - 1][snapY] < smallestValue && m_nNodeChart[snapX - 1][snapY] > 0)
+		{
+			smallestValue = m_nNodeChart[snapX - 1][snapY];
+			goX = snapX - 1;
+			goY = snapY;
+		}
+		if (snapY < m_nWorldHeight - 1 && m_nNodeChart[snapX][snapY + 1] < smallestValue && m_nNodeChart[snapX][snapY + 1] > 0)
+		{
+			smallestValue = m_nNodeChart[snapX][snapY + 1];
+			goX = snapX;
+			goY = snapY + 1;
+		}
+		if (snapY > 0 && m_nNodeChart[snapX][snapY - 1] < smallestValue && m_nNodeChart[snapX][snapY - 1] > 0)
+		{
+			smallestValue = m_nNodeChart[snapX][snapY - 1];
+			goX = snapX;
+			goY = snapY - 1;
+		}
+
+		// Needs a new path
+		if (smallestValue == m_nNodeChart[snapX][snapY])
+		{
+			// Pathfind to player
+			m_ptFindTarget = m_pPlayer->GetPosition();
+
+			// Start node
+			Node start;
+			start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
+			start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
+
+			// End node
+			Node end;
+			end.x = (int)(m_ptFindTarget.x) / tileWidth;
+			end.y = (int)(m_ptFindTarget.y) / tileHeight;
+
+			Pathfind(start, end);
+
+			// Reset pathing timer
+			m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
+		}
+
+		// Determine where to go
+		m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
 	}
-	if (snapX > 0 && m_nNodeChart[snapX - 1][snapY] < smallestValue && m_nNodeChart[snapX - 1][snapY] > 0)
-	{
-		smallestValue = m_nNodeChart[snapX - 1][snapY];
-		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(-32, 0);
-	}
-	if (snapY < m_nWorldHeight - 1 && m_nNodeChart[snapX][snapY + 1] < smallestValue && m_nNodeChart[snapX][snapY + 1] > 0)
-	{
-		smallestValue = m_nNodeChart[snapX][snapY + 1];
-		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(0, 32);
-	}
-	if (snapY > 0 && m_nNodeChart[snapX][snapY - 1] < smallestValue && m_nNodeChart[snapX][snapY - 1] > 0)
-	{
-		smallestValue = m_nNodeChart[snapX][snapY - 1];
-		m_ptMoveTarget = m_pAgent->GetPosition() + SGD::Vector(0, -32);
-	}
+
+	// FOR DEBUG PURPOSES ONLY!
+	//m_ptMoveTarget = m_pPlayer->GetPosition();
 
 	// Create move vector
 	SGD::Vector toTarget = m_ptMoveTarget - m_pAgent->GetPosition();
@@ -97,6 +166,8 @@ void AIComponent::Update(float dt)
 	toTarget *= dynamic_cast<Enemy*>(m_pAgent)->GetSpeed() * dt;
 	SGD::Point oldPosition = m_pAgent->GetPosition();
 	SGD::Point newPosition = oldPosition;
+
+#if 1
 
 	// Check x
 	newPosition.x += toTarget.x;
@@ -116,8 +187,34 @@ void AIComponent::Update(float dt)
 		m_pAgent->SetPosition(newPosition);
 	}
 
+#endif
+
 	// Move
 	m_pAgent->SetPosition(newPosition);
+}
+
+void AIComponent::Render()
+{
+	// Get camera position in terms of tiles
+	int camTileX = Camera::x / 32;
+	int camTileY = Camera::y / 32;
+
+	// Get stop point for rendering
+	int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
+	int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
+
+	// Loop through the viewport
+	for (int x = camTileX; x < stopX; x++)
+	{
+		for (int y = camTileY; y < stopY; y++)
+		{
+			// Don't render out-of-bounds index
+			if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
+				continue;
+
+			SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
+		}
+	}
 }
 
 /**********************************************************/
@@ -181,28 +278,28 @@ bool AIComponent::Pathfind(Node start, Node end)
 		if (node.x == start.x && node.y == start.y)
 			return true;
 
-		if (node.x < 1 || node.y < 1 || node.x >= m_nWorldWidth - 1 || node.y >= m_nWorldHeight - 1)
-			continue;
+		/*if (node.x < 1 || node.y < 1 || node.x >= m_nWorldWidth - 1 || node.y >= m_nWorldHeight - 1)
+			continue;*/
 
-		if (m_nNodeChart[node.x - 1][node.y] == 0)
+		if (node.x > 0 && m_nNodeChart[node.x - 1][node.y] == 0)
 		{
 			nodes.push(Node(node.x - 1, node.y));
 			m_nNodeChart[node.x - 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
 		}
 
-		if (m_nNodeChart[node.x + 1][node.y] == 0)
+		if (node.x < m_nWorldWidth - 1 && m_nNodeChart[node.x + 1][node.y] == 0)
 		{
 			nodes.push(Node(node.x + 1, node.y));
 			m_nNodeChart[node.x + 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
 		}
 
-		if (m_nNodeChart[node.x][node.y + 1] == 0)
+		if (node.y < m_nWorldHeight - 1 && m_nNodeChart[node.x][node.y + 1] == 0)
 		{
 			nodes.push(Node(node.x, node.y + 1));
 			m_nNodeChart[node.x][node.y + 1] = m_nNodeChart[node.x][node.y] + 1;
 		}
 
-		if (m_nNodeChart[node.x][node.y - 1] == 0)
+		if (node.y > 0 && m_nNodeChart[node.x][node.y - 1] == 0)
 		{
 			nodes.push(Node(node.x, node.y - 1));
 			m_nNodeChart[node.x][node.y - 1] = m_nNodeChart[node.x][node.y] + 1;
@@ -210,4 +307,31 @@ bool AIComponent::Pathfind(Node start, Node end)
 	}
 
 	return false;
+}
+
+bool AIComponent::BoxCast(SGD::Vector _direction, SGD::Point _destination) const
+{
+	WorldManager* pWorld = WorldManager::GetInstance();
+	SGD::Rectangle rect = m_pAgent->GetRect();
+
+	for (int i = 0; i < BOXCAST_ITERATIONS; i++)
+	{
+		// Move the box
+		rect.left += _direction.x * BOXCAST_INTERVAL;
+		rect.right += _direction.x * BOXCAST_INTERVAL;
+		rect.top += _direction.x * BOXCAST_INTERVAL;
+		rect.bottom += _direction.x * BOXCAST_INTERVAL;
+		rect.left += _direction.y * BOXCAST_INTERVAL;
+		rect.right += _direction.y * BOXCAST_INTERVAL;
+		rect.top += _direction.y * BOXCAST_INTERVAL;
+		rect.bottom += _direction.y * BOXCAST_INTERVAL;
+
+		// Check for collision against world
+		if (pWorld->CheckCollision(rect))
+			return false;
+
+		// Check if boxcast is successful
+		if (_destination.IsWithinRectangle(rect))
+			return true;
+	}
 }

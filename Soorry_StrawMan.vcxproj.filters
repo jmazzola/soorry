@@ -535,6 +535,9 @@
     <Xml Include="resource\data\config.xml">
       <Filter>Game States</Filter>
     </Xml>
+    <Xml Include="resource\data\singleEnemy.xml">
+      <Filter>Zombie Factory</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt">

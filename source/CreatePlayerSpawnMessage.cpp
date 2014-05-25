@@ -17,6 +17,7 @@ CreatePlayerSpawnMessage::~CreatePlayerSpawnMessage()
 
 /**********************************************************/
 // Accessors
+
 int CreatePlayerSpawnMessage::GetX() const
 {
 	return m_nX;

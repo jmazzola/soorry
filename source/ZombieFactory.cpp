@@ -6,9 +6,13 @@
 
 #include "../TinyXML/tinyxml.h"
 
+#include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
 
-ZombieFactory::ZombieFactory()
+
+ZombieFactory::ZombieFactory() : Listener(this)
 {
+	RegisterForEvent("TEST");
 }
 
 
@@ -88,11 +92,14 @@ void ZombieFactory::Start()
 
 void ZombieFactory::Stop()
 {
-
 }
 
 void ZombieFactory::Update(float dt)
 {
+	// For debug purposes only!
+	if (m_nEnemiesRemaining > 0 && SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::K))
+		m_nEnemiesRemaining--;
+
 	// If paused, don't do anything
 	if (m_bIsPaused)
 		return;
@@ -107,6 +114,10 @@ void ZombieFactory::Update(float dt)
 		if (m_fBuildTimeRemaining <= 0.0f)
 		{
 			m_bBuildMode = false;
+			m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
+			m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
+			m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
+			m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
 			return;
 		}
 	}
@@ -115,9 +126,20 @@ void ZombieFactory::Update(float dt)
 	else
 	{
 		// Check if all enemies are dead
-		if (m_nEnemiesRemaining <= 0)
+		int zombiesToSpawn = m_nBeaverZombiesToSpawn + m_nSlowZombiesToSpawn + m_nFastZombiesToSpawn;
+		if (m_nEnemiesRemaining <= 0 && zombiesToSpawn == 0)
 		{
 			m_bBuildMode = true;
+			m_nWave++;
+
+			// Pause if last wave
+			if (m_nWave > (int)waveData.size())
+			{
+				m_bIsPaused = true;
+				return;
+			}
+
+			m_fBuildTimeRemaining = (float)waveData[m_nWave - 1].buildTime;
 			return;
 		}
 
@@ -125,13 +147,14 @@ void ZombieFactory::Update(float dt)
 		m_fNextSpawnTime -= dt;
 
 		// Spawn zombies when ready
-		if (m_fNextSpawnTime <= 0.0f)
+		if (m_fNextSpawnTime <= 0.0f && zombiesToSpawn > 0)
 		{
 			// Determine which zombie to spawn
 			int zombieType;
 			bool invalid = false;
 			do
 			{
+				invalid = false;
 				zombieType = rand() % 3;
 				switch (zombieType)
 				{
@@ -154,36 +177,42 @@ void ZombieFactory::Update(float dt)
 			} while (invalid);
 
 			// Determine where to spawn
-			invalid = false;
-			int spawnX;
-			int spawnY;
+			int spawnX = 0;
+			int spawnY = 0;
 			do
 			{
+				invalid = false;
+
 				// Determine which side
 				int side = rand() % 4;
 				switch (side)
 				{
 				case 0:
 					// Right edge
-					spawnX = m_nSpawnWidth - 32;
-					spawnY = rand() % (m_nSpawnHeight - 32);
+					spawnX = m_nSpawnWidth - 31;
+					spawnY = rand() % (m_nSpawnHeight - 31);
 					break;
 				case 1:
 					// Top edge
-					spawnX = rand() % (m_nSpawnWidth - 32);
-					spawnY = 0;
+					spawnX = rand() % (m_nSpawnWidth - 31);
+					spawnY = 1;
 					break;
 				case 2:
 					// Left edge
-					spawnX = 0;
-					spawnY = rand() % (m_nSpawnHeight - 32);
+					spawnX = 1;
+					spawnY = rand() % (m_nSpawnHeight - 31);
 					break;
 				case 3:
 					// Bottom edge
-					spawnX = rand() % (m_nSpawnWidth - 32);
-					spawnY = m_nSpawnHeight - 32;
+					spawnX = rand() % (m_nSpawnWidth - 31);
+					spawnY = m_nSpawnHeight - 31;
 					break;
 				}
+
+				// Make sure we're not spawning on top of something
+				if (m_pEntityManager->CheckCollision(SGD::Rectangle((float)spawnX, (float)spawnY, (float)(spawnX + 32), (float)(spawnY + 32))))
+					invalid = true;
+
 			} while (invalid);
 
 			// Spawn the zombie
@@ -194,6 +223,7 @@ void ZombieFactory::Update(float dt)
 					  // Slow zombie
 					  CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
+					  m_nSlowZombiesToSpawn--;
 			}
 				break;
 			case 1:
@@ -201,6 +231,7 @@ void ZombieFactory::Update(float dt)
 					  // Fast zombie
 					  CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
+					  m_nFastZombiesToSpawn--;
 			}
 				break;
 			case 2:
@@ -208,13 +239,25 @@ void ZombieFactory::Update(float dt)
 					  // Beaver zombie
 					  CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(spawnX, spawnY);
 					  pMsg->QueueMessage();
+					  m_nBeaverZombiesToSpawn--;
 			}
 				break;
 			}
 
+			// Update counters
+			m_nEnemiesRemaining++;
+
 			// Reset timers
 			m_fNextSpawnTime = m_fSpawnInterval;
 		}
+	}
+}
+
+void ZombieFactory::HandleEvent(const SGD::Event* pEvent)
+{
+	if (pEvent->GetEventID() == "TEST")
+	{
+		//m_nEnemiesRemaining++;
 	}
 }
 
@@ -362,4 +405,9 @@ void ZombieFactory::SetSpawnInterval(float _spawnInterval)
 void ZombieFactory::SetNextSpawnTime(float _nextSpawnTime)
 {
 	m_fNextSpawnTime = _nextSpawnTime;
+}
+
+void ZombieFactory::SetEntityManager(EntityManager* _entityManager)
+{
+	m_pEntityManager = _entityManager;
 }

@@ -1081,9 +1081,9 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="4" y="16" index="1" collider="false">
+    <tile x="4" y="16" index="72" collider="false">
       <initial_trigger id="" />
-      <collision_trigger id="" />
+      <collision_trigger id="TEST" />
       <collision id="0" />
     </tile>
     <tile x="4" y="17" index="1" collider="false">
@@ -1792,7 +1792,7 @@
       <collision id="0" />
     </tile>
     <tile x="7" y="8" index="1" collider="false">
-      <initial_trigger id="" />
+      <initial_trigger id="PLAYER_SPAWN" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>

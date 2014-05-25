@@ -44,7 +44,7 @@ Player::Player()
 	m_nCurrPlaceable = -1;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
-	m_fSpeed = 100.0f;
+	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 

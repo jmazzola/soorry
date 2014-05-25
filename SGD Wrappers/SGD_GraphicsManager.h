@@ -27,7 +27,7 @@ namespace SGD
 	// Forward declaration of global variable
 	extern const float PI;
 
-	
+
 	//*****************************************************************//
 	// GraphicsManager
 	//	- SINGLETON class for rendering text, geometry, and textures
@@ -36,38 +36,39 @@ namespace SGD
 	class GraphicsManager
 	{
 	public:
-		static	GraphicsManager*	GetInstance		( void );
-		static	void				DeleteInstance	( void );
+		static	GraphicsManager*	GetInstance(void);
+		static	void				DeleteInstance(void);
 
 
-		virtual	bool		Initialize			( bool vsync = true )	= 0;
-		virtual	bool		Update				( void )				= 0;
-		virtual	bool		Terminate			( void )				= 0;
-			
-		
-		virtual bool		SetClearColor		( Color color = {0,0,0} )				= 0;
-		virtual bool		Resize				( Size size, bool windowed = true )		= 0;
+		virtual	bool		Initialize(bool vsync = true) = 0;
+		virtual	bool		Update(void) = 0;
+		virtual	bool		Terminate(void) = 0;
 
 
-		virtual bool		DrawString			( const wchar_t* text, Point position,  Color color = {} )										= 0;
-		virtual bool		DrawString			( const char* text, Point position,  Color color = {} )											= 0;
-		virtual bool		DrawLine			( Point position1, Point position2, Color color = {}, unsigned int lineWidth = 3 )				= 0;
-		virtual bool		DrawRectangle		( Rectangle rect, Color fillColor, Color lineColor = {0,0,0,0}, unsigned int lineWidth = 3 )	= 0;
+		virtual bool		SetClearColor(Color color = { 0, 0, 0 }) = 0;
+		virtual bool		Resize(Size size, bool windowed = true) = 0;
 
 
-		virtual	HTexture	LoadTexture			( const wchar_t* filename, Color colorKey = {0,0,0,0} )		= 0;
-		virtual	HTexture	LoadTexture			( const char* filename, Color colorKey = {0,0,0,0} )		= 0;
-		virtual	bool		DrawTexture			( HTexture handle, Point position, float rotation = 0.0f, Vector rotationOffset = {}, Color color = {}, Size scale = {1.0f, 1.0f} )						= 0;
-		virtual	bool		DrawTextureSection	( HTexture handle, Point position, Rectangle section, float rotation = 0.0f, Vector rotationOffset = {}, Color color = {}, Size scale = {1.0f, 1.0f} )	= 0;
-		virtual	bool		UnloadTexture		( HTexture& handle )										= 0;
+		virtual bool		DrawString(const wchar_t* text, Point position, Color color = {}) = 0;
+		virtual bool		DrawString(const char* text, Point position, Color color = {}) = 0;
+		virtual bool		DrawLine(Point position1, Point position2, Color color = {}, unsigned int lineWidth = 3) = 0;
+		virtual bool		DrawRectangle(Rectangle rect, Color fillColor, Color lineColor = { 0, 0, 0, 0 }, unsigned int lineWidth = 3) = 0;
+
+
+		virtual	HTexture	LoadTexture(const wchar_t* filename, Color colorKey = { 0, 0, 0, 0 }) = 0;
+		virtual	HTexture	LoadTexture(const char* filename, Color colorKey = { 0, 0, 0, 0 }) = 0;
+		virtual	bool		DrawTexture(HTexture handle, Point position, float rotation = 0.0f, Vector rotationOffset = {}, Color color = {}, Size scale = { 1.0f, 1.0f }) = 0;
+		virtual	bool		DrawTextureSection(HTexture handle, Point position, Rectangle section, float rotation = 0.0f, Vector rotationOffset = {}, Color color = {}, Size scale = { 1.0f, 1.0f }) = 0;
+		virtual bool		DrawTextureSectionSimple(HTexture handle, Point position, Rectangle section) = 0;
+		virtual	bool		UnloadTexture(HTexture& handle) = 0;
 
 
 	protected:
-		GraphicsManager					( void )					= default;
-		virtual	~GraphicsManager		( void )					= default;
+		GraphicsManager(void) = default;
+		virtual	~GraphicsManager(void) = default;
 
-		GraphicsManager					( const GraphicsManager& )	= delete;
-		GraphicsManager&	operator=	( const GraphicsManager& )	= delete;
+		GraphicsManager(const GraphicsManager&) = delete;
+		GraphicsManager&	operator=	(const GraphicsManager&) = delete;
 	};
 
 }	// namespace SGD

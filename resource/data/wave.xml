@@ -2,18 +2,26 @@
 <waves>
   <wave>
     <infinite_build_time value="false"/>
-    <build_time value="10"/>
+    <build_time value="1"/>
     <slow_zombies amount="4"/>
     <fast_zombies amount="8"/>
     <beaver_zombies amount="15"/>
-    <spawn_interval value="0.8"/>
+    <spawn_interval value="0.2"/>
   </wave>
   <wave>
     <infinite_build_time value="false"/>
-    <build_time value="60"/>
+    <build_time value="1"/>
     <slow_zombies amount="16"/>
     <fast_zombies amount="23"/>
     <beaver_zombies amount="42"/>
-    <spawn_interval value="1.1"/>
+    <spawn_interval value="0.1"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="1"/>
+    <slow_zombies amount="16"/>
+    <fast_zombies amount="23"/>
+    <beaver_zombies amount="42"/>
+    <spawn_interval value="0.1"/>
   </wave>
 </waves>

@@ -15,6 +15,7 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
+	virtual void Render() override;
 
 	/**********************************************************/
 	// Accessors
