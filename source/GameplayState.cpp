@@ -11,7 +11,7 @@
 #include "Button.h"
 #include "Camera.h"
 
-
+#include "Shop.h"
 #include "Weapon.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
@@ -147,7 +147,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
 
 	// Debug
-	dynamic_cast<Player*>(m_pPlayer)->SetScore(13371011);
+	dynamic_cast<Player*>(m_pPlayer)->SetScore(763712);
 
 
 	//// Create our player
@@ -283,6 +283,12 @@ Entity*	GameplayState::CreatePlayer() const
 		if (m_pShop->IsOpen() == false)
 			m_bIsPaused = !m_bIsPaused;
 	}
+
+	if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	{
+		m_pShop->SetShopStatus(true);
+	}
+
 	if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
 		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
@@ -447,6 +453,8 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 #pragma endregion
 
+
+
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
@@ -463,7 +471,7 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused
-	if (!m_bIsPaused)
+	if (!m_bIsPaused || m_pShop->IsOpen() == false)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
@@ -489,9 +497,6 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-
-
 	// Render test world
 	WorldManager::GetInstance()->Render(SGD::Point(Camera::x, Camera::y));
 
@@ -508,7 +513,7 @@ Entity*	GameplayState::CreatePlayer() const
 	for (int i = 0; i < 4; i++)
 	{
 		Weapon* weapons = player->GetWeapons();
-		string weaponAmmo = "Weapon " + std::to_string(i); + ": ";
+		string weaponAmmo = "Weapon " + std::to_string(i); + " :  ";
 		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
 		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + i * 20 ));
 		weaponAmmo.clear();
@@ -583,6 +588,9 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// If we're shopping
 	if (m_pShop->IsOpen())
+	{
+		m_pShop->Render();
+	}
 	// Draw wave info
 	if (zombieFactory.IsBuildMode())
 	{
