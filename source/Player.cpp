@@ -185,8 +185,6 @@ void Player::Update(float dt)
 	Camera::y = (int)m_ptPosition.y - 284;
 
 	//Update Timers
-	m_fShotTimer -= dt;
-	m_fPlaceTimer -= dt;
 
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)

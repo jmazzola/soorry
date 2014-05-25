@@ -78,7 +78,6 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	bool m_bIsShopping;
 	Entity* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
