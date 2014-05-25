@@ -62,7 +62,7 @@ public:
 	void SetInventory(Inventory* inventory);
 	void SetCursor(Cursor* cursor);
 	void SetWeapons(Weapon* weapons);
-	void SetZombieFactory(ZombieFactory wave)  { m_pZombieWave = wave; }
+	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
 protected:
 
 	/**********************************************************/
@@ -82,6 +82,6 @@ protected:
 	Inventory* m_pInventory;
 	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
-	ZombieFactory m_pZombieWave;
+	ZombieFactory* m_pZombieWave;
 };
 

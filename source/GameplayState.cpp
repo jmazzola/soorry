@@ -30,6 +30,7 @@
 #include "CreateSlowZombieMessage.h"
 #include "CreateProjectileMessage.h"
 #include "CreatePlaceableMessage.h"
+#include "CreatePlayerSpawnMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -76,6 +77,13 @@ using namespace std;
 	return &s_Instance;
 }
 
+
+EntityManager* GameplayState::GetEntityManager() const
+{
+	return GetInstance()->m_pEntities;
+}
+
+
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
@@ -83,7 +91,7 @@ using namespace std;
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
-
+	player->SetPosition(m_ptPlayerSpawnPoint);
 	player->SetZombieFactory(zombieFactory);
 	return player;
 }
@@ -137,8 +145,21 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+	// Load the world
+	WorldManager* pWorld = WorldManager::GetInstance();
+	pWorld->LoadWorld("resource/world/colWorld.xml");
+
+	// Start Zombie Factory
+	zombieFactory = new ZombieFactory;
+	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->Start();
+	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
+	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
+	zombieFactory->SetEntityManager(m_pEntities);
+
 	// Create our player
 	m_pPlayer = CreatePlayer();
+
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
@@ -147,17 +168,6 @@ Entity*	GameplayState::CreatePlayer() const
 	//m_pPuppet->SetPosition({ 200, 20 });
 	//// Add it to the entity manager
 	//m_pEntities->AddEntity(m_pPuppet, Entity::ENT_PLAYER);
-
-	// Load the world
-	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/colWorld.xml");
-
-	// Start Zombie Factory
-	zombieFactory.LoadWaves("resource/data/wave.xml");
-	zombieFactory.Start();
-	zombieFactory.SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
-	zombieFactory.SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
-
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
@@ -178,7 +188,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_bIsShopping = false;
 
 	// Play the background music
-	pAudio->PlayAudio(m_hBackgroundMus, true);
+	//pAudio->PlayAudio(m_hBackgroundMus, true);
 
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 }
@@ -206,6 +216,8 @@ Entity*	GameplayState::CreatePlayer() const
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
 
+	// Delete the zombie factory
+	delete zombieFactory;
 
 	// Release the player
 	if (m_pPlayer != nullptr)
@@ -213,8 +225,6 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
 	}
-
-
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
@@ -240,16 +250,16 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pMessages = nullptr;
 	SGD::MessageManager::DeleteInstance();
 
+	// Terminate & deallocate menu items
+	m_pMainButton->Terminate();
+	delete m_pMainButton;
+	m_pMainButton = nullptr;
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
 
-	// Terminate & deallocate menu items
-	m_pMainButton->Terminate();
-	delete m_pMainButton;
-	m_pMainButton = nullptr;
 
 }
 
@@ -454,7 +464,7 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
 	// Grab the controllers
-	SGD::InputManager::GetInstance()->CheckForNewControllers();
+	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused
 	if (!m_bIsPaused)
@@ -468,7 +478,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pMessages->Update();
 
 		// Update Zombie Factory
-		zombieFactory.Update(elapsedTime);
+		zombieFactory->Update(elapsedTime);
 
 		// Check collisions
 		m_pEntities->CheckCollisions(0, 1);
@@ -495,7 +505,7 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render test world
-	WorldManager::GetInstance()->Render(SGD::Point(Camera::x, Camera::y));
+	WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
@@ -582,17 +592,17 @@ Entity*	GameplayState::CreatePlayer() const
 
 
 	// Draw wave info
-	if (zombieFactory.IsBuildMode())
+	if (zombieFactory->IsBuildMode())
 	{
 		string timeRemaining = "Time remaining: ";
-		timeRemaining.append(std::to_string(zombieFactory.GetBuildTimeRemaining()));
+		timeRemaining.append(std::to_string(zombieFactory->GetBuildTimeRemaining()));
 		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
 	}
 
 	else
 	{
 		string enemiesRemaining = "Enemies Remaining: ";
-		enemiesRemaining.append(std::to_string(zombieFactory.GetEnemiesRemaining()));
+		enemiesRemaining.append(std::to_string(zombieFactory->GetEnemiesRemaining()));
 		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
 	}
 }
@@ -668,6 +678,16 @@ Entity*	GameplayState::CreatePlayer() const
 
 		}
 		break;
+
+	case MessageID::MSG_CREATE_PLAYER_SPAWN:
+	{
+											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+											GameplayState* g = GameplayState::GetInstance();
+											g->m_ptPlayerSpawnPoint.x = pCreateMessage->GetX();
+											g->m_ptPlayerSpawnPoint.y = pCreateMessage->GetY();
+
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -704,6 +724,9 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
 
+	/*if (tempBeav->GetPosition().x < 0 || tempBeav->GetPosition().x > 10000)
+		return nullptr;*/
+
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -725,6 +748,9 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
 
+	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
+		return nullptr;*/
+
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -744,6 +770,9 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(50.0f);
 	zambie->SetVelocity({ 0, 0 });
+
+	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
+		return nullptr;*/
 
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);

@@ -232,7 +232,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 				drawPos.y = y * (float)m_nTileHeight - _cameraPos.y;
 
 				// Draw the tile
-				pGraphics->DrawTextureSection(m_hTilesetImage, drawPos, sourceRect);
+				pGraphics->DrawTextureSectionSimple(m_hTilesetImage, drawPos, sourceRect);
 
 				// FOR DEBUG PURPOSES ONLY!
 				/*wostringstream id;
@@ -283,6 +283,46 @@ bool WorldManager::CheckCollision(IEntity* _object)
 					pEvent->QueueEvent();
 				}
 
+				// Check if collision
+				if (m_vLayers[i][x][y].IsCollidable())
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool WorldManager::CheckCollision(SGD::Rectangle _rect)
+{
+	// Set the tiles to check
+	int top = (int)_rect.top / m_nTileHeight;
+	int left = (int)_rect.left / m_nTileWidth;
+	int bottom = (int)_rect.bottom / m_nTileHeight + 1;
+	int right = (int)_rect.right / m_nTileWidth + 1;
+
+#if !CLOSED
+
+	// Bound within the world
+	if (top < 0) top = 0;
+	if (left < 0) left = 0;
+	if (bottom < 0) bottom = 0;
+	if (right < 0) right = 0;
+	if (top > m_nWorldHeight - 1) top = m_nWorldHeight;
+	if (bottom > m_nWorldHeight - 1) bottom = m_nWorldHeight;
+	if (left > m_nWorldWidth - 1) left = m_nWorldWidth;
+	if (right > m_nWorldWidth - 1) right = m_nWorldWidth;
+
+#endif
+
+	// Loop through tiles to check
+	for (int x = left; x < right; x++)
+	{
+		for (int y = top; y < bottom; y++)
+		{
+			// Go through each layer (starting on top)
+			for (int i = m_vLayers.size() - 1; i >= 0; i--)
+			{
 				// Check if collision
 				if (m_vLayers[i][x][y].IsCollidable())
 					return true;
@@ -354,19 +394,30 @@ void WorldManager::SetColliderID(int _x, int _y, int _id)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(EMPTY);
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(0);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(false);
+		m_bSolidsChart[_x][_y] = false;
 	}
 
 	else if (_id == WINDOW)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WINDOW);
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(1);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
+		m_bSolidsChart[_x][_y] = true;
 	}
 
 	else if (_id == WALL)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WALL);
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(2);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
+		m_bSolidsChart[_x][_y] = true;
 	}
+}
+
+int WorldManager::GetColliderID(int _x, int _y)
+{
+	return m_vLayers[m_vLayers.size() - 1][_x][_y].GetColliderID();
 }
 
 /**********************************************************/
@@ -443,9 +494,8 @@ void WorldManager::SendInitialTriggerMessage(const Tile& _tile) const
 	// PLAYER_SPAWN
 	if (_tile.GetTriggerInit() == "PLAYER_SPAWN")
 	{
-		CreatePlayerSpawnMessage* pMsg = new CreatePlayerSpawnMessage(_tile.GetX(), _tile.GetY());
-		pMsg->QueueMessage();
-		pMsg = nullptr;
+		CreatePlayerSpawnMessage message(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
+		message.SendMessageNow();
 	}
 }
 
@@ -455,6 +505,15 @@ void WorldManager::GenerateSolidsChart()
 	m_bSolidsChart = new bool*[m_nWorldWidth];
 	for (int x = 0; x < m_nWorldWidth; x++)
 		m_bSolidsChart[x] = new bool[m_nWorldHeight];
+
+	// Default the solids chart
+	for (int x = 0; x < m_nWorldWidth; x++)
+	{
+		for (int y = 0; y < m_nWorldHeight; y++)
+		{
+			m_bSolidsChart[x][y] = false;
+		}
+	}
 
 	// Loop through each of the layers
 	for (unsigned int i = 0; i < m_vLayers.size(); i++)
@@ -466,13 +525,7 @@ void WorldManager::GenerateSolidsChart()
 			{
 				// Check if collidable
 				if (m_vLayers[i][x][y].IsCollidable())
-				{
 					m_bSolidsChart[x][y] = true;
-				}
-				else
-				{
-					m_bSolidsChart[x][y] = false;
-				}
 			}
 		}
 	}
