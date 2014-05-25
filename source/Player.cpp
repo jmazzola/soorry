@@ -303,7 +303,7 @@ void Player::Update(float dt)
 
 	}
 
-	if (m_pZombieWave.IsBuildMode() == true)
+	if (m_pZombieWave->IsBuildMode() == true)
 	{
 		//if (m_fShotTimer < 0)
 		//{

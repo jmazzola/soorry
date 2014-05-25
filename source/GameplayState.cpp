@@ -693,13 +693,14 @@ Entity*	GameplayState::CreatePlayer() const
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance();
-		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
-		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
-		place->Release();
-		place = nullptr;
-
+										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+										 GameplayState* g = GameplayState::GetInstance();
+										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+										 place->Release();
+										 place = nullptr;
+	}
+		break;
 	case MessageID::MSG_CREATE_PLAYER_SPAWN:
 	{
 											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
@@ -905,8 +906,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 	case 3://Fire axe?
 	{
 
+			   break;
 	}
-		break;
 	}
 }
 
