@@ -11,7 +11,7 @@
 #include "Entity.h"
 #include "AnimationManager.h"
 #include "ZombieFactory.h"
-
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Listener.h"
 
 /**********************************************************/
