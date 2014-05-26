@@ -3,6 +3,8 @@
 #include "Particle.h"
 #include <ctime>
 #include <math.h>
+#include "Entity.h"
+
 Emitter::Emitter()
 {
 }
@@ -122,6 +124,10 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
+	if (followEnitiy != nullptr)
+	{
+		position = followEnitiy->GetPosition();
+	}
 	if (isLooping)
 	{
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)

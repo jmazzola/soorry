@@ -33,6 +33,7 @@
 #include "CreatePickupMessage.h"
 #include "DestroyEntityMessage.h"
 #include "CreatePlayerSpawnMessage.h"
+#include "../CreateParticleMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -134,11 +135,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	//TODO: change this back
-	//Load preset xml file
-	//m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
-	//load emitters
-	//m_pParticleManager->load();
+	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -301,8 +298,8 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		m_pShop->SetShopStatus(true);
 	}
-
-	if (pInput->IsKeyPressed(SGD::Key::Z))
+	
+	/*if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
 		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
 		msg->QueueMessage();
@@ -319,7 +316,7 @@ Entity*	GameplayState::CreatePlayer() const
 		CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-	}
+	}*/
 #pragma region Pause Menu Navigation Clutter
 	// Handle pause menu input
 	// If we're paused
@@ -530,7 +527,7 @@ Entity*	GameplayState::CreatePlayer() const
 		weaponAmmo += std::to_string(i);
 		weaponAmmo += " :  ";
 		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
-		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + (float)i * 20 ));
+		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + (float)i * 20));
 		weaponAmmo.clear();
 	}
 #endif
@@ -713,20 +710,20 @@ Entity*	GameplayState::CreatePlayer() const
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-										 GameplayState* g = GameplayState::GetInstance();
-										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
-										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
-										 place->Release();
-										 place = nullptr;
+		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+		place->Release();
+		place = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_PLAYER_SPAWN:
 	{
-											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
-											GameplayState* g = GameplayState::GetInstance();
-											g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
-											g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
+		const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+		g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
@@ -737,6 +734,20 @@ Entity*	GameplayState::CreatePlayer() const
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* ent = pCreateMessage->GetEntity();
 		g->m_pEntities->RemoveEntity(ent);
+	}
+		break;
+	case MessageID::MSG_CREATE_STATIC_PARTICLE:
+	{
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
+	}
+		break;
+	case MessageID::MSG_CREATE_DYNAMIC_PARTICLE:
+	{
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	}
@@ -896,7 +907,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
-		SGD::Vector vec =  pos - m_pPlayer->GetPosition();
+		SGD::Vector vec = pos - m_pPlayer->GetPosition();
 		vec.Normalize();
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
@@ -910,8 +921,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		tempProj->SetLifeTime(5);
 		tempProj->SetPosition(m_pPlayer->GetPosition());
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-		pos.x +=  Camera::x;
-		pos.y +=  Camera::y;
+		pos.x += Camera::x;
+		pos.y += Camera::y;
 		SGD::Vector vec = pos - m_pPlayer->GetPosition();
 		vec.Normalize();
 		vec *= 1000;
@@ -929,7 +940,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 	case 3://Fire axe?
 	{
 
-			   break;
+		break;
 	}
 	}
 

@@ -20,6 +20,8 @@
 #include "Tile.h"
 #include "Camera.h"
 #include "CreatePickupMessage.h"
+#include "../CreateParticleMessage.h"
+#include "../SGD Wrappers/SGD_Message.h"
 
 #define WALLPICK 0
 #define WINDOWPICK 1
@@ -249,7 +251,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-
+	if (pInput->IsKeyPressed(SGD::Key::Space))
+	{
+  		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true)
 	{

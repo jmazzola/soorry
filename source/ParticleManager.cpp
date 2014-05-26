@@ -4,6 +4,7 @@
 #include "Particle.h"
 #include "ParticleFlyweight.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "Entity.h"
 //TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
@@ -46,7 +47,7 @@ void ParticleManager::load()
 	}
 }
 
-bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
+bool ParticleManager::loadEmitters(std::string fileName)
 {
 	TiXmlDocument doc(fileName.c_str());
 	if (doc.LoadFile())
@@ -105,11 +106,6 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		tempFlyweight->startRotation = (float)tempDouble;
 		data->Attribute("end", &tempDouble);
 		tempFlyweight->endRotation = (float)tempDouble;
-		//Read XML for Flyweight direction
-		data = data->NextSiblingElement("direction");
-		data->Attribute("x", &x);
-		data->Attribute("y", &y);
-		tempFlyweight->direction = SGD::Vector((float)x, (float)y);
 		//Read XML for Flyweight color
 		data = data->NextSiblingElement("color");
 		data->Attribute("startA",&a);
@@ -157,11 +153,10 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		tempEmitter->particleFlyweight = tempFlyweight;
 		particleFlyweights.push_back(tempFlyweight);
 		std::pair<std::string, Emitter*> emitterKeyPair;
-		emitterKeyPair.first = EmitterID;
+		emitterKeyPair.first = tempFlyweight->particleID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
-		//NOTE: pushing to active emitters for testing
-		activeEmitters.push_back(tempEmitter);
+
 		return true;
 	}
 	else
@@ -170,7 +165,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 
 Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filename)
 {
-	if (loadEmitters(filename,emitterID))
+	if (loadEmitters(filename))
 	{
 		return loadedEmitters[emitterID];
 	}
@@ -186,3 +181,16 @@ void ParticleManager::unload()
 	activeEmitters.clear();
 	loadedEmitters.clear();
 }
+void ParticleManager::activate(std::string _emitterID,int _x, int _y)
+{
+	loadedEmitters[_emitterID]->position = SGD::Point( _x, _y );
+	activeEmitters.push_back(loadedEmitters[_emitterID]);
+}
+
+void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
+{
+	loadedEmitters[_emitterID]->offset = SGD::Point(_x, _y);
+	loadedEmitters[_emitterID]->followEnitiy = _entity;
+	activeEmitters.push_back(loadedEmitters[_emitterID]);
+}
+
