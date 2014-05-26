@@ -153,11 +153,24 @@ int Game::Main( void )
 	//m_pAnimation->m_sAnimationTS.m_nCurrFrame = 0;
 	//m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
 
-
-
 	// Update & render the current state
 	m_pCurrState->Update( elapsedTime );
 	m_pCurrState->Render();
+
+	// Increase the frame count
+	m_unFrames++;
+
+	// Decrease the timer
+	m_fFPSTimer -= elapsedTime;
+
+	// Has the timer expired?
+	if (m_fFPSTimer <= 0.0f)
+	{
+		m_unFPS = m_unFrames;
+		m_unFrames = 0;
+		m_fFPSTimer = 1.0f;		// count down from 1 second
+	}
+
 	
 	return 0;		// keep playing!
 }

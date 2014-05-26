@@ -12,13 +12,15 @@
 #include "AnimationManager.h"
 #include "ZombieFactory.h"
 
+#include "../SGD Wrappers/SGD_Listener.h"
+
 /**********************************************************/
 // Forward Declarations
 class Weapon;
 class Inventory;
 class Cursor;
 
-class Player : public Entity
+class Player : public Entity, public SGD::Listener
 {
 public:
 
@@ -30,11 +32,12 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
-
+	bool Blockable(SGD::Point mouse);
+	virtual void HandleEvent(const SGD::Event* pEvent);
 	/**********************************************************/
 	// Accessors
-	int GetMaxHealth() const;
-	int GetCurrHealth() const;
+	float GetMaxHealth() const;
+	float GetCurrHealth() const;
 	int GetCurrWeapon() const;
 	int GetCurrPowerup() const;
 	int GetCurrPlaceable() const;
@@ -48,8 +51,8 @@ public:
 
 	/**********************************************************/
 	// Mutators
-	void SetMaxHealth(int maxHealth);
-	void SetCurrHealth(int currHealth);
+	void SetMaxHealth(float maxHealth);
+	void SetCurrHealth(float currHealth);
 	void SetCurrWeapon(int currWeapon);
 	void SetCurrPowerup(int currPowerup);
 	void SetCurrPlaceable(int currPlaceable);
@@ -67,8 +70,8 @@ protected:
 	// Members
 	float m_fShotTimer;
 	float m_fPlaceTimer;
-	int m_nMaxHealth;
-	int m_nCurrHealth;
+	float m_nMaxHealth;
+	float m_nCurrHealth;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;

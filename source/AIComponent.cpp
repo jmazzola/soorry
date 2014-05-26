@@ -6,6 +6,7 @@
 #include "Camera.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
 
 #include <queue>
 using namespace std;
@@ -24,7 +25,7 @@ AIComponent::AIComponent()
 
 	// Create node chart
 	m_nNodeChart = new int*[m_nWorldWidth];
-	for (unsigned int x = 0; x < m_nWorldWidth; x++)
+	for (int x = 0; x < m_nWorldWidth; x++)
 		m_nNodeChart[x] = new int[m_nWorldHeight];
 
 	// Get the entity manager
@@ -90,7 +91,7 @@ void AIComponent::Update(float dt)
 			Pathfind(start, end);
 
 			// Reset pathing timer
-			m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
+			m_fTimeToPathfind = 2.0f + (rand() % 300) / 100.0f;
 		}
 
 		if (m_pAgent->GetPosition().x == 0.2f || m_pAgent->GetPosition().y == 0.2f)
@@ -185,6 +186,15 @@ void AIComponent::Update(float dt)
 	{
 		newPosition.y = oldPosition.y;
 		m_pAgent->SetPosition(newPosition);
+	}
+
+	if (m_pEntityManager->CheckCollision(m_pAgent->GetRect(), 0))
+	{
+		float damage = 8.0f * dt;
+		SGD::Event e("TAKE_DAMAGE", (void*)&damage);
+		e.SendEventNow();
+
+		newPosition = oldPosition;
 	}
 
 #endif
@@ -334,4 +344,6 @@ bool AIComponent::BoxCast(SGD::Vector _direction, SGD::Point _destination) const
 		if (_destination.IsWithinRectangle(rect))
 			return true;
 	}
+
+	return false;
 }
