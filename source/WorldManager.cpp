@@ -376,13 +376,6 @@ int WorldManager::CheckCollisionID(IEntity* _object)
 	return 0;
 }
 
-int WorldManager::ColliderIDAtPosition(int _x, int _y) const
-{
-	// Start with the top layer
-
-	return 0;
-}
-
 bool WorldManager::IsSolidAtPosition(int _x, int _y) const
 {
 	return m_bSolidsChart[_x][_y];

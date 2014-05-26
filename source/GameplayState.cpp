@@ -511,11 +511,11 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Render test world
 	WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
+	Player* player = dynamic_cast<Player*>(m_pPlayer);
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 
-	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	// Draw money
 	int money = player->GetScore();
 	string moneyy = "Current Money: " + std::to_string(money);
@@ -525,9 +525,11 @@ Entity*	GameplayState::CreatePlayer() const
 	for (int i = 0; i < 4; i++)
 	{
 		Weapon* weapons = player->GetWeapons();
-		string weaponAmmo = "Weapon " + std::to_string(i); + " :  ";
+		string weaponAmmo = "Weapon ";
+		weaponAmmo += std::to_string(i);
+		weaponAmmo += " :  ";
 		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
-		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + i * 20 ));
+		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + (float)i * 20 ));
 		weaponAmmo.clear();
 	}
 #endif
@@ -537,6 +539,16 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Render the entities
 	m_pEntities->RenderAll();
+
+	float currHealth = player->GetCurrHealth();
+	float maxHealth = player->GetMaxHealth();
+	if (currHealth != maxHealth)
+	{
+		float ratio = currHealth / maxHealth;
+		unsigned char alpha = 255 - (unsigned int)(255.0f * ratio);
+
+		pGraphics->DrawRectangle(SGD::Rectangle(0.0f, 0.0f, 800.0f, 600.0f), SGD::Color(alpha, 255, 0, 0));
+	}
 
 	// --- Pause Menu stuff ---
 	// If we're paused
@@ -603,6 +615,7 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		m_pShop->Render();
 	}
+
 	// Draw wave info
 	if (zombieFactory->IsBuildMode())
 	{
@@ -617,6 +630,12 @@ Entity*	GameplayState::CreatePlayer() const
 		enemiesRemaining.append(std::to_string(zombieFactory->GetEnemiesRemaining()));
 		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
 	}
+
+	// Render the FPS
+	string fps = "FPS: ";
+	fps += std::to_string(m_unFPS);
+	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
+
 }
 
 
@@ -705,8 +724,8 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
 											GameplayState* g = GameplayState::GetInstance();
-											g->m_ptPlayerSpawnPoint.x = pCreateMessage->GetX();
-											g->m_ptPlayerSpawnPoint.y = pCreateMessage->GetY();
+											g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+											g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
@@ -909,6 +928,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   break;
 	}
 	}
+
+	return nullptr;
 }
 
 Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)

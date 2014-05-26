@@ -305,14 +305,11 @@ void EntityManager::CheckCollisions( unsigned int bucket1, unsigned int bucket2 
 
 bool EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
 {
-	// Validate the iteration state
-	assert(m_bIterating == false && "EntityManager::CheckCollisions - cannot collide while iterating");
-
 	// Test against a single bucket
 	if (_bucket != -1)
 	{
 		// Quietly validate the parameters
-		if (_bucket >= m_tEntities.size()
+		if (_bucket >= (int)m_tEntities.size()
 			|| m_tEntities[_bucket].size() == 0)
 			return false;
 

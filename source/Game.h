@@ -103,6 +103,13 @@ private:
 	// Game Time
 	unsigned long			m_ulGameTime	= 0;
 
+	/**********************************************************/
+	// FPS stuff
+	unsigned int m_unFPS = 60;
+	unsigned int m_unFrames = 0;
+	float m_fFPSTimer = 1.0f;
+
+
 	// Fullscreen
 	bool m_bFullscreen = true;
 
