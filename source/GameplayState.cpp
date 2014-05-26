@@ -617,6 +617,12 @@ Entity*	GameplayState::CreatePlayer() const
 		enemiesRemaining.append(std::to_string(zombieFactory->GetEnemiesRemaining()));
 		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
 	}
+
+	// Render the FPS
+	string fps = "FPS: ";
+	fps += std::to_string(m_unFPS);
+	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
+
 }
 
 
