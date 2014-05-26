@@ -344,4 +344,6 @@ bool AIComponent::BoxCast(SGD::Vector _direction, SGD::Point _destination) const
 		if (_destination.IsWithinRectangle(rect))
 			return true;
 	}
+
+	return false;
 }

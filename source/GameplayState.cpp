@@ -722,8 +722,8 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
 											GameplayState* g = GameplayState::GetInstance();
-											g->m_ptPlayerSpawnPoint.x = pCreateMessage->GetX();
-											g->m_ptPlayerSpawnPoint.y = pCreateMessage->GetY();
+											g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+											g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
