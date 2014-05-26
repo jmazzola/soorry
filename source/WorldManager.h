@@ -29,7 +29,6 @@ public:
 	bool CheckCollision(IEntity* object);
 	bool CheckCollision(SGD::Rectangle rect);
 	int CheckCollisionID(IEntity* object);
-	int ColliderIDAtPosition(int x, int y) const;
 	bool IsSolidAtPosition(int x, int y) const;
 	void SetColliderID(int x, int y, int id);
 	int GetColliderID(int x, int y);

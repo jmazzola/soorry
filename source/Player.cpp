@@ -23,6 +23,8 @@
 
 #define WALLPICK 0
 #define WINDOWPICK 1
+#define GRIDWIDTH 32
+#define GRIDHEIGHT 32
 
 Player::Player() : Listener(this)
 {
@@ -181,6 +183,11 @@ void Player::Update(float dt)
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update  all Timers
 	m_fShotTimer -= dt;
+	m_fPlaceTimer -= dt;
+	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+	pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
+	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;
+
 
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
@@ -234,6 +241,15 @@ void Player::Update(float dt)
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
+	if (pInput->IsKeyDown(SGD::Key::E) == true && 
+		m_pInventory->GetHealthPacks() > 0 && m_nCurrHealth < m_nMaxHealth)
+	{
+		m_nCurrHealth = m_nMaxHealth;
+		unsigned int newset = m_pInventory->GetHealthPacks();
+		--newset;
+		m_pInventory->SetHealthPacks(newset);
+	}
+
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true)
 	{
@@ -282,32 +298,21 @@ void Player::Update(float dt)
 
 	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
 	{
-		m_ptPosition.x += 30;
 		 //Colliding with wall
-		if (pWorld->CheckCollisionID(this) == WALL)
+		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
-			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
-			pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
-
-			pWorld->SetColliderID(pos.x, pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, m_ptPosition);
+			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, {pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT});
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
-		else if (pWorld->CheckCollisionID(this) == WINDOW)
+		else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
 		{
-			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
-			pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
-
-			pWorld->SetColliderID(pos.x, pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, m_ptPosition);
+			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
-		m_ptPosition.x -= 30;
-
 	}
 
 	if (m_pZombieWave->IsBuildMode() == true)
@@ -397,30 +402,23 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
 				{
 					m_fPlaceTimer = 1;
-					SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-					pos.x = ((pos.x - (int)pos.x % 32) + Camera::x) / 32;
-					pos.y = ((pos.y - (int)pos.y % 32) + Camera::y) / 32;
-
-					pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
-					// Decreasing the amount of mines left for the player
-					unsigned int newset = m_pInventory->GetWalls();
-					--newset;
-					m_pInventory->SetWalls(newset);
+						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
+						// Decreasing the amount of mines left for the player
+						unsigned int newset = m_pInventory->GetWalls();
+						--newset;
+						m_pInventory->SetWalls(newset);
 				}
 			}
 			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
 				{
 					m_fPlaceTimer = 1;
-					SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-					pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-					pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 
-					pWorld->SetColliderID((int)pos.x / 32, (int)pos.y / 32, WINDOW);
+					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 					// Decreasing the amount of mines left for the player
 					unsigned int newset = m_pInventory->GetWindows();
 					--newset;
@@ -468,6 +466,11 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 		float damage = *((float*)pEvent->GetData());
 		m_nCurrHealth -= damage;
 	}
+}
+
+bool Player::Blockable(SGD::Point mouse)
+{
+	return (mouse.x >= 1 && mouse.x < 49 && mouse.y >= 1 && mouse.y < 49);
 }
 
 /**********************************************************/
