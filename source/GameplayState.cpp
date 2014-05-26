@@ -13,6 +13,7 @@
 
 #include "Shop.h"
 #include "Weapon.h"
+#include "Inventory.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -200,6 +201,18 @@ Entity*	GameplayState::CreatePlayer() const
 	//pAudio->PlayAudio(m_hBackgroundMus, true);
 
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+	
+	// HUD
+	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
+
+	m_hShotgunPic = pGraphics->LoadTexture("resource/images/hud/shotgun.png");
+	m_hShotgunThumb = pGraphics->LoadTexture("resource/images/hud/shotgunThumb.png");
+	m_hARPic = pGraphics->LoadTexture("resource/images/hud/ar.png");
+	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
+	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
+	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
+	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
+	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
 }
 
 
@@ -245,6 +258,17 @@ Entity*	GameplayState::CreatePlayer() const
 	// Unload pause menu
 	pGraphics->UnloadTexture(m_hPauseMainBackground);
 	pGraphics->UnloadTexture(m_hPauseOptionsBackground);
+
+	// Unload HUD
+	pGraphics->UnloadTexture(m_hHUD);
+	pGraphics->UnloadTexture(m_hShotgunPic);
+	pGraphics->UnloadTexture(m_hShotgunThumb);
+	pGraphics->UnloadTexture(m_hARPic);
+	pGraphics->UnloadTexture(m_hARThumb);
+	pGraphics->UnloadTexture(m_hRLPic);
+	pGraphics->UnloadTexture(m_hRLThumb);
+	pGraphics->UnloadTexture(m_hFireAxePic);
+	pGraphics->UnloadTexture(m_hFireAxeThumb);
 
 	// Make sure pause isn't set
 	m_bIsPaused = false;
@@ -513,23 +537,6 @@ Entity*	GameplayState::CreatePlayer() const
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
-
-	// Draw money
-	int money = player->GetScore();
-	string moneyy = "Current Money: " + std::to_string(money);
-	pGraphics->DrawString(moneyy.c_str(), { 100, 50 });
-
-	// Draw weapons
-	for (int i = 0; i < 4; i++)
-	{
-		Weapon* weapons = player->GetWeapons();
-		string weaponAmmo = "Weapon ";
-		weaponAmmo += std::to_string(i);
-		weaponAmmo += " :  ";
-		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
-		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + (float)i * 20 ));
-		weaponAmmo.clear();
-	}
 #endif
 
 	//Render test particles
@@ -614,28 +621,92 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pShop->Render();
 	}
 
-	// Draw wave info
-	if (zombieFactory->IsBuildMode())
-	{
-		string timeRemaining = "Time remaining: ";
-		timeRemaining.append(std::to_string(zombieFactory->GetBuildTimeRemaining()));
-		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
-	}
-
-	else
-	{
-		string enemiesRemaining = "Enemies Remaining: ";
-		enemiesRemaining.append(std::to_string(zombieFactory->GetEnemiesRemaining()));
-		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
-	}
-
 	// Render the FPS
 	string fps = "FPS: ";
 	fps += std::to_string(m_unFPS);
 	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
 
-	// Render HUD
+	// -- Render HUD --
+	if (!m_bIsPaused)
+	{
+		if (!m_pShop->IsOpen())
+		{
+			pGraphics->DrawTexture(m_hHUD, { 0, 0 });
 
+			// -- Draw the score --
+			string score = "Score: ";
+			score += std::to_string(player->GetScore());
+			m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255});
+
+			// -- Draw the time remaining [during build mode] --
+			if (zombieFactory->IsBuildMode())
+			{
+				string timeRemaining = "Time remaining: ";
+				timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
+				timeRemaining += " secs";
+				m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
+			}
+			// -- Draw the number of enemies remaining [during fight mode] --
+			else
+			{
+				string enemiesRemaining = "Enemies Remaining: ";
+				m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
+				
+				int numOfEnemies = zombieFactory->GetEnemiesRemaining();
+				if (numOfEnemies <= 3)
+					m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
+				else
+					m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
+
+			}
+
+			// -- Draw the items --
+
+			// Get the inventory
+			Inventory* inv = player->GetInventory();
+
+			// Draw the number of healthpacks
+			m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
+
+			// Draw the number of grenades
+			m_pFont->Draw(std::to_string(inv->GetGrenads()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+
+			// Draw the number of walls
+			m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
+
+			// Draw the number of windows
+			m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
+
+			// Draw the number of beartraps
+			m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
+
+			// Draw the number of mines
+			m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
+
+			// -- Draw the selected weapon -- 
+			
+			// Get the weapons
+			Weapon* weapons = player->GetWeapons();
+			string names[4] = { "Shotgun", "Assault Rifle", "Rocket Launcher", "Fire Axe" };
+			SGD::HTexture textures[4] = { m_hShotgunPic, m_hARPic, m_hRLPic, m_hFireAxePic };
+
+			// Draw the name of the selected weapon
+			m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
+			
+			// Draw the picture of the selected pic
+			pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
+
+			// Draw the ammo of the selected weapon
+			m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+
+			// -- Draw the offhand weapons ammos --
+			m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
+
+
+		}
+	}
 
 
 }
