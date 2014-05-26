@@ -14,7 +14,6 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include <cassert>
 
-
 /**************************************************************/
 // Update
 //	- move the entity's position by its velocity
@@ -47,7 +46,6 @@
 	//m_fRotation += 0.01f;
 
 	// Draw the image
-
 }
 
 

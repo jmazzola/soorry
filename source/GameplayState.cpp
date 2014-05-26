@@ -141,13 +141,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Create our player
 	m_pPlayer = CreatePlayer();
 	// Add it to the entity manager
-	m_pEntities->AddEntity(m_pPlayer, Entity::ENT_PLAYER);
-
-	//// Create our player
-	//m_pPuppet = CreatePlayer();
-	//m_pPuppet->SetPosition({ 200, 20 });
-	//// Add it to the entity manager
-	//m_pEntities->AddEntity(m_pPuppet, Entity::ENT_PLAYER);
+	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
 	// Load the world
 	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
