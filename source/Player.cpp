@@ -296,7 +296,7 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::P) == true)
 		m_nCurrPlaceable = 3;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
+	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
 		 //Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
@@ -400,10 +400,10 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 
-				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos)
+					&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 				{
 						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
 						// Decreasing the amount of mines left for the player
@@ -412,10 +412,10 @@ void Player::Update(float dt)
 						m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 
-				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos)
+					&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 				{
 
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
