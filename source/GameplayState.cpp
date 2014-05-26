@@ -11,6 +11,9 @@
 #include "Button.h"
 #include "Camera.h"
 
+#include "Shop.h"
+#include "Weapon.h"
+
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
@@ -29,6 +32,7 @@
 #include "CreatePlaceableMessage.h"
 #include "CreatePickupMessage.h"
 #include "DestroyEntityMessage.h"
+#include "CreatePlayerSpawnMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -78,6 +82,13 @@ using namespace std;
 	return &s_Instance;
 }
 
+
+EntityManager* GameplayState::GetEntityManager() const
+{
+	return GetInstance()->m_pEntities;
+}
+
+
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
@@ -85,7 +96,7 @@ using namespace std;
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
-
+	player->SetPosition(m_ptPlayerSpawnPoint);
 	player->SetZombieFactory(zombieFactory);
 	return player;
 }
@@ -138,8 +149,21 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+	// Load the world
+	WorldManager* pWorld = WorldManager::GetInstance();
+	pWorld->LoadWorld("resource/world/colWorld.xml");
+
+	// Start Zombie Factory
+	zombieFactory = new ZombieFactory;
+	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->Start();
+	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
+	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
+	zombieFactory->SetEntityManager(m_pEntities);
+
 	// Create our player
 	m_pPlayer = CreatePlayer();
+
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
@@ -151,6 +175,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory.Start();
+	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
@@ -164,12 +189,17 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 
+	// Load Store
+	m_pShop = new Shop;
+	m_pShop->SetShopStatus(false);
+	m_pShop->Enter(m_pPlayer);
+
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-
+	m_bIsPaused = false;
 	// Play the background music
-	pAudio->PlayAudio(m_hBackgroundMus, true);
+	//pAudio->PlayAudio(m_hBackgroundMus, true);
 
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 }
@@ -196,6 +226,8 @@ Entity*	GameplayState::CreatePlayer() const
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
 
+	// Delete the zombie factory
+	delete zombieFactory;
 
 	// Release the player
 	if (m_pPlayer != nullptr)
@@ -203,8 +235,6 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
 	}
-
-
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();
@@ -230,16 +260,21 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pMessages = nullptr;
 	SGD::MessageManager::DeleteInstance();
 
+	// Terminate & deallocate menu items
+	m_pMainButton->Terminate();
+	delete m_pMainButton;
+	m_pMainButton = nullptr;
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
 
-	// Terminate & deallocate menu items
-	m_pMainButton->Terminate();
-	delete m_pMainButton;
-	m_pMainButton = nullptr;
+
+	// Terminate & deallocate shop
+	m_pShop->Exit();
+	delete m_pShop;
+	m_pShop = nullptr;
 
 }
 
@@ -256,7 +291,16 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
-		m_bIsPaused = !m_bIsPaused;
+	{
+		if (m_pShop->IsOpen() == false)
+			m_bIsPaused = !m_bIsPaused;
+	}
+
+	if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	{
+		m_pShop->SetShopStatus(true);
+	}
+
 	if (pInput->IsKeyPressed(SGD::Key::Z))
 	{
 		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
@@ -421,6 +465,11 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 #pragma endregion
 
+
+
+	if (m_pShop->IsOpen())
+		m_pShop->Input();
+
 	return true;	// keep playing
 }
 
@@ -431,10 +480,10 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
 	// Grab the controllers
-	SGD::InputManager::GetInstance()->CheckForNewControllers();
+	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused
-	if (!m_bIsPaused)
+	if (!m_bIsPaused || m_pShop->IsOpen() == false)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
@@ -445,7 +494,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pMessages->Update();
 
 		// Update Zombie Factory
-		//zombieFactory.Update(elapsedTime);
+		zombieFactory->Update(elapsedTime);
 
 		// Check collisions
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
@@ -460,14 +509,27 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-
-
 	// Render test world
-	WorldManager::GetInstance()->Render(SGD::Point(Camera::x, Camera::y));
+	WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
+
+	Player* player = dynamic_cast<Player*>(m_pPlayer);
+	// Draw money
+	int money = player->GetScore();
+	string moneyy = "Current Money: " + std::to_string(money);
+	pGraphics->DrawString(moneyy.c_str(), { 100, 50 });
+
+	// Draw weapons
+	for (int i = 0; i < 4; i++)
+	{
+		Weapon* weapons = player->GetWeapons();
+		string weaponAmmo = "Weapon " + std::to_string(i); + " :  ";
+		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
+		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + i * 20 ));
+		weaponAmmo.clear();
+	}
 #endif
 
 	//Render test particles
@@ -536,18 +598,23 @@ Entity*	GameplayState::CreatePlayer() const
 
 	}
 
+	// If we're shopping
+	if (m_pShop->IsOpen())
+	{
+		m_pShop->Render();
+	}
 	// Draw wave info
-	if (zombieFactory.IsBuildMode())
+	if (zombieFactory->IsBuildMode())
 	{
 		string timeRemaining = "Time remaining: ";
-		timeRemaining.append(std::to_string(zombieFactory.GetBuildTimeRemaining()));
+		timeRemaining.append(std::to_string(zombieFactory->GetBuildTimeRemaining()));
 		pGraphics->DrawString(timeRemaining.c_str(), { 0, 0 });
 	}
 
 	else
 	{
 		string enemiesRemaining = "Enemies Remaining: ";
-		enemiesRemaining.append(std::to_string(zombieFactory.GetEnemiesRemaining()));
+		enemiesRemaining.append(std::to_string(zombieFactory->GetEnemiesRemaining()));
 		pGraphics->DrawString(enemiesRemaining.c_str(), { 0, 0 });
 	}
 }
@@ -626,12 +693,21 @@ Entity*	GameplayState::CreatePlayer() const
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance();
-		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
-		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
-		place->Release();
-		place = nullptr;
+										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+										 GameplayState* g = GameplayState::GetInstance();
+										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+										 place->Release();
+										 place = nullptr;
+	}
+		break;
+	case MessageID::MSG_CREATE_PLAYER_SPAWN:
+	{
+											const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+											GameplayState* g = GameplayState::GetInstance();
+											g->m_ptPlayerSpawnPoint.x = pCreateMessage->GetX();
+											g->m_ptPlayerSpawnPoint.y = pCreateMessage->GetY();
+
 	}
 		break;
 	case MessageID::MSG_DESTROY_ENTITY:
@@ -679,6 +755,9 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
 
+	/*if (tempBeav->GetPosition().x < 0 || tempBeav->GetPosition().x > 10000)
+		return nullptr;*/
+
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -700,6 +779,9 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
 
+	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
+		return nullptr;*/
+
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -719,6 +801,9 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(50.0f);
 	zambie->SetVelocity({ 0, 0 });
+
+	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
+		return nullptr;*/
 
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
@@ -821,8 +906,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 	case 3://Fire axe?
 	{
 
+			   break;
 	}
-		break;
 	}
 }
 

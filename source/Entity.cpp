@@ -40,7 +40,7 @@
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
-	SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(100, 0, 0, 0));
+	//SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;

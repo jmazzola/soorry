@@ -87,7 +87,8 @@ namespace SGD
 			virtual	HTexture	LoadTexture				( const wchar_t* filename, Color colorKey )		override;
 			virtual	HTexture	LoadTexture				( const char* filename, Color colorKey )		override;
 			virtual	bool		DrawTexture				( HTexture handle, Point position, float rotation, Vector rotationOffset, Color color, Size scale )						override;
-			virtual	bool		DrawTextureSection		( HTexture handle, Point position, Rectangle section, float rotation, Vector rotationOffset, Color color, Size scale )	override;
+			virtual	bool		DrawTextureSection(HTexture handle, Point position, Rectangle section, float rotation, Vector rotationOffset, Color color, Size scale)	override;
+			virtual	bool		DrawTextureSectionSimple(HTexture handle, Point position, Rectangle section)	override;
 			virtual	bool		UnloadTexture			( HTexture& handle )							override;
 
 		private:
@@ -1452,6 +1453,71 @@ namespace SGD
 			return true;
 		}
 		//*************************************************************//
+
+
+
+		// Added for optimization - does not scale or rotate
+		bool GraphicsManager::DrawTextureSectionSimple(HTexture handle, Point position, Rectangle section)
+		{
+			// Sanity-check the wrapper's status
+			assert(m_eStatus == E_INITIALIZED && "GraphicsManager::DrawTextureSection - wrapper has not been initialized");
+			if (m_eStatus != E_INITIALIZED)
+				return false;
+
+			assert(handle != SGD::INVALID_HANDLE && "GraphicsManager::DrawTexture - invalid handle");
+			if (handle == SGD::INVALID_HANDLE)
+				return false;
+
+
+			// Get the texture info from the handle manager
+			TextureInfo* data = m_HandleManager.GetData(handle);
+			assert(data != nullptr && "GraphicsManager::DrawTextureSection - handle has expired");
+			if (data == nullptr)
+				return false;
+
+
+			// Store original transform
+			D3DXMATRIX original, world;
+			m_pSprite->GetTransform(&original);
+
+			// Calculate transform matrix
+			D3DXMATRIX translated;
+
+			D3DXMATRIX transform;
+			D3DXMatrixIdentity(&transform);
+
+
+			// Translate
+			D3DXMatrixTranslation(&translated, position.x, position.y, 0.0f);
+			transform *= translated;
+
+
+			// Apply the transform
+			D3DXMatrixMultiply(&world, &transform, &original);
+			m_pSprite->SetTransform(&world);
+
+
+			// Draw the texture
+			RECT source = { (LONG)section.left, (LONG)section.top, (LONG)section.right, (LONG)section.bottom };
+			HRESULT result = m_pSprite->Draw(data->texture, &source, nullptr, nullptr, (D3DCOLOR)SGD::Color());
+
+
+			// Restore the transform
+			m_pSprite->SetTransform(&original);
+
+
+			if (FAILED(result))
+			{
+				// MESSAGE
+				char szBuffer[128];
+				_snprintf_s(szBuffer, 128, _TRUNCATE, "!!! GraphicsManager::DrawTexture - failed to draw texture (0x%X) !!!\n", result);
+				OutputDebugStringA(szBuffer);
+
+				return false;
+			}
+
+			return true;
+		}
 
 
 

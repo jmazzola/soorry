@@ -46,7 +46,7 @@ Player::Player()
 	m_nCurrPlaceable = -1;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
-	m_fSpeed = 100.0f;
+	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 
@@ -187,8 +187,6 @@ void Player::Update(float dt)
 	Camera::y = (int)m_ptPosition.y - 284;
 
 	//Update Timers
-	m_fShotTimer -= dt;
-	m_fPlaceTimer -= dt;
 
 	// Input
 	if (pInput->IsKeyDown(SGD::Key::A) == true)
@@ -318,7 +316,7 @@ void Player::Update(float dt)
 
 	}
 
-	if (m_pZombieWave.IsBuildMode() == true)
+	if (m_pZombieWave->IsBuildMode() == true)
 	{
 		//if (m_fShotTimer < 0)
 		//{
