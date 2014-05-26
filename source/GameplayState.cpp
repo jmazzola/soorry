@@ -167,15 +167,15 @@ Entity*	GameplayState::CreatePlayer() const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
-	// Debug
-	dynamic_cast<Player*>(m_pPlayer)->SetScore(763712);
+	// Load the world
+	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
 
+	// Load wave information
+	zombieFactory->LoadWaves("resource/data/wave.xml");
 
-	//// Create our player
-	//m_pPuppet = CreatePlayer();
-	//m_pPuppet->SetPosition({ 200, 20 });
+	// Start Zombie Factory
+	zombieFactory->Start();
 	//// Add it to the entity manager
-	//m_pEntities->AddEntity(m_pPuppet, Entity::ENT_PLAYER);
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
