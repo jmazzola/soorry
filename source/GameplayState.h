@@ -99,6 +99,18 @@ private:
 
 	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hShotgunPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hShotgunThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hARPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hARThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hRLPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRLThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
