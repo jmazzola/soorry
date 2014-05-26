@@ -7,6 +7,7 @@
 /**********************************************************/
 // Forward Declarations
 class Entity;
+class EntityManager;
 struct Node;
 
 class AIComponent
@@ -23,7 +24,7 @@ public:
 	/**********************************************************/
 	// Interface
 	void Update(float dt);
-
+	void Render();
 
 	/**********************************************************/
 	// Accessors
@@ -47,12 +48,14 @@ protected:
 	Entity* m_pPlayer;
 	SGD::Point m_ptMoveTarget;
 	SGD::Point m_ptFindTarget;
+	EntityManager* m_pEntityManager;
 
 private:
 
 	/**********************************************************/
 	// Helper Functions
 	bool Pathfind(Node start, Node end);
+	bool BoxCast(SGD::Vector direction, SGD::Point destination) const;
 };
 
 

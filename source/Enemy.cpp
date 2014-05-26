@@ -22,6 +22,12 @@ void Enemy::Update(float dt)
 	m_AIComponent.Update(dt);
 }
 
+void Enemy::Render()
+{
+	Entity::Render();
+	//m_AIComponent.Render();
+}
+
 int Enemy::GetType() const
 {
 	return ENT_ENEMY;

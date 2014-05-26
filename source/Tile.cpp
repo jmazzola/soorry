@@ -43,12 +43,12 @@ bool Tile::IsCollidable() const
 	return m_bIsCollidable;
 }
 
-string Tile::GetTriggerInit() const
+const string& Tile::GetTriggerInit() const
 {
 	return m_strTriggerInit;
 }
 
-string Tile::GetTriggerCollision() const
+const string& Tile::GetTriggerCollision() const
 {
 	return m_strTriggerCollision;
 }
@@ -81,12 +81,12 @@ void Tile::SetCollidable(bool _isCollidable)
 	m_bIsCollidable = _isCollidable;
 }
 
-void Tile::SetTriggerInit(string _triggerInit)
+void Tile::SetTriggerInit(const string& _triggerInit)
 {
 	m_strTriggerInit = _triggerInit;
 }
 
-void Tile::SetTriggerCollision(string _triggerCollision)
+void Tile::SetTriggerCollision(const string& _triggerCollision)
 {
 	m_strTriggerCollision = _triggerCollision;
 }

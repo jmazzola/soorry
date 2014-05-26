@@ -206,7 +206,7 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 {
 	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
-	g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+	//g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
 
 	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
 	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;

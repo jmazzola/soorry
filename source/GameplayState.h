@@ -26,6 +26,7 @@ class ParticleManager;
 class Button;
 class BitmapFont;
 #include "../SGD Wrappers/SGD_Declarations.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 #include "ZombieFactory.h"
 
@@ -51,6 +52,8 @@ public:
 	virtual bool	Input(void)				override;	// handle user input
 	virtual void	Update(float elapsedTime)	override;	// update game entities / animations
 	virtual void	Render(void)				override;	// render game entities / menus
+
+	EntityManager* GetEntityManager() const;
 
 private:
 
@@ -78,13 +81,13 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	bool m_bIsShopping;
 	Entity* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
-	ZombieFactory zombieFactory;
+	ZombieFactory* zombieFactory;
+	SGD::Point m_ptPlayerSpawnPoint;
 
 	/**********************************************************/
 	// Textures
