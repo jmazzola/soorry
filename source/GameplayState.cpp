@@ -865,7 +865,6 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	}
 }
 
-
 Entity* GameplayState::CreateProjectile(int _Weapon)
 {
 	switch (_Weapon)

@@ -34,10 +34,10 @@ Player::Player() : Listener(this)
 
 
 	// Animation/ Image
-	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
-	m_antsAnimation.m_nCurrAnimation = "running";
+	m_antsAnimation.m_nCurrAnimation = "player";
 
 	// Player's variables
 	m_nMaxHealth = 100;
@@ -185,8 +185,10 @@ void Player::Update(float dt)
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-	pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
-	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;
+	pos.x = ((int)(pos.x + Camera::x) / GRIDWIDTH);
+	pos.y = ((int)(pos.y + Camera::y) / GRIDWIDTH);
+	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
+	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
 
 
 	// Set camera
