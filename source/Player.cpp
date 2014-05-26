@@ -202,7 +202,7 @@ void Player::Update(float dt)
 	m_fPlaceTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
-	pos.y = (float)((int)(pos.y + Camera::y) / GRIDWIDTH);
+	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
 	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
 	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
 
