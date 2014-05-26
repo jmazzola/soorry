@@ -861,8 +861,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
-		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
-		vec *= -1;
+		SGD::Vector vec = pos - m_pPlayer->GetPosition();
+		vec.Normalize();
+		vec *= 1000;
 		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
@@ -876,8 +877,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
-		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
-		vec *= -1;
+		SGD::Vector vec =  pos - m_pPlayer->GetPosition();
+		vec.Normalize();
+		vec *= 1000;
 		tempProj->SetVelocity(vec);
 		return tempProj;
 	}
@@ -891,8 +893,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x +=  Camera::x;
 		pos.y +=  Camera::y;
-		SGD::Vector vec = m_pPlayer->GetPosition() - pos;
-		vec *= -1;
+		SGD::Vector vec = pos - m_pPlayer->GetPosition();
+		vec.Normalize();
+		vec *= 1000;
 		tempProj->SetVelocity(vec);
 		Sprite* bro = new Sprite;
 		Frame* frame = new Frame;
