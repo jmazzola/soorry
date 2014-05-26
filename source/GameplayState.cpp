@@ -166,10 +166,6 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
-
-	// Load the world
-	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
-
 	// Load wave information
 	zombieFactory->LoadWaves("resource/data/wave.xml");
 
@@ -198,6 +194,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
 	m_bIsPaused = false;
+
 	// Play the background music
 	//pAudio->PlayAudio(m_hBackgroundMus, true);
 
@@ -636,6 +633,10 @@ Entity*	GameplayState::CreatePlayer() const
 	fps += std::to_string(m_unFPS);
 	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
 
+	// Render HUD
+
+
+
 }
 
 
@@ -923,7 +924,6 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		break;
 	case 3://Fire axe?
 	{
-
 			   break;
 	}
 	}
