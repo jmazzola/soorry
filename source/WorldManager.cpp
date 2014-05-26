@@ -1,7 +1,5 @@
 #include "WorldManager.h"
 
-#include "Tile.h"
-
 #include "../TinyXML/tinyxml.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -135,10 +133,23 @@ bool WorldManager::LoadWorld(string fileName)
 
 	m_vLayers.push_back(layer);
 
+	GenerateSolidsChart();
+
+	// Add walls
+	for (unsigned int i = 0; i < m_vInitWalls.size(); i++)
+	{
+		SetColliderID(m_vInitWalls[i].GetX(), m_vInitWalls[i].GetY(), WALL);
+	}
+
+	// Add windows
+	for (unsigned int i = 0; i < m_vInitWindows.size(); i++)
+	{
+		SetColliderID(m_vInitWindows[i].GetX(), m_vInitWindows[i].GetY(), WINDOW);
+	}
+
 	// Are there any layers?
 	if (m_vLayers.size() > 0)
 	{
-		GenerateSolidsChart();
 		return true;
 	}
 	else
@@ -482,13 +493,25 @@ void WorldManager::SetTilesetImage(SGD::HTexture _tilesetImage)
 /**********************************************************/
 // Helper Functions
 
-void WorldManager::SendInitialTriggerMessage(const Tile& _tile) const
+void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 {
 	// PLAYER_SPAWN
 	if (_tile.GetTriggerInit() == "PLAYER_SPAWN")
 	{
 		CreatePlayerSpawnMessage message(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
 		message.SendMessageNow();
+	}
+
+	// WALL
+	if (_tile.GetTriggerInit() == "WALL")
+	{
+		m_vInitWalls.push_back(_tile);
+	}
+
+	// WINDOW
+	if (_tile.GetTriggerInit() == "WINDOW")
+	{
+		m_vInitWindows.push_back(_tile);
 	}
 }
 

@@ -152,7 +152,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/colWorld.xml");
+	pWorld->LoadWorld("resource/world/world.xml");
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;

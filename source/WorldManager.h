@@ -8,6 +8,7 @@ using namespace std;
 #include "../SGD Wrappers/SGD_Geometry.h"
 
 #include "Layer.h"
+#include "Tile.h"
 
 #define CAMERA_IMPLEMENTED 1
 
@@ -62,6 +63,8 @@ protected:
 	int m_nTilesetWidth;
 	bool** m_bSolidsChart;
 	vector<Layer> m_vLayers;
+	vector<Tile> m_vInitWalls;
+	vector<Tile> m_vInitWindows;
 	SGD::HTexture m_hTilesetImage;
 
 #if !CAMERA_IMPLEMENTED
@@ -74,7 +77,7 @@ private:
 
 	/**********************************************************/
 	// Helper Functions
-	void SendInitialTriggerMessage(const Tile& tile) const;
+	void SendInitialTriggerMessage(Tile& tile);
 	void GenerateSolidsChart();
 
 	/**********************************************************/
