@@ -2,6 +2,7 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -25,7 +26,7 @@
 #define GRIDWIDTH 32
 #define GRIDHEIGHT 32
 
-Player::Player()
+Player::Player() : Listener(this)
 {
 	// Entity
 	m_ptPosition = { 50, 100 };
@@ -158,6 +159,7 @@ Player::Player()
 		break;
 	}
 
+	RegisterForEvent("TAKE_DAMAGE");
 }
 
 
@@ -186,6 +188,11 @@ void Player::Update(float dt)
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
 
+	// Regenerate health
+	m_nCurrHealth += 7.0f * dt;
+	if (m_nCurrHealth > m_nMaxHealth)
+		m_nCurrHealth = m_nMaxHealth;
+
 	//Update Timers
 
 	// Input
@@ -194,7 +201,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true)
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.x < 0)
 			m_ptPosition.x = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
@@ -204,7 +211,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true)
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.x >= pWorld->GetWorldWidth() * pWorld->GetTileWidth())
 			m_ptPosition.x = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
@@ -214,7 +221,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true)
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.y < 0)
 			m_ptPosition.y = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
@@ -224,7 +231,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true)
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.y >= pWorld->GetWorldHeight() * pWorld->GetTileHeight())
 			m_ptPosition.y = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
@@ -469,15 +476,24 @@ void Player::HandleCollision(const IEntity* pOther)
 	}
 }
 
+void Player::HandleEvent(const SGD::Event* pEvent)
+{
+	if (pEvent->GetEventID() == "TAKE_DAMAGE")
+	{
+		float damage = *((float*)pEvent->GetData());
+		m_nCurrHealth -= damage;
+	}
+}
+
 /**********************************************************/
 // Accessors
 
-int Player::GetMaxHealth() const
+float Player::GetMaxHealth() const
 {
 	return m_nMaxHealth;
 }
 
-int Player::GetCurrHealth() const
+float Player::GetCurrHealth() const
 {
 	return m_nCurrHealth;
 }
@@ -536,12 +552,12 @@ Weapon* Player::GetWeapons() const
 /**********************************************************/
 // Mutators
 
-void Player::SetMaxHealth(int _maxHealth)
+void Player::SetMaxHealth(float _maxHealth)
 {
 	m_nMaxHealth = _maxHealth;
 }
 
-void Player::SetCurrHealth(int _currHealth)
+void Player::SetCurrHealth(float _currHealth)
 {
 	m_nCurrHealth = _currHealth;
 }
