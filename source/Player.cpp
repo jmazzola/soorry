@@ -55,7 +55,7 @@ Player::Player() : Listener(this)
 	m_pInventory = new Inventory();
 	m_pInventory->SetBearTraps(100);
 	m_pInventory->SetGrenads(0);
-	m_pInventory->SetHealthPacks(0);
+	m_pInventory->SetHealthPacks(3);
 	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(100);
 	m_pInventory->SetWindows(100);
@@ -317,7 +317,7 @@ void Player::Update(float dt)
 		}
 	}
 
-	if (m_pZombieWave->IsBuildMode() == true)
+	if (m_pZombieWave->IsBuildMode() == false)
 	{
 		//if (m_fShotTimer < 0)
 		//{
@@ -402,11 +402,11 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 
+				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
 				{
-					m_fPlaceTimer = 1;
 						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
 						// Decreasing the amount of mines left for the player
 						unsigned int newset = m_pInventory->GetWalls();
@@ -414,11 +414,11 @@ void Player::Update(float dt)
 						m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 
+				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
 				{
-					m_fPlaceTimer = 1;
 
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 					// Decreasing the amount of mines left for the player
@@ -472,8 +472,10 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 
 bool Player::Blockable(SGD::Point mouse)
 {
-	return (mouse.x >= 1 && mouse.x < 49 && mouse.y >= 1 && mouse.y < 49);
+	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance()->GetWorldWidth()-1 
+		&& mouse.y >= 1 && mouse.y < WorldManager::GetInstance()->GetWorldHeight() - 1);
 }
+
 
 /**********************************************************/
 // Accessors
