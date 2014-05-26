@@ -63,8 +63,8 @@ using namespace std;
 	m_pEvents->Initialize();
 
 	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance();
-	m_pMessages->Initialize(&MessageProc);
+	//m_pMessages = SGD::MessageManager::GetInstance();
+	//m_pMessages->Initialize(&MessageProc);
 
 
 	// Allocate the Entity Manager
@@ -171,35 +171,6 @@ using namespace std;
 	// Render the entities
 	m_pEntities->RenderAll();
 }
-
-
-/**************************************************************/
-// MessageProc
-//	- process messages queued in the MessageManager
-//	- STATIC METHOD
-//		- does NOT have invoking object!!!
-//		- must use singleton to access members
-/*static*/ void LoadingState::MessageProc(const SGD::Message* pMsg)
-{
-	/* Show warning when a Message ID enumerator is not handled */
-#pragma warning( push )
-#pragma warning( 1 : 4061 )
-
-	// What type of message?
-	switch (pMsg->GetMessageID())
-	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
-		break;
-	}
-
-
-	/* Restore previous warning levels */
-#pragma warning( pop )
-
-}
-
 
 /**************************************************************/
 // Factory Methods
