@@ -185,8 +185,8 @@ void Player::Update(float dt)
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-	pos.x = ((int)(pos.x + Camera::x) / GRIDWIDTH);
-	pos.y = ((int)(pos.y + Camera::y) / GRIDWIDTH);
+	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
+	pos.y = (float)((int)(pos.y + Camera::y) / GRIDWIDTH);
 	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
 	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
 
@@ -298,7 +298,7 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::P) == true)
 		m_nCurrPlaceable = 3;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && Blockable(pos))
+	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
 		 //Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
@@ -370,7 +370,7 @@ void Player::Update(float dt)
 		// Send a Message to Create a bear trap if the player has any
 		if (m_nCurrPlaceable != -1)
 		{
-			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
+			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0 && PlacementCheck(pos))
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
 				{
@@ -389,7 +389,7 @@ void Player::Update(float dt)
 			// Send a Message to Create a mine if the player has any
 			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
@@ -404,8 +404,7 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos)
-					&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
 						// Decreasing the amount of mines left for the player
@@ -416,8 +415,7 @@ void Player::Update(float dt)
 			}
 			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos)
-					&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
@@ -603,4 +601,15 @@ void Player::SetInventory(Inventory* _inventory)
 void Player::SetWeapons(Weapon* _weapons)
 {
 	m_pWeapons = _weapons;
+}
+bool Player::PlacementCheck(SGD::Point mouse)
+{
+	if (Blockable(mouse)
+		&& WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false
+		&& m_pEntityManager->CheckCollision({ mouse.x, mouse.y, GRIDWIDTH, GRIDHEIGHT }) == false)
+	{
+		return true;
+	}
+	else 
+		return false;
 }

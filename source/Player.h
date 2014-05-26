@@ -13,7 +13,7 @@
 #include "ZombieFactory.h"
 
 #include "../SGD Wrappers/SGD_Listener.h"
-
+#include "EntityManager.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -34,6 +34,7 @@ public:
 	virtual void HandleCollision(const IEntity* pOther) override;
 	bool Blockable(SGD::Point mouse);
 	virtual void HandleEvent(const SGD::Event* pEvent);
+	bool PlacementCheck(SGD::Point mouse);
 	/**********************************************************/
 	// Accessors
 	float GetMaxHealth() const;
@@ -48,7 +49,7 @@ public:
 	float GetTimeAlive() const;
 	Inventory* GetInventory() const;
 	Weapon* GetWeapons() const;
-
+	EntityManager* GetEntityManager() const { return m_pEntityManager; }
 	/**********************************************************/
 	// Mutators
 	void SetMaxHealth(float maxHealth);
@@ -64,6 +65,7 @@ public:
 	void SetInventory(Inventory* inventory);
 	void SetWeapons(Weapon* weapons);
 	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
+	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
 protected:
 
 	/**********************************************************/
@@ -83,5 +85,6 @@ protected:
 	Inventory* m_pInventory;
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
+	EntityManager* m_pEntityManager;
 };
 

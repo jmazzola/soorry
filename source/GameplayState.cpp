@@ -98,6 +98,7 @@ Entity*	GameplayState::CreatePlayer() const
 	Player* player = new Player();
 	player->SetPosition(m_ptPlayerSpawnPoint);
 	player->SetZombieFactory(zombieFactory);
+	player->SetEntityManager(m_pEntities);
 	return player;
 }
 
