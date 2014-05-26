@@ -468,6 +468,12 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 	}
 }
 
+bool Player::Blockable(SGD::Point mouse)
+{
+	return (mouse.x >= 1 && mouse.x < 49 && mouse.y >= 1 && mouse.y < 49);
+}
+
+
 /**********************************************************/
 // Accessors
 
