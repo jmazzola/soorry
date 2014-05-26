@@ -521,6 +521,21 @@ Entity*	GameplayState::CreatePlayer() const
 		// Check collisions
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 	}
+
+	// Update FPS
+	// Increase the frame count
+	m_unFrames++;
+
+	// Decrease the timer
+	m_fFPSTimer -= elapsedTime;
+
+	// Has the timer expired?
+	if (m_fFPSTimer <= 0.0f)
+	{
+		m_unFPS = m_unFrames;
+		m_unFrames = 0;
+		m_fFPSTimer = 1.0f;		// count down from 1 second
+	}
 }
 
 
@@ -703,8 +718,6 @@ Entity*	GameplayState::CreatePlayer() const
 			m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
 			m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
 			m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-
-
 		}
 	}
 

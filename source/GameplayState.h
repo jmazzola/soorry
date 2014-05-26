@@ -90,6 +90,13 @@ private:
 	SGD::Point m_ptPlayerSpawnPoint;
 
 	/**********************************************************/
+	// FPS
+	// FPS stuff
+	unsigned int m_unFPS = 60;
+	unsigned int m_unFrames = 0;
+	float m_fFPSTimer = 1.0f;
+
+	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBeaverImg = SGD::INVALID_HANDLE;
@@ -126,13 +133,6 @@ private:
 	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
-
-	//*******************************************************************
-	// FPS
-	unsigned int m_unFPS = 60;
-	unsigned int m_unFrames = 0;
-	float m_fFPSTimer = 0.0f;
-
 	
 	/**********************************************************/
 	// Factory Methods
