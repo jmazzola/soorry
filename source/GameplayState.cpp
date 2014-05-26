@@ -171,10 +171,10 @@ Entity*	GameplayState::CreatePlayer() const
 	WorldManager::GetInstance()->LoadWorld("resource/world/colWorld.xml");
 
 	// Load wave information
-	zombieFactory.LoadWaves("resource/data/wave.xml");
+	zombieFactory->LoadWaves("resource/data/wave.xml");
 
 	// Start Zombie Factory
-	zombieFactory.Start();
+	zombieFactory->Start();
 	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");

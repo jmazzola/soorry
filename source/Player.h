@@ -30,7 +30,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
-
+	bool Blockable(SGD::Point mouse);
 	/**********************************************************/
 	// Accessors
 	int GetMaxHealth() const;
