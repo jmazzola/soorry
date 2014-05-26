@@ -11,6 +11,7 @@
 #include "Entity.h"
 #include "AnimationManager.h"
 #include "ZombieFactory.h"
+#include "AIComponent.h"
 
 #include "../SGD Wrappers/SGD_Listener.h"
 
@@ -83,5 +84,10 @@ protected:
 	Inventory* m_pInventory;
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
+
+private:
+
+	int** m_nNodeChart;
+	bool CheckLegalPlacement(Node end);
 };
 

@@ -20,6 +20,10 @@
 #include "Tile.h"
 #include "Camera.h"
 #include "CreatePickupMessage.h"
+#include "AIComponent.h"
+
+#include <queue>
+using namespace std;
 
 #define WALLPICK 0
 #define WINDOWPICK 1
@@ -40,8 +44,8 @@ Player::Player() : Listener(this)
 	m_antsAnimation.m_nCurrAnimation = "player";
 
 	// Player's variables
-	m_nMaxHealth = 100;
-	m_nCurrHealth = 100;
+	m_nMaxHealth = 100.0f;
+	m_nCurrHealth = 100.0f;
 	m_nCurrWeapon = 0;
 	m_nCurrPowerup = -1;
 	m_nCurrPlaceable = -1;
@@ -160,13 +164,24 @@ Player::Player() : Listener(this)
 	}
 
 	RegisterForEvent("TAKE_DAMAGE");
+
+	// Create node chart
+	WorldManager* pWorld = WorldManager::GetInstance();
+
+	m_nNodeChart = new int*[];
+	for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+		m_nNodeChart[x] = new int[pWorld->GetWorldHeight()];
 }
 
 
 Player::~Player()
 {
 	delete[]m_pWeapons;
-		delete m_pInventory;
+	delete m_pInventory;
+
+	for (int x = 0; x < WorldManager::GetInstance()->GetWorldWidth(); x++)
+		delete[] m_nNodeChart[x];
+	delete[] m_nNodeChart;
 }
 
 
@@ -243,7 +258,7 @@ void Player::Update(float dt)
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
-	if (pInput->IsKeyDown(SGD::Key::E) == true && 
+	if (pInput->IsKeyDown(SGD::Key::E) == true &&
 		m_pInventory->GetHealthPacks() > 0 && m_nCurrHealth < m_nMaxHealth)
 	{
 		m_nCurrHealth = m_nMaxHealth;
@@ -300,11 +315,11 @@ void Player::Update(float dt)
 
 	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
 	{
-		 //Colliding with wall
+		//Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, {pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT});
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
@@ -402,19 +417,19 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0
 				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
 				{
-						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
-						// Decreasing the amount of mines left for the player
-						unsigned int newset = m_pInventory->GetWalls();
-						--newset;
-						m_pInventory->SetWalls(newset);
+					pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
+					// Decreasing the amount of mines left for the player
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0
 				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
@@ -472,7 +487,7 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 
 bool Player::Blockable(SGD::Point mouse)
 {
-	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance()->GetWorldWidth()-1 
+	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance()->GetWorldWidth() - 1
 		&& mouse.y >= 1 && mouse.y < WorldManager::GetInstance()->GetWorldHeight() - 1);
 }
 
@@ -603,4 +618,72 @@ void Player::SetInventory(Inventory* _inventory)
 void Player::SetWeapons(Weapon* _weapons)
 {
 	m_pWeapons = _weapons;
+}
+
+
+bool Player::CheckLegalPlacement(Node end)
+{
+	WorldManager* pWorld = WorldManager::GetInstance();
+
+	Node start;
+	start.x = 0;
+	start.y = 0;
+
+	// Reset node chart
+	for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+	{
+		for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+		{
+			if (pWorld->IsSolidAtPosition(x, y))
+				m_nNodeChart[x][y] = -1;
+			else
+				m_nNodeChart[x][y] = 0;
+		}
+	}
+
+	queue<Node> nodes;
+
+	nodes.push(end);
+	m_nNodeChart[end.x][end.y] = 1;
+
+	int highestNode = 1;
+
+	while (!nodes.empty())
+	{
+		Node node;
+		node = nodes.front();
+		nodes.pop();
+
+		if (node.x == start.x && node.y == start.y)
+			return true;
+
+		/*if (node.x < 1 || node.y < 1 || node.x >= m_nWorldWidth - 1 || node.y >= m_nWorldHeight - 1)
+		continue;*/
+
+		if (node.x > 0 && m_nNodeChart[node.x - 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x - 1, node.y));
+			m_nNodeChart[node.x - 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.x < pWorld->GetWorldWidth() - 1 && m_nNodeChart[node.x + 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x + 1, node.y));
+			m_nNodeChart[node.x + 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.y < pWorld->GetWorldHeight() - 1 && m_nNodeChart[node.x][node.y + 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y + 1));
+			m_nNodeChart[node.x][node.y + 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.y > 0 && m_nNodeChart[node.x][node.y - 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y - 1));
+			m_nNodeChart[node.x][node.y - 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
+	}
+
+	return false;
 }
