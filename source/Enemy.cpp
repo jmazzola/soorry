@@ -19,7 +19,7 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
-	m_AIComponent.Update(dt);
+	//m_AIComponent.Update(dt);
 }
 
 void Enemy::Render()
