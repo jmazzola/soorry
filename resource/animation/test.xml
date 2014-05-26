@@ -57,7 +57,6 @@
     <duration time="0.1" />
     <triggerID>ha</triggerID>
   </frame>
-  <sprite>JMP_pig.png</sprite>
   <spriteID>running</spriteID>
   <isLooping isIt="1" />
   <Frames numbers="8" />

@@ -4,6 +4,7 @@
 #include "Particle.h"
 #include "ParticleFlyweight.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+//TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
 }
@@ -68,11 +69,6 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		if (tempInt != 0) tempBool = true;
 		else tempBool = false;
 		tempEmitter->isLooping = tempBool;
-		//Read XML for Emitter Position
-		data = data->NextSiblingElement("position");
-		data->Attribute("x", &x);
-		data->Attribute("y", &y);
-		tempEmitter->position = SGD::Point((float)x, (float)y);
 		//Read XML for Emitter size
 		data = data->NextSiblingElement("size");
 		data->Attribute("width", &width);

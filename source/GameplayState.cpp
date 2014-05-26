@@ -123,6 +123,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
+	//TODO: change this back
 	//Load preset xml file
 	//m_pParticleManager->createEmitter("test_particle", "resource/world/testparticle.xml");
 	//load emitters
