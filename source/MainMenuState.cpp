@@ -156,12 +156,8 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// If ESCAPE is pressed
 	if (pInput->IsKeyPressed(SGD::Key::Escape))
-	{
-		// Change the game state to the Intro
-		pGame->ChangeState(IntroState::GetInstance());
-	}
+		m_nCursor = MENU_EXIT;
 
 
 	// --- Scrolling through options ---

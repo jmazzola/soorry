@@ -167,10 +167,11 @@ Player::Player() : Listener(this)
 
 	// Create node chart
 	WorldManager* pWorld = WorldManager::GetInstance();
-
-	m_nNodeChart = new int*[];
-	for (int x = 0; x < pWorld->GetWorldWidth(); x++)
-		m_nNodeChart[x] = new int[pWorld->GetWorldHeight()];
+	int worldWidth = pWorld->GetWorldWidth();
+	int worldHeight = pWorld->GetWorldHeight();
+	m_nNodeChart = new int*[worldWidth];
+	for (int x = 0; x < worldWidth; x++)
+		m_nNodeChart[x] = new int[worldHeight];
 }
 
 
@@ -200,8 +201,8 @@ void Player::Update(float dt)
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-	pos.x = ((int)(pos.x + Camera::x) / GRIDWIDTH);
-	pos.y = ((int)(pos.y + Camera::y) / GRIDWIDTH);
+	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
+	pos.y = (float)((int)(pos.y + Camera::y) / GRIDWIDTH);
 	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
 	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
 
@@ -313,7 +314,7 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::P) == true)
 		m_nCurrPlaceable = 3;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
+	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
 		//Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
@@ -385,9 +386,9 @@ void Player::Update(float dt)
 		// Send a Message to Create a bear trap if the player has any
 		if (m_nCurrPlaceable != -1)
 		{
-			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
+			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0 )
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0 && PlacementCheck(pos))
 				{
 					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
@@ -404,7 +405,7 @@ void Player::Update(float dt)
 			// Send a Message to Create a mine if the player has any
 			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
@@ -417,10 +418,9 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0
-				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
 					// Decreasing the amount of mines left for the player
@@ -429,12 +429,10 @@ void Player::Update(float dt)
 					m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0
-				&& pWorld->IsSolidAtPosition(pos.x, pos.y) == false)
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 					// Decreasing the amount of mines left for the player
 					unsigned int newset = m_pInventory->GetWindows();
@@ -621,7 +619,7 @@ void Player::SetWeapons(Weapon* _weapons)
 }
 
 
-bool Player::CheckLegalPlacement(Node end)
+bool Player::CheckLegalPlacement(Node end, Node block)
 {
 	WorldManager* pWorld = WorldManager::GetInstance();
 
@@ -642,6 +640,8 @@ bool Player::CheckLegalPlacement(Node end)
 	}
 
 	queue<Node> nodes;
+
+	m_nNodeChart[block.x][block.y] = -1;
 
 	nodes.push(end);
 	m_nNodeChart[end.x][end.y] = 1;
@@ -686,4 +686,17 @@ bool Player::CheckLegalPlacement(Node end)
 	}
 
 	return false;
+}
+
+bool Player::PlacementCheck(SGD::Point mouse)
+{
+	if (Blockable(mouse)
+		&& WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false
+		&& m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false
+		&& CheckLegalPlacement(Node((int)m_ptPosition.x / GRIDWIDTH, (int)m_ptPosition.y / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y)))
+	{
+		return true;
+	}
+	else 
+		return false;
 }

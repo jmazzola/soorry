@@ -171,7 +171,7 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 
 void AnimationManager::UnloadSprites()
 {
-	for (unsigned int i = 0; i < m_mSprites.size(); i++)
+	for (unsigned int i = 0; i < m_vSpriteNames.size(); i++)
 	{
 		delete m_mSprites[m_vSpriteNames[i]];
 	}
