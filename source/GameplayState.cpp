@@ -525,9 +525,11 @@ Entity*	GameplayState::CreatePlayer() const
 	for (int i = 0; i < 4; i++)
 	{
 		Weapon* weapons = player->GetWeapons();
-		string weaponAmmo = "Weapon " + std::to_string(i); + " :  ";
+		string weaponAmmo = "Weapon ";
+		weaponAmmo += std::to_string(i);
+		weaponAmmo += " :  ";
 		weaponAmmo += std::to_string(weapons[i].GetCurrAmmo()).c_str();
-		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + i * 20 ));
+		pGraphics->DrawString(weaponAmmo.c_str(), SGD::Point(200, 100 + (float)i * 20 ));
 		weaponAmmo.clear();
 	}
 #endif
@@ -926,6 +928,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   break;
 	}
 	}
+
+	return nullptr;
 }
 
 Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)

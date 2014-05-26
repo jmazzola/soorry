@@ -89,7 +89,7 @@ private:
 
 
 	// Message Callback Function:
-	static void MessageProc( const SGD::Message* pMsg );
+	//static void MessageProc( const SGD::Message* pMsg );
 };
 
 #endif //INTROSTATE_H
