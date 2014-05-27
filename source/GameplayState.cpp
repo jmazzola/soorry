@@ -560,6 +560,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Render the entities
 	m_pEntities->RenderAll();
 
+	// Draw health overlay
 	float currHealth = player->GetCurrHealth();
 	float maxHealth = player->GetMaxHealth();
 	if (currHealth != maxHealth)
@@ -569,6 +570,9 @@ Entity*	GameplayState::CreatePlayer() const
 
 		pGraphics->DrawRectangle(SGD::Rectangle(0.0f, 0.0f, 800.0f, 600.0f), SGD::Color(alpha, 255, 0, 0));
 	}
+
+	// FOR DEBUG PURPOSES ONLY!
+	pGraphics->DrawString(std::to_string(currHealth).c_str(), { 0, 32 });
 
 	// --- Pause Menu stuff ---
 	// If we're paused

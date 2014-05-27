@@ -135,25 +135,20 @@ bool WorldManager::LoadWorld(string fileName)
 
 	GenerateSolidsChart();
 
-	// Add walls
+	// Add walls to top layer
 	for (unsigned int i = 0; i < m_vInitWalls.size(); i++)
 	{
 		SetColliderID(m_vInitWalls[i].GetX(), m_vInitWalls[i].GetY(), WALL);
 	}
 
-	// Add windows
+	// Add windows to top layer
 	for (unsigned int i = 0; i < m_vInitWindows.size(); i++)
 	{
 		SetColliderID(m_vInitWindows[i].GetX(), m_vInitWindows[i].GetY(), WINDOW);
 	}
 
 	// Are there any layers?
-	if (m_vLayers.size() > 0)
-	{
-		return true;
-	}
-	else
-		return false;
+	return (m_vLayers.size() > 0);
 }
 
 void WorldManager::UnloadWorld()
