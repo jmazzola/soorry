@@ -660,6 +660,11 @@ Entity*	GameplayState::CreatePlayer() const
 			score += std::to_string(player->GetScore());
 			m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
 
+			// -- Draw the wave number --
+			string waveNum = "Wave: ";
+			waveNum += std::to_string(zombieFactory->GetWave());
+			m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
+
 			// -- Draw the time remaining [during build mode] --
 			if (zombieFactory->IsBuildMode())
 			{
