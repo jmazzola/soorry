@@ -18,10 +18,10 @@ bool Particle::Update(float dt)
 	if (currLifeTime > maxLifeTime)
 		return false;
 	//change based on the rates
-	Color.alpha		-=	(char)colorRateA*dt;
-	Color.red		-=	(char)colorRateR*dt;
-	Color.green		-=	(char)colorRateG*dt;
-	Color.blue		-=	(char)colorRateB*dt;
+	Color.alpha		-=	(char)((float)colorRateA*dt);
+	Color.red		-=	(char)((float)colorRateR*dt);
+	Color.green		-=	(char)((float)colorRateG*dt);
+	Color.blue		-=	(char)((float)colorRateB*dt);
 	velocity.x		-=	velocityRateX*dt;
 	velocity.y		-=	velocityRateY*dt;
 	scale.width		-=	scaleRateX*dt;

@@ -13,3 +13,8 @@ Rocket::Rocket()
 Rocket::~Rocket()
 {
 }
+
+ int Rocket::GetType() const 
+{
+	return ENT_BULLET_ROCKET;
+}

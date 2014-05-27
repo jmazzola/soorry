@@ -13,6 +13,7 @@
 #include "ZombieFactory.h"
 #include "AIComponent.h"
 
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Listener.h"
 #include "EntityManager.h"
 /**********************************************************/

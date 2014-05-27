@@ -3,6 +3,9 @@
 #include "Particle.h"
 #include <ctime>
 #include <math.h>
+#include "Entity.h"
+#include "Camera.h"
+
 Emitter::Emitter()
 {
 }
@@ -29,6 +32,7 @@ void Emitter::load()
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
+		
 
 		for (int i = 0; i < maxParticles; i++)
 		{
@@ -41,10 +45,10 @@ void Emitter::load()
 			//Create rates to update particles
 			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = 0;
-			tempParticle->colorRateA = (((float)particleFlyweight->startColor.alpha - (float)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (((float)particleFlyweight->startColor.red - (float)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
-			tempParticle->colorRateG = (((float)particleFlyweight->startColor.green - (float)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (((float)particleFlyweight->startColor.blue - (float)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->colorRateA = (((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
+			tempParticle->colorRateR = (((int)particleFlyweight->startColor.red -	(int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
+			tempParticle->colorRateG = (((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
+			tempParticle->colorRateB = (((int)particleFlyweight->startColor.blue -	(int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
 			tempParticle->scale = particleFlyweight->startScale;
 			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
 			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
@@ -76,13 +80,13 @@ void Emitter::load()
 			{
 				//MAFF very powerful
 				//NOTE:width == radius height is not used
-				float radius = rand() % (int)size.width / 2;
+				float radius = (float)(rand() % (int)size.width / 2);
 				float x = size.width / 2;
 				float y = size.width / 2;
 				//Point for the center of the emitter
 				SGD::Point center = SGD::Point(x, y);
 				//randomize the angle for the circle
-				float randAngle = rand() % 360;
+				float randAngle = (float)(rand() % 360);
 				randAngle = (randAngle / 180)*SGD::PI;
 				//put in the angle
 				tempParticle->position.x = center.x + (radius*cosf(randAngle));
@@ -122,6 +126,12 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
+	if (followEnitiy != nullptr)
+	{
+		position = followEnitiy->GetPosition();
+		position.x -= Camera::x;
+		position.y -= Camera::y;
+	}
 	if (isLooping)
 	{
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)
@@ -156,11 +166,11 @@ void Emitter::Update(float dt)
 				case 1://circle
 				{
 					//NOTE:width == radius height is not used
-					float radius = rand() % (int)size.width / 2;
+					float radius = (float)(rand() % (int)size.width / 2);
 					//Point for the center of the emitter
 					SGD::Point center = SGD::Point(position.x + size.width / 2, position.y + size.width / 2);
 					//randomize the angle for the circle
-					float randAngle = rand() % 360;
+					float randAngle = (float)(rand() % 360);
 					//convert to radians
 					randAngle = (randAngle / 180)*SGD::PI;
 					//put in the angle
@@ -207,7 +217,9 @@ void Emitter::Update(float dt)
 			aliveParticles.push_back(deadParticles.front());
 			deadParticles.erase(deadParticles.begin());
 		}
+
 	}
+
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
 		//check if the particle is dead

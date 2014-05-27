@@ -6,6 +6,7 @@
 #include <string>
 
 class Particle;
+class Entity;
 
 class Emitter
 {
@@ -22,6 +23,7 @@ public:
 	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
+	SGD::Point offset = { 0, 0};
 	SGD::Size size;
 	int maxParticles;
 	float spawnRate;
@@ -30,6 +32,6 @@ public:
 	std::vector<Particle*> deadParticles;
 	std::string emitterID;
 	SGD::Rectangle square;
-	
+	Entity* followEnitiy = nullptr;
 };
 

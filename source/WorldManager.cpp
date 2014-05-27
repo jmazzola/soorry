@@ -1,7 +1,5 @@
 #include "WorldManager.h"
 
-#include "Tile.h"
-
 #include "../TinyXML/tinyxml.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -135,14 +133,22 @@ bool WorldManager::LoadWorld(string fileName)
 
 	m_vLayers.push_back(layer);
 
-	// Are there any layers?
-	if (m_vLayers.size() > 0)
+	GenerateSolidsChart();
+
+	// Add walls to top layer
+	for (unsigned int i = 0; i < m_vInitWalls.size(); i++)
 	{
-		GenerateSolidsChart();
-		return true;
+		SetColliderID(m_vInitWalls[i].GetX(), m_vInitWalls[i].GetY(), WALL);
 	}
-	else
-		return false;
+
+	// Add windows to top layer
+	for (unsigned int i = 0; i < m_vInitWindows.size(); i++)
+	{
+		SetColliderID(m_vInitWindows[i].GetX(), m_vInitWindows[i].GetY(), WINDOW);
+	}
+
+	// Are there any layers?
+	return (m_vLayers.size() > 0);
 }
 
 void WorldManager::UnloadWorld()
@@ -243,7 +249,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 	}
 }
 
-bool WorldManager::CheckCollision(IEntity* _object)
+bool WorldManager::CheckCollision(IEntity* _object, bool _ignoreWindows)
 {
 	// Get the object's collision rect
 	SGD::Rectangle rect = _object->GetRect();
@@ -285,7 +291,12 @@ bool WorldManager::CheckCollision(IEntity* _object)
 
 				// Check if collision
 				if (m_vLayers[i][x][y].IsCollidable())
+				{
+					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
+						continue;
+
 					return true;
+				}
 			}
 		}
 	}
@@ -293,7 +304,7 @@ bool WorldManager::CheckCollision(IEntity* _object)
 	return false;
 }
 
-bool WorldManager::CheckCollision(SGD::Rectangle _rect)
+bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 {
 	// Set the tiles to check
 	int top = (int)_rect.top / m_nTileHeight;
@@ -325,7 +336,12 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect)
 			{
 				// Check if collision
 				if (m_vLayers[i][x][y].IsCollidable())
+				{
+					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
+						continue;
+
 					return true;
+				}
 			}
 		}
 	}
@@ -482,13 +498,25 @@ void WorldManager::SetTilesetImage(SGD::HTexture _tilesetImage)
 /**********************************************************/
 // Helper Functions
 
-void WorldManager::SendInitialTriggerMessage(const Tile& _tile) const
+void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 {
 	// PLAYER_SPAWN
 	if (_tile.GetTriggerInit() == "PLAYER_SPAWN")
 	{
 		CreatePlayerSpawnMessage message(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
 		message.SendMessageNow();
+	}
+
+	// WALL
+	if (_tile.GetTriggerInit() == "WALL")
+	{
+		m_vInitWalls.push_back(_tile);
+	}
+
+	// WINDOW
+	if (_tile.GetTriggerInit() == "WINDOW")
+	{
+		m_vInitWindows.push_back(_tile);
 	}
 }
 

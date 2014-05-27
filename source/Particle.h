@@ -19,10 +19,10 @@ public:
 	float				velocityRateX;
 	float				velocityRateY;
 	SGD::Color			Color;
-	float				colorRateA;
-	float				colorRateR;
-	float				colorRateG;
-	float				colorRateB;
+	int					colorRateA;
+	int					colorRateR;
+	int					colorRateG;
+	int					colorRateB;
 	SGD::Size			scale;
 	float				scaleRateX;
 	float				scaleRateY;

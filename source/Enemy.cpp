@@ -1,7 +1,10 @@
 #include "Enemy.h"
 
-#include "AIComponent.h"
+#include "../SGD Wrappers/SGD_Event.h"
 
+#include "AIComponent.h"
+#include "DestroyEntityMessage.h"
+#include "GameplayState.h"
 
 Enemy::Enemy()
 {
@@ -19,7 +22,26 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
-	m_AIComponent.Update(dt);
+	if (m_nCurrHealth > 0)
+		m_AIComponent.Update(dt);
+	else
+	{
+		// Get rid of that bitch
+		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
+		// Queue the message
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+
+		// Increase player's score
+		int score = 20;
+		SGD::Event e("INCREASE_SCORE", (void*)&score);
+		e.SendEventNow();
+
+		// Update the ZombieFactory to adjust count
+		ZombieFactory* z = GameplayState::GetInstance()->GetZombieFactory();
+		z->SetEnemiesRemaining( z->GetEnemiesRemaining() - 1);
+		
+	}
 }
 
 void Enemy::Render()
@@ -31,6 +53,23 @@ void Enemy::Render()
 int Enemy::GetType() const
 {
 	return ENT_ENEMY;
+}
+
+/*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
+{
+	int type = pOther->GetType();
+	switch (pOther->GetType())
+	{
+		case ENT_BULLET_ASSAULT:
+			m_nCurrHealth -= 40;
+			break;
+		case ENT_BULLET_SHOTGUN:
+			m_nCurrHealth -= 80;
+			break;
+		case ENT_BULLET_ROCKET:
+			m_nCurrHealth -= 100;
+			break;
+	}
 }
 
 /**********************************************************/

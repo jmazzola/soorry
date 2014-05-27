@@ -6,5 +6,7 @@ class ShotgunPellet :
 public:
 	ShotgunPellet();
 	~ShotgunPellet();
+	virtual int GetType() const override;
+
 };
 

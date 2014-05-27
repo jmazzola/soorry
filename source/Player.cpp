@@ -21,6 +21,8 @@
 #include "Camera.h"
 #include "CreatePickupMessage.h"
 #include "AIComponent.h"
+#include "CreateParticleMessage.h"
+#include "../SGD Wrappers/SGD_Message.h"
 
 #include <queue>
 using namespace std;
@@ -48,7 +50,7 @@ Player::Player() : Listener(this)
 	m_nCurrHealth = 100.0f;
 	m_nCurrWeapon = 0;
 	m_nCurrPowerup = -1;
-	m_nCurrPlaceable = -1;
+	m_nCurrPlaceable = 2;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
 	m_fSpeed = 250.0f;
@@ -164,6 +166,7 @@ Player::Player() : Listener(this)
 	}
 
 	RegisterForEvent("TAKE_DAMAGE");
+	RegisterForEvent("INCREASE_SCORE");
 
 	// Create node chart
 	WorldManager* pWorld = WorldManager::GetInstance();
@@ -267,7 +270,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-
+	if (pInput->IsKeyPressed(SGD::Key::Space))
+	{
+  		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
 	{
@@ -314,7 +322,6 @@ void Player::Update(float dt)
 	// Selecting Mine
 	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 1;
-
 
 	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
@@ -482,6 +489,16 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 	{
 		float damage = *((float*)pEvent->GetData());
 		m_nCurrHealth -= damage;
+
+		// Make sure we don't underflow
+		if (m_nCurrHealth < 0.0f)
+			m_nCurrHealth = 0.0f;
+	}
+
+	if (pEvent->GetEventID() == "INCREASE_SCORE")
+	{
+		int score = *((int*)pEvent->GetData());
+		m_unScore += score;
 	}
 }
 
