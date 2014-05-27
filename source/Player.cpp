@@ -50,7 +50,7 @@ Player::Player() : Listener(this)
 	m_nCurrHealth = 100.0f;
 	m_nCurrWeapon = 0;
 	m_nCurrPowerup = -1;
-	m_nCurrPlaceable = -1;
+	m_nCurrPlaceable = 2;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
 	m_fSpeed = 250.0f;
@@ -166,6 +166,7 @@ Player::Player() : Listener(this)
 	}
 
 	RegisterForEvent("TAKE_DAMAGE");
+	RegisterForEvent("INCREASE_SCORE");
 
 	// Create node chart
 	WorldManager* pWorld = WorldManager::GetInstance();
@@ -491,6 +492,12 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 		// Make sure we don't underflow
 		if (m_nCurrHealth < 0.0f)
 			m_nCurrHealth = 0.0f;
+	}
+
+	if (pEvent->GetEventID() == "INCREASE_SCORE")
+	{
+		int score = *((int*)pEvent->GetData());
+		m_unScore += score;
 	}
 }
 
