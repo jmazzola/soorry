@@ -240,6 +240,7 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/player.xml");
 	LoadSprites("resource/animation/beaver.xml");
 	LoadSprites("resource/animation/fastZombie.xml");
+	LoadSprites("resource/animation/slowZombie.xml");
 	LoadSprites("resource/animation/rocket.xml");
 	LoadSprites("resource/animation/Crab.xml");
 	LoadSprites("resource/animation/Wall.xml");

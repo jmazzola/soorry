@@ -4,24 +4,64 @@
     <infinite_build_time value="false"/>
     <build_time value="20"/>
     <slow_zombies amount="4"/>
-    <fast_zombies amount="8"/>
-    <beaver_zombies amount="15"/>
+    <fast_zombies amount="6"/>
+    <beaver_zombies amount="12"/>
     <spawn_interval value="0.2"/>
   </wave>
   <wave>
     <infinite_build_time value="false"/>
-    <build_time value="1"/>
-    <slow_zombies amount="16"/>
+    <build_time value="30"/>
+    <slow_zombies amount="42"/>
     <fast_zombies amount="23"/>
-    <beaver_zombies amount="42"/>
+    <beaver_zombies amount="12"/>
+    <spawn_interval value="0.15"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="48"/>
+    <fast_zombies amount="29"/>
+    <beaver_zombies amount="30"/>
+    <spawn_interval value="0.14"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="100"/>
+    <fast_zombies amount="95"/>
+    <beaver_zombies amount="120"/>
+    <spawn_interval value="0.5"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="110"/>
+    <fast_zombies amount="100"/>
+    <beaver_zombies amount="130"/>
     <spawn_interval value="0.1"/>
   </wave>
   <wave>
     <infinite_build_time value="false"/>
-    <build_time value="1"/>
-    <slow_zombies amount="16"/>
-    <fast_zombies amount="23"/>
-    <beaver_zombies amount="42"/>
-    <spawn_interval value="0.1"/>
+    <build_time value="35"/>
+    <slow_zombies amount="425"/>
+    <fast_zombies amount="90"/>
+    <beaver_zombies amount="95"/>
+    <spawn_interval value="0.07"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="40"/>
+    <slow_zombies amount="500"/>
+    <fast_zombies amount="400"/>
+    <beaver_zombies amount="600"/>
+    <spawn_interval value="0.06"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="40"/>
+    <slow_zombies amount="600"/>
+    <fast_zombies amount="500"/>
+    <beaver_zombies amount="700"/>
+    <spawn_interval value="0.06"/>
   </wave>
 </waves>
