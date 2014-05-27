@@ -233,7 +233,7 @@ void Emitter::Update(float dt)
 		}
 		else if (!update &&!isLooping)
 		{
-			delete aliveParticles[i];
+			deadParticles.push_back(aliveParticles[i]);
 			aliveParticles.erase(aliveParticles.begin() + i);
 			i--;
 		}

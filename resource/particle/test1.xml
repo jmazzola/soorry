@@ -14,6 +14,6 @@
     <size width="0" height="0" />
     <lifetime max="1" min="1" />
     <particleID>Temp_Particle</particleID>
-    <image name="C:\Users\FULL SAIL\Desktop\SGP mybranch\soorry\resource\images\particles\testParticle1.jpg" />
+    <image name="resource\images\particles\testParticle1.jpg" />
   </flyweight>
 </ParticleManager>
