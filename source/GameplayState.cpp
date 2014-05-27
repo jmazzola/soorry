@@ -344,34 +344,36 @@ Entity*	GameplayState::CreatePlayer() const
 	// If we're paused
 	if (m_bIsPaused)
 	{
-		// --- Scrolling through options ---
-		// If the down arrow (PC), or down dpad (Xbox 360) are pressed
-		// Move the cursor (selected item) down
-		if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
-		{
-			// TODO: Add sound fx for going up and down
-			++m_nPauseMenuCursor;
-
-			// Wrap around the options
-			if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
-				m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
-		}
-		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
-		// Move the cursor (selected item) up
-		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
-		{
-			--m_nPauseMenuCursor;
-
-			// Wrap around the options
-			if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
-				m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
-		}
-
 		//-----------------------------------------------------------------------
 		// --- Handling what tab we're in ---
 		// If we're in the Main menu OF the pause menu. 
 		if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 		{
+
+			// --- Scrolling through options ---
+			// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+			// Move the cursor (selected item) down
+			if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+			{
+				// TODO: Add sound fx for going up and down
+				++m_nPauseMenuCursor;
+
+				// Wrap around the options
+				if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+					m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+			}
+			// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+			// Move the cursor (selected item) up
+			else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+			{
+				--m_nPauseMenuCursor;
+
+				// Wrap around the options
+				if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
+					m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+			}
+
+
 			// --- Selecting an option ---
 			// If the enter key (PC) or A button (Xbox 360) are pressed
 			// Select the item
@@ -382,30 +384,30 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOption::PAUSE_RESUME:
 				{
-													  // Resume gameplay
-													  m_bIsPaused = false;
-													  break;
+					 // Resume gameplay
+					 m_bIsPaused = false;
+					 break;
 				}
 					break;
 
 				case PauseMenuOption::PAUSE_OPTION:
 				{
-													  // Set the cursor to the first option in the options tab
-													  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-													  // Go to the options tab
-													  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-													  // Load the options
-													  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-													  break;
+					// Set the cursor to the first option in the options tab
+					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+					// Go to the options tab
+					m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+					// Load the options
+					OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+					break;
 				}
 					break;
 
 				case PauseMenuOption::PAUSE_EXIT:
 				{
-													//Go to Main Menu
-													pGame->ChangeState(MainMenuState::GetInstance());
-													// Exit immediately
-													return true;
+					//Go to Main Menu
+					pGame->ChangeState(MainMenuState::GetInstance());
+					// Exit immediately
+					return true;
 				}
 					break;
 				}
@@ -414,6 +416,31 @@ Entity*	GameplayState::CreatePlayer() const
 		// If we're in the main menu's options tab
 		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 		{
+
+			// --- Scrolling through options ---
+			// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+			// Move the cursor (selected item) down
+			if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+			{
+				// TODO: Add sound fx for going up and down
+				++m_nPauseMenuCursor;
+
+				// Wrap around the options
+				if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
+					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+			}
+			// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+			// Move the cursor (selected item) up
+			else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+			{
+				--m_nPauseMenuCursor;
+
+				// Wrap around the options
+				if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
+					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
+			}
+
+
 			// --- Increasing an option ---
 			// If the right key (PC) or right dpad (Xbox 360) are pressed
 			// Increase the value
@@ -423,15 +450,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-															 // Increase the music volume += 5
-															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+					 // Increase the music volume += 5
+					 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-														   // Increase the sound effects volume += 5
-														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+					 // Increase the sound effects volume += 5
+					 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 				}
 					break;
 				}
@@ -445,15 +472,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-															 // Increase the music volume -= 5
-															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+					 // Increase the music volume -= 5
+					 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-														   // Increase the sound effects volume -= 5
-														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+					 // Increase the sound effects volume -= 5
+					 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 				}
 					break;
 				}
@@ -466,16 +493,21 @@ Entity*	GameplayState::CreatePlayer() const
 			{
 				switch (m_nPauseMenuCursor)
 				{
+					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
+					{
+						pGame->ToggleFullscreen();
+					}
+					break;
 				case PauseMenuOptionsOption::OPTION_GOBACK:
 				{
-															  // Go back to the pause menu's main menu
-															  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-															  // Make the highlighted option 'Options'
-															  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-															  // Save options
-															  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+					 // Go back to the pause menu's main menu
+					 m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+					 // Make the highlighted option 'Options'
+					 m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+					 // Save options
+					 OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-															  break;
+					 break;
 				}
 					break;
 				}
@@ -625,10 +657,27 @@ Entity*	GameplayState::CreatePlayer() const
 			else
 				m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
-				m_pMainButton->Draw("Go Back", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			// If the game is in fullscreen
+			if (Game::GetInstance()->GetFullscreen())
+			{
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+					m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			}
+			// If the game is windowed
 			else
-				m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			{
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+					m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			}
+
+			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
+				m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
 	}

@@ -134,10 +134,7 @@ int Game::Main( void )
 	if (SGD::InputManager::GetInstance()->IsKeyDown(SGD::Key::Alt) &&
 		SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::Enter))
 	{
-		// Stupid fix for single button press
-		SGD::GraphicsManager::GetInstance()->Resize({ 800, 600 }, !m_bFullscreen);
-		// Toggle the fullscreen
-		m_bFullscreen = !m_bFullscreen;
+		ToggleFullscreen();
 		// Disable the 'Enter' input
 		return false;
 	}
