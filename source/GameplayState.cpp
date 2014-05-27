@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "OptionsState.h"
 #include "MainMenuState.h"
+#include "LoadSaveState.h"
 #include "Button.h"
 #include "Camera.h"
 
@@ -56,9 +57,14 @@
 #include "WallPickup.h"
 #include "WindowPickup.h"
 
+#include "../TinyXML/tinyxml.h"
+
+#include <Shlobj.h>
+
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
+#include <fstream>
 using namespace std;
 
 
@@ -84,6 +90,15 @@ using namespace std;
 	return &s_Instance;
 }
 
+char GameplayState::GetCurrentGameSlot() const
+{
+	return m_nCurrGameSlot;
+}
+
+void GameplayState::SetCurrentGameSlot(char slot)
+{
+	m_nCurrGameSlot = slot;
+}
 
 EntityManager* GameplayState::GetEntityManager() const
 {
@@ -165,6 +180,21 @@ Entity*	GameplayState::CreatePlayer() const
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
 
+	// Load the gamesave
+
+	// If the slot is set
+	if (m_nCurrGameSlot > 0)
+	{
+		// If we can't load the savegame
+		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+			// Make a new savegame
+			SaveGame(true);
+		else
+			// load the savegame
+			LoadGameFromSlot(m_nCurrGameSlot);
+	}
+
+
 	// Create our player
 	m_pPlayer = CreatePlayer();
 
@@ -220,6 +250,7 @@ Entity*	GameplayState::CreatePlayer() const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -237,6 +268,9 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Delete the zombie factory
 	delete zombieFactory;
+
+	// Save the file
+	SaveGame(false);
 
 	// Release the player
 	if (m_pPlayer != nullptr)
@@ -1122,5 +1156,144 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
 		window->SetTimeOfFrame(0);
 		window->SetCurrAnimation("window");
 		return window;
+	}
+}
+
+// LoadGameFromSlot
+// - Load game from the slot
+void GameplayState::LoadGameFromSlot(int slot)
+{
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "\\SoorrySaveGame_0";
+	pathtowrite += std::to_string(slot) + ".xml";
+
+
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load the file, if not gtfo
+	if (!doc.LoadFile(pathtowrite.c_str()))
+		return;
+
+	// Access the root element (volume)
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Is the root there, if not, gtfo
+	if (pRoot == nullptr)
+		return;
+
+	m_ptPlayerSpawnPoint.x = float(atoi(pRoot->Attribute("x")));
+	m_ptPlayerSpawnPoint.y = float(atoi(pRoot->Attribute("y")));
+
+
+}
+
+// SaveGame
+// - Saves and or creates a savefile in the appdata
+// [in] newFile - if it's creating a file: true, otherwise false
+void GameplayState::SaveGame(bool newFile)
+{
+
+	// --- Make a new XML file in Appdata ---
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "\\SoorrySaveGame_0";
+	pathtowrite += std::to_string(m_nCurrGameSlot) + ".xml";
+
+
+	// If we're making a new file
+	if (newFile)
+	{
+
+		// Make a document
+		TiXmlDocument doc;
+
+		// Allocate a Tiny XML Declaration
+		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
+
+		// Attach the declaration to the document
+		doc.LinkEndChild(pDecl);
+
+		// Add a new element 'position'
+		TiXmlElement* pRoot = new TiXmlElement("position");
+
+		// Add the X and Y of position
+		pRoot->SetAttribute("x", 0);
+		pRoot->SetAttribute("y", 0);
+
+		// Link the root to the doc
+		doc.LinkEndChild(pRoot);
+
+		// Save the file
+		doc.SaveFile(pathtowrite.c_str());
+	}
+	else
+	{
+		// Make a document
+		TiXmlDocument doc;
+
+		// Allocate a Tiny XML Declaration
+		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
+
+		// Attach the declaration to the document
+		doc.LinkEndChild(pDecl);
+
+		// Add a new element 'position'
+		TiXmlElement* pRoot = new TiXmlElement("position");
+
+		// Add the X and Y of position
+		pRoot->SetAttribute("x", (int)m_pPlayer->GetPosition().x);
+		pRoot->SetAttribute("y", (int)m_pPlayer->GetPosition().y);
+
+		// Link the root to the doc
+		doc.LinkEndChild(pRoot);
+
+		// Save the file
+		doc.SaveFile(pathtowrite.c_str());
 	}
 }

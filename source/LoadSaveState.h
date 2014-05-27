@@ -10,6 +10,11 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 
+#include <string>
+using namespace std;
+
+#define NUM_SLOTS 3
+
 /**************************************************************/
 // Forward class declaration
 //	- tells the compiler that the type exists
@@ -42,6 +47,8 @@ public:
 	virtual bool	Input(void)				override;	// handle user input
 	virtual void	Update(float elapsedTime)	override;	// update game entities / animations
 	virtual void	Render(void)				override;	// render game entities / menus
+
+	bool CheckSlotExists(int slot);
 
 private:
 
@@ -93,6 +100,12 @@ private:
 	// Menu Items
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
+
+	/**********************************************************/
+	// Gamer Profile System
+	string m_szSaveFiles[NUM_SLOTS];
+	int m_pnSlots[NUM_SLOTS];
+	bool m_bFileExists[NUM_SLOTS];
 
 	// Message Callback Function:
 	//static void MessageProc(const SGD::Message* pMsg);
