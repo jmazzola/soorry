@@ -137,7 +137,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	//m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -1012,13 +1012,13 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		vec.Normalize();
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
-		Sprite* bro = new Sprite;
+		/*Sprite* bro = new Sprite;
 		Frame* frame = new Frame;
 		frame->SetFrameRect({ 0, 0, 32, 32 });
 		frame->SetAnchorPoint({ 0, 0 });
 		bro->AddFrame(frame);
 		bro->SetImage("resource/images/particles/testParticle1.jpg");
-		tempProj->SetSprite(bro);
+		tempProj->SetSprite(bro);*/
 		return tempProj;
 	}
 		break;
