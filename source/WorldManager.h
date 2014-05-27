@@ -27,8 +27,8 @@ public:
 	bool LoadWorld(string fileName);
 	void UnloadWorld();
 	void Render(SGD::Point cameraPosition);
-	bool CheckCollision(IEntity* object);
-	bool CheckCollision(SGD::Rectangle rect);
+	bool CheckCollision(IEntity* object, bool ignoreWindows = false);
+	bool CheckCollision(SGD::Rectangle rect, bool ignoreWindows = false);
 	int CheckCollisionID(IEntity* object);
 	bool IsSolidAtPosition(int x, int y) const;
 	void SetColliderID(int x, int y, int id);

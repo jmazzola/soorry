@@ -90,6 +90,10 @@ EntityManager* GameplayState::GetEntityManager() const
 	return GetInstance()->m_pEntities;
 }
 
+ZombieFactory* GameplayState::GetZombieFactory() const
+{
+	return GetInstance()->zombieFactory;
+}
 
 /*************************************************************/
 // CreatePlayer
@@ -518,6 +522,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 		// Check collisions
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 	}
 
 	// Update FPS
@@ -655,6 +660,11 @@ Entity*	GameplayState::CreatePlayer() const
 			score += std::to_string(player->GetScore());
 			m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
 
+			// -- Draw the wave number --
+			string waveNum = "Wave: ";
+			waveNum += std::to_string(zombieFactory->GetWave());
+			m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
+
 			// -- Draw the time remaining [during build mode] --
 			if (zombieFactory->IsBuildMode())
 			{
@@ -704,8 +714,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 			// Get the weapons
 			Weapon* weapons = player->GetWeapons();
-			string names[4] = { "Shotgun", "Assault Rifle", "Rocket Launcher", "Fire Axe" };
-			SGD::HTexture textures[4] = { m_hShotgunPic, m_hARPic, m_hRLPic, m_hFireAxePic };
+			string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
+			SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
 
 			// Draw the name of the selected weapon
 			m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
@@ -1002,7 +1012,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
-			   vec *= 750 + rand() % 500;
+			   vec *= (float)(750 + rand() % 500);
 
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;

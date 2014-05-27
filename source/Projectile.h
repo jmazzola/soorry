@@ -2,6 +2,10 @@
 
 #include "Entity.h"
 
+class Entity;
+class EntityManager;
+class Enemy;
+
 class Projectile : public Entity
 {
 public:
@@ -13,6 +17,8 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
+	virtual void HandleCollision(const IEntity* pOther) override;
+	
 
 	/**********************************************************/
 	// Accessors
@@ -33,5 +39,8 @@ protected:
 	int m_nDamage;
 	float m_fSpeed;
 	float m_fLifeTime;
+
+	// Enemy
+	Enemy* m_pEnemy;
 };
 
