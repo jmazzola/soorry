@@ -487,6 +487,10 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 	{
 		float damage = *((float*)pEvent->GetData());
 		m_nCurrHealth -= damage;
+
+		// Make sure we don't underflow
+		if (m_nCurrHealth < 0.0f)
+			m_nCurrHealth = 0.0f;
 	}
 }
 
