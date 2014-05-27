@@ -269,29 +269,29 @@ void Player::Update(float dt)
 	}
 
 	//GAH Weapons! - Arnold
-	if (pInput->IsKeyPressed(SGD::Key::One) == true)
+	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 0;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Two) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 1;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Three) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 2;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Four) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
 	if (m_fShotTimer < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0)
 	{
-		if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+		if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pZombieWave->IsBuildMode() == false)
 		{
 			CreateProjectileMessage* msg = new CreateProjectileMessage(m_nCurrWeapon);
 			msg->QueueMessage();
@@ -303,15 +303,15 @@ void Player::Update(float dt)
 		}
 	}
 	// Selecting Bear Trap
-	if (pInput->IsKeyPressed(SGD::Key::Nine) == true)
+	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 0;
 	// Selecting Mine
-	if (pInput->IsKeyPressed(SGD::Key::Zero) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 1;
 
-	if (pInput->IsKeyPressed(SGD::Key::O) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 2;
-	if (pInput->IsKeyPressed(SGD::Key::P) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 3;
 
 	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
