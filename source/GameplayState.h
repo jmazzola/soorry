@@ -128,7 +128,7 @@ private:
 	int m_nPauseMenuTab;
 	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT };
 	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
-	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_GOBACK };
+	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_FULLSCREEN, OPTION_GOBACK };
 
 	/**********************************************************/
 	// Audio

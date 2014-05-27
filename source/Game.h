@@ -19,6 +19,7 @@ class IGameState;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 
 class AnimationManager;
 
@@ -55,7 +56,11 @@ public:
 
 
 	bool GetFullscreen() const { return m_bFullscreen; }
-	void ToggleFullscreen() { m_bFullscreen = !m_bFullscreen; }
+	void ToggleFullscreen() 
+	{ 
+		SGD::GraphicsManager::GetInstance()->Resize({ 800, 600 }, !m_bFullscreen);
+		m_bFullscreen = !m_bFullscreen; 
+	}
 
 	
 	/**********************************************************/

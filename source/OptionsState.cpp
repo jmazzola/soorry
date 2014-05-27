@@ -186,6 +186,13 @@ using namespace std;
 		switch (m_nCursor)
 		{
 
+			case  MENU_TOGGLEFULLSCREEN:
+			{
+				// Toggle fullscreen
+				pGame->ToggleFullscreen();
+			}
+				break;
+
 			case MENU_GOBACK:
 			{
 					//Go to Main Menu
@@ -282,7 +289,7 @@ using namespace std;
 
 	// TODO: Add Strings to STRING TABLE for easy localization
 	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-	
+
 	// Create the string for the button
 	string musicVol = "Music Vol: ";
 	// Grab the volume
@@ -305,10 +312,29 @@ using namespace std;
 	else
 		m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-	if (m_nCursor == MENU_GOBACK)
-		m_pMainButton->Draw("Go Back", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	// If the game is in fullscreen
+	if (Game::GetInstance()->GetFullscreen())
+	{
+		if (m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
+	// If the game is windowed
 	else
-		m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	{
+		if (m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
+
+	if (m_nCursor == MENU_GOBACK)
+		m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	else
+		m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
 }
 
 /**************************************************************/
