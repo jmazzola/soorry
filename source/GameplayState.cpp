@@ -1002,7 +1002,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
-			   vec *= 750 + rand() % 500;
+			   vec *= (float)(750 + rand() % 500);
 
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;

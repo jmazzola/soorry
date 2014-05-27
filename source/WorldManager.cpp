@@ -249,7 +249,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 	}
 }
 
-bool WorldManager::CheckCollision(IEntity* _object)
+bool WorldManager::CheckCollision(IEntity* _object, bool _ignoreWindows)
 {
 	// Get the object's collision rect
 	SGD::Rectangle rect = _object->GetRect();
@@ -291,7 +291,12 @@ bool WorldManager::CheckCollision(IEntity* _object)
 
 				// Check if collision
 				if (m_vLayers[i][x][y].IsCollidable())
+				{
+					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
+						continue;
+
 					return true;
+				}
 			}
 		}
 	}
@@ -299,7 +304,7 @@ bool WorldManager::CheckCollision(IEntity* _object)
 	return false;
 }
 
-bool WorldManager::CheckCollision(SGD::Rectangle _rect)
+bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 {
 	// Set the tiles to check
 	int top = (int)_rect.top / m_nTileHeight;
@@ -331,7 +336,12 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect)
 			{
 				// Check if collision
 				if (m_vLayers[i][x][y].IsCollidable())
+				{
+					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
+						continue;
+
 					return true;
+				}
 			}
 		}
 	}
