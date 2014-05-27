@@ -302,17 +302,19 @@ void Player::Update(float dt)
 			m_pWeapons[m_nCurrWeapon].SetCurrAmmo((m_pWeapons[m_nCurrWeapon].GetCurrAmmo() - 1));
 		}
 	}
-	// Selecting Bear Trap
+	// Selecting Walls
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 2;
+	// Selecting Windows
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 3;
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 0;
 	// Selecting Mine
-	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 1;
 
-	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 2;
-	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 3;
 
 	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
