@@ -32,6 +32,11 @@ void Enemy::Update(float dt)
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 
+		// Increase player's score
+		int score = 20;
+		SGD::Event e("INCREASE_SCORE", (void*)&score);
+		e.SendEventNow();
+
 		// Update the ZombieFactory to adjust count
 		ZombieFactory* z = GameplayState::GetInstance()->GetZombieFactory();
 		z->SetEnemiesRemaining( z->GetEnemiesRemaining() - 1);
