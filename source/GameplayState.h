@@ -54,6 +54,7 @@ public:
 	virtual void	Render(void)				override;	// render game entities / menus
 
 	EntityManager* GetEntityManager() const;
+	ZombieFactory* GetZombieFactory() const;
 
 private:
 

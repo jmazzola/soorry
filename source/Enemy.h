@@ -2,6 +2,8 @@
 
 #include "Entity.h"
 
+#include "../SGD Wrappers/SGD_Listener.h"
+
 #include "AIComponent.h"
 
 class Enemy : public Entity
@@ -16,6 +18,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void Render() override;
+	virtual void HandleCollision(const IEntity* pOther);
 
 	/**********************************************************/
 	// Accessors
