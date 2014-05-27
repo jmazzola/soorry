@@ -142,6 +142,7 @@ Entity*	GameplayState::CreatePlayer() const
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -936,16 +937,9 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
 
-	/*if (tempBeav->GetPosition().x < 0 || tempBeav->GetPosition().x > 10000)
-		return nullptr;*/
-
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
-	//NOTE: need to render only one image ask james how to do this
-	/*Sprite bro;
-	bro.SetImage("resource\animation\TestBeaver.png");
-	tempBeav->SetSprite(&bro);*/
 	return tempBeav;
 }
 
@@ -960,15 +954,9 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetSpeed(150.0f);
 	zambie->SetVelocity({ 0, 0 });
 
-	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
-		return nullptr;*/
-
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
-	/*Sprite bro;
-	bro.SetImage("resource\images\tim\tim.png");
-	zambie->SetSprite(&bro);*/
 	return zambie;
 }
 
@@ -983,15 +971,9 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
 
-	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
-		return nullptr;*/
-
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
-	/*Sprite bro;
-	bro.SetImage("resource\images\tim\tim.png");
-	zambie->SetSprite(&bro);*/
 	return zambie;
 }
 
@@ -1082,13 +1064,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
-			   /*Sprite* bro = new Sprite;
-			   Frame* frame = new Frame;
-			   frame->SetFrameRect({ 0, 0, 32, 32 });
-			   frame->SetAnchorPoint({ 0, 0 });
-			   bro->AddFrame(frame);
-			   bro->SetImage("resource/images/particles/testParticle1.jpg");
-			   tempProj->SetSprite(bro);*/
+			   
+			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+
 			   return tempProj;
 	}
 		break;

@@ -16,7 +16,11 @@ class Emitter
 	float spawnTimer;
 public:
 	Emitter();
-	~Emitter();
+	//The trilogy... OF EVIL!
+	virtual ~Emitter();
+	Emitter(const Emitter& _cpy);
+	Emitter& operator=(const Emitter& _assign);
+	//End of trilogy
 	void Update(float dt);
 	void Render();
 	void load();

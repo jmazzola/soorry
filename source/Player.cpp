@@ -112,7 +112,6 @@ Player::Player() : Listener(this)
 	m_pWeapons[3] = tempWeapon;
 #pragma endregion
 
-	onlyOnce = true;
 
 	RegisterForEvent("TAKE_DAMAGE");
 	RegisterForEvent("INCREASE_SCORE");
@@ -155,8 +154,7 @@ void Player::Update(float dt)
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
-	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
+	
 
 
 	// Set camera
@@ -219,12 +217,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Space) && onlyOnce == true)
+	if (pInput->IsKeyPressed(SGD::Key::Space) )
 	{
   		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-		onlyOnce = false;
+		
 	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)

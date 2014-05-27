@@ -1,8 +1,9 @@
 #include "Particle.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "Camera.h"
 Particle::Particle()
 {
-
+	
 }
 
 
