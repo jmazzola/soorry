@@ -28,11 +28,6 @@ Emitter::~Emitter()
 	if (particleFlyweight != nullptr)
 	{
 		delete particleFlyweight;
-		/*if (particleFlyweight->image != SGD::INVALID_HANDLE)
-		{
-			SGD::GraphicsManager::GetInstance()->UnloadTexture(particleFlyweight->image);
-			particleFlyweight->image = SGD::INVALID_HANDLE;
-		}*/
 		particleFlyweight = nullptr;
 	}
 }
@@ -139,8 +134,8 @@ void Emitter::Update(float dt)
 	if (followEnitiy != nullptr)
 	{
 		position = followEnitiy->GetPosition();
-		position.x -= Camera::x;
-		position.y -= Camera::y;
+		/*position.x -= Camera::x;
+		position.y -= Camera::y;*/
 	}
 	if (isLooping)
 	{

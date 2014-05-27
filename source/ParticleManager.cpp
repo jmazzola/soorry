@@ -177,20 +177,22 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 
 void ParticleManager::unload()
 {
+	//NOTE: need to create a trilogy of evil and 
 	for (unsigned int i = activeEmitters.size(); i > 0; i--)
 	{
 		delete activeEmitters[i-1];
 	}
-	for (unsigned int i = 0; i < IDs.size(); i++)
-	{
-		delete loadedEmitters.at(IDs[i]);
-	}
+	//for (unsigned int i = 0; i < IDs.size(); i++)
+	//{
+	//	delete loadedEmitters.at(IDs[i]);
+	//}
 	activeEmitters.clear();
 	loadedEmitters.clear();
 }
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
-	Emitter* tempEmitter = new Emitter;
+	//NOTE: should be creating new memory
+	Emitter* tempEmitter;
 	tempEmitter = loadedEmitters[_emitterID];
 	tempEmitter->position = SGD::Point( _x, _y );
 	tempEmitter->load();
@@ -199,7 +201,7 @@ void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 
 void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
 {
-	Emitter* tempEmitter = new Emitter;
+	Emitter* tempEmitter;
 	tempEmitter = loadedEmitters[_emitterID];
 	tempEmitter->offset = SGD::Point(_x, _y);
 	tempEmitter->followEnitiy = _entity;
