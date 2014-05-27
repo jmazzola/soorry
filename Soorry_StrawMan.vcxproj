@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CreateParticleMessage.cpp" />
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp" />
     <ClCompile Include="SGD Wrappers\SGD_Event.cpp" />
     <ClCompile Include="SGD Wrappers\SGD_EventManager.cpp" />
@@ -32,6 +31,7 @@
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
+    <ClCompile Include="source\CreateParticleMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
     <ClCompile Include="source\CreatePlaceableMessage.cpp" />
     <ClCompile Include="source\CreatePlayerSpawnMessage.cpp" />
@@ -87,7 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CreateParticleMessage.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
@@ -114,6 +113,7 @@
     <ClInclude Include="source\Button.h" />
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
+    <ClInclude Include="source\CreateParticleMessage.h" />
     <ClInclude Include="source\CreatePickupMessage.h" />
     <ClInclude Include="source\CreatePlaceableMessage.h" />
     <ClInclude Include="source\CreatePlayerSpawnMessage.h" />

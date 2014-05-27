@@ -5,6 +5,7 @@
 #include "ParticleFlyweight.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Entity.h"
+#include <map>
 //TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
@@ -141,6 +142,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		//Read XML for the Flyweight Particle ID
 		data = data->NextSiblingElement("particleID");
 		tempStr = data->GetText();
+		IDs.push_back(tempStr);
 		tempFlyweight->particleID = tempStr;
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
@@ -177,6 +179,10 @@ void ParticleManager::unload()
 	for (unsigned int i = activeEmitters.size(); i > 0; i--)
 	{
 		delete activeEmitters[i-1];
+	}
+	for (unsigned int i = 0; i < IDs.size(); i++)
+	{
+		delete loadedEmitters.at(IDs[i]);
 	}
 	activeEmitters.clear();
 	loadedEmitters.clear();

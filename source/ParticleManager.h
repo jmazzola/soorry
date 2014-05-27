@@ -9,6 +9,7 @@ class ParticleManager
 	std::vector<ParticleFlyweight*> particleFlyweights;
 	std::vector<Emitter*> activeEmitters;
 	std::map<std::string, Emitter*> loadedEmitters;
+	std::vector<std::string> IDs;
 	int numOfEmitters = 0;
 public:
 	void Update(float dt);

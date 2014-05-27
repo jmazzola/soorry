@@ -34,7 +34,7 @@
 #include "CreatePickupMessage.h"
 #include "DestroyEntityMessage.h"
 #include "CreatePlayerSpawnMessage.h"
-#include "../CreateParticleMessage.h"
+#include "CreateParticleMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -137,7 +137,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	//m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 

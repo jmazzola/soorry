@@ -21,7 +21,7 @@
 #include "Camera.h"
 #include "CreatePickupMessage.h"
 #include "AIComponent.h"
-#include "../CreateParticleMessage.h"
+#include "CreateParticleMessage.h"
 #include "../SGD Wrappers/SGD_Message.h"
 
 #include <queue>
