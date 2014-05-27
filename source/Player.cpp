@@ -20,8 +20,12 @@
 #include "Tile.h"
 #include "Camera.h"
 #include "CreatePickupMessage.h"
+#include "AIComponent.h"
 #include "../CreateParticleMessage.h"
 #include "../SGD Wrappers/SGD_Message.h"
+
+#include <queue>
+using namespace std;
 
 #define WALLPICK 0
 #define WINDOWPICK 1
@@ -36,14 +40,14 @@ Player::Player() : Listener(this)
 
 
 	// Animation/ Image
-	m_pSprite = AnimationManager::GetInstance()->GetSprite("running");
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
-	m_antsAnimation.m_nCurrAnimation = "running";
+	m_antsAnimation.m_nCurrAnimation = "player";
 
 	// Player's variables
-	m_nMaxHealth = 100;
-	m_nCurrHealth = 100;
+	m_nMaxHealth = 100.0f;
+	m_nCurrHealth = 100.0f;
 	m_nCurrWeapon = 0;
 	m_nCurrPowerup = -1;
 	m_nCurrPlaceable = -1;
@@ -57,7 +61,7 @@ Player::Player() : Listener(this)
 	m_pInventory = new Inventory();
 	m_pInventory->SetBearTraps(100);
 	m_pInventory->SetGrenads(0);
-	m_pInventory->SetHealthPacks(0);
+	m_pInventory->SetHealthPacks(3);
 	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(100);
 	m_pInventory->SetWindows(100);
@@ -162,13 +166,25 @@ Player::Player() : Listener(this)
 	}
 
 	RegisterForEvent("TAKE_DAMAGE");
+
+	// Create node chart
+	WorldManager* pWorld = WorldManager::GetInstance();
+	int worldWidth = pWorld->GetWorldWidth();
+	int worldHeight = pWorld->GetWorldHeight();
+	m_nNodeChart = new int*[worldWidth];
+	for (int x = 0; x < worldWidth; x++)
+		m_nNodeChart[x] = new int[worldHeight];
 }
 
 
 Player::~Player()
 {
 	delete[]m_pWeapons;
-		delete m_pInventory;
+	delete m_pInventory;
+
+	for (int x = 0; x < WorldManager::GetInstance()->GetWorldWidth(); x++)
+		delete[] m_nNodeChart[x];
+	delete[] m_nNodeChart;
 }
 
 
@@ -187,8 +203,10 @@ void Player::Update(float dt)
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-	pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
-	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;
+	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
+	pos.y = (float)((int)(pos.y + Camera::y) / GRIDWIDTH);
+	/*pos.x = (float)((pos.x - (int)pos.x % GRIDWIDTH) + Camera::x) / GRIDWIDTH;
+	pos.y = (float)((pos.y - (int)pos.y % GRIDHEIGHT) + Camera::y) / GRIDHEIGHT;*/
 
 
 	// Set camera
@@ -243,7 +261,7 @@ void Player::Update(float dt)
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
-	if (pInput->IsKeyDown(SGD::Key::E) == true && 
+	if (pInput->IsKeyDown(SGD::Key::E) == true &&
 		m_pInventory->GetHealthPacks() > 0 && m_nCurrHealth < m_nMaxHealth)
 	{
 		m_nCurrHealth = m_nMaxHealth;
@@ -303,13 +321,13 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::P) == true)
 		m_nCurrPlaceable = 3;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true)
+	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
-		 //Colliding with wall
+		//Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, {pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT});
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
@@ -322,7 +340,7 @@ void Player::Update(float dt)
 		}
 	}
 
-	if (m_pZombieWave->IsBuildMode() == true)
+	if (m_pZombieWave->IsBuildMode() == false)
 	{
 		//if (m_fShotTimer < 0)
 		//{
@@ -375,9 +393,9 @@ void Player::Update(float dt)
 		// Send a Message to Create a bear trap if the player has any
 		if (m_nCurrPlaceable != -1)
 		{
-			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0)
+			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0 )
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0 && PlacementCheck(pos))
 				{
 					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
@@ -394,7 +412,7 @@ void Player::Update(float dt)
 			// Send a Message to Create a mine if the player has any
 			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true)
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
 					// Cooldown for placing objects
 					m_fPlaceTimer = 1;
@@ -407,24 +425,21 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0 && m_fPlaceTimer <= 0)
+			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					m_fPlaceTimer = 1;
-						pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
-						// Decreasing the amount of mines left for the player
-						unsigned int newset = m_pInventory->GetWalls();
-						--newset;
-						m_pInventory->SetWalls(newset);
+					pWorld->SetColliderID((int)pos.x, (int)pos.y, WALL);
+					// Decreasing the amount of mines left for the player
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0 && m_fPlaceTimer <= 0)
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0)
 			{
-				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && Blockable(pos))
+				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					m_fPlaceTimer = 1;
-
 					pWorld->SetColliderID((int)pos.x, (int)pos.y, WINDOW);
 					// Decreasing the amount of mines left for the player
 					unsigned int newset = m_pInventory->GetWindows();
@@ -477,7 +492,8 @@ void Player::HandleEvent(const SGD::Event* pEvent)
 
 bool Player::Blockable(SGD::Point mouse)
 {
-	return (mouse.x >= 1 && mouse.x < 49 && mouse.y >= 1 && mouse.y < 49);
+	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance()->GetWorldWidth() - 1
+		&& mouse.y >= 1 && mouse.y < WorldManager::GetInstance()->GetWorldHeight() - 1);
 }
 
 
@@ -607,4 +623,87 @@ void Player::SetInventory(Inventory* _inventory)
 void Player::SetWeapons(Weapon* _weapons)
 {
 	m_pWeapons = _weapons;
+}
+
+
+bool Player::CheckLegalPlacement(Node end, Node block)
+{
+	WorldManager* pWorld = WorldManager::GetInstance();
+
+	Node start;
+	start.x = 0;
+	start.y = 0;
+
+	// Reset node chart
+	for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+	{
+		for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+		{
+			if (pWorld->IsSolidAtPosition(x, y))
+				m_nNodeChart[x][y] = -1;
+			else
+				m_nNodeChart[x][y] = 0;
+		}
+	}
+
+	queue<Node> nodes;
+
+	m_nNodeChart[block.x][block.y] = -1;
+
+	nodes.push(end);
+	m_nNodeChart[end.x][end.y] = 1;
+
+	int highestNode = 1;
+
+	while (!nodes.empty())
+	{
+		Node node;
+		node = nodes.front();
+		nodes.pop();
+
+		if (node.x == start.x && node.y == start.y)
+			return true;
+
+		/*if (node.x < 1 || node.y < 1 || node.x >= m_nWorldWidth - 1 || node.y >= m_nWorldHeight - 1)
+		continue;*/
+
+		if (node.x > 0 && m_nNodeChart[node.x - 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x - 1, node.y));
+			m_nNodeChart[node.x - 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.x < pWorld->GetWorldWidth() - 1 && m_nNodeChart[node.x + 1][node.y] == 0)
+		{
+			nodes.push(Node(node.x + 1, node.y));
+			m_nNodeChart[node.x + 1][node.y] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.y < pWorld->GetWorldHeight() - 1 && m_nNodeChart[node.x][node.y + 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y + 1));
+			m_nNodeChart[node.x][node.y + 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
+
+		if (node.y > 0 && m_nNodeChart[node.x][node.y - 1] == 0)
+		{
+			nodes.push(Node(node.x, node.y - 1));
+			m_nNodeChart[node.x][node.y - 1] = m_nNodeChart[node.x][node.y] + 1;
+		}
+	}
+
+	return false;
+}
+
+bool Player::PlacementCheck(SGD::Point mouse)
+{
+	if (Blockable(mouse)
+		&& WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false
+		&& m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false
+		&& CheckLegalPlacement(Node((int)m_ptPosition.x / GRIDWIDTH, (int)m_ptPosition.y / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y)))
+	{
+		return true;
+	}
+	else 
+		return false;
 }

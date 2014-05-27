@@ -105,7 +105,7 @@ private:
 
 	/**********************************************************/
 	// FPS stuff
-	unsigned int m_unFPS = 60;
+	unsigned int m_unFPS = 100000000;
 	unsigned int m_unFrames = 0;
 	float m_fFPSTimer = 1.0f;
 

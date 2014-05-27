@@ -4,6 +4,7 @@
 #include <ctime>
 #include <math.h>
 #include "Entity.h"
+#include "Camera.h"
 
 Emitter::Emitter()
 {
@@ -31,6 +32,7 @@ void Emitter::load()
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
+		
 
 		for (int i = 0; i < maxParticles; i++)
 		{
@@ -127,6 +129,8 @@ void Emitter::Update(float dt)
 	if (followEnitiy != nullptr)
 	{
 		position = followEnitiy->GetPosition();
+		position.x -= Camera::x;
+		position.y -= Camera::y;
 	}
 	if (isLooping)
 	{
@@ -213,7 +217,9 @@ void Emitter::Update(float dt)
 			aliveParticles.push_back(deadParticles.front());
 			deadParticles.erase(deadParticles.begin());
 		}
+
 	}
+
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
 		//check if the particle is dead

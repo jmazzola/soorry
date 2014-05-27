@@ -184,6 +184,7 @@ void ParticleManager::unload()
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
 	loadedEmitters[_emitterID]->position = SGD::Point( _x, _y );
+	loadedEmitters[_emitterID]->load();
 	activeEmitters.push_back(loadedEmitters[_emitterID]);
 }
 
@@ -191,6 +192,7 @@ void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, 
 {
 	loadedEmitters[_emitterID]->offset = SGD::Point(_x, _y);
 	loadedEmitters[_emitterID]->followEnitiy = _entity;
+	loadedEmitters[_emitterID]->load();
 	activeEmitters.push_back(loadedEmitters[_emitterID]);
 }
 

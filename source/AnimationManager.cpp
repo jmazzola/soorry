@@ -171,7 +171,7 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 
 void AnimationManager::UnloadSprites()
 {
-	for (unsigned int i = 0; i < m_mSprites.size(); i++)
+	for (unsigned int i = 0; i < m_vSpriteNames.size(); i++)
 	{
 		delete m_mSprites[m_vSpriteNames[i]];
 	}
@@ -206,7 +206,7 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 {
 	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
-	//g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+	g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
 
 	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
 	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;
@@ -237,7 +237,7 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 
 void AnimationManager::LoadAll()
 {
-	LoadSprites("resource/animation/piggy3.xml");
+	LoadSprites("resource/animation/player.xml");
 	LoadSprites("resource/animation/beaver.xml");
 	LoadSprites("resource/animation/fastZombie.xml");
 	LoadSprites("resource/animation/rocket.xml");

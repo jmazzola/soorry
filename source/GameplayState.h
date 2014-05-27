@@ -90,12 +90,33 @@ private:
 	SGD::Point m_ptPlayerSpawnPoint;
 
 	/**********************************************************/
+	// FPS
+	// FPS stuff
+	unsigned int m_unFPS = 60;
+	unsigned int m_unFrames = 0;
+	float m_fFPSTimer = 1.0f;
+
+	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBeaverImg = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hShotgunPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hShotgunThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hARPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hARThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hRLPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRLThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Pause Menu Stuff
@@ -112,13 +133,6 @@ private:
 	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
-
-	//*******************************************************************
-	// FPS
-	unsigned int m_unFPS = 60;
-	unsigned int m_unFrames = 0;
-	float m_fFPSTimer = 0.0f;
-
 	
 	/**********************************************************/
 	// Factory Methods
