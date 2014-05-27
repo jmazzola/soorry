@@ -140,9 +140,8 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
-	// TEMP REMOVAL
-	//m_pParticleManager = ParticleManager::GetInstance();
-	//m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	m_pParticleManager = ParticleManager::GetInstance();
+	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -234,8 +233,7 @@ Entity*	GameplayState::CreatePlayer() const
 	pAudio->UnloadAudio(m_hBackgroundMus);
 
 	//Matt gets rid of the memory leaks
-	// TEMP REMOVAL
-	//m_pParticleManager->unload();
+	m_pParticleManager->unload();
 
 	// Delete the zombie factory
 	delete zombieFactory;
@@ -509,8 +507,7 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
-		// TEMP REMOVAL
-		//m_pParticleManager->Update(elapsedTime);
+		m_pParticleManager->Update(elapsedTime);
 
 		// Process the events & messages
 		m_pEvents->Update();
@@ -557,8 +554,7 @@ Entity*	GameplayState::CreatePlayer() const
 #endif
 
 	//Render test particles
-	// TEMP REMOVAL
-	//m_pParticleManager->Render();
+	m_pParticleManager->Render();
 
 	// Render the entities
 	m_pEntities->RenderAll();
