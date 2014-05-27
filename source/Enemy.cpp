@@ -55,7 +55,7 @@ int Enemy::GetType() const
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
-		/*case ENT_BULLET_ASSAULT:
+		case ENT_BULLET_ASSAULT:
 			m_nCurrHealth -= 40;
 			break;
 		case ENT_BULLET_SHOTGUN:
@@ -63,14 +63,7 @@ int Enemy::GetType() const
 			break;
 		case ENT_BULLET_ROCKET:
 			m_nCurrHealth -= 100;
-			break;*/
-	case ENT_PROJECTILE:
-		m_nCurrHealth -= 40;
-		break;
-
-	case ENT_BASE:
-		m_nCurrHealth -= 100;
-		break;
+			break;
 	}
 }
 
