@@ -186,7 +186,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true || m_ptPosition.x >= pWorld->GetWorldWidth() * pWorld->GetTileWidth())
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.x >= pWorld->GetWorldWidth() * pWorld->GetTileWidth() - pWorld->GetTileWidth())
 			m_ptPosition.x = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
@@ -206,7 +206,7 @@ void Player::Update(float dt)
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
-		if (pWorld->CheckCollision(this) == true || m_ptPosition.y >= pWorld->GetWorldHeight() * pWorld->GetTileHeight())
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.y >= pWorld->GetWorldHeight() * pWorld->GetTileHeight() - pWorld->GetTileHeight())
 			m_ptPosition.y = oldpos;
 
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
