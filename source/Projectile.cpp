@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "DestroyEntityMessage.h"
+#include "WorldManager.h"
 
 #include "../SGD Wrappers/SGD_Event.h"
 
@@ -24,6 +25,14 @@ Projectile::~Projectile()
 void Projectile::Update(float dt)
 {
 	Entity::Update(dt);
+
+	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true))
+	{
+		// Destroy the proj
+		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+	}
 }
 
 int Projectile::GetType() const
