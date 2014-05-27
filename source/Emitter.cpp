@@ -32,6 +32,93 @@ Emitter::~Emitter()
 	}
 }
 
+Emitter::Emitter(const Emitter& _cpy)
+{
+	for (unsigned int i = aliveParticles.size(); i > 0; i--)
+	{
+		delete aliveParticles[i - 1];
+	}
+	if (aliveParticles.size() != 0)
+		aliveParticles.clear();
+	for (unsigned int i = 0; i < _cpy.aliveParticles.size(); i++)
+	{
+		aliveParticles.push_back(new Particle);
+	}
+	for (unsigned int i = deadParticles.size(); i > 0; i--)
+	{
+		delete deadParticles[i - 1];
+	}
+	if (deadParticles.size() != 0)
+		deadParticles.clear();
+	for (unsigned int i = 0; i < _cpy.deadParticles.size(); i++)
+	{
+		deadParticles.push_back(new Particle);
+	}
+	if (particleFlyweight != nullptr)
+	{
+		delete particleFlyweight;
+		particleFlyweight = nullptr;
+	}
+	particleFlyweight = new ParticleFlyweight;
+	followEnitiy = _cpy.followEnitiy;
+	particleFlyweight = _cpy.particleFlyweight;
+	isLooping = _cpy.isLooping;
+	position = _cpy.position;
+	offset = _cpy.offset;
+	size = _cpy.size;
+	maxParticles = _cpy.maxParticles;
+	spawnRate = _cpy.spawnRate;
+	shape = _cpy.shape;
+	emitterID = _cpy.emitterID;
+	square = _cpy.square;
+}
+
+Emitter& Emitter::operator=(const Emitter& _assign)
+{
+	//check for self assignment
+	if (this != &_assign)
+	{
+		for (unsigned int i = aliveParticles.size(); i > 0; i--)
+		{
+			delete aliveParticles[i - 1];
+		}
+		if (aliveParticles.size() != 0)
+			aliveParticles.clear();
+		for (unsigned int i = 0; i < _assign.aliveParticles.size(); i++)
+		{
+			aliveParticles.push_back(new Particle);
+		}
+		for (unsigned int i = deadParticles.size(); i > 0; i--)
+		{
+			delete deadParticles[i - 1];
+		}
+		if (deadParticles.size() != 0)
+			deadParticles.clear();
+		for (unsigned int i = 0; i < _assign.deadParticles.size(); i++)
+		{
+			deadParticles.push_back(new Particle);
+		}
+		if (particleFlyweight != nullptr)
+		{
+			delete particleFlyweight;
+			particleFlyweight = nullptr;
+		}
+		particleFlyweight = new ParticleFlyweight;
+		followEnitiy = _assign.followEnitiy;
+		particleFlyweight = _assign.particleFlyweight;
+		isLooping = _assign.isLooping;
+		position = _assign.position;
+		offset = _assign.offset;
+		size = _assign.size;
+		maxParticles = _assign.maxParticles;
+		spawnRate = _assign.spawnRate;
+		shape = _assign.shape;
+		emitterID = _assign.emitterID;
+		square = _assign.square;
+	}
+	return *this;
+}
+
 void Emitter::load()
 {
 	srand((unsigned int)time(nullptr));
@@ -55,10 +142,10 @@ void Emitter::load()
 			//Create rates to update particles
 			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = 0;
-			tempParticle->colorRateA = (((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (((int)particleFlyweight->startColor.red -	(int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
-			tempParticle->colorRateG = (((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (((int)particleFlyweight->startColor.blue -	(int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->colorRateA = (int)(((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
+			tempParticle->colorRateR = (int)(((int)particleFlyweight->startColor.red -	(int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
+			tempParticle->colorRateG = (int)(((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
+			tempParticle->colorRateB = (int)(((int)particleFlyweight->startColor.blue -	(int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
 			tempParticle->scale = particleFlyweight->startScale;
 			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
 			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
@@ -223,7 +310,9 @@ void Emitter::Update(float dt)
 		for (float i = 0; i < spawnRate*dt; i++)
 		{
 			if (deadParticles.size() == 0)
+			{
 				break;
+			}
 			aliveParticles.push_back(deadParticles.front());
 			deadParticles.erase(deadParticles.begin());
 		}
