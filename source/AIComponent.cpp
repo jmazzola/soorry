@@ -58,8 +58,8 @@ void AIComponent::Update(float dt)
 	m_fTimeToPathfind -= dt;
 
 	// JIT fix for this stupid, fucking bug
-	/*if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
-		m_pAgent->SetPosition({ 0, 0 });*/
+	if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
+		m_pAgent->SetPosition({ 0, 0 });
 
 	// Check for direct route
 	SGD::Vector toPlayer = m_pPlayer->GetPosition() - m_pAgent->GetPosition();
