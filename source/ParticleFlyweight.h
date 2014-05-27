@@ -2,7 +2,6 @@
 #include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Color.h"
 #include "../SGD Wrappers/SGD_Handle.h"
-//#include "../SGD Wrappers/"
 #include <string>
 class ParticleFlyweight
 {

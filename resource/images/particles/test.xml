@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ParticleManager>
   <emitter>
-    <isLooping bool="0" />
+    <isLooping bool="1" />
     <size width="100" height="100" />
     <particles max="500" />
     <shape number="0" />
@@ -14,6 +14,6 @@
     <size width="0" height="0" />
     <lifetime max="5" min="5" />
     <particleID>Temp_Particle</particleID>
-    <image name="C:\Users\FULL SAIL\Desktop\SGP mybranch\soorry\resource\images\particles\testParticle1.jpg" />
+    <image name="testParticle1.jpg" />
   </flyweight>
 </ParticleManager>

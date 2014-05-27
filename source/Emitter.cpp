@@ -1,5 +1,6 @@
 #include "Emitter.h"
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Particle.h"
 #include <ctime>
 #include <math.h>
@@ -24,7 +25,16 @@ Emitter::~Emitter()
 	}
 	if (deadParticles.size() != 0)
 		deadParticles.clear();
-	delete particleFlyweight;
+	if (particleFlyweight != nullptr)
+	{
+		delete particleFlyweight;
+		/*if (particleFlyweight->image != SGD::INVALID_HANDLE)
+		{
+			SGD::GraphicsManager::GetInstance()->UnloadTexture(particleFlyweight->image);
+			particleFlyweight->image = SGD::INVALID_HANDLE;
+		}*/
+		particleFlyweight = nullptr;
+	}
 }
 
 void Emitter::load()

@@ -147,6 +147,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
 		tempStr = data->Attribute("name");
+		tempStr = "resource/images/particles/" + tempStr;
 		tempFlyweight->image = SGD::GraphicsManager::GetInstance()->LoadTexture(tempStr.c_str());
 		//Adding flyweight to vector
 		particleFlyweights.push_back(tempFlyweight);
@@ -189,16 +190,20 @@ void ParticleManager::unload()
 }
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
-	loadedEmitters[_emitterID]->position = SGD::Point( _x, _y );
-	loadedEmitters[_emitterID]->load();
-	activeEmitters.push_back(loadedEmitters[_emitterID]);
+	Emitter* tempEmitter = new Emitter;
+	tempEmitter = loadedEmitters[_emitterID];
+	tempEmitter->position = SGD::Point( _x, _y );
+	tempEmitter->load();
+	activeEmitters.push_back(tempEmitter);
 }
 
 void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
 {
-	loadedEmitters[_emitterID]->offset = SGD::Point(_x, _y);
-	loadedEmitters[_emitterID]->followEnitiy = _entity;
-	loadedEmitters[_emitterID]->load();
-	activeEmitters.push_back(loadedEmitters[_emitterID]);
+	Emitter* tempEmitter = new Emitter;
+	tempEmitter = loadedEmitters[_emitterID];
+	tempEmitter->offset = SGD::Point(_x, _y);
+	tempEmitter->followEnitiy = _entity;
+	tempEmitter->load();
+	activeEmitters.push_back(tempEmitter);
 }
 
