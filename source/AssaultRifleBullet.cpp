@@ -13,3 +13,8 @@ AssaultRifleBullet::AssaultRifleBullet()
 AssaultRifleBullet::~AssaultRifleBullet()
 {
 }
+
+int AssaultRifleBullet::GetType() const
+{
+	return ENT_BULLET_ASSAULT;
+}

@@ -13,3 +13,8 @@ ShotgunPellet::ShotgunPellet()
 ShotgunPellet::~ShotgunPellet()
 {
 }
+
+int ShotgunPellet::GetType() const
+{
+	return ENT_BULLET_SHOTGUN;
+}
