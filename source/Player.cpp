@@ -21,6 +21,8 @@
 #include "Camera.h"
 #include "CreatePickupMessage.h"
 #include "AIComponent.h"
+#include "../CreateParticleMessage.h"
+#include "../SGD Wrappers/SGD_Message.h"
 
 #include <queue>
 using namespace std;
@@ -267,7 +269,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-
+	if (pInput->IsKeyPressed(SGD::Key::Space))
+	{
+  		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
 	{

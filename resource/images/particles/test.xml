@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ParticleManager>
+  <emitter>
+    <isLooping bool="1" />
+    <size width="13" height="37" />
+    <particles max="112" />
+    <shape number="0" />
+  </emitter>
+  <flyweight>
+    <velocity startx="-320" starty="587" endx="-69" endy="-747" />
+    <rotate start="16" end="68" />
+    <color startA="255" startR="255" startG="255" startB="255" endA="255" endR="255" endG="255" endB="255" />
+    <scale startx="57" starty="58" endx="2" endy="44" />
+    <size width="0" height="0" />
+    <lifetime max="38" min="67" />
+    <particleID>Temp_Particle</particleID>
+    <image name="C:\Users\FULL SAIL\Desktop\SGP mybranch\soorry\resource\images\particles\testParticle1.jpg" />
+  </flyweight>
+</ParticleManager>
