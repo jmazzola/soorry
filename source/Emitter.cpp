@@ -37,7 +37,12 @@ void Emitter::load()
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
-		
+		if (followEnitiy != nullptr)
+		{
+			position = followEnitiy->GetPosition();
+			position.x -= Camera::x;
+			position.y -= Camera::y;
+		}
 
 		for (int i = 0; i < maxParticles; i++)
 		{
@@ -94,8 +99,8 @@ void Emitter::load()
 				float randAngle = (float)(rand() % 360);
 				randAngle = (randAngle / 180)*SGD::PI;
 				//put in the angle
-				tempParticle->position.x = center.x + (radius*cosf(randAngle));
-				tempParticle->position.y = center.y + (radius*sinf(randAngle));
+				tempParticle->position.x = center.x + (radius*cosf(randAngle) + position.x);
+				tempParticle->position.y = center.y + (radius*sinf(randAngle) + position.y);
 			}
 				break;
 			case 2://line
@@ -134,8 +139,8 @@ void Emitter::Update(float dt)
 	if (followEnitiy != nullptr)
 	{
 		position = followEnitiy->GetPosition();
-		/*position.x -= Camera::x;
-		position.y -= Camera::y;*/
+		position.x -= Camera::x;
+		position.y -= Camera::y;
 	}
 	if (isLooping)
 	{

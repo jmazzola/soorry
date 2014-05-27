@@ -88,7 +88,7 @@ protected:
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
-
+	bool onlyOnce;
 private:
 
 	int** m_nNodeChart;

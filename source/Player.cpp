@@ -112,58 +112,7 @@ Player::Player() : Listener(this)
 	m_pWeapons[3] = tempWeapon;
 #pragma endregion
 
-
-
-	//is three appropriate?
-	switch (3)
-	{
-		//NOTE:Will it hit this?
-	case 0: //Assault rifle
-	{
-				//NOTE: totally made up
-				Weapon tempWeapon = m_pWeapons[0];
-				tempWeapon.SetCurrAmmo(30);
-				//NOTE: totally made up
-				tempWeapon.SetMaxAmmo(500);
-				tempWeapon.SetFireRate(.5);
-				tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
-	}
-		break;
-	case 1://Shotgun
-	{
-			   //NOTE: totally made up
-			   Weapon tempWeapon = m_pWeapons[1];
-			   tempWeapon.SetCurrAmmo(10);
-			   //NOTE: totally made up
-			   tempWeapon.SetMaxAmmo(500);
-			   tempWeapon.SetFireRate(1);
-			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-
-	}
-		break;
-	case 2://rocket launcher
-	{
-			   //NOTE: totally made up
-			   Weapon tempWeapon = m_pWeapons[2];
-			   tempWeapon.SetCurrAmmo(5);
-			   //NOTE: totally made up
-			   tempWeapon.SetMaxAmmo(50);
-			   tempWeapon.SetFireRate(4);
-			   tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-	}
-		break;
-	case 3:
-	{
-			  //NOTE: totally made up
-			  Weapon tempWeapon = m_pWeapons[3];
-			  tempWeapon.SetCurrAmmo(0);
-			  //NOTE: totally made up
-			  tempWeapon.SetMaxAmmo(0);
-			  tempWeapon.SetFireRate(1);
-			  tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
-	}
-		break;
-	}
+	onlyOnce = true;
 
 	RegisterForEvent("TAKE_DAMAGE");
 	RegisterForEvent("INCREASE_SCORE");
@@ -270,11 +219,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Space))
+	if (pInput->IsKeyPressed(SGD::Key::Space) && onlyOnce == true)
 	{
   		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
+		onlyOnce = false;
 	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
