@@ -311,7 +311,6 @@ void Emitter::Update(float dt)
 		{
 			if (deadParticles.size() == 0)
 			{
-				allParticlesCreated = false;
 				break;
 			}
 			aliveParticles.push_back(deadParticles.front());
