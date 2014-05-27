@@ -80,13 +80,13 @@ void AIComponent::Update(float dt)
 
 			// Start node
 			Node start;
-			start.x = (int)(m_pAgent->GetPosition().x) / tileWidth;
-			start.y = (int)(m_pAgent->GetPosition().y) / tileHeight;
+			start.x = (int)(m_pAgent->GetPosition().x + 16) / tileWidth;
+			start.y = (int)(m_pAgent->GetPosition().y + 16) / tileHeight;
 
 			// End node
 			Node end;
-			end.x = (int)(m_ptFindTarget.x) / tileWidth;
-			end.y = (int)(m_ptFindTarget.y) / tileHeight;
+			end.x = (int)(m_ptFindTarget.x + 16) / tileWidth;
+			end.y = (int)(m_ptFindTarget.y + 16) / tileHeight;
 
 			Pathfind(start, end);
 

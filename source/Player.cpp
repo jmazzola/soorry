@@ -662,7 +662,7 @@ bool Player::PlacementCheck(SGD::Point mouse)
 	if (Blockable(mouse)
 		&& WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false
 		&& m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false
-		&& CheckLegalPlacement(Node((int)m_ptPosition.x / GRIDWIDTH, (int)m_ptPosition.y / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y)))
+		&& CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y)))
 	{
 		return true;
 	}

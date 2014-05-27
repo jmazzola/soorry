@@ -410,7 +410,7 @@ void WorldManager::SetColliderID(int _x, int _y, int _id)
 	else if (_id == WINDOW)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WINDOW);
-		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(3);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(457);
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
 		m_bSolidsChart[_x][_y] = true;
 	}
@@ -418,7 +418,7 @@ void WorldManager::SetColliderID(int _x, int _y, int _id)
 	else if (_id == WALL)
 	{
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WALL);
-		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(2);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetTileID(37);
 		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
 		m_bSolidsChart[_x][_y] = true;
 	}

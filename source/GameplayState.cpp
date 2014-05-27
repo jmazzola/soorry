@@ -140,8 +140,9 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
-	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	// TEMP REMOVAL
+	//m_pParticleManager = ParticleManager::GetInstance();
+	//m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -170,11 +171,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
-	// Load wave information
-	zombieFactory->LoadWaves("resource/data/wave.xml");
 
-	// Start Zombie Factory
-	zombieFactory->Start();
 	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
@@ -237,7 +234,8 @@ Entity*	GameplayState::CreatePlayer() const
 	pAudio->UnloadAudio(m_hBackgroundMus);
 
 	//Matt gets rid of the memory leaks
-	m_pParticleManager->unload();
+	// TEMP REMOVAL
+	//m_pParticleManager->unload();
 
 	// Delete the zombie factory
 	delete zombieFactory;
@@ -511,7 +509,8 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
-		m_pParticleManager->Update(elapsedTime);
+		// TEMP REMOVAL
+		//m_pParticleManager->Update(elapsedTime);
 
 		// Process the events & messages
 		m_pEvents->Update();
@@ -558,7 +557,8 @@ Entity*	GameplayState::CreatePlayer() const
 #endif
 
 	//Render test particles
-	m_pParticleManager->Render();
+	// TEMP REMOVAL
+	//m_pParticleManager->Render();
 
 	// Render the entities
 	m_pEntities->RenderAll();
@@ -575,7 +575,7 @@ Entity*	GameplayState::CreatePlayer() const
 	}
 
 	// FOR DEBUG PURPOSES ONLY!
-	pGraphics->DrawString(std::to_string(currHealth).c_str(), { 0, 32 });
+	//pGraphics->DrawString(std::to_string(currHealth).c_str(), { 0, 32 });
 
 	// --- Pause Menu stuff ---
 	// If we're paused
@@ -672,6 +672,8 @@ Entity*	GameplayState::CreatePlayer() const
 				timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 				timeRemaining += " secs";
 				m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
+
+				m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
 			}
 			// -- Draw the number of enemies remaining [during fight mode] --
 			else
@@ -910,7 +912,7 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	zambie->SetAttackRange(1.0f);
 	zambie->SetMaxHealth(100);
 	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(100.0f);
+	zambie->SetSpeed(150.0f);
 	zambie->SetVelocity({ 0, 0 });
 
 	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
@@ -933,7 +935,7 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	zambie->SetAttackRange(1.0f);
 	zambie->SetMaxHealth(100);
 	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(50.0f);
+	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
 
 	/*if (zambie->GetPosition().x < 0 || zambie->GetPosition().x > 10000)
