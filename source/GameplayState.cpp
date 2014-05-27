@@ -90,6 +90,10 @@ EntityManager* GameplayState::GetEntityManager() const
 	return GetInstance()->m_pEntities;
 }
 
+ZombieFactory* GameplayState::GetZombieFactory() const
+{
+	return GetInstance()->zombieFactory;
+}
 
 /*************************************************************/
 // CreatePlayer
@@ -518,6 +522,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 		// Check collisions
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 	}
 
 	// Update FPS
@@ -704,8 +709,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 			// Get the weapons
 			Weapon* weapons = player->GetWeapons();
-			string names[4] = { "Shotgun", "Assault Rifle", "Rocket Launcher", "Fire Axe" };
-			SGD::HTexture textures[4] = { m_hShotgunPic, m_hARPic, m_hRLPic, m_hFireAxePic };
+			string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
+			SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
 
 			// Draw the name of the selected weapon
 			m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
