@@ -196,7 +196,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_bIsPaused = false;
 
 	// Play the background music
-	//pAudio->PlayAudio(m_hBackgroundMus, true);
+	pAudio->PlayAudio(m_hBackgroundMus, true);
 
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
