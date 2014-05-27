@@ -310,15 +310,15 @@ void Player::Update(float dt)
 		}
 	}
 	// Selecting Bear Trap
-	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 0;
 	// Selecting Mine
-	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 1;
 
-	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
+	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 2;
-	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 3;
 
 	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
