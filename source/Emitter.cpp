@@ -143,9 +143,9 @@ void Emitter::load()
 			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = 0;
 			tempParticle->colorRateA = (int)(((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (int)(((int)particleFlyweight->startColor.red -	(int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
+			tempParticle->colorRateR = (int)(((int)particleFlyweight->startColor.red - (int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
 			tempParticle->colorRateG = (int)(((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (int)(((int)particleFlyweight->startColor.blue -	(int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->colorRateB = (int)(((int)particleFlyweight->startColor.blue - (int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
 			tempParticle->scale = particleFlyweight->startScale;
 			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
 			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
@@ -170,6 +170,7 @@ void Emitter::load()
 			case 0://square
 			{
 				tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
+
 				tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
 			}
 				break;
@@ -196,12 +197,12 @@ void Emitter::load()
 				SGD::Point start = position;
 				SGD::Point end = { size.width, size.height };
 				float slope = (start.y - end.y) / (start.x - end.x);
-				float x,y;
+				float x, y;
 				if (start.x != 0)
 					x = rand() % (int)start.x + end.x;
 				if (end.x != 0)
 					x = rand() % (int)end.x + start.x;
-				y = end.y+(slope*(x - end.x));
+				y = end.y + (slope*(x - end.x));
 				tempParticle->position = { x, y };
 			}
 				break;
@@ -286,7 +287,7 @@ void Emitter::Update(float dt)
 						x = rand() % (int)start.x + end.x;
 					if (end.x != 0)
 						x = rand() % (int)end.x + start.x;
-					y = end.y+(slope*(x - end.x));
+					y = end.y + (slope*(x - end.x));
 					tempParticle->position = { x, y };
 				}
 					break;
