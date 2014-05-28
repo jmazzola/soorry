@@ -570,7 +570,7 @@ Entity*	GameplayState::CreatePlayer() const
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused
-	if (!m_bIsPaused || m_pShop->IsOpen() == false)
+	if (m_bIsPaused == false)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
