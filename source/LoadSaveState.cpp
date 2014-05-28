@@ -33,6 +33,12 @@
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
+#include <sys/stat.h>
+#include <fstream>
+
+#include <shlobj.h>
+#include "Shlwapi.h"
+#pragma comment(lib, "Shlwapi.lib")
 using namespace std;
 
 
@@ -93,6 +99,29 @@ using namespace std;
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
+	// Setup the directory names for the savefiles
+	for (int i = 1; i < NUM_SLOTS + 1; i++)
+	{
+		m_szSaveFiles[i - 1].clear();
+
+		// Grab the appdata path
+		char* path = 0;
+		size_t size = MAX_PATH;
+		_dupenv_s(&path, &size, "APPDATA");
+		m_szSaveFiles[i - 1] += path;
+
+		// Go to our folder in appdata and set up the save name
+		m_szSaveFiles[i-1] += "\\RazorBalloon\\SoorrySaveGame_0";
+		// Set 1 - 3
+		m_szSaveFiles[i-1] += std::to_string(i);
+		// Set it as .xml since we read it in that way
+		m_szSaveFiles[i-1] += ".xml";
+	}
+
+	// Check if we have the files
+	for (int i = 0; i < NUM_SLOTS; i++)
+		CheckSlotExists(i);
 
 }
 
@@ -181,6 +210,8 @@ using namespace std;
 			// until then, they're placeholders.
 			case MENU_SLOT1:
 			{
+				// Set the gameplay to slot 1
+				GameplayState::GetInstance()->SetCurrentGameSlot(1);
 				// Load the gameplay state
 				pGame->ChangeState(GameplayState::GetInstance());
 				// Exit immediately
@@ -189,13 +220,19 @@ using namespace std;
 
 			case MENU_SLOT2:
 			{
+				// Set the gameplay to slot 2
+				GameplayState::GetInstance()->SetCurrentGameSlot(2);
 				pGame->ChangeState(GameplayState::GetInstance());
+
 				return true;
 			}
 
 			case MENU_SLOT3:
 			{
+				// Set the gameplay to slot 3
+				GameplayState::GetInstance()->SetCurrentGameSlot(3);
 				pGame->ChangeState(GameplayState::GetInstance());
+
 				return true;
 			}
 
@@ -251,20 +288,54 @@ using namespace std;
 	// TODO: Add Strings to STRING TABLE for easy localization
 	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
 
-	if (m_nCursor == MENU_SLOT1)
-		m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-	else
-		m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-	if (m_nCursor == MENU_SLOT2)
-		m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	// If the first file exists
+	if (m_bFileExists[0])
+	{
+		// Show that the save exists
+		if (m_nCursor == MENU_SLOT1)
+			m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
 	else
-		m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	{
+		// Prompt a new game.
+		if (m_nCursor == MENU_SLOT1)
+			m_pMainButton->Draw("Make New Game", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Make New Game", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
 
-	if (m_nCursor == MENU_SLOT3)
-		m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	if (m_bFileExists[1])
+	{
+		if (m_nCursor == MENU_SLOT2)
+			m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
 	else
-		m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	{
+		if (m_nCursor == MENU_SLOT2)
+			m_pMainButton->Draw("Make New Game", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Make New Game", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
+
+	if (m_bFileExists[2])
+	{
+		if (m_nCursor == MENU_SLOT3)
+			m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
+	else
+	{
+		if (m_nCursor == MENU_SLOT3)
+			m_pMainButton->Draw("Make New Game", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Make New Game", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
 
 	if (m_nCursor == MENU_GOBACK)
 		m_pMainButton->Draw("Go Back", { 170, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
@@ -287,4 +358,19 @@ Button* LoadSaveState::CreateButton() const
 	pButton->SetSize({ 314, 70 });
 
 	return pButton;
+}
+
+/********************************************/
+// LoadSavegame
+//  - check if the file exists, set that slot with that data
+// [in] slot - The number of the slot to check
+// [out] returns true if a savefile exists
+// [out] returns false if a savefile does not exist
+bool LoadSaveState::CheckSlotExists(int slot)
+{
+	// Does the file exist?
+	m_bFileExists[slot] = PathFileExistsA(m_szSaveFiles[slot].c_str());
+
+	// true = exists, false = doesn't exist
+	return m_bFileExists[slot];
 }

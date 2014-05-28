@@ -55,6 +55,12 @@ public:
 
 	EntityManager* GetEntityManager() const;
 	ZombieFactory* GetZombieFactory() const;
+	char GetCurrentGameSlot() const;
+	void SetCurrentGameSlot(char slot);
+
+	// Create and or save the game
+	void SaveGame(bool newFile);
+	void LoadGameFromSlot(int slot);
 
 private:
 
@@ -89,6 +95,8 @@ private:
 	float m_fTimeUntilWave;
 	ZombieFactory* zombieFactory;
 	SGD::Point m_ptPlayerSpawnPoint;
+
+	char m_nCurrGameSlot;
 
 	/**********************************************************/
 	// FPS
