@@ -2,8 +2,8 @@
 |	File:		LoadSaveState.cpp
 |	Author:		Justin Mazzola
 |	Course:		SGP
-|	Purpose:	The state where the player will save and load
-|				gamesaves
+|	Purpose:	The state where the player will save and load and
+|				delete gamesaves
 ***************************************************************/
 #include "LoadSaveState.h"
 
@@ -30,10 +30,11 @@
 #include "Entity.h"
 #include "EntityManager.h"
 
+#include "../TinyXML/tinyxml.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
-#include <sys/stat.h>
 #include <fstream>
 
 #include <shlobj.h>
@@ -248,6 +249,17 @@ using namespace std;
 		}
 	}
 
+	// If we press Backspace
+	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0,(unsigned int)SGD::Button::X))
+	{
+		// Delete the file
+		remove(m_szSaveFiles[m_nCursor].c_str());
+
+		// Check if we have the files again to refresh
+		for (int i = 0; i < NUM_SLOTS; i++)
+			CheckSlotExists(i);
+	}
+
 	return true;	// keep playing
 }
 
@@ -341,6 +353,9 @@ using namespace std;
 		m_pMainButton->Draw("Go Back", { 170, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 	else
 		m_pMainButton->Draw("Go Back", { 170, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+	// Render game info (basic info for now for selected option)
+	m_pFont->Draw(LoadFileInfo(m_nCursor), 560, 498, 0.4f, { 0, 0, 0 });
 }
 
 /**************************************************************/
@@ -373,4 +388,38 @@ bool LoadSaveState::CheckSlotExists(int slot)
 
 	// true = exists, false = doesn't exist
 	return m_bFileExists[slot];
+}
+
+// LoadFileInfo
+// - return a string containing info about the savegame
+// [in] slot - the number slot you're loading
+// [out] string - text to display
+string LoadSaveState::LoadFileInfo(int slot)
+{
+	// TODO, redo the load/save screen to have space for the game info, such as:
+	// Date and Time the gamesave was last modified, wave number, upgrades, and money.
+
+	TiXmlDocument doc;
+	// Attempt to load the file, if not gtfo
+	if (!doc.LoadFile(m_szSaveFiles[slot].c_str()))
+		return "Can't load XML file";
+
+	// Access the root element (volume)
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Is the root there, if not, gtfo
+	if (pRoot == nullptr)
+		return "Root cannot be null!";
+
+	float x = float(atoi(pRoot->Attribute("x")));
+	float y = float(atoi(pRoot->Attribute("y")));
+
+	// Get the stats
+	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
+
+	// Grab the money
+	int money = int(atoi(pStats->Attribute("money")));
+
+	string returnString = "Money: ";
+	return returnString + std::to_string(money);
 }
