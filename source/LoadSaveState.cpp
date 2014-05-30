@@ -384,7 +384,7 @@ Button* LoadSaveState::CreateButton() const
 bool LoadSaveState::CheckSlotExists(int slot)
 {
 	// Does the file exist?
-	m_bFileExists[slot] = PathFileExistsA(m_szSaveFiles[slot].c_str());
+	m_bFileExists[slot] = PathFileExistsA(m_szSaveFiles[slot].c_str()) ? TRUE : FALSE;
 
 	// true = exists, false = doesn't exist
 	return m_bFileExists[slot];
