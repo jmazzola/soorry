@@ -339,7 +339,7 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 				{
 					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
 						continue;
-
+					
 					return true;
 				}
 			}

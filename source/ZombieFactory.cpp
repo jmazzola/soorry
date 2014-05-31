@@ -96,9 +96,9 @@ void ZombieFactory::Stop()
 
 void ZombieFactory::Update(float dt)
 {
-	// For debug purposes only!
-	if (m_nEnemiesRemaining > 0 && SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::K))
-		m_nEnemiesRemaining--;
+	// FOR DEBUG PURPOSES ONLY!
+	/*if (m_nEnemiesRemaining > 0 && SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::K))
+		m_nEnemiesRemaining--;*/
 
 	// If paused, don't do anything
 	if (m_bIsPaused)
