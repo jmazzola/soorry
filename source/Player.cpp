@@ -157,7 +157,11 @@ void Player::Update(float dt)
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
-
+	if ( m_nCurrHealth <= 0.0f )
+	{
+		GameplayState::GetInstance ()->HasLost ();
+		return;
+	}
 	// Regenerate health
 	m_nCurrHealth += 7.0f * dt;
 	if (m_nCurrHealth > m_nMaxHealth)

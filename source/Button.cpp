@@ -94,7 +94,7 @@ void Button::Draw(string text, SGD::Point position, SGD::Color color, SGD::Size 
 	
 	// Draw the text in the middle of the button
 	m_pFont->Draw(text,
-		((int)position.x + (int)m_sizeImageSize.width / 2) - (m_pFont->GetTextWidth(text) / 2),
-		((int)position.y + (int)m_sizeImageSize.height / 2) - 25,
+		((int)position.x + (int)m_sizeImageSize.width / 2) - ((int)(m_pFont->GetTextWidth(text) * .5f * scale.width)),
+		((int)position.y + (int)m_sizeImageSize.height / 2) - (int)(25 * scale.height),
 		scale.width, color);
 }

@@ -253,15 +253,20 @@ Entity*	GameplayState::CreatePlayer () const
 
 	// Setup Winning Credits
 	// Set the margins for the text
-	topMargin = 220;
-	bottomMargin = 474;
+	m_nTopMargin = 220;
+	m_nBottomMargin = 474;
 
 	// Set and start the credits movement
-	textPosition.x = 180;
-	textPosition.y = bottomMargin + SCROLL_SPEED;
+	m_ptTextPosition.x = 180;
+	m_ptTextPosition.y = m_nBottomMargin + SCROLL_SPEED;
 
 	// Setup You Win message transition timer
 	m_fWinTimer = 5.0f;
+
+	// Setup Losing Screen Variables
+	m_bHasLost = false;
+	m_bReplay = true;
+	m_fLossTimer = 5.0f;
 
 	// Play the background music
 	pAudio->PlayAudio ( m_hBackgroundMus , true );
@@ -279,7 +284,7 @@ Entity*	GameplayState::CreatePlayer () const
 	m_hRLThumb = pGraphics->LoadTexture ( "resource/images/hud/rpgthumb.png" );
 	m_hFireAxePic = pGraphics->LoadTexture ( "resource/images/hud/fireaxe.png" );
 	m_hFireAxeThumb = pGraphics->LoadTexture ( "resource/images/hud/fireaxethumb.png" );
-	m_hBackground = pGraphics->LoadTexture("resource/images/menus/CreditsBG.png");
+	m_hBackground = pGraphics->LoadTexture ( "resource/images/menus/Blank.png" );
 }
 
 
@@ -385,7 +390,7 @@ Entity*	GameplayState::CreatePlayer () const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance ();
 
-	if ( m_bCreditsStarted == false || m_fWinTimer == 5.0f)
+	if ( m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false )
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
 		if ( pInput->IsKeyPressed ( SGD::Key::Escape ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::Start ) )
@@ -600,6 +605,27 @@ Entity*	GameplayState::CreatePlayer () const
 		pGame->ChangeState ( MainMenuState::GetInstance () );
 		return true;
 	}
+	if(m_bHasLost == true && m_fLossTimer <= 0.0f)
+	{
+		if(pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+			m_bReplay = !m_bReplay;
+
+		else if(pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		{
+			switch ( m_bReplay )
+			{
+			case true:
+				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
+				return true;
+				break;
+
+			case false:
+				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+				return true;
+				break;
+			}
+		}
+	}
 
 	if ( m_pShop->IsOpen () )
 		m_pShop->Input ();
@@ -616,8 +642,8 @@ Entity*	GameplayState::CreatePlayer () const
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
-	// If the game isn't paused and you haven't won
-	if ( m_bIsPaused == false && zombieFactory->GetWave () != zombieFactory->GetTotalWaves () + 1 )
+	// If the game isn't paused and you haven't won and you haven't lost
+	if ( m_bIsPaused == false && zombieFactory->GetWave () != zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false )
 	{
 		// Update the entities
 		m_pEntities->UpdateAll ( elapsedTime );
@@ -638,33 +664,40 @@ Entity*	GameplayState::CreatePlayer () const
 	}
 
 	// If you have won the game
-	else if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 )
+	else if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
 	{
+		m_bIsPaused = false;
 		// Move the credits if they have started
 		if ( m_bCreditsStarted == true )
 		{
-			textPosition.x = 220;
-			textPosition.y -= SCROLL_SPEED;
+			m_ptTextPosition.x = 220;
+			m_ptTextPosition.y -= SCROLL_SPEED;
 
 			if ( m_fCreditsTimer < 0.0f )
 			{
 				Game::GetInstance ()->ChangeState ( MainMenuState::GetInstance () );
 				return;
 			}
-			
+
 			m_fCreditsTimer -= elapsedTime;
 		}
 
 		// If the screen has faded to black start the credits
-		if( m_fWinTimer <= 0.0f && m_bCreditsStarted == false)
+		if ( m_fWinTimer <= 0.0f && m_bCreditsStarted == false )
 		{
 			m_bCreditsStarted = true;
 			m_fCreditsTimer = 28.0f;
 		}
 
 		// Count down to fade the screen to black and roll the credits
-		if(m_fWinTimer > 0.0f)
+		if ( m_fWinTimer > 0.0f )
 			m_fWinTimer -= elapsedTime;
+	}
+	// If you have lost fade to the replay menu
+	else if(m_bHasLost == true)
+	{
+		if(m_fLossTimer > 0)
+			m_fLossTimer -= elapsedTime;
 	}
 
 	// Update FPS
@@ -694,8 +727,8 @@ Entity*	GameplayState::CreatePlayer () const
 #if _DEBUG
 	pGraphics->DrawString ( "Gameplay State | Debugging" , { 240 , 0 } , { 255 , 0 , 255 } );
 #endif
-	// If the credits aren't rolling
-	if ( m_bCreditsStarted == false )
+	// If the credits aren't rolling and you haven't loss
+	if ( m_bCreditsStarted == false && m_fLossTimer > 0.0f )
 	{
 		// Render test world
 		WorldManager::GetInstance ()->Render ( SGD::Point ( (float)Camera::x , (float)Camera::y ) );
@@ -902,20 +935,37 @@ Entity*	GameplayState::CreatePlayer () const
 			}
 		}
 
-		if(zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1)
+		// If you have won the game render You Win and fade to credits
+		if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
 		{
-			Game * pGame = Game::GetInstance();
+			Game * pGame = Game::GetInstance ();
 
-			pGraphics->DrawRectangle ( 
-				SGD::Rectangle ( SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), 
-				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
-			
-			m_pFont->Draw ( "You Win!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth("You Win!"))  , pGame->GetScreenHeight () / 2 - 64, 2.0f , SGD::Color { 255 , 0 , 0 } );
+			pGraphics->DrawRectangle (
+				SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) ,
+				SGD::Color ( 255 - (char)(m_fWinTimer * 51) , 0 , 0 , 0 ) );
+
+			m_pFont->Draw ( "You Win!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth ( "You Win!" )) , pGame->GetScreenHeight () / 2 - 64 , 2.0f , SGD::Color { 255 , 0 , 0 } );
+		}
+		if(m_bHasLost == true)
+		{
+			Game * pGame = Game::GetInstance ();
+
+			pGraphics->DrawRectangle (
+				SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) ,
+				SGD::Color ( 255 - (char)(m_fLossTimer * 51) , 0 , 0 , 0 ) );
+
+			m_pFont->Draw ( "You Lose!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth ( "You Lose!" )) , pGame->GetScreenHeight () / 2 - 64 , 2.0f , SGD::Color { 0 , 0 , 0 } );
 		}
 	}
+	// Render the credits if you have won and faded to them
 	else if ( m_bCreditsStarted == true )
 	{
 		RenderCredits ();
+	}
+	// Render the Replay menu if you have lost and faded to them
+	else if ( m_bHasLost  && m_fLossTimer <= 0.0f)
+	{
+		RenderLoss ();
 	}
 
 }
@@ -1436,6 +1486,8 @@ void GameplayState::SaveGame ( bool newFile )
 	}
 }
 
+// Render Credits
+// - Renders the credits upon winning the game
 void GameplayState::RenderCredits ( void )
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
@@ -1474,7 +1526,7 @@ void GameplayState::RenderCredits ( void )
 					 Special Thanks\n\
 					 Jordan Butler for ideas.";
 
-	m_pFont->Draw ( credits , (int)textPosition.x , (int)textPosition.y , 0.5f , { 255 , 0 , 0 } );
+	m_pFont->Draw ( credits , (int)m_ptTextPosition.x , (int)m_ptTextPosition.y , 0.5f , { 255 , 0 , 0 } );
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
 	// Draw rectangles to cut off the words to give an illusion of margins
@@ -1487,9 +1539,48 @@ void GameplayState::RenderCredits ( void )
 	// Render button
 	m_pMainButton->Draw ( "Main Menu" , { 180 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
 
-	if(m_fCreditsTimer <= 5.0f)
+	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
+
+	if ( m_fCreditsTimer <= 5.0f )
 	{
-		Game * pGame = Game::GetInstance();
-		pGraphics->DrawRectangle(SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point( (float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), SGD::Color(255 - (char)(m_fCreditsTimer * 51), 0, 0, 0));
+		Game * pGame = Game::GetInstance ();
+		pGraphics->DrawRectangle ( SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) , SGD::Color ( 255 - (char)(m_fCreditsTimer * 51) , 0 , 0 , 0 ) );
 	}
+}
+
+// HasLost
+// - Lets gameplay know that the player has died
+// sets the game pause to false
+void GameplayState::HasLost ( void )
+{
+	m_bHasLost = true;
+	m_bIsPaused = false;
+}
+
+// RenderLoss
+// - Renders the game over screen
+// Allows the player to replay the current game mode or
+// go to the main menu
+void GameplayState::RenderLoss ( void )
+{
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+			
+	// Draw the paused main menu background
+	pGraphics->DrawTexture ( m_hBackground , { 0 , 0 } );
+
+	// Draw the game over at the top
+	m_pFont->Draw("Game Over", Game::GetInstance()->GetScreenWidth() / 2 - (int)(m_pFont->GetTextWidth("Game Over") * .75f), 100, 1.2f, SGD::Color(255, 0, 0, 0));
+
+	// Draw the options
+	if (m_bReplay == true)
+		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 255 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+	else
+		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+
+	if ( m_bReplay == false )
+		m_pMainButton->Draw ( "Main Menu, eh?" , { 200 , 290 } , { 255 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+	else
+		m_pMainButton->Draw ( "Main Menu, eh?" , { 200 , 290 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+
+			
 }
