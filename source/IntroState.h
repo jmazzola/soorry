@@ -63,7 +63,6 @@ private:
 	
 	/**********************************************************/
 	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
 	Entity* m_pPlayer = nullptr;
 	
 	
@@ -80,6 +79,7 @@ private:
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hLogo = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hStudioLogo = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Audio
