@@ -119,7 +119,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
-///	- set the player's properties
+//	- set the player's properties
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
@@ -164,7 +164,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
 	m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
-	// Set background color
+	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
 	// Camera
