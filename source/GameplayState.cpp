@@ -57,6 +57,11 @@
 #include "WallPickup.h"
 #include "WindowPickup.h"
 
+#include "MachineGunTower.h"
+#include "MapleSyrupTower.h"
+#include "HockeyStickTower.h"
+#include "LaserTower.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -74,6 +79,7 @@ using namespace std;
 #define BUCKET_PROJECTILES 2
 #define BUCKET_PLACEABLE 3
 #define BUCKET_PICKUP 4
+#define BUCKET_TOWERS 5
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -793,7 +799,7 @@ Entity*	GameplayState::CreatePlayer() const
 			m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
 
 			// Draw the number of grenades
-			m_pFont->Draw(std::to_string(inv->GetGrenads()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
 
 			// Draw the number of walls
 			m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
@@ -1149,6 +1155,14 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
 		window->SetTimeOfFrame(0);
 		window->SetCurrAnimation("window");
 		return window;
+	}
+}
+
+Entity* GameplayState::CreateTower(int _x, int _y, int _type)
+{
+	switch (_type)
+	{
+		
 	}
 }
 

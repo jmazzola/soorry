@@ -303,7 +303,7 @@ void EntityManager::CheckCollisions( unsigned int bucket1, unsigned int bucket2 
 
 
 
-bool EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
+IEntity* EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
 {
 	// Test against a single bucket
 	if (_bucket != -1)
@@ -320,7 +320,7 @@ bool EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
 			// Check for collision
 			if (_rect.IsIntersecting(vec[i]->GetRect()))
 			{
-				return true;
+				return vec[i];
 			}
 		}
 	}
@@ -335,11 +335,11 @@ bool EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
 				// Check for collision
 				if (_rect.IsIntersecting(m_tEntities[bucket][i]->GetRect()))
 				{
-					return true;
+					return m_tEntities[bucket][i];
 				}
 			}
 		}
 	}
 
-	return false;
+	return nullptr;
 }

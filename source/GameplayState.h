@@ -151,6 +151,7 @@ private:
 	Entity* CreateProjectile(int _Weapon);
 	Entity* CreatePlaceable(int trap);
 	Entity* CreatePickUp(int pick, SGD::Point pos);
+	Entity* CreateTower(int x, int y, int type);
 
 	// Create a button
 	Button* CreateButton() const;
