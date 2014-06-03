@@ -241,9 +241,9 @@ void WorldManager::Render(SGD::Point _cameraPos)
 				pGraphics->DrawTextureSectionSimple(m_hTilesetImage, drawPos, sourceRect);
 
 				// FOR DEBUG PURPOSES ONLY!
-				/*wostringstream id;
-				id << tileID;
-				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth, y * (float)m_nTileHeight));*/
+				wostringstream id;
+				id << (m_bSolidsChart[x][y] == true) ? 1 : 0;
+				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth, y * (float)m_nTileHeight));
 			}
 		}
 	}

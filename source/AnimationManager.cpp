@@ -246,4 +246,5 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/Wall.xml");
 	LoadSprites("resource/animation/Window.xml");
 	LoadSprites("resource/animation/bullet.xml");
+	LoadSprites("resource/animation/mine.xml");
 }

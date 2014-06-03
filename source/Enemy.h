@@ -6,7 +6,7 @@
 
 #include "AIComponent.h"
 
-class Enemy : public Entity
+class Enemy : public Entity, public SGD::Listener
 {
 public:
 
@@ -49,6 +49,8 @@ protected:
 	float m_fAttackRate;
 	float m_fAttackRange;
 	float m_fSpeed;
+	float m_fTrapTimer;
+	bool m_bIsTrapped;
 	AIComponent m_AIComponent;
 };
 

@@ -46,7 +46,7 @@ Player::Player() : Listener(this)
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
 	m_antsAnimation.m_nCurrAnimation = "player";
-
+	
 	// Player's variables
 	m_nMaxHealth = 100.0f;
 	m_nCurrHealth = 100.0f;
@@ -72,46 +72,37 @@ Player::Player() : Listener(this)
 	m_pInventory->SetHockeyStickTowers(2);
 	m_pInventory->SetLaserTowers(2);
 
-	//NOTE: Do I initialize this here? was this created right?
 	m_pWeapons = new Weapon[4];
 #pragma region Load Weapons
 
 
 	//Assault rifle
-	//NOTE: totally made up
 	Weapon tempWeapon;
 	tempWeapon.SetCurrAmmo(30);
-	//NOTE: totally made up
 	tempWeapon.SetMaxAmmo(500);
 	tempWeapon.SetFireRate(.2f);
 	tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 	m_pWeapons[0] = tempWeapon;
 
 	//Shotgun
-	//NOTE: totally made up
 	tempWeapon;
 	tempWeapon.SetCurrAmmo(10);
-	//NOTE: totally made up
 	tempWeapon.SetMaxAmmo(500);
 	tempWeapon.SetFireRate(.5f);
 	tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 	m_pWeapons[1] = tempWeapon;
 
 	//rocket launcher
-	//NOTE: totally made up
 	tempWeapon;
 	tempWeapon.SetCurrAmmo(5);
-	//NOTE: totally made up
 	tempWeapon.SetMaxAmmo(50);
 	tempWeapon.SetFireRate(2);
 	tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 	m_pWeapons[2] = tempWeapon;
 
 	//Fire Axe
-	//NOTE: totally made up
 	tempWeapon;
 	tempWeapon.SetCurrAmmo(0);
-	//NOTE: totally made up
 	tempWeapon.SetMaxAmmo(0);
 	tempWeapon.SetFireRate(.5f);
 	tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);

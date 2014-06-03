@@ -170,7 +170,6 @@ void Emitter::load()
 			case 0://square
 			{
 				tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
-
 				tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
 			}
 				break;

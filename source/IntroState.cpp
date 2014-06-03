@@ -68,6 +68,10 @@ using namespace std;
 	//m_pMessages = SGD::MessageManager::GetInstance();
 	//m_pMessages->Initialize(&MessageProc);
 
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
+
 
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
@@ -75,11 +79,12 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	m_hLogo = pGraphics->LoadTexture("resource/images/intro/razorballoon.png");
 
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+
 
 	// Set background color
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -94,7 +99,7 @@ using namespace std;
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
+	pGraphics->UnloadTexture(m_hLogo);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -106,10 +111,9 @@ using namespace std;
 	m_pEntities = nullptr;
 
 
-	m_pMessages->Terminate();
+	/*m_pMessages->Terminate();
 	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();
-
+	SGD::MessageManager::DeleteInstance();*/
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
@@ -130,8 +134,8 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 
-	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	// Press Space to skip to the Main Menu at any time
+	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}
@@ -146,6 +150,8 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void IntroState::Update(float elapsedTime)
 {
+	// Update the counter
+	m_fTimeRemaining += elapsedTime;
 
 
 	// Update the entities
@@ -154,7 +160,7 @@ using namespace std;
 
 	// Process the events & messages
 	m_pEvents->Update();
-	m_pMessages->Update();
+	//m_pMessages->Update();
 
 
 	// Check collisions
@@ -168,8 +174,21 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-	pGraphics->DrawString("Intro State", { 200, 200 }, { 255, 0, 255 });
+	// Render the text to press Space to skip in bottom right corner
+	m_pFont->Draw("Press Space to Skip", 550, 500, 0.4f, { 255, 0, 0 });
+
+	// Run the really ghetto and janky animation
+
+	// If it's been between 0 and 5 seconds
+	if (m_fTimeRemaining <= 4.99f)
+	{
+		// Draw the logo
+		pGraphics->DrawTexture(m_hLogo, { 200, 128 }, 0, {}, SGD::Color((char)m_fTimeRemaining * 51, 255, 255, 255));
+	}
+	else if (m_fTimeRemaining >= 5.0f && m_fTimeRemaining <= 10.0f)
+	{
+		//
+	}
 
 
 	// Render the entities

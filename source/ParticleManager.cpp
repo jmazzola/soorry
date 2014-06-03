@@ -142,7 +142,6 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		//Read XML for the Flyweight Particle ID
 		data = data->NextSiblingElement("particleID");
 		tempStr = data->GetText();
-		IDs.push_back(tempStr);
 		tempFlyweight->particleID = tempStr;
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
@@ -177,17 +176,16 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 
 void ParticleManager::unload()
 {
-	for (unsigned int i = 0; i < IDs.size(); i++)
+	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
 	{
-		delete loadedEmitters.at(IDs[i]);
+		delete loadedEmitters.at(iter->first);
 	}
 	activeEmitters.clear();
 	loadedEmitters.clear();
-	IDs.clear();
 }
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
-	//NOTE: should be creating new memory
+	//NOTE: should be creating new memory?
 	Emitter* tempEmitter;
 	tempEmitter = loadedEmitters[_emitterID];
 	tempEmitter->position = SGD::Point( (float)_x, (float)_y );
