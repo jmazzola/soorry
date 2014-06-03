@@ -314,6 +314,11 @@ int ZombieFactory::GetSpawnHeight() const
 	return m_nSpawnHeight;
 }
 
+int ZombieFactory::GetTotalWaves() const
+{
+	return waveData.size();
+}
+
 float ZombieFactory::GetBuildTime() const
 {
 	return m_fBuildTime;

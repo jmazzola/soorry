@@ -36,6 +36,7 @@
 #include "DestroyEntityMessage.h"
 #include "CreatePlayerSpawnMessage.h"
 #include "CreateParticleMessage.h"
+#include "CreateTowerMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -1162,7 +1163,27 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type)
 {
 	switch (_type)
 	{
-		
+	case CreateTowerMessage::TOWER_MACHINE_GUN:
+	{
+												  MachineGunTower* tower = new MachineGunTower;
+
+	}
+		break;
+	case CreateTowerMessage::TOWER_MAPLE_SYRUP:
+	{
+
+	}
+		break;
+	case CreateTowerMessage::TOWER_HOCKEY_STICK:
+	{
+
+	}
+		break;
+	case CreateTowerMessage::TOWER_LASER:
+	{
+
+	}
+		break;
 	}
 
 	return nullptr;

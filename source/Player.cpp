@@ -451,7 +451,7 @@ void Player::Update(float dt)
 			{
 				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage(pos.x + pWorld->GetTileWidth(), pos.y + pWorld->GetTileHeight(), 
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x + pWorld->GetTileWidth()), (int)(pos.y + pWorld->GetTileHeight()), 
 						CreateTowerMessage::TOWER_MACHINE_GUN);
 
 					// Decreasing the amount of mines left for the player

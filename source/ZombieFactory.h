@@ -37,6 +37,7 @@ public:
 	int GetBeaverZombiesToSpawn() const;
 	int GetSpawnWidth() const;
 	int GetSpawnHeight() const;
+	int GetTotalWaves() const;
 	float GetBuildTime() const;
 	float GetBuildTimeRemaining() const;
 	float GetSpawnInterval() const;
