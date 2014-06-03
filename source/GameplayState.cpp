@@ -119,7 +119,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
-///	- set the player's properties
+//	- set the player's properties
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
