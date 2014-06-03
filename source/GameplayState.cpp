@@ -1174,6 +1174,8 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type)
 	{
 		
 	}
+
+	return nullptr;
 }
 
 // LoadGameFromSlot
