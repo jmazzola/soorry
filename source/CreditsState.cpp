@@ -206,8 +206,9 @@ using namespace std;
 	string credits = "SOORRY\n\n\
 					 By Razor Balloon\n\n\
 					 Part of Heavy Square Studios\n\n\
-					 Associate Producer\n\
-					 Sean Hathaway\n\n\
+					 Associate Producers\n\
+					 Sean Hathaway\n\
+					 Robert Rodriguez\n\n\
 					 Executive Producer\n\
 					 John O' Leske\n\n\
 					 World Software Engineer\n\
@@ -222,6 +223,8 @@ using namespace std;
 					 Justin Mazzola\n\n\
 					 UI Programmer\n\
 					 Justin Mazzola\n\n\
+					 Mercenary Programmer\n\
+					 Ryan Simmons\n\n\
 					 Artists\n\
 					 Gregory Bey\n\
 					 Caris Frazier\n\
