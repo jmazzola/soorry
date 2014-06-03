@@ -369,6 +369,9 @@ Entity*	GameplayState::CreatePlayer () const
 	delete m_pShop;
 	m_pShop = nullptr;
 
+	// Reset Winning Credits
+	m_bCreditsStarted = false;
+
 }
 
 
@@ -648,13 +651,15 @@ Entity*	GameplayState::CreatePlayer () const
 				Game::GetInstance ()->ChangeState ( MainMenuState::GetInstance () );
 				return;
 			}
+			
+			m_fCreditsTimer -= elapsedTime;
 		}
 
 		// If the screen has faded to black start the credits
 		if( m_fWinTimer <= 0.0f && m_bCreditsStarted == false)
 		{
 			m_bCreditsStarted = true;
-			m_fCreditsTimer = 20.0f;
+			m_fCreditsTimer = 28.0f;
 		}
 
 		// Count down to fade the screen to black and roll the credits
@@ -904,8 +909,8 @@ Entity*	GameplayState::CreatePlayer () const
 			pGraphics->DrawRectangle ( 
 				SGD::Rectangle ( SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), 
 				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
-
-			m_pFont->Draw ( "You Win!" , pGame->GetScreenWidth () / 2 , pGame->GetScreenHeight () / 2 , 2.0f , SGD::Color { 255 , 255 , 255 } );
+			
+			m_pFont->Draw ( "You Win!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth("You Win!"))  , pGame->GetScreenHeight () / 2 - 64, 2.0f , SGD::Color { 255 , 0 , 0 } );
 		}
 	}
 	else if ( m_bCreditsStarted == true )
@@ -1480,5 +1485,11 @@ void GameplayState::RenderCredits ( void )
 		SGD::Rectangle ( 0 , 475 , 800 , 600 ) , {} , {} );
 
 	// Render button
-	m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
+	m_pMainButton->Draw ( "Main Menu" , { 180 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
+
+	if(m_fCreditsTimer <= 5.0f)
+	{
+		Game * pGame = Game::GetInstance();
+		pGraphics->DrawRectangle(SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point( (float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), SGD::Color(255 - (char)(m_fCreditsTimer * 51), 0, 0, 0));
+	}
 }
