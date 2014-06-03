@@ -208,7 +208,7 @@ using namespace std;
 					 Part of Heavy Square Studios\n\n\
 					 Associate Producers\n\
 					 Sean Hathaway\n\
-					 Robert Rodriguez\n\n\
+					 Robert Martinez\n\n\
 					 Executive Producer\n\
 					 John O' Leske\n\n\
 					 World Software Engineer\n\
