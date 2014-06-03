@@ -23,6 +23,8 @@
 #include "AIComponent.h"
 #include "CreateParticleMessage.h"
 #include "../SGD Wrappers/SGD_Message.h"
+#include "Tower.h"
+#include "CreateTowerMessage.h"
 
 #include <queue>
 using namespace std;
@@ -50,7 +52,7 @@ Player::Player() : Listener(this)
 	m_nCurrHealth = 100.0f;
 	m_nCurrWeapon = 0;
 	m_nCurrPowerup = -1;
-	m_nCurrPlaceable = 2;
+	m_nCurrPlaceable = 0;
 	m_unScore = 0;
 	m_unEnemiesKilled = 0;
 	m_fSpeed = 250.0f;
@@ -60,11 +62,15 @@ Player::Player() : Listener(this)
 	// Player Inventory
 	m_pInventory = new Inventory();
 	m_pInventory->SetBearTraps(100);
-	m_pInventory->SetGrenads(0);
+	m_pInventory->SetGrenades(0);
 	m_pInventory->SetHealthPacks(3);
 	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(100);
 	m_pInventory->SetWindows(100);
+	m_pInventory->SetMachineGunTowers(2);
+	m_pInventory->SetMapleSyrupTowers(2);
+	m_pInventory->SetHockeyStickTowers(2);
+	m_pInventory->SetLaserTowers(2);
 
 	m_pWeapons = new Weapon[4];
 #pragma region Load Weapons
@@ -251,19 +257,54 @@ void Player::Update(float dt)
 	}
 	// Selecting Walls
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 2;
+		m_nCurrPlaceable = 0;
+
 	// Selecting Windows
 	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 3;
-	// Selecting Bear Trap
-	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 0;
-	// Selecting Mine
-	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 1;
 
-	if (pInput->IsKeyDown(SGD::Key::MouseRight) == true && Blockable(pos))
+	// Selecting Bear Trap
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 2;
+
+	// Selecting Mine
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 3;
+
+	// Selecting Machine gun towers
+	if (pInput->IsKeyPressed(SGD::Key::Five) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 4;
+
+	// Selecting Maple Syrup towers
+	if (pInput->IsKeyPressed(SGD::Key::Six) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 5;
+
+	// Selecting Hockey Stick towers
+	if (pInput->IsKeyPressed(SGD::Key::Seven) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 6;
+
+	// Selecting Laser towers
+	if (pInput->IsKeyPressed(SGD::Key::Eight) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 7;
+
+	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && Blockable(pos))
 	{
+		// Test rect
+		SGD::Rectangle rect;
+		rect.left = pos.x * pWorld->GetTileWidth() + pWorld->GetTileWidth() / 4;
+		rect.top = pos.y * pWorld->GetTileHeight() + pWorld->GetTileHeight() / 4;
+		rect.right = rect.left + pWorld->GetTileWidth() / 2;
+		rect.bottom = rect.top + pWorld->GetTileHeight() / 2;
+
+		// Check if tower is there
+		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 5));
+
+		if (tower)
+		{
+
+		}
+
+#if 0
 		//Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
@@ -279,6 +320,7 @@ void Player::Update(float dt)
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
+#endif
 	}
 
 	if (m_pZombieWave->IsBuildMode() == false)
@@ -331,10 +373,11 @@ void Player::Update(float dt)
 	}
 	else
 	{
-		// Send a Message to Create a bear trap if the player has any
+		// Place item
 		if (m_nCurrPlaceable != -1)
 		{
-			if (m_nCurrPlaceable == 0 && m_pInventory->GetBearTraps() > 0 )
+			// Bear trap
+			if (m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps() > 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_fPlaceTimer <= 0 && PlacementCheck(pos))
 				{
@@ -350,8 +393,9 @@ void Player::Update(float dt)
 
 				}
 			}
-			// Send a Message to Create a mine if the player has any
-			else if (m_nCurrPlaceable == 1 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
+
+			// Mine
+			else if (m_nCurrPlaceable == 3 && m_pInventory->GetMines() > 0 && m_fPlaceTimer <= 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
@@ -366,7 +410,9 @@ void Player::Update(float dt)
 					m_pInventory->SetMines(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 2 && m_pInventory->GetWalls() > 0)
+
+			// Walls
+			else if (m_nCurrPlaceable == 0 && m_pInventory->GetWalls() > 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
@@ -377,7 +423,9 @@ void Player::Update(float dt)
 					m_pInventory->SetWalls(newset);
 				}
 			}
-			else if (m_nCurrPlaceable == 3 && m_pInventory->GetWindows() > 0)
+
+			// Windows
+			else if (m_nCurrPlaceable == 1 && m_pInventory->GetWindows() > 0)
 			{
 				if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
@@ -389,6 +437,18 @@ void Player::Update(float dt)
 				}
 			}
 
+			// Machine gun tower
+			else if (m_nCurrPlaceable == 4 && m_pInventory->GetMachineGunTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage(pos.x + pWorld->GetTileWidth(), pos.y + pWorld->GetTileHeight(), 
+						CreateTowerMessage::TOWER_MACHINE_GUN);
+
+					// Decreasing the amount of mines left for the player
+					m_pInventory->SetMachineGunTowers(m_pInventory->GetMachineGunTowers() - 1);
+				}
+			}
 		}
 
 	}

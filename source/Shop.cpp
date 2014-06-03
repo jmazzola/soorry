@@ -524,7 +524,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		if (parcel == MINE)
 			inventory->SetMines(inventory->GetMines() + 1);
 		if (parcel == GRENADE)
-			inventory->SetGrenads(inventory->GetGrenads() + 3);
+			inventory->SetGrenades(inventory->GetGrenades() + 3);
 		if (parcel == AMMO)
 		{
 			// Refill the player's ammo

@@ -20,7 +20,6 @@
 // Forward Declarations
 class Weapon;
 class Inventory;
-class Cursor;
 
 class Player : public Entity, public SGD::Listener
 {

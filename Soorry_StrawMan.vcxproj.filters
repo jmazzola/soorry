@@ -61,6 +61,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{7dd5bce4-c73e-4998-ac86-cf87d298e452}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Towers/Traps">
+      <UniqueIdentifier>{d6e332b8-a784-4a15-8d32-ba042f0431ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -281,6 +284,24 @@
     </ClCompile>
     <ClCompile Include="source\CreateParticleMessage.cpp">
       <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Tower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateTowerMessage.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MachineGunTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MapleSyrupTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HockeyStickTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LaserTower.cpp">
+      <Filter>Towers/Traps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -526,6 +547,24 @@
     </ClInclude>
     <ClInclude Include="source\CreateParticleMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Tower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateTowerMessage.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MachineGunTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MapleSyrupTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HockeyStickTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LaserTower.h">
+      <Filter>Towers/Traps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

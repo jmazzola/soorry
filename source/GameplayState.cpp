@@ -57,6 +57,11 @@
 #include "WallPickup.h"
 #include "WindowPickup.h"
 
+#include "MachineGunTower.h"
+#include "MapleSyrupTower.h"
+#include "HockeyStickTower.h"
+#include "LaserTower.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -74,6 +79,7 @@ using namespace std;
 #define BUCKET_PROJECTILES 2
 #define BUCKET_PLACEABLE 3
 #define BUCKET_PICKUP 4
+#define BUCKET_TOWERS 5
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -198,6 +204,21 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Create our player
 	m_pPlayer = CreatePlayer();
+
+	// If the slot is set
+
+	// TODO: Make it so I DON'T have to do this twice, since I can't set money because
+	// the player isn't created yet.
+	if (m_nCurrGameSlot > 0)
+	{
+		// If we can't load the savegame
+		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+			// Make a new savegame
+			SaveGame(true);
+		else
+			// load the savegame
+			LoadGameFromSlot(m_nCurrGameSlot);
+	}
 
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
@@ -570,7 +591,7 @@ Entity*	GameplayState::CreatePlayer() const
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused
-	if (!m_bIsPaused || m_pShop->IsOpen() == false)
+	if (m_bIsPaused == false)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
@@ -782,7 +803,7 @@ Entity*	GameplayState::CreatePlayer() const
 			m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
 
 			// Draw the number of grenades
-			m_pFont->Draw(std::to_string(inv->GetGrenads()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
 
 			// Draw the number of walls
 			m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
@@ -1147,6 +1168,14 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
 	}
 }
 
+Entity* GameplayState::CreateTower(int _x, int _y, int _type)
+{
+	switch (_type)
+	{
+		
+	}
+}
+
 // LoadGameFromSlot
 // - Load game from the slot
 void GameplayState::LoadGameFromSlot(int slot)
@@ -1195,6 +1224,16 @@ void GameplayState::LoadGameFromSlot(int slot)
 
 	m_ptPlayerSpawnPoint.x = float(atoi(pRoot->Attribute("x")));
 	m_ptPlayerSpawnPoint.y = float(atoi(pRoot->Attribute("y")));
+
+	// Get the volume
+	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
+
+	// Set the player's score
+	if (dynamic_cast<Player*>(m_pPlayer) != nullptr)
+	{
+		int money = int(atoi(pStats->Attribute("money")));
+		dynamic_cast<Player*>(m_pPlayer)->SetScore(money);
+	}
 
 
 }
@@ -1257,6 +1296,15 @@ void GameplayState::SaveGame(bool newFile)
 		// Link the root to the doc
 		doc.LinkEndChild(pRoot);
 
+		// Add a new element called 'stats'
+		TiXmlElement* pStats = new TiXmlElement("stats");
+
+		// Add the money
+		pStats->SetAttribute("money", 0);
+
+		// Link the stats to the doc
+		doc.LinkEndChild(pStats);
+
 		// Save the file
 		doc.SaveFile(pathtowrite.c_str());
 	}
@@ -1280,6 +1328,15 @@ void GameplayState::SaveGame(bool newFile)
 
 		// Link the root to the doc
 		doc.LinkEndChild(pRoot);
+
+		// Add a new element called 'stats'
+		TiXmlElement* pStats = new TiXmlElement("stats");
+
+		// Add the money
+		pStats->SetAttribute("money", (int)dynamic_cast<Player*>(m_pPlayer)->GetScore());
+
+		// Link the stats to the doc
+		doc.LinkEndChild(pStats);
 
 		// Save the file
 		doc.SaveFile(pathtowrite.c_str());

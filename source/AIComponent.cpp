@@ -61,7 +61,7 @@ void AIComponent::Update(float dt)
 	if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
 		m_pAgent->SetPosition({ 0, 0 });
 
-	// Check for direct route
+	// Check for direct route (TEMPORARILY DISABLED!)
 	SGD::Vector toPlayer = m_pPlayer->GetPosition() - m_pAgent->GetPosition();
 	toPlayer.Normalize();
 	if (false && BoxCast(toPlayer, m_pPlayer->GetPosition()))
@@ -205,6 +205,8 @@ void AIComponent::Update(float dt)
 
 void AIComponent::Render()
 {
+	// NOTE: This function is only called for certain debug practices
+
 	// Get camera position in terms of tiles
 	int camTileX = Camera::x / 32;
 	int camTileY = Camera::y / 32;
