@@ -63,18 +63,6 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 
-	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance();
-	m_pEvents->Initialize();
-
-	// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -118,22 +106,6 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	//m_pMessages->Terminate();
-	//m_pMessages = nullptr;
-	//SGD::MessageManager::DeleteInstance();
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
-
 	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
@@ -171,23 +143,9 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void CreditsState::Update(float elapsedTime)
 {
-
-
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
-	// Process the events & messages
-	m_pEvents->Update();
-	//m_pMessages->Update();
-
-
-	// Check collisions
-
 	// Move the credits
 	textPosition.x = 220;
 	textPosition.y -= SCROLL_SPEED;
-
 }
 
 
@@ -244,9 +202,6 @@ using namespace std;
 
 	// Render button
 	m_pMainButton->Draw("Go Back", { 200, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
-
-	// Render the entities
-	m_pEntities->RenderAll();
 }
 
 /**************************************************************/

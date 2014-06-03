@@ -88,13 +88,11 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	bool m_bCreditsStarted;
 	Entity* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
-	float m_fCreditsTimer;
 	ZombieFactory* zombieFactory;
 	SGD::Point m_ptPlayerSpawnPoint;
 
@@ -167,6 +165,15 @@ private:
 	// Animation Manager
 	AnimationManager* m_pAnimation = nullptr;
 
+	// Winning Items
+	void RenderCredits(void);
+	bool m_bCreditsStarted;
+	int topMargin;
+	int bottomMargin;
+	float m_fCreditsTimer;
+	float m_fWinTimer;
+	SGD::Point textPosition;
+	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
 };
 
 #endif //GAMEPLAYSTATE_H
