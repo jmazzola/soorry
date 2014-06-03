@@ -1,18 +1,20 @@
 #pragma once
 
 #include "Entity.h"
-
-class BearTrap : public Entity
+#include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Event.h"
+class BearTrap : public Entity, public SGD::Listener
 {
 public:
 
-	BearTrap() = default;
+	BearTrap();
 	~BearTrap() = default;
 
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
+	virtual void HandleCollision(const IEntity* pOther);
 
 	/**********************************************************/
 	// Accessors
@@ -24,5 +26,7 @@ public:
 
 private:
 	bool m_bIsTrapping;
+
+	bool m_bActivated;
 };
 
