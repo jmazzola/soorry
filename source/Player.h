@@ -15,6 +15,7 @@
 
 #include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Handle.h"
 #include "EntityManager.h"
 /**********************************************************/
 // Forward Declarations
@@ -87,7 +88,12 @@ protected:
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
-	
+	//Player sounds
+	SGD::HAudio m_hBlockPlace;
+	SGD::HAudio m_hBlockBreak;
+	SGD::HAudio m_hPickup;
+
+
 private:
 
 	int** m_nNodeChart;

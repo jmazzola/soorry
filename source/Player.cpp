@@ -3,6 +3,7 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -46,7 +47,7 @@ Player::Player() : Listener(this)
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
 	m_antsAnimation.m_nCurrAnimation = "player";
-	
+
 	// Player's variables
 	m_nMaxHealth = 100.0f;
 	m_nCurrHealth = 100.0f;
@@ -120,6 +121,14 @@ Player::Player() : Listener(this)
 	m_nNodeChart = new int*[worldWidth];
 	for (int x = 0; x < worldWidth; x++)
 		m_nNodeChart[x] = new int[worldHeight];
+
+	// load audio
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	m_hBlockPlace = pAudio->LoadAudio("resource/audio/block_place.wav");
+	m_hBlockBreak = pAudio->LoadAudio("resource/audio/Block_Break.wav");
+	m_hPickup = pAudio->LoadAudio("resource/audio/block_pickup.wav");
+
+
 }
 
 
@@ -131,6 +140,13 @@ Player::~Player()
 	for (int x = 0; x < WorldManager::GetInstance()->GetWorldWidth(); x++)
 		delete[] m_nNodeChart[x];
 	delete[] m_nNodeChart;
+
+	//Delete audio
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	pAudio->UnloadAudio(m_hBlockPlace);
+	pAudio->UnloadAudio(m_hBlockBreak);
+	pAudio->UnloadAudio(m_hPickup);
+
 }
 
 
@@ -151,7 +167,7 @@ void Player::Update(float dt)
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-	
+
 
 
 	// Set camera
@@ -214,12 +230,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Space) )
+	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
-  		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-		
+
 	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
@@ -253,6 +269,7 @@ void Player::Update(float dt)
 			int tempInt = m_pWeapons[m_nCurrWeapon].GetCurrAmmo();
 			m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 			m_pWeapons[m_nCurrWeapon].SetCurrAmmo((m_pWeapons[m_nCurrWeapon].GetCurrAmmo() - 1));
+
 		}
 	}
 	// Selecting Walls
@@ -390,7 +407,7 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetBearTraps();
 					--newset;
 					m_pInventory->SetBearTraps(newset);
-
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
@@ -408,6 +425,8 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetMines();
 					--newset;
 					m_pInventory->SetMines(newset);
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+
 				}
 			}
 
@@ -421,6 +440,8 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetWalls();
 					--newset;
 					m_pInventory->SetWalls(newset);
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+
 				}
 			}
 
@@ -434,6 +455,8 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetWindows();
 					--newset;
 					m_pInventory->SetWindows(newset);
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+
 				}
 			}
 
@@ -442,11 +465,13 @@ void Player::Update(float dt)
 			{
 				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage(pos.x + pWorld->GetTileWidth(), pos.y + pWorld->GetTileHeight(), 
+					CreateTowerMessage* msg = new CreateTowerMessage(pos.x + pWorld->GetTileWidth(), pos.y + pWorld->GetTileHeight(),
 						CreateTowerMessage::TOWER_MACHINE_GUN);
 
 					// Decreasing the amount of mines left for the player
 					m_pInventory->SetMachineGunTowers(m_pInventory->GetMachineGunTowers() - 1);
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+
 				}
 			}
 		}
@@ -715,6 +740,6 @@ bool Player::PlacementCheck(SGD::Point mouse)
 	{
 		return true;
 	}
-	else 
+	else
 		return false;
 }

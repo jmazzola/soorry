@@ -20,7 +20,6 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
-
 #include "../SGD Wrappers/SGD_EventManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_MessageManager.h"
@@ -158,12 +157,16 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
-
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
+	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
+	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocket_launch.wav");
+	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
+	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
-	m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
+	m_pParticleManager->loadEmitters("resource/particle/Blood_Particle1.xml");
+	//m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -284,6 +287,12 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
+	pAudio->StopAudio(m_hShopMusic);
+	pAudio->UnloadAudio(m_hShopMusic);
+	pAudio->UnloadAudio(m_hBulletHit);
+	pAudio->UnloadAudio(m_hGunShoot);
+	pAudio->UnloadAudio(m_hShotgunShoot);
+	pAudio->UnloadAudio(m_hRocketShoot);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -374,6 +383,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
+		pAudio->StopAudio(m_hBackgroundMus);
+		pAudio->PlayAudio(m_hShopMusic, true);
 		m_pShop->SetShopStatus(true);
 	}
 
@@ -589,7 +600,11 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
-
+	if (m_pShop->IsOpen() == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == false)
+	{
+		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hBackgroundMus);
+	}
 	// If the game isn't paused
 	if (m_bIsPaused == false)
 	{
@@ -609,8 +624,6 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		//draw grid rectangle
-
-
 	}
 
 	// Update FPS
@@ -1091,6 +1104,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		vec.Normalize();
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hGunShoot);
 		return tempProj;
 	}
 		break;
@@ -1113,6 +1127,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		vec.Rotate(degree);
 
 		tempProj->SetVelocity(vec);
+	
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hShotgunShoot);
 		return tempProj;
 	}
 		break;
@@ -1130,7 +1146,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
 
-		ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+		//ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
 
 		return tempProj;
 	}
@@ -1344,3 +1361,4 @@ void GameplayState::SaveGame(bool newFile)
 		doc.SaveFile(pathtowrite.c_str());
 	}
 }
+

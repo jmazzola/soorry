@@ -91,6 +91,11 @@ using namespace std;
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	//Load music 
+	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
+
+	//Play Audio
+	pAudio->PlayAudio(m_hMenuMusic, true);
 	// Set the cursor's index to the first option
 	m_nCursor = 0;
 
@@ -120,6 +125,8 @@ using namespace std;
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	//Release music
+	pAudio->UnloadAudio(m_hMenuMusic);
 
 	// Deallocate the Entity Manager
 	m_pEntities->RemoveAll();

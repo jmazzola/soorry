@@ -7,15 +7,18 @@
 #include "WorldManager.h"
 
 #include "../SGD Wrappers/SGD_Event.h"
-
+#include "../SGD Wrappers/SGD_AudioManager.h"
 
 Projectile::Projectile()
 {
+	m_hHit = SGD::AudioManager::GetInstance()->LoadAudio("resource/audio/Bullet_Hit.wav");
 }
 
 
 Projectile::~Projectile()
 {
+	SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
+
 }
 
 
@@ -32,6 +35,7 @@ void Projectile::Update(float dt)
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hHit);
 	}
 }
 
@@ -49,6 +53,7 @@ int Projectile::GetType() const
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hHit);
 	}
 }
 
