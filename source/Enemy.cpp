@@ -6,9 +6,10 @@
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 
-Enemy::Enemy()
+Enemy::Enemy() : Listener(this)
 {
 	m_AIComponent.SetAgent(this);
+	m_fTrapTimer = 0;
 }
 
 
@@ -22,9 +23,10 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
-	if (m_nCurrHealth > 0)
+	m_fTrapTimer -= dt;
+	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
 		m_AIComponent.Update(dt);
-	else
+	else if (m_nCurrHealth <= 0)
 	{
 		// Get rid of that bitch
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
@@ -36,11 +38,15 @@ void Enemy::Update(float dt)
 		int score = 20;
 		SGD::Event e("INCREASE_SCORE", (void*)&score);
 		e.SendEventNow();
-
+		
 		// Update the ZombieFactory to adjust count
 		ZombieFactory* z = GameplayState::GetInstance()->GetZombieFactory();
 		z->SetEnemiesRemaining( z->GetEnemiesRemaining() - 1);
-		
+	}
+	if (m_bIsTrapped == true)
+	{
+		m_fTrapTimer = 2;
+		m_bIsTrapped = false;
 	}
 }
 
@@ -69,6 +75,14 @@ int Enemy::GetType() const
 		case ENT_BULLET_ROCKET:
 			m_nCurrHealth -= 100;
 			break;
+		case ENT_TRAP_BEARTRAP:
+			m_bIsTrapped = true;
+			break;
+			//NOTE: may have to delete
+		case ENT_TRAP_MINE:
+			m_nCurrHealth = 0;
+			break;
+
 	}
 }
 
