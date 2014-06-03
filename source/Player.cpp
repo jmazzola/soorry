@@ -451,10 +451,13 @@ void Player::Update(float dt)
 			{
 				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x + pWorld->GetTileWidth()), (int)(pos.y + pWorld->GetTileHeight()), 
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()), 
 						CreateTowerMessage::TOWER_MACHINE_GUN);
+					msg->QueueMessage();
 
-					// Decreasing the amount of mines left for the player
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y);
+
+					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetMachineGunTowers(m_pInventory->GetMachineGunTowers() - 1);
 				}
 			}

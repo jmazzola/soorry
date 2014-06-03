@@ -127,6 +127,9 @@ private:
 	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hMachineGunBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMachineGunGunImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;

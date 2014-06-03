@@ -155,11 +155,14 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
+	m_hPlayerImg = pGraphics->LoadTexture("resource/images/tim/tim.png");
+
+	// Load tower images
+	m_hMachineGunBaseImage = pGraphics->LoadTexture("resource/images/towers/machineGunBase.png");
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
+	m_hBackgroundMus = pAudio->LoadAudio("resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -277,6 +280,8 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	// Unload tower images
+	pGraphics->UnloadTexture(m_hMachineGunBaseImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -441,30 +446,30 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOption::PAUSE_RESUME:
 				{
-					 // Resume gameplay
-					 m_bIsPaused = false;
-					 break;
+													  // Resume gameplay
+													  m_bIsPaused = false;
+													  break;
 				}
 					break;
 
 				case PauseMenuOption::PAUSE_OPTION:
 				{
-					// Set the cursor to the first option in the options tab
-					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-					// Go to the options tab
-					m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-					// Load the options
-					OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-					break;
+													  // Set the cursor to the first option in the options tab
+													  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+													  // Go to the options tab
+													  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+													  // Load the options
+													  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+													  break;
 				}
 					break;
 
 				case PauseMenuOption::PAUSE_EXIT:
 				{
-					//Go to Main Menu
-					pGame->ChangeState(MainMenuState::GetInstance());
-					// Exit immediately
-					return true;
+													//Go to Main Menu
+													pGame->ChangeState(MainMenuState::GetInstance());
+													// Exit immediately
+													return true;
 				}
 					break;
 				}
@@ -507,15 +512,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-					 // Increase the music volume += 5
-					 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+															 // Increase the music volume += 5
+															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-					 // Increase the sound effects volume += 5
-					 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+														   // Increase the sound effects volume += 5
+														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 				}
 					break;
 				}
@@ -529,15 +534,15 @@ Entity*	GameplayState::CreatePlayer() const
 				{
 				case PauseMenuOptionsOption::OPTION_MUSIC:
 				{
-					 // Increase the music volume -= 5
-					 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+															 // Increase the music volume -= 5
+															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 				}
 					break;
 
 				case PauseMenuOptionsOption::OPTION_SFX:
 				{
-					 // Increase the sound effects volume -= 5
-					 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+														   // Increase the sound effects volume -= 5
+														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 				}
 					break;
 				}
@@ -550,21 +555,21 @@ Entity*	GameplayState::CreatePlayer() const
 			{
 				switch (m_nPauseMenuCursor)
 				{
-					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
-					{
-						pGame->ToggleFullscreen();
-					}
+				case PauseMenuOptionsOption::OPTION_FULLSCREEN:
+				{
+																  pGame->ToggleFullscreen();
+				}
 					break;
 				case PauseMenuOptionsOption::OPTION_GOBACK:
 				{
-					 // Go back to the pause menu's main menu
-					 m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-					 // Make the highlighted option 'Options'
-					 m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-					 // Save options
-					 OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+															  // Go back to the pause menu's main menu
+															  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+															  // Make the highlighted option 'Options'
+															  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+															  // Save options
+															  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-					 break;
+															  break;
 				}
 					break;
 				}
@@ -957,6 +962,14 @@ Entity*	GameplayState::CreatePlayer() const
 												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
+	case MessageID::MSG_CREATE_TOWER:
+	{
+										const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
+										GameplayState* g = GameplayState::GetInstance();
+										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
+										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1120,7 +1133,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
-			   
+
 			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
 			   return tempProj;
@@ -1166,6 +1179,11 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type)
 	case CreateTowerMessage::TOWER_MACHINE_GUN:
 	{
 												  MachineGunTower* tower = new MachineGunTower;
+
+												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
+												  tower->SetBaseImage(m_hMachineGunBaseImage);
+
+												  return tower;
 
 	}
 		break;

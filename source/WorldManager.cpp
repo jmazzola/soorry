@@ -429,6 +429,12 @@ int WorldManager::GetColliderID(int _x, int _y)
 	return m_vLayers[m_vLayers.size() - 1][_x][_y].GetColliderID();
 }
 
+void WorldManager::SetSolidAtPosition(int _x, int _y)
+{
+	m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WALL);
+	m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
+}
+
 /**********************************************************/
 // Accessors
 
