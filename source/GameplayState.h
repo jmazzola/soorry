@@ -88,11 +88,13 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
+	bool m_bCreditsStarted;
 	Entity* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
+	float m_fCreditsTimer;
 	ZombieFactory* zombieFactory;
 	SGD::Point m_ptPlayerSpawnPoint;
 

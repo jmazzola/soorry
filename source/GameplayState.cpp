@@ -591,8 +591,8 @@ Entity*	GameplayState::CreatePlayer() const
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
-	// If the game isn't paused
-	if (m_bIsPaused == false)
+	// If the game isn't paused and you haven't won
+	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
@@ -610,8 +610,11 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		//draw grid rectangle
-
-
+	}
+	// If you have won the game
+	else if(zombieFactory->GetWave() == zombieFactory->GetTotalWaves() + 1)
+	{
+	
 	}
 
 	// Update FPS
