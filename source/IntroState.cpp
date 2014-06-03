@@ -72,14 +72,10 @@ using namespace std;
 	BitmapFont* pFont = Game::GetInstance()->GetFont();
 	m_pFont = pFont;
 
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
-
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hLogo = pGraphics->LoadTexture("resource/images/intro/razorballoon.png");
+	m_hStudioLogo = pGraphics->LoadTexture("resource/images/intro/studiologo.png");
 
 
 	// Load Audio
@@ -100,16 +96,10 @@ using namespace std;
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	pGraphics->UnloadTexture(m_hLogo);
+	pGraphics->UnloadTexture(m_hStudioLogo);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
 
 	/*m_pMessages->Terminate();
 	m_pMessages = nullptr;
@@ -153,11 +143,6 @@ using namespace std;
 	// Update the counter
 	m_fTimeRemaining += elapsedTime;
 
-
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
 	// Process the events & messages
 	m_pEvents->Update();
 	//m_pMessages->Update();
@@ -174,25 +159,73 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the text to press Space to skip in bottom right corner
+	// Render the text to press Space to skip in bottom right corner WITH 90% SPACE!!!!!!!!11111111111
 	m_pFont->Draw("Press Space to Skip", 550, 500, 0.4f, { 255, 0, 0 });
 
-	// Run the really ghetto and janky animation
+	// Run the animation
 
-	// If it's been between 0 and 5 seconds
-	if (m_fTimeRemaining <= 4.99f)
+	// -- Show Developer Logo --
+	// If it's been between 0 and 1.5 seconds
+	if (m_fTimeRemaining <= 1.5f)
 	{
-		// Draw the logo
-		pGraphics->DrawTexture(m_hLogo, { 200, 128 }, 0, {}, SGD::Color((char)m_fTimeRemaining * 51, 255, 255, 255));
+		// If we are already at full alpha
+		if (m_fTimeRemaining >= 0.95f)
+		{
+			// Show "Developed by"
+			m_pFont->Draw("Developed by", 320, 80, 0.6f, { 255, 0, 0 });
+			// Show the logo
+			pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, { 255, 255, 255 }, { 0.6f, 0.6f });
+		}
+		else
+		{
+			// Fade in text
+			m_pFont->Draw("Developed by", 320, 80, 0.6f, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 0, 0));
+			// Fade in the logo
+			pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
+		}
 	}
-	else if (m_fTimeRemaining >= 5.0f && m_fTimeRemaining <= 10.0f)
+	// If it's between 1.5 seconds and 2 seconds
+	else if (m_fTimeRemaining >= 1.5f && m_fTimeRemaining < 2.0f)
 	{
-		//
+		// Fade out text
+		m_pFont->Draw("Developed by", 320, 80, 0.6f, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 0, 0));
+		// Fade out the logo
+		pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
 	}
+	
 
-
-	// Render the entities
-	m_pEntities->RenderAll();
+	// -- Show Studio Logo --
+	// If it's between 2.1 seconds and 3 seconds
+	else if (m_fTimeRemaining >= 2.1f && m_fTimeRemaining < 3.0f)
+	{
+		// If we are already at full alpha
+		if (m_fTimeRemaining >= 2.99f)
+		{
+			// Show "Produced by"
+			m_pFont->Draw("Produced by", 320, 80, 0.6f, { 255, 0, 0 });
+			// Show the studio logo
+			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, { 255, 255, 255 }, { 0.6f, 0.6f });
+		}
+		else
+		{
+			// Fade in text
+			m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 0, 0));
+			// Fade in the studio logo
+			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
+		}
+	}
+	else if (m_fTimeRemaining >= 3.0f && m_fTimeRemaining <= 4.0f)
+	{
+		// Fade out text
+		m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 0, 0));
+		// Fade out the logo
+		pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
+	}
+	else if (m_fTimeRemaining >= 4.5f)
+	{
+		// Go to the main menu
+		Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+	}
 }
 
 
