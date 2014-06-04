@@ -85,6 +85,9 @@ using namespace std;
 #define BUCKET_PICKUP 4
 #define BUCKET_TOWERS 2
 
+// Winning Credits
+#define SCROLL_SPEED 0.04f;
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <cfloat>
@@ -123,7 +126,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
-///	- set the player's properties
+//	- set the player's properties
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
@@ -158,7 +161,7 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture("resource/images/tim/tim.png");
+	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load tower images
 	m_hMachineGunBaseImage = pGraphics->LoadTexture("resource/images/towers/machineGunBase.png");
@@ -170,7 +173,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio("resource/audio/JPM_LightsAndSounds.xwm");
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -260,6 +263,23 @@ Entity*	GameplayState::CreatePlayer() const
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
 	m_bIsPaused = false;
 
+	// Setup Winning Credits
+	// Set the margins for the text
+	m_nTopMargin = 220;
+	m_nBottomMargin = 474;
+
+	// Set and start the credits movement
+	m_ptTextPosition.x = 180;
+	m_ptTextPosition.y = m_nBottomMargin + SCROLL_SPEED;
+
+	// Setup You Win message transition timer
+	m_fWinTimer = 5.0f;
+
+	// Setup Losing Screen Variables
+	m_bHasLost = false;
+	m_bReplay = true;
+	m_fLossTimer = 5.0f;
+
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
 
@@ -276,6 +296,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
 	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
 	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 }
 
 
@@ -343,6 +364,10 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hRLThumb);
 	pGraphics->UnloadTexture(m_hFireAxePic);
 	pGraphics->UnloadTexture(m_hFireAxeThumb);
+	pGraphics->UnloadTexture(m_hBackground);
+
+	// Unload Blank
+	pGraphics->UnloadTexture(m_hBackground);
 
 	// Make sure pause isn't set
 	m_bIsPaused = false;
@@ -372,6 +397,9 @@ Entity*	GameplayState::CreatePlayer() const
 	delete m_pShop;
 	m_pShop = nullptr;
 
+	// Reset Winning Credits
+	m_bCreditsStarted = false;
+
 }
 
 
@@ -385,215 +413,242 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Press Escape (PC) or Start (Xbox 360) to toggle pausing
-	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
+	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
+		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if (m_pShop->IsOpen() == false)
-			m_bIsPaused = !m_bIsPaused;
-	}
+		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
+		{
+			if (m_pShop->IsOpen() == false)
+				m_bIsPaused = !m_bIsPaused;
+		}
 
-	if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	{
-		m_pShop->SetShopStatus(true);
-	}
+		if (pInput->IsKeyPressed(SGD::Key::Backspace))
+		{
+			m_pShop->SetShopStatus(true);
+		}
 
-	/*if (pInput->IsKeyPressed(SGD::Key::Z))
-	{
-	CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}
-	if (pInput->IsKeyPressed(SGD::Key::X))
-	{
-	CreateSlowZombieMessage* msg = new CreateSlowZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}
-	if (pInput->IsKeyPressed(SGD::Key::C))
-	{
-	CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}*/
+		/*if (pInput->IsKeyPressed(SGD::Key::Z))
+		{
+		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+		}
+		if (pInput->IsKeyPressed(SGD::Key::X))
+		{
+		CreateSlowZombieMessage* msg = new CreateSlowZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+		}
+		if (pInput->IsKeyPressed(SGD::Key::C))
+		{
+		CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+		}*/
 #pragma region Pause Menu Navigation Clutter
-	// Handle pause menu input
-	// If we're paused
-	if (m_bIsPaused)
-	{
-		//-----------------------------------------------------------------------
-		// --- Handling what tab we're in ---
-		// If we're in the Main menu OF the pause menu. 
-		if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+		// Handle pause menu input
+		// If we're paused
+		if (m_bIsPaused)
 		{
-
-			// --- Scrolling through options ---
-			// If the down arrow (PC), or down dpad (Xbox 360) are pressed
-			// Move the cursor (selected item) down
-			if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+			//-----------------------------------------------------------------------
+			// --- Handling what tab we're in ---
+			// If we're in the Main menu OF the pause menu. 
+			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
-				// TODO: Add sound fx for going up and down
-				++m_nPauseMenuCursor;
 
-				// Wrap around the options
-				if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
-					m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+				// --- Scrolling through options ---
+				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+				// Move the cursor (selected item) down
+				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+				{
+					// TODO: Add sound fx for going up and down
+					++m_nPauseMenuCursor;
+
+					// Wrap around the options
+					if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+						m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+				}
+				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+				// Move the cursor (selected item) up
+				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+				{
+					--m_nPauseMenuCursor;
+
+					// Wrap around the options
+					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
+						m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+				}
+
+
+				// --- Selecting an option ---
+				// If the enter key (PC) or A button (Xbox 360) are pressed
+				// Select the item
+				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+				{
+					// Switch table for the item selected
+					switch (m_nPauseMenuCursor)
+					{
+					case PauseMenuOption::PAUSE_RESUME:
+					{
+														  // Resume gameplay
+														  m_bIsPaused = false;
+														  break;
+					}
+						break;
+
+					case PauseMenuOption::PAUSE_OPTION:
+					{
+														  // Set the cursor to the first option in the options tab
+														  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+														  // Go to the options tab
+														  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+														  // Load the options
+														  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+														  break;
+					}
+						break;
+
+					case PauseMenuOption::PAUSE_EXIT:
+					{
+														//Go to Main Menu
+														pGame->ChangeState(MainMenuState::GetInstance());
+														// Exit immediately
+														return true;
+					}
+						break;
+					}
+				}
 			}
-			// If the up arrow (PC), or up dpad (Xbox 360) are pressed
-			// Move the cursor (selected item) up
-			else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+			// If we're in the main menu's options tab
+			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 			{
-				--m_nPauseMenuCursor;
 
-				// Wrap around the options
-				if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
-					m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
-			}
-
-
-			// --- Selecting an option ---
-			// If the enter key (PC) or A button (Xbox 360) are pressed
-			// Select the item
-			if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
-			{
-				// Switch table for the item selected
-				switch (m_nPauseMenuCursor)
+				// --- Scrolling through options ---
+				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+				// Move the cursor (selected item) down
+				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
 				{
-				case PauseMenuOption::PAUSE_RESUME:
-				{
-													  // Resume gameplay
-													  m_bIsPaused = false;
-													  break;
+					// TODO: Add sound fx for going up and down
+					++m_nPauseMenuCursor;
+
+					// Wrap around the options
+					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
+						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
 				}
-					break;
-
-				case PauseMenuOption::PAUSE_OPTION:
+				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+				// Move the cursor (selected item) up
+				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 				{
-													  // Set the cursor to the first option in the options tab
-													  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-													  // Go to the options tab
-													  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-													  // Load the options
-													  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-													  break;
-				}
-					break;
+					--m_nPauseMenuCursor;
 
-				case PauseMenuOption::PAUSE_EXIT:
-				{
-													//Go to Main Menu
-													pGame->ChangeState(MainMenuState::GetInstance());
-													// Exit immediately
-													return true;
+					// Wrap around the options
+					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
+						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
 				}
-					break;
+
+
+				// --- Increasing an option ---
+				// If the right key (PC) or right dpad (Xbox 360) are pressed
+				// Increase the value
+				if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
+				{
+					switch (m_nPauseMenuCursor)
+					{
+					case PauseMenuOptionsOption::OPTION_MUSIC:
+					{
+																 // Increase the music volume += 5
+																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+					}
+						break;
+
+					case PauseMenuOptionsOption::OPTION_SFX:
+					{
+															   // Increase the sound effects volume += 5
+															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+					}
+						break;
+					}
+				}
+				// --- Decreasing an option ---
+				// If the left key (PC) or left dpad (Xbox 360) are pressed
+				// Decrease the value
+				if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+				{
+					switch (m_nPauseMenuCursor)
+					{
+					case PauseMenuOptionsOption::OPTION_MUSIC:
+					{
+																 // Increase the music volume -= 5
+																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+					}
+						break;
+
+					case PauseMenuOptionsOption::OPTION_SFX:
+					{
+															   // Increase the sound effects volume -= 5
+															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+					}
+						break;
+					}
+				}
+
+				// --- Selecting an option ---
+				// If the enter key (PC) or A button (Xbox 360) are pressed
+				// Select the item
+				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+				{
+					switch (m_nPauseMenuCursor)
+					{
+					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
+					{
+																	  pGame->ToggleFullscreen();
+					}
+						break;
+					case PauseMenuOptionsOption::OPTION_GOBACK:
+					{
+																  // Go back to the pause menu's main menu
+																  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+																  // Make the highlighted option 'Options'
+																  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+																  // Save options
+																  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+
+																  break;
+					}
+						break;
+					}
 				}
 			}
 		}
-		// If we're in the main menu's options tab
-		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
-		{
-
-			// --- Scrolling through options ---
-			// If the down arrow (PC), or down dpad (Xbox 360) are pressed
-			// Move the cursor (selected item) down
-			if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
-			{
-				// TODO: Add sound fx for going up and down
-				++m_nPauseMenuCursor;
-
-				// Wrap around the options
-				if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
-					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-			}
-			// If the up arrow (PC), or up dpad (Xbox 360) are pressed
-			// Move the cursor (selected item) up
-			else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
-			{
-				--m_nPauseMenuCursor;
-
-				// Wrap around the options
-				if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
-					m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
-			}
-
-
-			// --- Increasing an option ---
-			// If the right key (PC) or right dpad (Xbox 360) are pressed
-			// Increase the value
-			if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
-			{
-				switch (m_nPauseMenuCursor)
-				{
-				case PauseMenuOptionsOption::OPTION_MUSIC:
-				{
-															 // Increase the music volume += 5
-															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
-				}
-					break;
-
-				case PauseMenuOptionsOption::OPTION_SFX:
-				{
-														   // Increase the sound effects volume += 5
-														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
-				}
-					break;
-				}
-			}
-			// --- Decreasing an option ---
-			// If the left key (PC) or left dpad (Xbox 360) are pressed
-			// Decrease the value
-			if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
-			{
-				switch (m_nPauseMenuCursor)
-				{
-				case PauseMenuOptionsOption::OPTION_MUSIC:
-				{
-															 // Increase the music volume -= 5
-															 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
-				}
-					break;
-
-				case PauseMenuOptionsOption::OPTION_SFX:
-				{
-														   // Increase the sound effects volume -= 5
-														   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
-				}
-					break;
-				}
-			}
-
-			// --- Selecting an option ---
-			// If the enter key (PC) or A button (Xbox 360) are pressed
-			// Select the item
-			if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
-			{
-				switch (m_nPauseMenuCursor)
-				{
-				case PauseMenuOptionsOption::OPTION_FULLSCREEN:
-				{
-																  pGame->ToggleFullscreen();
-				}
-					break;
-				case PauseMenuOptionsOption::OPTION_GOBACK:
-				{
-															  // Go back to the pause menu's main menu
-															  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-															  // Make the highlighted option 'Options'
-															  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-															  // Save options
-															  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
-
-															  break;
-				}
-					break;
-				}
-			}
-		}
-
 	}
 #pragma endregion
+	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
+	{
+		// Since there's only one state..go back to main menu
+		pGame->ChangeState(MainMenuState::GetInstance());
+		return true;
+	}
+	if (m_bHasLost == true && m_fLossTimer <= 0.0f)
+	{
+		if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+			m_bReplay = !m_bReplay;
 
+		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		{
+			switch (m_bReplay)
+			{
+			case true:
+				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
+				return true;
+				break;
 
+			case false:
+				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+				return true;
+				break;
+			}
+		}
+	}
 
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
@@ -610,8 +665,8 @@ Entity*	GameplayState::CreatePlayer() const
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
-	// If the game isn't paused
-	if (m_bIsPaused == false)
+	// If the game isn't paused and you haven't won and you haven't lost
+	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
 	{
 		// Update the entities
 		m_pEntities->UpdateAll(elapsedTime);
@@ -629,8 +684,43 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		//draw grid rectangle
+	}
 
+	// If you have won the game
+	else if (zombieFactory->GetWave() == zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
+	{
+		m_bIsPaused = false;
+		// Move the credits if they have started
+		if (m_bCreditsStarted == true)
+		{
+			m_ptTextPosition.x = 220;
+			m_ptTextPosition.y -= SCROLL_SPEED;
 
+			if (m_fCreditsTimer < 0.0f)
+			{
+				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+				return;
+			}
+
+			m_fCreditsTimer -= elapsedTime;
+		}
+
+		// If the screen has faded to black start the credits
+		if (m_fWinTimer <= 0.0f && m_bCreditsStarted == false)
+		{
+			m_bCreditsStarted = true;
+			m_fCreditsTimer = 28.0f;
+		}
+
+		// Count down to fade the screen to black and roll the credits
+		if (m_fWinTimer > 0.0f)
+			m_fWinTimer -= elapsedTime;
+	}
+	// If you have lost fade to the replay menu
+	else if (m_bHasLost == true)
+	{
+		if (m_fLossTimer > 0)
+			m_fLossTimer -= elapsedTime;
 	}
 
 	// Update FPS
@@ -657,216 +747,249 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render test world
-	WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
-	Player* player = dynamic_cast<Player*>(m_pPlayer);
-
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 #endif
-
-	//Render test particles
-	m_pParticleManager->Render();
-
-	// Render the entities
-	m_pEntities->RenderAll();
-
-	// Draw health overlay
-	float currHealth = player->GetCurrHealth();
-	float maxHealth = player->GetMaxHealth();
-	if (currHealth != maxHealth)
+	// If the credits aren't rolling and you haven't loss
+	if (m_bCreditsStarted == false && m_fLossTimer > 0.0f)
 	{
-		float ratio = currHealth / maxHealth;
-		unsigned char alpha = 255 - (unsigned int)(255.0f * ratio);
+		// Render test world
+		WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
+		Player* player = dynamic_cast<Player*>(m_pPlayer);
 
-		pGraphics->DrawRectangle(SGD::Rectangle(0.0f, 0.0f, 800.0f, 600.0f), SGD::Color(alpha, 255, 0, 0));
-	}
+		//Render test particles
+		m_pParticleManager->Render();
 
-	// FOR DEBUG PURPOSES ONLY!
-	//pGraphics->DrawString(std::to_string(currHealth).c_str(), { 0, 32 });
+		// Render the entities
+		m_pEntities->RenderAll();
 
-	// --- Pause Menu stuff ---
-	// If we're paused
-	if (m_bIsPaused)
-	{
-		if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+		// Draw health overlay
+		float currHealth = player->GetCurrHealth();
+		float maxHealth = player->GetMaxHealth();
+		if (currHealth != maxHealth)
 		{
-			// Draw the paused main menu background
-			pGraphics->DrawTexture(m_hPauseMainBackground, { 0, 0 });
+			float ratio = currHealth / maxHealth;
+			unsigned char alpha = 255 - (unsigned int)(255.0f * ratio);
 
-			// Draw the options
-			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME)
-				m_pMainButton->Draw("Resume Game", { 170, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw("Resume Game", { 170, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION)
-				m_pMainButton->Draw("Options", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw("Options", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-			if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT)
-				m_pMainButton->Draw("Exit Game", { 165, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw("Exit Game", { 165, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-		}
-		else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
-		{
-			// Draw the paused menu option's background
-			pGraphics->DrawTexture(m_hPauseOptionsBackground, { 0, 0 });
-
-			// Create the string for the button
-			string musicVol = "Music Vol: ";
-			// Grab the volume
-			int musicVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music);
-			// Add it to the string since C++ doesn't support [ string + "" ] 
-			musicVol.append(std::to_string(musicVolValue));
-
-			// Same stuff here for the sfx vol
-			string sfxVol = "SFX Vol: ";
-			int sfxVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects);
-			sfxVol.append(std::to_string(sfxVolValue));
-
-			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_MUSIC)
-				m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_SFX)
-				m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-			// If the game is in fullscreen
-			if (Game::GetInstance()->GetFullscreen())
-			{
-				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
-					m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-				else
-					m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-			}
-			// If the game is windowed
-			else
-			{
-				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
-					m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-				else
-					m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-			}
-
-			if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
-				m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-			else
-				m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			pGraphics->DrawRectangle(SGD::Rectangle(0.0f, 0.0f, 800.0f, 600.0f), SGD::Color(alpha, 255, 0, 0));
 		}
 
-	}
+		// FOR DEBUG PURPOSES ONLY!
+		//pGraphics->DrawString(std::to_string(currHealth).c_str(), { 0, 32 });
 
-	// If we're shopping
-	if (m_pShop->IsOpen())
-	{
-		m_pShop->Render();
-	}
-
-	// Render the FPS
-	string fps = "FPS: ";
-	fps += std::to_string(m_unFPS);
-	pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
-
-	// -- Render HUD --
-	if (!m_bIsPaused)
-	{
-		if (!m_pShop->IsOpen())
+		// --- Pause Menu stuff ---
+		// If we're paused
+		if (m_bIsPaused)
 		{
-			pGraphics->DrawTexture(m_hHUD, { 0, 0 });
-
-			// -- Draw the score --
-			string score = "Score: ";
-			score += std::to_string(player->GetScore());
-			m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
-
-			// -- Draw the wave number --
-			string waveNum = "Wave: ";
-			waveNum += std::to_string(zombieFactory->GetWave());
-			m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
-
-			// -- Draw the time remaining [during build mode] --
-			if (zombieFactory->IsBuildMode())
+			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
-				string timeRemaining = "Time remaining: ";
-				timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
-				timeRemaining += " secs";
-				m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
+				// Draw the paused main menu background
+				pGraphics->DrawTexture(m_hPauseMainBackground, { 0, 0 });
 
-				m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
-			}
-			// -- Draw the number of enemies remaining [during fight mode] --
-			else
-			{
-				string enemiesRemaining = "Enemies Remaining: ";
-				m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
-
-				int numOfEnemies = zombieFactory->GetEnemiesRemaining();
-				if (numOfEnemies <= 3)
-					m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
+				// Draw the options
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME)
+					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
+					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION)
+					m_pMainButton->Draw("Options", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw("Options", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT)
+					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			}
+			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
+			{
+				// Draw the paused menu option's background
+				pGraphics->DrawTexture(m_hPauseOptionsBackground, { 0, 0 });
+
+				// Create the string for the button
+				string musicVol = "Music Vol: ";
+				// Grab the volume
+				int musicVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music);
+				// Add it to the string since C++ doesn't support [ string + "" ] 
+				musicVol.append(std::to_string(musicVolValue));
+
+				// Same stuff here for the sfx vol
+				string sfxVol = "SFX Vol: ";
+				int sfxVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+				sfxVol.append(std::to_string(sfxVolValue));
+
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_MUSIC)
+					m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_SFX)
+					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+				// If the game is in fullscreen
+				if (Game::GetInstance()->GetFullscreen())
+				{
+					if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+						m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+					else
+						m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				}
+				// If the game is windowed
+				else
+				{
+					if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+					else
+						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				}
+
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
+					m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				else
+					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 			}
 
-			// -- Draw the items --
+		}
 
-			// Get the inventory
-			Inventory* inv = player->GetInventory();
+		// If we're shopping
+		if (m_pShop->IsOpen())
+		{
+			m_pShop->Render();
+		}
 
-			// Draw the number of healthpacks
-			m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
+		// Render the FPS
+		string fps = "FPS: ";
+		fps += std::to_string(m_unFPS);
+		pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
 
-			// Draw the number of grenades
-			m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+		// -- Render HUD --
+		if (!m_bIsPaused)
+		{
+			if (!m_pShop->IsOpen())
+			{
+				pGraphics->DrawTexture(m_hHUD, { 0, 0 });
 
-			// Draw the number of walls
-			m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
+				// -- Draw the score --
+				string score = "Score: ";
+				score += std::to_string(player->GetScore());
+				m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
 
-			// Draw the number of windows
-			m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
+				// -- Draw the wave number --
+				string waveNum = "Wave: ";
+				waveNum += std::to_string(zombieFactory->GetWave());
+				m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
 
-			// Draw the number of beartraps
-			m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
+				// -- Draw the time remaining [during build mode] --
+				if (zombieFactory->IsBuildMode())
+				{
+					string timeRemaining = "Time remaining: ";
+					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
+					timeRemaining += " secs";
+					m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-			// Draw the number of mines
-			m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
+					m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
+				}
+				// -- Draw the number of enemies remaining [during fight mode] --
+				else
+				{
+					string enemiesRemaining = "Enemies Remaining: ";
+					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
 
-			// -- Draw the selected weapon -- 
+					int numOfEnemies = zombieFactory->GetEnemiesRemaining();
+					if (numOfEnemies <= 3)
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
+					else
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
 
-			// Get the weapons
-			Weapon* weapons = player->GetWeapons();
-			string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
-			SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
+				}
 
-			// Draw the name of the selected weapon
-			m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
+				// -- Draw the items --
 
-			// Draw the picture of the selected pic
-			pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
+				// Get the inventory
+				Inventory* inv = player->GetInventory();
 
-			// Draw the ammo of the selected weapon
-			m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+				// Draw the number of healthpacks
+				m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
 
-			// -- Draw the offhand weapons ammos --
-			m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
-			m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
-			m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-			//Draw the grid rectange
-			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				// Draw the number of grenades
+				m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
 
-			//NOTE: why did it take this much work? did i do something wrong?
-			/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
-			pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
-			pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+				// Draw the number of walls
+				m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
+
+				// Draw the number of windows
+				m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
+
+				// Draw the number of beartraps
+				m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
+
+				// Draw the number of mines
+				m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
+
+				// -- Draw the selected weapon -- 
+
+				// Get the weapons
+				Weapon* weapons = player->GetWeapons();
+				string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
+				SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
+
+				// Draw the name of the selected weapon
+				m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
+
+				// Draw the picture of the selected pic
+				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
+
+				// Draw the ammo of the selected weapon
+				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+
+				// -- Draw the offhand weapons ammos --
+				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
+				//Draw the grid rectange
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				//NOTE: why did it take this much work? did i do something wrong?
+				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
+				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
+				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+			}
+		}
+
+		// If you have won the game render You Win and fade to credits
+		if (zombieFactory->GetWave() == zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
+		{
+			Game * pGame = Game::GetInstance();
+
+			pGraphics->DrawRectangle(
+				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
+				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
+
+			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
+		}
+		if (m_bHasLost == true)
+		{
+			Game * pGame = Game::GetInstance();
+
+			pGraphics->DrawRectangle(
+				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
+				SGD::Color(255 - (char)(m_fLossTimer * 51), 0, 0, 0));
+
+			m_pFont->Draw("You Lose!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Lose!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 0, 0, 0 });
 		}
 	}
-
+	// Render the credits if you have won and faded to them
+	else if (m_bCreditsStarted == true)
+	{
+		RenderCredits();
+	}
+	// Render the Replay menu if you have lost and faded to them
+	else if (m_bHasLost  && m_fLossTimer <= 0.0f)
+	{
+		RenderLoss();
+	}
 
 }
 
@@ -923,13 +1046,21 @@ Entity*	GameplayState::CreatePlayer() const
 
 											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
 											 GameplayState* self = GameplayState::GetInstance();
-											 for (int i = 0; i < 10; i++)
+											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
-												 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-												 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-												 bullet->Release();
-												 bullet = nullptr;
+												 for (int i = 0; i < 9; i++)
+												 {
+													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													 bullet->Release();
+													 bullet = nullptr;
+												 }
 											 }
+											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+											 bullet->Release();
+											 bullet = nullptr;
+
 	}
 		break;
 
@@ -1168,8 +1299,6 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
-
-			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
 			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
@@ -1437,4 +1566,76 @@ void GameplayState::SaveGame(bool newFile)
 		// Save the file
 		doc.SaveFile(pathtowrite.c_str());
 	}
+}
+
+// Render Credits
+// - Renders the credits upon winning the game
+void GameplayState::RenderCredits(void)
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Draw the background
+	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+
+	// Draw the credits
+	// TODO: Load in a text file
+	string credits = "";
+
+	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
+
+	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
+	// Draw rectangles to cut off the words to give an illusion of margins
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
+		SGD::Rectangle(0, 0, 800, 228), {}, {});
+
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
+		SGD::Rectangle(0, 475, 800, 600), {}, {});
+
+	// Render button
+	m_pMainButton->Draw("Main Menu", { 180, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
+
+	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
+
+	if (m_fCreditsTimer <= 5.0f)
+	{
+		Game * pGame = Game::GetInstance();
+		pGraphics->DrawRectangle(SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), SGD::Color(255 - (char)(m_fCreditsTimer * 51), 0, 0, 0));
+	}
+}
+
+// HasLost
+// - Lets gameplay know that the player has died
+// sets the game pause to false
+void GameplayState::HasLost(void)
+{
+	m_bHasLost = true;
+	m_bIsPaused = false;
+}
+
+// RenderLoss
+// - Renders the game over screen
+// Allows the player to replay the current game mode or
+// go to the main menu
+void GameplayState::RenderLoss(void)
+{
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Draw the paused main menu background
+	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+
+	// Draw the game over at the top
+	m_pFont->Draw("Game Over", Game::GetInstance()->GetScreenWidth() / 2 - (int)(m_pFont->GetTextWidth("Game Over") * .75f), 100, 1.2f, SGD::Color(255, 0, 0, 0));
+
+	// Draw the options
+	if (m_bReplay == true)
+		m_pMainButton->Draw("Soorry, Try Again?", { 220, 200 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+	else
+		m_pMainButton->Draw("Soorry, Try Again?", { 220, 200 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+
+	if (m_bReplay == false)
+		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+	else
+		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+
+
 }
