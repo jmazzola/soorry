@@ -109,9 +109,6 @@ private:
 	// Transition State
 	IGameState*				m_pTransState	= nullptr;
 
-	// Transition State
-	IGameState*				m_pTransState = nullptr;
-
 
 	/**********************************************************/
 	// Game Time

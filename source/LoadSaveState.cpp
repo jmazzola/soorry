@@ -211,6 +211,15 @@ using namespace std;
 			return true;
 		}
 
+		case MENU_GOBACK:
+		{
+			//Go to Main Menu
+			pGame->Transition(MainMenuState::GetInstance());
+			// Exit immediately
+			return true;
+		}
+			break;
+
 
 		}
 	}
