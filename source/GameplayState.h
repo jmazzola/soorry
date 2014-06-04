@@ -62,6 +62,9 @@ public:
 	void SaveGame(bool newFile);
 	void LoadGameFromSlot(int slot);
 
+	// Player calls this once their hp is <= 0 to lose the game
+	void HasLost(void);
+
 private:
 
 	/**********************************************************/
@@ -127,6 +130,17 @@ private:
 	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
 
+	// Tower textures
+	SGD::HTexture m_hMachineGunBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMachineGunGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMachineGunBulletImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMapleSyrupBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMapleSyrupGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hHockeyStickBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hHockeyStickGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
@@ -149,13 +163,14 @@ private:
 	SGD::HAudio m_hBulletHit = SGD::INVALID_HANDLE;
 	/**********************************************************/
 	// Factory Methods
-	Entity* CreateBeaverZombie(int _x, int _y);
-	Entity* CreateFastZombie(int _x, int _y);
-	Entity* CreateSlowZombie(int _x, int _y);
-	Entity* CreateProjectile(int _Weapon);
-	Entity* CreatePlaceable(int trap);
-	Entity* CreatePickUp(int pick, SGD::Point pos);
-	Entity* CreateTower(int x, int y, int type);
+	Entity* CreateBeaverZombie(int _x, int _y) const;
+	Entity* CreateFastZombie(int _x, int _y) const;
+	Entity* CreateSlowZombie(int _x, int _y) const;
+	Entity* CreateProjectile(int _Weapon) const;
+	Entity* CreatePlaceable(int trap) const;
+	Entity* CreatePickUp(int pick, SGD::Point pos) const;
+	Entity* CreateTower(int x, int y, int type) const;
+	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
 
 	// Create a button
 	Button* CreateButton() const;
@@ -169,6 +184,21 @@ private:
 	// Animation Manager
 	AnimationManager* m_pAnimation = nullptr;
 
+	// Winning Functions and Variables
+	void RenderCredits(void);
+	bool m_bCreditsStarted;
+	int m_nTopMargin;
+	int m_nBottomMargin;
+	float m_fCreditsTimer;
+	float m_fWinTimer;
+	SGD::Point m_ptTextPosition;
+	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
+
+	// Losing Functions and Variables
+	void RenderLoss(void);
+	float m_fLossTimer;
+	bool m_bHasLost;
+	bool m_bReplay;
 };
 
 #endif //GAMEPLAYSTATE_H

@@ -42,9 +42,9 @@
 
 // GetInstance
 //	- allocate the ONE instance & return it
-/*static*/ Game* Game::GetInstance( void )
+/*static*/ Game* Game::GetInstance(void)
 {
-	if( s_pInstance == nullptr )
+	if (s_pInstance == nullptr)
 		s_pInstance = new Game;
 
 	return s_pInstance;
@@ -52,10 +52,21 @@
 
 // DeleteInstance
 //	- deallocate the ONE instance
-/*static*/ void Game::DeleteInstance( void )
+/*static*/ void Game::DeleteInstance(void)
 {
 	delete s_pInstance;
 	s_pInstance = nullptr;
+}
+
+
+void Game::Transition(IGameState* to)
+{
+	if (m_pTransState)
+		return;
+
+	m_pTransState = to;
+	to->Enter();
+	to->SetTransition(true);
 }
 
 
@@ -64,44 +75,44 @@
 //	- initialize the SGD wrappers
 //	- load resources / assets
 //	- allocate & initialize the game entities
-bool Game::Initialize( int width, int height )
+bool Game::Initialize(int width, int height)
 {
 	// Seed First!
-	srand( (unsigned int)time( nullptr ) );
+	srand((unsigned int)time(nullptr));
 	rand();
 
 
 	// Store the size parameters
-	m_nScreenWidth	= width;
+	m_nScreenWidth = width;
 	m_nScreenHeight = height;
 
 	// Store the SGD singletons
-	m_pAudio	= SGD::AudioManager::GetInstance();
-	m_pGraphics	= SGD::GraphicsManager::GetInstance();
-	m_pInput	= SGD::InputManager::GetInstance();
-	
+	m_pAudio = SGD::AudioManager::GetInstance();
+	m_pGraphics = SGD::GraphicsManager::GetInstance();
+	m_pInput = SGD::InputManager::GetInstance();
+
 	// Initialize each singleton
-	if( m_pAudio->Initialize() == false 
-	   || m_pGraphics->Initialize( false ) == false 
-	   || m_pInput->Initialize() == false )
+	if (m_pAudio->Initialize() == false
+		|| m_pGraphics->Initialize(false) == false
+		|| m_pInput->Initialize() == false)
 	{
 		return false;
 	}
 
 
 	// Allocate & initialize the font
-	   m_pFont = new BitmapFont;
-	   m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png","resource/data/BitmapFont_Roboto.fnt");
+	m_pFont = new BitmapFont;
+	m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png", "resource/data/BitmapFont_Roboto.fnt");
 
-	// Start the game in the Main Menu state
-	ChangeState( MainMenuState::GetInstance() );
-	
+	// Start the game in the Intro state
+	ChangeState(IntroState::GetInstance());
+
 
 	// Store the current time (in milliseconds)
 	m_ulGameTime = GetTickCount();
 
-	
-	
+
+
 	return true;	// success!
 }
 
@@ -111,11 +122,11 @@ bool Game::Initialize( int width, int height )
 //	- update the SGD wrappers
 //	- update the game entities
 //	- render the game entities
-int Game::Main( void )
+int Game::Main(void)
 {
-	if( m_pAudio->Update() == false 
-	   || m_pGraphics->Update() == false 
-	   || m_pInput->Update() == false )
+	if (m_pAudio->Update() == false
+		|| m_pGraphics->Update() == false
+		|| m_pInput->Update() == false)
 	{
 		return -10;		// abort!
 	}
@@ -126,7 +137,7 @@ int Game::Main( void )
 	m_ulGameTime = now;
 
 	// Cap the elapsed time to 1/8th of a second
-	if( elapsedTime > 0.125f )
+	if (elapsedTime > 0.125f)
 		elapsedTime = 0.125f;
 
 	// Toggle fullscreen
@@ -138,12 +149,11 @@ int Game::Main( void )
 		// Disable the 'Enter' input
 		return false;
 	}
-	
+
 
 	// Let the current state handle input
-	if( m_pCurrState->Input() == false )
+	if (m_pCurrState->Input() == false)
 		return 1;	// exit success!
-
 
 	// Testing the rending for the animation
 	//m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "running";
@@ -151,9 +161,24 @@ int Game::Main( void )
 	//m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
 
 	// Update & render the current state
-	m_pCurrState->Update( elapsedTime );
+	if (!m_pTransState)
+		m_pCurrState->Update(elapsedTime);
+
 	m_pCurrState->Render();
-	
+
+	if (m_pTransState)
+	{
+		m_pTransState->Update(elapsedTime);
+		m_pTransState->Render();
+
+		if (m_pTransState->IsTransitioning() == false)
+		{
+			m_pCurrState->Exit();
+			m_pCurrState = m_pTransState;
+			m_pTransState = nullptr;
+		}
+	}
+
 	return 0;		// keep playing!
 }
 
@@ -163,10 +188,10 @@ int Game::Main( void )
 //	- deallocate game entities
 //	- unload resources / assets
 //	- terminate the SGD wrappers
-void Game::Terminate( void )
+void Game::Terminate(void)
 {
 	// Exit the current state
-	ChangeState( nullptr );
+	ChangeState(nullptr);
 
 	// Terminate & deallocate the font
 	m_pFont->Terminate();
@@ -178,7 +203,7 @@ void Game::Terminate( void )
 	m_pAudio->Terminate();
 	m_pAudio = nullptr;
 	SGD::AudioManager::DeleteInstance();
-	
+
 	m_pGraphics->Terminate();
 	m_pGraphics = nullptr;
 	SGD::GraphicsManager::DeleteInstance();
@@ -196,16 +221,16 @@ void Game::Terminate( void )
 //	- DANGER! Exiting the current state can CRASH the program!
 //	  The state can ONLY be exited from the
 //	  Input, Update, and Render methods!!!
-void Game::ChangeState( IGameState* pNewState )
+void Game::ChangeState(IGameState* pNewState)
 {
 	// Exit the old state
-	if( m_pCurrState != nullptr)
+	if (m_pCurrState != nullptr)
 		m_pCurrState->Exit();
 
 	// Store the new state
 	m_pCurrState = pNewState;
 
 	// Enter the new state
-	if( m_pCurrState != nullptr)
+	if (m_pCurrState != nullptr)
 		m_pCurrState->Enter();
 }

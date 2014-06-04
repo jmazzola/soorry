@@ -12,6 +12,7 @@ Rocket::Rocket()
 
 Rocket::~Rocket()
 {
+	delete m_pSprite;
 }
 
  int Rocket::GetType() const 

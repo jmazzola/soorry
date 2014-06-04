@@ -23,6 +23,7 @@
 class Entity;
 class EntityManager;
 class MenuFlyweight;
+class BitmapFont;
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 
@@ -62,7 +63,6 @@ private:
 	
 	/**********************************************************/
 	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
 	Entity* m_pPlayer = nullptr;
 	
 	
@@ -78,7 +78,8 @@ private:
 
 	/**********************************************************/
 	// Textures
-
+	SGD::HTexture m_hLogo = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hStudioLogo = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Audio
@@ -86,6 +87,10 @@ private:
 	
 	/**********************************************************/
 	// Factory Methods
+
+	/**********************************************************/
+	// Font
+	BitmapFont* m_pFont;
 
 
 	// Message Callback Function:

@@ -10,6 +10,8 @@
 #include <vector>
 using namespace std;
 
+class Player;
+
 class ZombieFactory : public SGD::Listener
 {
 public:
@@ -37,6 +39,7 @@ public:
 	int GetBeaverZombiesToSpawn() const;
 	int GetSpawnWidth() const;
 	int GetSpawnHeight() const;
+	int GetTotalWaves() const;
 	float GetBuildTime() const;
 	float GetBuildTimeRemaining() const;
 	float GetSpawnInterval() const;
@@ -59,6 +62,7 @@ public:
 	void SetSpawnInterval(float spawnInterval);
 	void SetNextSpawnTime(float nextSpawnTime);
 	void SetEntityManager(EntityManager* entityManager);
+	void SetPlayer(Player* player);
 
 protected:
 
@@ -80,5 +84,6 @@ protected:
 	float m_fNextSpawnTime;
 	vector<WaveData> waveData;
 	EntityManager* m_pEntityManager;
+	Player* m_pPlayer;
 };
 

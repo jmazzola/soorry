@@ -19,12 +19,14 @@ public:
 
 	/**********************************************************/
 	// Accessor
-	SGD::HTexture GetImage() { return m_htImage; }
-	std::string GetSpriteID() { return m_strSpriteID; }
-	bool IsLooping() { return m_bIsLooping; }
+	SGD::HTexture GetImage( void ) { return m_htImage; }
+	std::string GetSpriteID( void ) { return m_strSpriteID; }
+	bool IsLooping( void ) { return m_bIsLooping; }
 	//Frame& GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
 	Frame GetFrame(int frameNum) { return *m_vFrames[frameNum]; }
-	int GetFrameSize() { return m_vFrames.size(); }
+	int GetFrameSize( void ) { return m_vFrames.size(); }
+	int GetCurrFrame( void ) { return m_nCurrFrame; }
+	void NextFrame( void );
 
 	/**********************************************************/
 	// Mutator
@@ -46,5 +48,6 @@ private:
 	SGD::HTexture m_htImage = SGD::INVALID_HANDLE;
 	std::string m_strSpriteID;
 	bool m_bIsLooping;
+	int m_nCurrFrame = 0;
 };
 

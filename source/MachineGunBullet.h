@@ -1,40 +1,37 @@
 #pragma once
 
-#include "Tower.h"
+#include "Entity.h"
 
-class MachineGunTower : public Tower
+#include "../SGD Wrappers/SGD_Handle.h"
+
+class MachineGunBullet : public Entity
 {
 public:
+
+	MachineGunBullet();
+	~MachineGunBullet();
 
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render() override;
+	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
-
-	MachineGunTower();
-	~MachineGunTower();
+	virtual void HandleCollision(const IEntity* pOther) override;
 
 	/**********************************************************/
 	// Accessors
 	int GetDamage() const;
-	float GetFireRate() const;
 
 	/**********************************************************/
 	// Mutators
 	void SetDamage(int damage);
-	void SetFireRate(float fireRate);
+	void SetImage(SGD::HTexture image);
 
 protected:
 
-	/**********************************************************/
-	// Data members
 	int m_nDamage;
-	float m_fFireRate;
-	float m_fBulletSpeed;
-
-private:
-
-	float m_fNextShotTimer;
+	float m_fLifetime;
+	SGD::HTexture m_hImage = SGD::INVALID_HANDLE;
 };
 
