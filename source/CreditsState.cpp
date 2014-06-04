@@ -63,22 +63,12 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 
-	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance();
-	m_pEvents->Initialize();
-
-	// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
+	SetTransition(false);
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/CreditsBG.png");
+	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
 
 	// Load Audio
@@ -112,27 +102,10 @@ using namespace std;
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	pGraphics->UnloadTexture(m_hBackground);
-
+	pGraphics->UnloadTexture(m_hMainMenuSnap);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	//m_pMessages->Terminate();
-	//m_pMessages = nullptr;
-	//SGD::MessageManager::DeleteInstance();
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
 
 	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
@@ -158,7 +131,7 @@ using namespace std;
 	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
 		// Since there's only one state..go back to main menu
-		pGame->ChangeState(MainMenuState::GetInstance());
+		pGame->Transition(MainMenuState::GetInstance());
 		return true;
 	}
 
@@ -171,22 +144,23 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void CreditsState::Update(float elapsedTime)
 {
+	// If we're changing menus, count down the timer
+	if (IsTransitioning())
+	{
+		m_fTransitionTime -= elapsedTime;
 
+		if (m_fTransitionTime <= 0)
+			SetTransition(false);
+	}
+	else
+	{
+		// Move the credits
+		textPosition.x = 220;
+		textPosition.y -= SCROLL_SPEED;
 
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
-	// Process the events & messages
-	m_pEvents->Update();
-	//m_pMessages->Update();
-
-
-	// Check collisions
-
-	// Move the credits
-	textPosition.x = 220;
-	textPosition.y -= SCROLL_SPEED;
+		// Reset the transition time to allow for transitions again
+		m_fTransitionTime = TRANSITION_TIME;
+	}
 
 }
 
@@ -198,55 +172,63 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Draw the background
-	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
-
 	// Draw the credits
 	// TODO: Load in a text file
 	string credits = "SOORRY\n\n\
-					 By Razor Balloon\n\n\
-					 Part of Heavy Square Studios\n\n\
-					 Associate Producers\n\
-					 Sean Hathaway\n\
-					 Robert Martinez\n\n\
-					 Executive Producer\n\
-					 John O' Leske\n\n\
-					 World Software Engineer\n\
-					 Justin Patterson\n\n\
-					 AI Programmer\n\
-					 Justin Patterson\n\n\
-					 Particle Software Engineer\n\
-					 Matthew Salow\n\n\
-					 Animation Software Engineer\n\
-					 James Sylvester\n\n\
-					 Game Core\n\
-					 Justin Mazzola\n\n\
-					 UI Programmer\n\
-					 Justin Mazzola\n\n\
-					 Mercenary Programmer\n\
-					 Ryan Simmons\n\n\
-					 Artists\n\
-					 Gregory Bey\n\
-					 Caris Frazier\n\
-					 Justin Mazzola\n\n\
-					 Special Thanks\n\
-					 Jordan Butler for ideas.";
+					  By Razor Balloon\n\n\
+					  Part of Heavy Square Studios\n\n\
+					  Associate Producers\n\
+					  Sean Hathaway\n\
+					  Robert Martinez\n\n\
+					  Executive Producer\n\
+					  John O' Leske\n\n\
+				      World Software Engineer\n\
+					  Justin Patterson\n\n\
+					  AI Programmer\n\
+					  Justin Patterson\n\n\
+					  Particle Software Engineer\n\
+					  Matthew Salow\n\n\
+					  Animation Software Engineer\n\
+					  James Sylvester\n\
+					  Ryan Simmons\n\n\
+					  Game Core\n\
+					  Justin Mazzola\n\n\
+					  UI Programmer\n\
+					  Justin Mazzola\n\n\
+					  Mercenary Programmer\n\
+					  Ryan Simmons\n\n\
+					  Canadian Linguist\n\
+					  Jordan Scelsa\n\n\
+					  Artists\n\
+					  Gregory Bey\n\
+					  Caris Frazier\n\
+					  Justin Mazzola\n\n\
+					  Special Thanks\n\
+					  Jordan Butler for ideas.";
 
-	m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 255, 0, 0 });
+	// If we're transitioning
+	if (IsTransitioning())
+	{
+		// Draw the background coming from the bottom - up
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
+	}
+	else
+	{
+		// Draw the background
+		pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
-	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
-	// Draw rectangles to cut off the words to give an illusion of margins
-	pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
-		SGD::Rectangle(0, 0, 800, 228), {}, {});
+		m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 255, 0, 0 });
 
-	pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
-		SGD::Rectangle(0, 475, 800, 600), {}, {});
+		// Draw rectangles to cut off the words to give an illusion of margins
+		pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
+			SGD::Rectangle(0, 0, 800, 228), {}, {});
 
-	// Render button
-	m_pMainButton->Draw("Go Back", { 200, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
+		pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
+			SGD::Rectangle(0, 475, 800, 600), {}, {});
 
-	// Render the entities
-	m_pEntities->RenderAll();
+		// Render button
+		m_pMainButton->Draw("Go Back", { 200, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
+	}
 }
 
 /**************************************************************/
