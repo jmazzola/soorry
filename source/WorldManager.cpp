@@ -242,7 +242,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 
 				// FOR DEBUG PURPOSES ONLY!
 				/*wostringstream id;
-				id << tileID;
+				id << (m_bSolidsChart[x][y] == true) ? 1 : 0;
 				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth, y * (float)m_nTileHeight));*/
 			}
 		}
@@ -427,6 +427,22 @@ void WorldManager::SetColliderID(int _x, int _y, int _id)
 int WorldManager::GetColliderID(int _x, int _y)
 {
 	return m_vLayers[m_vLayers.size() - 1][_x][_y].GetColliderID();
+}
+
+void WorldManager::SetSolidAtPosition(int _x, int _y, bool _solid)
+{
+	if (_solid)
+	{
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(WALL);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(true);
+		m_bSolidsChart[_x][_y] = true;
+	}
+	else
+	{
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetColliderID(EMPTY);
+		m_vLayers[m_vLayers.size() - 1][_x][_y].SetCollidable(false);
+		m_bSolidsChart[_x][_y] = false;
+	}
 }
 
 /**********************************************************/

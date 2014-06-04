@@ -46,7 +46,7 @@ Player::Player() : Listener(this)
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
 	m_antsAnimation.m_nCurrAnimation = "player";
-	
+
 	// Player's variables
 	m_nMaxHealth = 100.0f;
 	m_nCurrHealth = 100.0f;
@@ -67,10 +67,10 @@ Player::Player() : Listener(this)
 	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(100);
 	m_pInventory->SetWindows(100);
-	m_pInventory->SetMachineGunTowers(2);
-	m_pInventory->SetMapleSyrupTowers(2);
-	m_pInventory->SetHockeyStickTowers(2);
-	m_pInventory->SetLaserTowers(2);
+	m_pInventory->SetMachineGunTowers(20);
+	m_pInventory->SetMapleSyrupTowers(20);
+	m_pInventory->SetHockeyStickTowers(20);
+	m_pInventory->SetLaserTowers(20);
 
 	m_pWeapons = new Weapon[4];
 #pragma region Load Weapons
@@ -151,7 +151,7 @@ void Player::Update(float dt)
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-	
+
 
 
 	// Set camera
@@ -218,12 +218,12 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
-	if (pInput->IsKeyPressed(SGD::Key::Space) )
+	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
-  		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
+		CreateParticleMessage* msg = new CreateParticleMessage("Temp_Particle", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-		
+
 	}
 	//GAH Weapons! - Arnold
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
@@ -291,7 +291,7 @@ void Player::Update(float dt)
 	if (pInput->IsKeyPressed(SGD::Key::Eight) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 7;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && Blockable(pos))
+	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && m_pZombieWave->IsBuildMode())
 	{
 		// Test rect
 		SGD::Rectangle rect;
@@ -300,13 +300,13 @@ void Player::Update(float dt)
 		rect.right = rect.left + pWorld->GetTileWidth() / 2;
 		rect.bottom = rect.top + pWorld->GetTileHeight() / 2;
 
+		SetSelectedTower(nullptr);
+
 		// Check if tower is there
-		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 5));
+		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 2));
 
 		if (tower)
-		{
-
-		}
+			SetSelectedTower(tower);
 
 #if 0
 		//Colliding with wall
@@ -446,11 +446,62 @@ void Player::Update(float dt)
 			{
 				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x + pWorld->GetTileWidth()), (int)(pos.y + pWorld->GetTileHeight()), 
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_MACHINE_GUN);
+					msg->QueueMessage();
 
-					// Decreasing the amount of mines left for the player
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetMachineGunTowers(m_pInventory->GetMachineGunTowers() - 1);
+				}
+			}
+
+			// Maple Syrup tower
+			else if (m_nCurrPlaceable == 5 && m_pInventory->GetMapleSyrupTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_MAPLE_SYRUP);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
+				}
+			}
+
+			// Hockey Stick tower
+			else if (m_nCurrPlaceable == 6 && m_pInventory->GetHockeyStickTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_HOCKEY_STICK);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
+				}
+			}
+
+			// Laser tower
+			else if (m_nCurrPlaceable == 7 && m_pInventory->GetLaserTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_LASER);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 				}
 			}
 		}
@@ -634,12 +685,23 @@ void Player::SetInventory(Inventory* _inventory)
 	m_pInventory = _inventory;
 }
 
-
 void Player::SetWeapons(Weapon* _weapons)
 {
 	m_pWeapons = _weapons;
 }
 
+void Player::SetSelectedTower(Tower* _tower)
+{
+	if (m_pSelectedTower)
+		m_pSelectedTower->SetSelected(false);
+
+	m_pSelectedTower = nullptr;
+	if (_tower)
+	{
+		m_pSelectedTower = _tower;
+		m_pSelectedTower->SetSelected(true);
+	}
+}
 
 bool Player::CheckLegalPlacement(Node end, Node block)
 {
@@ -712,13 +774,18 @@ bool Player::CheckLegalPlacement(Node end, Node block)
 
 bool Player::PlacementCheck(SGD::Point mouse)
 {
-	if (Blockable(mouse)
-		&& WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false
-		&& m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false
-		&& CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y)))
+	bool a = Blockable(mouse);
+	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
+	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
+	bool d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+
+	if (a
+		&& b
+		&& c
+		&& d)
 	{
 		return true;
 	}
-	else 
+	else
 		return false;
 }

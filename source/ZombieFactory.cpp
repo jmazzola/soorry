@@ -3,6 +3,7 @@
 #include "CreateSlowZombieMessage.h"
 #include "CreateFastZombieMessage.h"
 #include "CreateBeaverZombieMessage.h"
+#include "Player.h"
 
 #include "../TinyXML/tinyxml.h"
 
@@ -118,6 +119,10 @@ void ZombieFactory::Update(float dt)
 			m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
 			m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
 			m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+
+			// Deselect all towers
+			m_pPlayer->SetSelectedTower(nullptr);
+
 			return;
 		}
 	}
@@ -415,4 +420,9 @@ void ZombieFactory::SetNextSpawnTime(float _nextSpawnTime)
 void ZombieFactory::SetEntityManager(EntityManager* _entityManager)
 {
 	m_pEntityManager = _entityManager;
+}
+
+void ZombieFactory::SetPlayer(Player* _player)
+{
+	m_pPlayer = _player;
 }

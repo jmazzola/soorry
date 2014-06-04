@@ -37,6 +37,7 @@
 #include "CreatePlayerSpawnMessage.h"
 #include "CreateParticleMessage.h"
 #include "CreateTowerMessage.h"
+#include "CreateMachineGunBulletMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -63,6 +64,8 @@
 #include "HockeyStickTower.h"
 #include "LaserTower.h"
 
+#include "MachineGunBullet.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -77,10 +80,10 @@ using namespace std;
 // Buckets
 #define BUCKET_PLAYER 0
 #define BUCKET_ENEMIES 1
-#define BUCKET_PROJECTILES 2
+#define BUCKET_PROJECTILES 5
 #define BUCKET_PLACEABLE 3
 #define BUCKET_PICKUP 4
-#define BUCKET_TOWERS 5
+#define BUCKET_TOWERS 2
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -158,11 +161,19 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
+	m_hPlayerImg = pGraphics->LoadTexture("resource/images/tim/tim.png");
+
+	// Load tower images
+	m_hMachineGunBaseImage = pGraphics->LoadTexture("resource/images/towers/machineGunBase.png");
+	m_hMachineGunGunImage = pGraphics->LoadTexture("resource/images/towers/machineGunGun.png");
+	m_hMachineGunBulletImage = pGraphics->LoadTexture("resource/images/towers/machineGunBullet.png");
+	m_hMapleSyrupBaseImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBase.png");
+	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
+	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
+	m_hBackgroundMus = pAudio->LoadAudio("resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -208,6 +219,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Create our player
 	m_pPlayer = CreatePlayer();
+	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
 
 	// If the slot is set
 
@@ -298,6 +310,13 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	// Unload tower images
+	pGraphics->UnloadTexture(m_hMachineGunBaseImage);
+	pGraphics->UnloadTexture(m_hMachineGunGunImage);
+	pGraphics->UnloadTexture(m_hMachineGunBulletImage);
+	pGraphics->UnloadTexture(m_hMapleSyrupBaseImage);
+	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
+	pGraphics->UnloadTexture(m_hLaserBaseImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -564,13 +583,7 @@ Entity*	GameplayState::CreatePlayer() const
 					}
 						break;
 
-					case PauseMenuOptionsOption::OPTION_SFX:
-					{
-															   // Increase the sound effects volume -= 5
-															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
-					}
-						break;
-					}
+
 				}
 
 				// --- Selecting an option ---
@@ -923,20 +936,17 @@ Entity*	GameplayState::CreatePlayer() const
 				// Draw the picture of the selected pic
 				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
 
-				// Draw the ammo of the selected weapon
-				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+			// -- Draw the offhand weapons ammos --
+			m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
+			//Draw the grid rectange
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 
-				// -- Draw the offhand weapons ammos --
-				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-				//Draw the grid rectange
-				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-				//NOTE: why did it take this much work? did i do something wrong?
-				pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
-				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
-				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);
-			}
+			//NOTE: why did it take this much work? did i do something wrong?
+			/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
+			pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
+			pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
 		}
 
 		// If you have won the game render You Win and fade to credits
@@ -1091,6 +1101,24 @@ Entity*	GameplayState::CreatePlayer() const
 												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
+	case MessageID::MSG_CREATE_TOWER:
+	{
+										const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
+										GameplayState* g = GameplayState::GetInstance();
+										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
+										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
+										tower->Release();
+	}
+		break;
+	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
+	{
+													 const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
+													 GameplayState* g = GameplayState::GetInstance();
+													 Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
+													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													 bullet->Release();
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1116,7 +1144,7 @@ Button* GameplayState::CreateButton() const
 	return pButton;
 }
 
-Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
+Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 {
 	BeaverZombie* tempBeav = new BeaverZombie;
 	tempBeav->SetDamage(10);
@@ -1133,7 +1161,7 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 	return tempBeav;
 }
 
-Entity* GameplayState::CreateFastZombie(int _x, int _y)
+Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 {
 	FastZombie* zambie = new FastZombie;
 	zambie->SetDamage(10);
@@ -1150,7 +1178,7 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y)
 	return zambie;
 }
 
-Entity* GameplayState::CreateSlowZombie(int _x, int _y)
+Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 {
 	SlowZombie* zambie = new SlowZombie;
 	zambie->SetDamage(10);
@@ -1167,7 +1195,7 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 	return zambie;
 }
 
-Entity* GameplayState::CreatePlaceable(int trap)
+Entity* GameplayState::CreatePlaceable(int trap) const
 {
 	if (trap == 0)
 	{
@@ -1199,7 +1227,7 @@ Entity* GameplayState::CreatePlaceable(int trap)
 	}
 }
 
-Entity* GameplayState::CreateProjectile(int _Weapon)
+Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
 	switch (_Weapon)
 	{
@@ -1257,7 +1285,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 
 			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
-			   return tempProj;
+		return tempProj;
 	}
 		break;
 	case 3://Fire axe?
@@ -1269,7 +1297,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon)
 	return nullptr;
 }
 
-Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
+Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 {
 	if (pick == 0)
 	{
@@ -1293,7 +1321,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
 	}
 }
 
-Entity* GameplayState::CreateTower(int _x, int _y, int _type)
+Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 {
 	switch (_type)
 	{
@@ -1301,26 +1329,59 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type)
 	{
 												  MachineGunTower* tower = new MachineGunTower;
 
+												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
+												  tower->SetBaseImage(m_hMachineGunBaseImage);
+												  tower->SetGunImage(m_hMachineGunGunImage);
+
+												  return tower;
+
 	}
 		break;
 	case CreateTowerMessage::TOWER_MAPLE_SYRUP:
 	{
+												  MapleSyrupTower* tower = new MapleSyrupTower;
 
+												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
+												  tower->SetBaseImage(m_hMapleSyrupBaseImage);
+
+												  return tower;
 	}
 		break;
 	case CreateTowerMessage::TOWER_HOCKEY_STICK:
 	{
+												   HockeyStickTower* tower = new HockeyStickTower;
 
+												   tower->SetPosition(SGD::Point((float)_x, (float)_y));
+												   tower->SetBaseImage(m_hHockeyStickBaseImage);
+
+												   return tower;
 	}
 		break;
 	case CreateTowerMessage::TOWER_LASER:
 	{
+											LaserTower* tower = new LaserTower;
 
+											tower->SetPosition(SGD::Point((float)_x, (float)_y));
+											tower->SetBaseImage(m_hLaserBaseImage);
+
+											return tower;
 	}
 		break;
 	}
 
 	return nullptr;
+}
+
+Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _velocity, int _damage) const
+{
+	MachineGunBullet* bullet = new MachineGunBullet;
+
+	bullet->SetPosition(SGD::Point((float)_x, (float)_y));
+	bullet->SetDamage(_damage);
+	bullet->SetImage(m_hMachineGunBulletImage);
+	bullet->SetVelocity(_velocity);
+
+	return bullet;
 }
 
 // LoadGameFromSlot

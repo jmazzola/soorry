@@ -343,3 +343,54 @@ IEntity* EntityManager::CheckCollision(SGD::Rectangle _rect, int _bucket)
 
 	return nullptr;
 }
+
+
+
+IEntity* EntityManager::CheckCollision(SGD::Point _point, float _radius, int _bucket)
+{
+	// Test against a single bucket
+	if (_bucket != -1)
+	{
+		// Quietly validate the parameters
+		if (_bucket >= (int)m_tEntities.size()
+			|| m_tEntities[_bucket].size() == 0)
+			return false;
+
+		EntityVector& vec = m_tEntities[_bucket];
+
+		for (unsigned int i = 0; i < vec.size(); i++)
+		{
+			// Compute vector
+			SGD::Vector distanceVector = vec[i]->GetRect().ComputeCenter() - _point;
+			float distance = distanceVector.ComputeLength();
+
+			// Check if within radius
+			if (distance < _radius)
+			{
+				return vec[i];
+			}
+		}
+	}
+
+	// Test against all buckets
+	else
+	{
+		for (unsigned int bucket = 0; bucket < m_tEntities.size(); bucket++)
+		{
+			for (unsigned int i = 0; i < m_tEntities[bucket].size(); i++)
+			{
+				// Compute vector
+				SGD::Vector distanceVector = m_tEntities[bucket][i]->GetRect().ComputeCenter() - _point;
+				float distance = distanceVector.ComputeLength();
+
+				// Check if within radius
+				if (distance < _radius)
+				{
+					return m_tEntities[bucket][i];
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}

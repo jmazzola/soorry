@@ -33,6 +33,7 @@ public:
 	bool IsSolidAtPosition(int x, int y) const;
 	void SetColliderID(int x, int y, int id);
 	int GetColliderID(int x, int y);
+	void SetSolidAtPosition(int x, int y, bool solid);
 
 	/**********************************************************/
 	// Accessors
