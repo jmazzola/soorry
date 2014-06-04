@@ -44,3 +44,11 @@ void Sprite::SetImage(const char * fileName)
 {
 	m_htImage = SGD::GraphicsManager::GetInstance()->LoadTexture(fileName);
 }
+
+void Sprite::NextFrame( void )
+{
+	m_nCurrFrame++;
+	if(m_nCurrFrame == m_vFrames.size())
+		m_nCurrFrame = 0;
+
+}

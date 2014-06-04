@@ -345,7 +345,7 @@ Entity*	GameplayState::CreatePlayer () const
 	pGraphics->UnloadTexture ( m_hRLThumb );
 	pGraphics->UnloadTexture ( m_hFireAxePic );
 	pGraphics->UnloadTexture ( m_hFireAxeThumb );
-	pGraphics->UnloadTexture( m_hBackground );
+	pGraphics->UnloadTexture ( m_hBackground );
 
 	// Unload Blank
 	pGraphics->UnloadTexture(m_hBackground);
@@ -609,22 +609,22 @@ Entity*	GameplayState::CreatePlayer () const
 		pGame->ChangeState ( MainMenuState::GetInstance () );
 		return true;
 	}
-	if(m_bHasLost == true && m_fLossTimer <= 0.0f)
+	if ( m_bHasLost == true && m_fLossTimer <= 0.0f )
 	{
-		if(pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+		if ( pInput->IsKeyPressed ( SGD::Key::Up ) || pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Up ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down ) )
 			m_bReplay = !m_bReplay;
 
-		else if(pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		else if ( pInput->IsKeyPressed ( SGD::Key::Enter ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::A ) )
 		{
 			switch ( m_bReplay )
 			{
 			case true:
-				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
+				Game::GetInstance ()->ChangeState ( GameplayState::GetInstance () );
 				return true;
 				break;
 
 			case false:
-				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+				Game::GetInstance ()->ChangeState ( MainMenuState::GetInstance () );
 				return true;
 				break;
 			}
@@ -668,7 +668,7 @@ Entity*	GameplayState::CreatePlayer () const
 	}
 
 	// If you have won the game
-	else if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
+	else if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false )
 	{
 		m_bIsPaused = false;
 		// Move the credits if they have started
@@ -698,9 +698,9 @@ Entity*	GameplayState::CreatePlayer () const
 			m_fWinTimer -= elapsedTime;
 	}
 	// If you have lost fade to the replay menu
-	else if(m_bHasLost == true)
+	else if ( m_bHasLost == true )
 	{
-		if(m_fLossTimer > 0)
+		if ( m_fLossTimer > 0 )
 			m_fLossTimer -= elapsedTime;
 	}
 
@@ -940,7 +940,7 @@ Entity*	GameplayState::CreatePlayer () const
 		}
 
 		// If you have won the game render You Win and fade to credits
-		if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
+		if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false )
 		{
 			Game * pGame = Game::GetInstance ();
 
@@ -950,7 +950,7 @@ Entity*	GameplayState::CreatePlayer () const
 
 			m_pFont->Draw ( "You Win!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth ( "You Win!" )) , pGame->GetScreenHeight () / 2 - 64 , 2.0f , SGD::Color { 255 , 0 , 0 } );
 		}
-		if(m_bHasLost == true)
+		if ( m_bHasLost == true )
 		{
 			Game * pGame = Game::GetInstance ();
 
@@ -967,7 +967,7 @@ Entity*	GameplayState::CreatePlayer () const
 		RenderCredits ();
 	}
 	// Render the Replay menu if you have lost and faded to them
-	else if ( m_bHasLost  && m_fLossTimer <= 0.0f)
+	else if ( m_bHasLost  && m_fLossTimer <= 0.0f )
 	{
 		RenderLoss ();
 	}
@@ -1027,13 +1027,21 @@ Entity*	GameplayState::CreatePlayer () const
 
 		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
 		GameplayState* self = GameplayState::GetInstance ();
-		for ( int i = 0; i < 10; i++ )
+		if ( pCreateMessage->GetWeaponNumber () == 1 )
 		{
-			Entity*bullet = self->CreateProjectile ( pCreateMessage->GetWeaponNumber () );
-			self->m_pEntities->AddEntity ( bullet , BUCKET_PROJECTILES );
-			bullet->Release ();
-			bullet = nullptr;
+			for ( int i = 0; i < 9; i++ )
+			{
+				Entity*bullet = self->CreateProjectile ( pCreateMessage->GetWeaponNumber () );
+				self->m_pEntities->AddEntity ( bullet , BUCKET_PROJECTILES );
+				bullet->Release ();
+				bullet = nullptr;
+			}
 		}
+		Entity*bullet = self->CreateProjectile ( pCreateMessage->GetWeaponNumber () );
+		self->m_pEntities->AddEntity ( bullet , BUCKET_PROJECTILES );
+		bullet->Release ();
+		bullet = nullptr;
+
 	}
 		break;
 
@@ -1502,33 +1510,33 @@ void GameplayState::RenderCredits ( void )
 	// Draw the credits
 	// TODO: Load in a text file
 	string credits = "SOORRY\n\n\
-					 By Razor Balloon\n\n\
-					 Part of Heavy Square Studios\n\n\
-					 Associate Producers\n\
-					 Sean Hathaway\n\
-					 Robert Martinez\n\n\
-					 Executive Producer\n\
-					 John O' Leske\n\n\
-					 World Software Engineer\n\
-					 Justin Patterson\n\n\
-					 AI Programmer\n\
-					 Justin Patterson\n\n\
-					 Particle Software Engineer\n\
-					 Matthew Salow\n\n\
-					 Animation Software Engineer\n\
-					 James Sylvester\n\n\
-					 Game Core\n\
-					 Justin Mazzola\n\n\
-					 UI Programmer\n\
-					 Justin Mazzola\n\n\
-					 Mercenary Programmer\n\
-					 Ryan Simmons\n\n\
-					 Artists\n\
-					 Gregory Bey\n\
-					 Caris Frazier\n\
-					 Justin Mazzola\n\n\
-					 Special Thanks\n\
-					 Jordan Butler for ideas.";
+					 					 By Razor Balloon\n\n\
+										 					 Part of Heavy Square Studios\n\n\
+															 					 Associate Producers\n\
+																				 					 Sean Hathaway\n\
+																									 					 Robert Martinez\n\n\
+																														 					 Executive Producer\n\
+																																			 					 John O' Leske\n\n\
+																																								 					 World Software Engineer\n\
+																																													 					 Justin Patterson\n\n\
+																																																		 					 AI Programmer\n\
+																																																							 					 Justin Patterson\n\n\
+																																																												 					 Particle Software Engineer\n\
+																																																																	 					 Matthew Salow\n\n\
+																																																																						 					 Animation Software Engineer\n\
+																																																																											 					 James Sylvester\n\n\
+																																																																																 					 Game Core\n\
+																																																																																					 					 Justin Mazzola\n\n\
+																																																																																										 					 UI Programmer\n\
+																																																																																															 					 Justin Mazzola\n\n\
+																																																																																																				 					 Mercenary Programmer\n\
+																																																																																																									 					 Ryan Simmons\n\n\
+																																																																																																														 					 Artists\n\
+																																																																																																																			 					 Gregory Bey\n\
+																																																																																																																								 					 Caris Frazier\n\
+																																																																																																																													 					 Justin Mazzola\n\n\
+																																																																																																																																		 					 Special Thanks\n\
+																																																																																																																																							 					 Jordan Butler for ideas.";
 
 	m_pFont->Draw ( credits , (int)m_ptTextPosition.x , (int)m_ptTextPosition.y , 0.5f , { 255 , 0 , 0 } );
 
@@ -1543,7 +1551,7 @@ void GameplayState::RenderCredits ( void )
 	// Render button
 	m_pMainButton->Draw ( "Main Menu" , { 180 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
 
-	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
+	m_pFont->Draw ( "Credits" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)((m_pFont->GetTextWidth ( "Credits" ) / 2) * 1.2f) - 20 , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
 
 	if ( m_fCreditsTimer <= 5.0f )
 	{
@@ -1567,16 +1575,16 @@ void GameplayState::HasLost ( void )
 // go to the main menu
 void GameplayState::RenderLoss ( void )
 {
-	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
-			
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
+
 	// Draw the paused main menu background
 	pGraphics->DrawTexture ( m_hBackground , { 0 , 0 } );
 
 	// Draw the game over at the top
-	m_pFont->Draw("Game Over", Game::GetInstance()->GetScreenWidth() / 2 - (int)(m_pFont->GetTextWidth("Game Over") * .75f), 100, 1.2f, SGD::Color(255, 0, 0, 0));
+	m_pFont->Draw ( "Game Over" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)(m_pFont->GetTextWidth ( "Game Over" ) * .75f) , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
 
 	// Draw the options
-	if (m_bReplay == true)
+	if ( m_bReplay == true )
 		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 255 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
 	else
 		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
@@ -1586,5 +1594,5 @@ void GameplayState::RenderLoss ( void )
 	else
 		m_pMainButton->Draw ( "Main Menu, eh?" , { 200 , 290 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
 
-			
+
 }
