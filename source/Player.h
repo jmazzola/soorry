@@ -20,6 +20,7 @@
 // Forward Declarations
 class Weapon;
 class Inventory;
+class Tower;
 
 class Player : public Entity, public SGD::Listener
 {
@@ -51,6 +52,7 @@ public:
 	Inventory* GetInventory() const;
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
+
 	/**********************************************************/
 	// Mutators
 	void SetMaxHealth(float maxHealth);
@@ -67,6 +69,8 @@ public:
 	void SetWeapons(Weapon* weapons);
 	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
 	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
+	void SetSelectedTower(Tower* tower);
+
 protected:
 
 	/**********************************************************/
@@ -87,6 +91,7 @@ protected:
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
+	Tower* m_pSelectedTower;
 	
 private:
 
