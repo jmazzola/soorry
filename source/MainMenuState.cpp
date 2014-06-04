@@ -121,27 +121,7 @@ using namespace std;
 	//Release music
 	pAudio->UnloadAudio(m_hMenuMusic);
 
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	//m_pMessages->Terminate();
-	//m_pMessages = nullptr;
-	//SGD::MessageManager::DeleteInstance();
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
-
-	// Terminate & deallocate menu items
-	m_pButton->Terminate();
-	delete m_pButton;
-	m_pButton = nullptr;
-
+	
 }
 
 
