@@ -97,6 +97,7 @@ using namespace std;
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
 
+	// Grab the audio
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	//Play Audio
@@ -120,6 +121,10 @@ using namespace std;
 
 	//Release music
 	pAudio->UnloadAudio(m_hMenuMusic);
+
+	m_pButton->Terminate();
+	delete m_pButton;
+	m_pButton = nullptr;
 
 	
 }

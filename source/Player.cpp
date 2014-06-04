@@ -521,7 +521,10 @@ void Player::Update ( float dt )
 
 					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetMachineGunTowers ( m_pInventory->GetMachineGunTowers () - 1 );
-					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 
 				}
 			}
@@ -536,7 +539,10 @@ void Player::Update ( float dt )
 					msg->QueueMessage();
 
 					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
 				}
@@ -552,7 +558,10 @@ void Player::Update ( float dt )
 					msg->QueueMessage();
 
 					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
 				}
@@ -568,7 +577,10 @@ void Player::Update ( float dt )
 					msg->QueueMessage();
 
 					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 				}

@@ -286,7 +286,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
 
-	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	// HUD
 	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
@@ -1263,7 +1263,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
-			   return tempProj;
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hGunShoot);
+		return tempProj;
 	}
 		break;
 	case 1://Shotgun
@@ -1283,6 +1284,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;
 			   vec.Rotate(degree);
+			   SGD::AudioManager::GetInstance()->PlayAudio(m_hShotgunShoot);
 
 			   tempProj->SetVelocity(vec);
 			   return tempProj;
@@ -1303,6 +1305,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   tempProj->SetVelocity(vec);
 
 			   //ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
 
 			   return tempProj;
 	}

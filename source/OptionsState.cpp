@@ -112,9 +112,6 @@ using namespace std;
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
 
-	// Save the options to a config file
-	SaveOptions(STRING_CONFIGPATH);
-
 }
 
 
@@ -167,6 +164,9 @@ using namespace std;
 
 			case MENU_GOBACK:
 			{
+				// Save the options to a config file
+				SaveOptions(STRING_CONFIGPATH);
+
 					//Go to Main Menu
 					pGame->Transition(MainMenuState::GetInstance());
 					// Exit immediately
