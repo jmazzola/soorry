@@ -158,7 +158,6 @@ using namespace std;
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
-
 		case  MENU_TOGGLEFULLSCREEN:
 		{
 			// Toggle fullscreen
@@ -166,13 +165,6 @@ using namespace std;
 		}
 			break;
 
-		case MENU_GOBACK:
-		{
-			//Go to Main Menu
-			pGame->Transition(MainMenuState::GetInstance());
-			// Exit immediately
-			return true;
-		}
 			break;
 		}
 	}

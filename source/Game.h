@@ -105,6 +105,9 @@ private:
 	/**********************************************************/
 	// Current Game State
 	IGameState*				m_pCurrState = nullptr;
+	
+	// Transition State
+	IGameState*				m_pTransState	= nullptr;
 
 	// Transition State
 	IGameState*				m_pTransState = nullptr;

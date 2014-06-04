@@ -73,6 +73,7 @@ using namespace std;
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/LoadSaveBG.png");
+	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
 
 	// Load Audio
@@ -125,6 +126,7 @@ using namespace std;
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	pGraphics->UnloadTexture(m_hBackground);
+	pGraphics->UnloadTexture(m_hMainMenuSnap);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -209,14 +211,6 @@ using namespace std;
 			return true;
 		}
 
-		case MENU_GOBACK:
-		{
-			// Go Back to Main Menu
-			pGame->Transition(MainMenuState::GetInstance());
-			// Exit immediately
-			return true;
-		}
-			break;
 
 		}
 	}
@@ -273,7 +267,12 @@ using namespace std;
 
 	// TODO: Add Strings to STRING TABLE for easy localization
 	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-
+	// If we're transitioning
+	if (IsTransitioning())
+	{
+		// Draw the main menu snapshot
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
+	}
 	// When the transition is done
 	else
 	{

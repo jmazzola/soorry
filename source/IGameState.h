@@ -42,6 +42,7 @@ public:
 	// Transition time
 	float m_fTransitionTime = TRANSITION_TIME;
 
+
 private:
 
 	// Is transitioning

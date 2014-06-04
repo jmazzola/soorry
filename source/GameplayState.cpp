@@ -347,6 +347,9 @@ Entity*	GameplayState::CreatePlayer () const
 	pGraphics->UnloadTexture ( m_hFireAxeThumb );
 	pGraphics->UnloadTexture( m_hBackground );
 
+	// Unload Blank
+	pGraphics->UnloadTexture(m_hBackground);
+
 	// Make sure pause isn't set
 	m_bIsPaused = false;
 

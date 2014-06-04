@@ -213,40 +213,39 @@ using namespace std;
 
 			break;
 		}
-	}
 
 #if _DEBUG	// if statement that says 'if we're running in debug mode' (Visual Studio goody :P)
-	// this won't work in release ;3
+			// this won't work in release ;3
+		// Debugging so our team doesn't have to go through so many menus to test stuff
 
-	// Debugging so our team doesn't have to go through so many menus to test stuff
+		// 1	-	Forceload GameplayState
+		// 2	-	Forceload LoadSaveState
+		// 3	-	Forceload OptionsState
+		// 4	-	Forceload CreditsState
 
-	// 1	-	Forceload GameplayState
-	// 2	-	Forceload LoadSaveState
-	// 3	-	Forceload OptionsState
-	// 4	-	Forceload CreditsState
-
-	if (pInput->IsKeyPressed(SGD::Key::One))
-	{
-		pGame->ChangeState(GameplayState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Two))
-	{
-		pGame->ChangeState(LoadSaveState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Three))
-	{
-		pGame->ChangeState(OptionsState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Four))
-	{
-		pGame->ChangeState(CreditsState::GetInstance());
-		return true;
-	}
+		if (pInput->IsKeyPressed(SGD::Key::One))
+		{
+			pGame->ChangeState(GameplayState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Two))
+		{
+			pGame->ChangeState(LoadSaveState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Three))
+		{
+			pGame->ChangeState(OptionsState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Four))
+		{
+			pGame->ChangeState(CreditsState::GetInstance());
+			return true;
+		}
 
 #endif
+	}
 
 	return true;	// keep playing
 }

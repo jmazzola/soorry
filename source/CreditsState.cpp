@@ -68,6 +68,7 @@ using namespace std;
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/CreditsBG.png");
+	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
 
 	// Load Audio
@@ -101,6 +102,7 @@ using namespace std;
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	pGraphics->UnloadTexture(m_hBackground);
+	pGraphics->UnloadTexture(m_hMainMenuSnap);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -173,35 +175,36 @@ using namespace std;
 	// Draw the credits
 	// TODO: Load in a text file
 	string credits = "SOORRY\n\n\
-					 					 By Razor Balloon\n\n\
-										 					 Part of Heavy Square Studios\n\n\
-															 					 Associate Producers\n\
-																				 					 Sean Hathaway\n\
-																									 					 Robert Martinez\n\n\
-																														 					 Executive Producer\n\
-																																			 					 John O' Leske\n\n\
-																																								 					 World Software Engineer\n\
-																																													 					 Justin Patterson\n\n\
-																																																		 					 AI Programmer\n\
-																																																							 					 Justin Patterson\n\n\
-																																																												 					 Particle Software Engineer\n\
-																																																																	 					 Matthew Salow\n\n\
-																																																																						 					 Animation Software Engineer\n\
-																																																																											 					 James Sylvester\n\n\
-																																																																																 					 Game Core\n\
-																																																																																					 					 Justin Mazzola\n\n\
-																																																																																										 					 UI Programmer\n\
-																																																																																															 					 Justin Mazzola\n\n\
-																																																																																																				 					 Mercenary Programmer\n\
-																																																																																																									 					 Ryan Simmons\n\n\
-																																																																																																														 					 Canadian Linguist\n\
-																																																																																																																			 					 Jordan Scelsa\n\n\
-																																																																																																																								 					 Artists\n\
-																																																																																																																													 					 Gregory Bey\n\
-																																																																																																																																		 					 Caris Frazier\n\
-																																																																																																																																							 					 Justin Mazzola\n\n\
-																																																																																																																																												 					 Special Thanks\n\
-																																																																																																																																																	 					 Jordan Butler for ideas.";
+					  By Razor Balloon\n\n\
+					  Part of Heavy Square Studios\n\n\
+					  Associate Producers\n\
+					  Sean Hathaway\n\
+					  Robert Martinez\n\n\
+					  Executive Producer\n\
+					  John O' Leske\n\n\
+				      World Software Engineer\n\
+					  Justin Patterson\n\n\
+					  AI Programmer\n\
+					  Justin Patterson\n\n\
+					  Particle Software Engineer\n\
+					  Matthew Salow\n\n\
+					  Animation Software Engineer\n\
+					  James Sylvester\n\
+					  Ryan Simmons\n\n\
+					  Game Core\n\
+					  Justin Mazzola\n\n\
+					  UI Programmer\n\
+					  Justin Mazzola\n\n\
+					  Mercenary Programmer\n\
+					  Ryan Simmons\n\n\
+					  Canadian Linguist\n\
+					  Jordan Scelsa\n\n\
+					  Artists\n\
+					  Gregory Bey\n\
+					  Caris Frazier\n\
+					  Justin Mazzola\n\n\
+					  Special Thanks\n\
+					  Jordan Butler for ideas.";
 
 	// If we're transitioning
 	if (IsTransitioning())
