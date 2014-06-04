@@ -127,7 +127,8 @@ Player::Player() : Listener(this)
 	m_hBlockPlace = pAudio->LoadAudio("resource/audio/block_place.wav");
 	m_hBlockBreak = pAudio->LoadAudio("resource/audio/Block_Break.wav");
 	m_hPickup = pAudio->LoadAudio("resource/audio/block_pickup.wav");
-
+	m_hWalking = pAudio->LoadAudio("resource/audio/walking2.wav");
+	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
 
 }
 
@@ -146,7 +147,8 @@ Player::~Player()
 	pAudio->UnloadAudio(m_hBlockPlace);
 	pAudio->UnloadAudio(m_hBlockBreak);
 	pAudio->UnloadAudio(m_hPickup);
-
+	pAudio->UnloadAudio(m_hWalking);
+	pAudio->UnloadAudio(m_hGunClick);
 }
 
 
@@ -159,6 +161,7 @@ Player::~Player()
 void Player::Update(float dt)
 {
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	Game* pGame = Game::GetInstance();
 	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update  all Timers
@@ -189,7 +192,10 @@ void Player::Update(float dt)
 
 		if (pWorld->CheckCollision(this) == true || m_ptPosition.x < 0)
 			m_ptPosition.x = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking);
+		}
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::D) == true)
@@ -199,7 +205,10 @@ void Player::Update(float dt)
 
 		if (pWorld->CheckCollision(this) == true || m_ptPosition.x >= pWorld->GetWorldWidth() * pWorld->GetTileWidth() - pWorld->GetTileWidth())
 			m_ptPosition.x = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking);
+		}
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::W) == true)
@@ -209,7 +218,10 @@ void Player::Update(float dt)
 
 		if (pWorld->CheckCollision(this) == true || m_ptPosition.y < 0)
 			m_ptPosition.y = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking,true);
+		}
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::S) == true)
@@ -219,7 +231,10 @@ void Player::Update(float dt)
 
 		if (pWorld->CheckCollision(this) == true || m_ptPosition.y >= pWorld->GetWorldHeight() * pWorld->GetTileHeight() - pWorld->GetTileHeight())
 			m_ptPosition.y = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking,true);
+		}
 		AnimationManager::GetInstance()->Update(m_antsAnimation, dt);
 	}
 	if (pInput->IsKeyDown(SGD::Key::E) == true &&
@@ -230,6 +245,10 @@ void Player::Update(float dt)
 		--newset;
 		m_pInventory->SetHealthPacks(newset);
 	}
+	if (pInput->IsKeyDown(SGD::Key::W) == false && pInput->IsKeyDown(SGD::Key::A) == false && pInput->IsKeyDown(SGD::Key::S) == false && pInput->IsKeyDown(SGD::Key::D) == false)
+	{
+		pAudio->StopAudio(m_hWalking);
+	}
 	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
@@ -238,26 +257,31 @@ void Player::Update(float dt)
 
 	}
 	//GAH Weapons! - Arnold
+	//Assault rifle
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 0;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
+	//Shotgun
 	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 1;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
+	//rocket launcher
 	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 2;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
+	//Fire axe
 	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[m_nCurrWeapon].GetFireRate();
 	}
+	//when shot!
 	if (m_fShotTimer < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0)
 	{
 		if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pZombieWave->IsBuildMode() == false)
@@ -272,6 +296,14 @@ void Player::Update(float dt)
 
 		}
 	}
+	else if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
+	{
+		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hGunClick) == false)
+		{
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hGunClick);
+		}
+	}
+	
 	// Selecting Walls
 	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = 0;
@@ -407,7 +439,10 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetBearTraps();
 					--newset;
 					m_pInventory->SetBearTraps(newset);
-					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 				}
 			}
 
@@ -425,7 +460,10 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetMines();
 					--newset;
 					m_pInventory->SetMines(newset);
-					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 
 				}
 			}
@@ -440,7 +478,10 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetWalls();
 					--newset;
 					m_pInventory->SetWalls(newset);
-					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 
 				}
 			}
@@ -455,7 +496,10 @@ void Player::Update(float dt)
 					unsigned int newset = m_pInventory->GetWindows();
 					--newset;
 					m_pInventory->SetWindows(newset);
-					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 
 				}
 			}

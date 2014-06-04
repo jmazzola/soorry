@@ -380,32 +380,18 @@ Entity*	GameplayState::CreatePlayer() const
 		if (m_pShop->IsOpen() == false)
 			m_bIsPaused = !m_bIsPaused;
 	}
-
+	// enter shop
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
 		pAudio->StopAudio(m_hBackgroundMus);
-		pAudio->PlayAudio(m_hShopMusic, true);
+		// to stop audio from playing after every backspace
+		if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
+		{
+			pAudio->PlayAudio(m_hShopMusic, true);
+		}
 		m_pShop->SetShopStatus(true);
 	}
 
-	/*if (pInput->IsKeyPressed(SGD::Key::Z))
-	{
-	CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}
-	if (pInput->IsKeyPressed(SGD::Key::X))
-	{
-	CreateSlowZombieMessage* msg = new CreateSlowZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}
-	if (pInput->IsKeyPressed(SGD::Key::C))
-	{
-	CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
-	msg->QueueMessage();
-	msg = nullptr;
-	}*/
 #pragma region Pause Menu Navigation Clutter
 	// Handle pause menu input
 	// If we're paused
@@ -585,7 +571,6 @@ Entity*	GameplayState::CreatePlayer() const
 #pragma endregion
 
 
-
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
@@ -600,6 +585,7 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
+	// when shop closes play game background music
 	if (m_pShop->IsOpen() == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == false)
 	{
 		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);

@@ -92,7 +92,8 @@ protected:
 	SGD::HAudio m_hBlockPlace;
 	SGD::HAudio m_hBlockBreak;
 	SGD::HAudio m_hPickup;
-
+	SGD::HAudio m_hWalking;
+	SGD::HAudio m_hGunClick;
 
 private:
 
