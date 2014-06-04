@@ -201,7 +201,8 @@ void AIComponent::Update(float dt)
 
 	// Calculate velocity for enemies rotation
 	SGD::Vector velocity = newPosition - oldPosition;
-	m_pAgent->SetVelocity(velocity);
+	if (velocity != SGD::Vector(0, 0))
+		m_pAgent->SetVelocity(velocity);
 
 	// Move
 	m_pAgent->SetPosition(newPosition);
