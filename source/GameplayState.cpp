@@ -1043,7 +1043,7 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 
 Entity* GameplayState::CreatePlaceable(int trap)
 {
-	if (trap == 0)
+	if (trap == 2)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);

@@ -94,8 +94,6 @@ using namespace std;
 	//Load music 
 	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
 
-	//Play Audio
-	pAudio->PlayAudio(m_hMenuMusic, true);
 	// Set the cursor's index to the first option
 	m_nCursor = 0;
 
@@ -109,6 +107,12 @@ using namespace std;
 
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
+
+	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+
+	//Play Audio
+	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	pAudio->PlayAudio(m_hMenuMusic, true);
 }
 
 
