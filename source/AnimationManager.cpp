@@ -203,7 +203,7 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 	}
 }
 
-void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
+void AnimationManager::Render(AnimationTimestamp& ants, float x, float y, float rotation, SGD::Vector center)
 {
 	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
 	//g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
@@ -219,7 +219,7 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 
 	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
-	r);
+	r, rotation, center);
 
 	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
 	{
