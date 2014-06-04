@@ -2,7 +2,7 @@
 |	File:		OptionsState.cpp
 |	Author:		Justin Mazzola
 |	Course:		SGP
-|	Purpose:	This state will allow the player to adjust 
+|	Purpose:	This state will allow the player to adjust
 |				in-game variables such as game volume.
 ***************************************************************/
 
@@ -158,7 +158,6 @@ using namespace std;
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
-
 			case  MENU_TOGGLEFULLSCREEN:
 			{
 				// Toggle fullscreen
@@ -183,41 +182,41 @@ using namespace std;
 	{
 		switch (m_nCursor)
 		{
-			case MENU_MUSICVOL:
-			{
-				// Increase the music volume += 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
-			}
-				break;
+		case MENU_MUSICVOL:
+		{
+			// Increase the music volume += 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+		}
+			break;
 
-			case MENU_SFXVOL:
-			{
-				// Increase the sound effects volume += 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
-			}
-				break;
+		case MENU_SFXVOL:
+		{
+			// Increase the sound effects volume += 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+		}
+			break;
 		}
 	}
 	// --- Decreasing an option ---
 	// If the left key (PC) or left dpad (Xbox 360) are pressed
 	// Decrease the value
-	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0,SGD::DPad::Left))
+	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
 	{
 		switch (m_nCursor)
 		{
-			case MENU_MUSICVOL:
-			{
-				// Increase the music volume -= 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
-			}
-				break;
+		case MENU_MUSICVOL:
+		{
+			// Increase the music volume -= 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+		}
+			break;
 
-			case MENU_SFXVOL:
-			{
-				// Increase the sound effects volume -= 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
-			}
-				break;
+		case MENU_SFXVOL:
+		{
+			// Increase the sound effects volume -= 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+		}
+			break;
 		}
 	}
 

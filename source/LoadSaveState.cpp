@@ -103,11 +103,11 @@ using namespace std;
 		m_szSaveFiles[i - 1] += path;
 
 		// Go to our folder in appdata and set up the save name
-		m_szSaveFiles[i-1] += "\\RazorBalloon\\SoorrySaveGame_0";
+		m_szSaveFiles[i - 1] += "\\RazorBalloon\\SoorrySaveGame_0";
 		// Set 1 - 3
-		m_szSaveFiles[i-1] += std::to_string(i);
+		m_szSaveFiles[i - 1] += std::to_string(i);
 		// Set it as .xml since we read it in that way
-		m_szSaveFiles[i-1] += ".xml";
+		m_szSaveFiles[i - 1] += ".xml";
 	}
 
 	// Check if we have the files
@@ -183,48 +183,40 @@ using namespace std;
 			// TODO: Make Slots 1-3 open and load the game with their loaded data
 			// (thats why they're cascading)
 			// until then, they're placeholders.
-			case MENU_SLOT1:
-			{
-				// Set the gameplay to slot 1
-				GameplayState::GetInstance()->SetCurrentGameSlot(1);
-				// Load the gameplay state
-				pGame->ChangeState(GameplayState::GetInstance());
-				// Exit immediately
-				return true;
-			}
+		case MENU_SLOT1:
+		{
+			// Set the gameplay to slot 1
+			GameplayState::GetInstance()->SetCurrentGameSlot(1);
+			// Load the gameplay state
+			pGame->ChangeState(GameplayState::GetInstance());
+			// Exit immediately
+			return true;
+		}
 
-			case MENU_SLOT2:
-			{
-				// Set the gameplay to slot 2
-				GameplayState::GetInstance()->SetCurrentGameSlot(2);
-				pGame->ChangeState(GameplayState::GetInstance());
+		case MENU_SLOT2:
+		{
+			// Set the gameplay to slot 2
+			GameplayState::GetInstance()->SetCurrentGameSlot(2);
+			pGame->ChangeState(GameplayState::GetInstance());
 
-				return true;
-			}
+			return true;
+		}
 
-			case MENU_SLOT3:
-			{
-				// Set the gameplay to slot 3
-				GameplayState::GetInstance()->SetCurrentGameSlot(3);
-				pGame->ChangeState(GameplayState::GetInstance());
+		case MENU_SLOT3:
+		{
+			// Set the gameplay to slot 3
+			GameplayState::GetInstance()->SetCurrentGameSlot(3);
+			pGame->ChangeState(GameplayState::GetInstance());
 
-				return true;
-			}
+			return true;
+		}
 
-			case MENU_GOBACK:
-			{
-				// Go Back to Main Menu
-				pGame->Transition(MainMenuState::GetInstance());
-				// Exit immediately
-				return true;
-			}
-				break;
 
 		}
 	}
 
 	// If we press Backspace
-	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0,(unsigned int)SGD::Button::X))
+	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X))
 	{
 		// Delete the file
 		remove(m_szSaveFiles[m_nCursor].c_str());
@@ -266,16 +258,15 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+
+	// TODO: Add Strings to STRING TABLE for easy localization
+	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
 	// If we're transitioning
-	if(IsTransitioning())
+	if (IsTransitioning())
 	{
 		// Draw the main menu snapshot
 		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
 	}
-
-	// TODO: Add Strings to STRING TABLE for easy localization
-	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-
 	// When the transition is done
 	else
 	{
