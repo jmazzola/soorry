@@ -65,21 +65,22 @@ using namespace std;
 	m_pEvents->Initialize();
 
 	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance();
-	m_pMessages->Initialize(&MessageProc);
+	//m_pMessages = SGD::MessageManager::GetInstance();
+	//m_pMessages->Initialize(&MessageProc);
 
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
+	// Setup BitmapFont
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+	m_pFont = pFont;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	m_hLogo = pGraphics->LoadTexture("resource/images/intro/razorballoon.png");
+	m_hStudioLogo = pGraphics->LoadTexture("resource/images/intro/studiologo.png");
 
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+
 
 	// Set background color
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -94,22 +95,15 @@ using namespace std;
 {
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-
+	pGraphics->UnloadTexture(m_hLogo);
+	pGraphics->UnloadTexture(m_hStudioLogo);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	m_pMessages->Terminate();
+	/*m_pMessages->Terminate();
 	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();
-
+	SGD::MessageManager::DeleteInstance();*/
 
 	// Terminate & deallocate the SGD wrappers
 	m_pEvents->Terminate();
@@ -130,8 +124,8 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 
-	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	// Press Space to skip to the Main Menu at any time
+	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}
@@ -146,15 +140,12 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void IntroState::Update(float elapsedTime)
 {
-
-
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
+	// Update the counter
+	m_fTimeRemaining += elapsedTime;
 
 	// Process the events & messages
 	m_pEvents->Update();
-	m_pMessages->Update();
+	//m_pMessages->Update();
 
 
 	// Check collisions
@@ -168,40 +159,73 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-	pGraphics->DrawString("Intro State", { 200, 200 }, { 255, 0, 255 });
+	// Render the text to press Space to skip in bottom right corner WITH 90% SPACE!!!!!!!!11111111111
+	m_pFont->Draw("Press Space to Skip", 550, 500, 0.4f, { 255, 0, 0 });
 
+	// Run the animation
 
-	// Render the entities
-	m_pEntities->RenderAll();
-}
-
-
-/**************************************************************/
-// MessageProc
-//	- process messages queued in the MessageManager
-//	- STATIC METHOD
-//		- does NOT have invoking object!!!
-//		- must use singleton to access members
-/*static*/ void IntroState::MessageProc(const SGD::Message* pMsg)
-{
-	/* Show warning when a Message ID enumerator is not handled */
-#pragma warning( push )
-#pragma warning( 1 : 4061 )
-
-	// What type of message?
-	switch (pMsg->GetMessageID())
+	// -- Show Developer Logo --
+	// If it's been between 0 and 1.5 seconds
+	if (m_fTimeRemaining <= 1.5f)
 	{
-	case MessageID::MSG_UNKNOWN:
-	default:
-		OutputDebugStringW(L"Game::MessageProc - unknown message id\n");
-		break;
+		// If we are already at full alpha
+		if (m_fTimeRemaining >= 0.95f)
+		{
+			// Show "Developed by"
+			m_pFont->Draw("Developed by", 320, 80, 0.6f, { 255, 0, 0 });
+			// Show the logo
+			pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, { 255, 255, 255 }, { 0.6f, 0.6f });
+		}
+		else
+		{
+			// Fade in text
+			m_pFont->Draw("Developed by", 320, 80, 0.6f, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 0, 0));
+			// Fade in the logo
+			pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
+		}
 	}
+	// If it's between 1.5 seconds and 2 seconds
+	else if (m_fTimeRemaining >= 1.5f && m_fTimeRemaining < 2.0f)
+	{
+		// Fade out text
+		m_pFont->Draw("Developed by", 320, 80, 0.6f, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 0, 0));
+		// Fade out the logo
+		pGraphics->DrawTexture(m_hLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
+	}
+	
 
-
-	/* Restore previous warning levels */
-#pragma warning( pop )
-
+	// -- Show Studio Logo --
+	// If it's between 2.1 seconds and 3 seconds
+	else if (m_fTimeRemaining >= 2.1f && m_fTimeRemaining < 3.0f)
+	{
+		// If we are already at full alpha
+		if (m_fTimeRemaining >= 2.99f)
+		{
+			// Show "Produced by"
+			m_pFont->Draw("Produced by", 320, 80, 0.6f, { 255, 0, 0 });
+			// Show the studio logo
+			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, { 255, 255, 255 }, { 0.6f, 0.6f });
+		}
+		else
+		{
+			// Fade in text
+			m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 0, 0));
+			// Fade in the studio logo
+			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
+		}
+	}
+	else if (m_fTimeRemaining >= 3.0f && m_fTimeRemaining <= 4.0f)
+	{
+		// Fade out text
+		m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 0, 0));
+		// Fade out the logo
+		pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
+	}
+	else if (m_fTimeRemaining >= 4.5f)
+	{
+		// Go to the main menu
+		Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+	}
 }
 
 

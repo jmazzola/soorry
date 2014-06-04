@@ -262,7 +262,7 @@ namespace SGD
 
 			// Send the message to the callback function to process
 			// (does not deallocate the message)
-			(*m_pCallback)( m_qMessages.front() );
+			(*m_pCallback)( pMsg );
 
 
 			return true;

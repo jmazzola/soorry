@@ -3,6 +3,10 @@
 #include <string>
 using namespace std;
 
+#define EMPTY 0
+#define WINDOW 1
+#define WALL 2
+
 class Tile
 {
 public:
@@ -17,8 +21,8 @@ public:
 	int GetTileID() const;
 	int GetColliderID() const;
 	bool IsCollidable() const;
-	string GetTriggerInit() const;
-	string GetTriggerCollision() const;
+	const string& GetTriggerInit() const;
+	const string& GetTriggerCollision() const;
 
 	/**********************************************************/
 	// Mutators
@@ -27,8 +31,8 @@ public:
 	void SetTileID(int tileID);
 	void SetColliderID(int colliderID);
 	void SetCollidable(bool isCollidable);
-	void SetTriggerInit(string triggerInit);
-	void SetTriggerCollision(string triggerCollision);
+	void SetTriggerInit(const string& triggerInit);
+	void SetTriggerCollision(const string& triggerCollision);
 
 protected:
 

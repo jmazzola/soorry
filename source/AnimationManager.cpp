@@ -32,7 +32,8 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 
 	Sprite* newSprite = new Sprite();
 	TiXmlElement* root = animationDoc.RootElement();
-	
+	int numSprites;
+	root->Attribute("Sprites", &numSprites);
 	// Check to see if there is actually anything to read in the XML
 	if (root == nullptr)
 		return false;
@@ -44,111 +45,123 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 	}
 
 	std::string ID;
-	TiXmlElement* spriteImg = root->FirstChildElement("sprite");
-	while (spriteImg != nullptr)
+	for (int i = 0; i < numSprites; i++)
 	{
-		if (spriteImg != nullptr)
+		TiXmlElement* spriteImg = root->FirstChildElement("sprite");
+		while (spriteImg != nullptr)
 		{
-			std::string file = "resource/animation/";
-			file += spriteImg->GetText();
+			if (spriteImg != nullptr)
+			{
+				std::string file = "resource/animation/";
+				file += spriteImg->GetText();
 
-			if (file.c_str() != nullptr)
-				newSprite->SetImage(file.c_str());
+				if (file.c_str() != nullptr)
+					newSprite->SetImage(file.c_str());
+			}
+			spriteImg = spriteImg->NextSiblingElement("spriteID");
+			if (spriteImg != nullptr)
+			{
+				std::string id = spriteImg->GetText();
+				if (id.c_str() != nullptr)
+				{
+					newSprite->SetSpriteID(id);
+					ID = id;
+				}
+			}
+			spriteImg = spriteImg->NextSiblingElement("isLooping");
+			if (spriteImg != nullptr)
+			{
+				int boolNum;
+				spriteImg->Attribute("isIt", &boolNum);
+				if (boolNum == 0)
+					newSprite->SetLooping(false);
+				else
+					newSprite->SetLooping(true);
+
+			}
+			spriteImg = spriteImg->NextSiblingElement("Frames");
+			int numFrames;
+			if (spriteImg != nullptr)
+			{
+				spriteImg->Attribute("numbers", &numFrames);
+			}
+			TiXmlElement* frames = spriteImg->NextSiblingElement("frame");
+			for (int i = 0; i < numFrames; i++)
+			{
+				if (frames != nullptr)
+				{
+					TiXmlElement* info = frames->FirstChildElement("anchorPoint");
+					Frame* newFrame = new Frame();
+					if (info != nullptr)
+					{
+						SGD::Point pointTemp;
+						double x, y;
+						info->Attribute("X", &x);
+						pointTemp.x = (float)x;
+						info->Attribute("Y", &y);
+						pointTemp.y = (float)y;
+						newFrame->SetAnchorPoint(pointTemp);
+					}
+					info = info->NextSiblingElement("collisionRect");
+
+					if (info != nullptr)
+					{
+						SGD::Rectangle collTemp;
+						double l, t, r, b;
+						info->Attribute("left", &l);
+						collTemp.left = (float)l;
+						info->Attribute("right", &r);
+						collTemp.right = (float)r;
+						info->Attribute("top", &t);
+						collTemp.top = (float)t;
+						info->Attribute("bottom", &b);
+						collTemp.bottom = (float)b;
+
+						newFrame->SetCollisionRect(collTemp);
+					}
+
+					info = info->NextSiblingElement("drawRect");
+					if (info != nullptr)
+					{
+						SGD::Rectangle drawTemp;
+						double l, t, r, b;
+						info->Attribute("left", &l);
+						drawTemp.left = (float)l;
+						info->Attribute("right", &r);
+						drawTemp.right = (float)r;
+						info->Attribute("top", &t);
+						drawTemp.top = (float)t;
+						info->Attribute("bottom", &b);
+						drawTemp.bottom = (float)b;
+
+						newFrame->SetFrameRect(drawTemp);
+					}
+
+					info = info->NextSiblingElement("duration");
+					if (info != nullptr)
+					{
+						double durtemp;
+						info->Attribute("time", &durtemp);
+						newFrame->SetDuration((float)durtemp);
+
+					}
+
+					info = info->NextSiblingElement("triggerID");
+					if (info != nullptr)
+					{
+						std::string trigid = info->GetText();
+						if (trigid.c_str() != nullptr)
+							newFrame->SetTriggerID(trigid);
+					}
+					newSprite->AddFrame(newFrame);
+					//frames->
+					frames = frames->NextSiblingElement("frame");
+				}
+			}
+			m_mSprites[newSprite->GetSpriteID()] = newSprite;
+			m_vSpriteNames.push_back(newSprite->GetSpriteID());
+			spriteImg = spriteImg->NextSiblingElement("sprite");
 		}
-		spriteImg = spriteImg->NextSiblingElement("spriteID");
-		if (spriteImg != nullptr)
-		{
-			std::string id = spriteImg->GetText();
-			if (id.c_str() != nullptr)
-			{
-				newSprite->SetSpriteID(id);
-				ID = id;
-			}
-		}
-		spriteImg = spriteImg->NextSiblingElement("isLooping");
-		if (spriteImg != nullptr)
-		{
-			int boolNum;
-			spriteImg->Attribute("isIt", &boolNum);
-			if (boolNum == 0)
-				newSprite->SetLooping(false);
-			else
-				newSprite->SetLooping(true);
-
-		}
-		TiXmlElement* frames = spriteImg->NextSiblingElement("frame");
-		while (frames != nullptr)
-		{
-			TiXmlElement* info = frames->FirstChildElement("collisionRect");
-			Frame* newFrame = new Frame();
-			if (info != nullptr)
-			{
-				SGD::Rectangle collTemp;
-				double l, t, r, b;
-				info->Attribute("left", &l);
-				collTemp.left = (float)l;
-				info->Attribute("right", &r);
-				collTemp.right = (float)r;
-				info->Attribute("top", &t);
-				collTemp.top = (float)t;
-				info->Attribute("bottom", &b);
-				collTemp.bottom = (float)b;
-
-				newFrame->SetCollisionRect(collTemp);
-			}
-
-			info = info->NextSiblingElement("drawRect");
-			if (info != nullptr)
-			{
-				SGD::Rectangle drawTemp;
-				double l, t, r, b;
-				info->Attribute("left", &l);
-				drawTemp.left = (float)l;
-				info->Attribute("right", &r);
-				drawTemp.right = (float)r;
-				info->Attribute("top", &t);
-				drawTemp.top = (float)t;
-				info->Attribute("bottom", &b);
-				drawTemp.bottom = (float)b;
-
-				newFrame->SetFrameRect(drawTemp);
-			}
-
-			info = info->NextSiblingElement("duration");
-			if (info != nullptr)
-			{
-				double durtemp;
-				info->Attribute("time", &durtemp);
-				newFrame->SetDuration((float)durtemp);
-
-			}
-
-			info = info->NextSiblingElement("anchorPoint");
-			if (info != nullptr)
-			{
-				SGD::Point pointTemp;
-				double x, y;
-				info->Attribute("X", &x);
-				pointTemp.x = (float)x;
-				info->Attribute("Y", &y);
-				pointTemp.y = (float)y;
-				newFrame->SetAnchorPoint(pointTemp);
-			}
-
-			info = info->NextSiblingElement("triggerID");
-			if (info != nullptr)
-			{
-				std::string trigid = info->GetText();
-				if (trigid.c_str() != nullptr)
-					newFrame->SetTriggerID(trigid);
-			}
-			newSprite->AddFrame(newFrame);
-			frames = frames->NextSiblingElement("frame");
-		}
-		m_mSprites[newSprite->GetSpriteID()] = newSprite;
-		m_vSpriteNames.push_back(newSprite->GetSpriteID());
-		//m_vSprites.push_back(newSprite);
-		spriteImg = spriteImg->NextSiblingElement("sprite");
 	}
 	if (m_mSprites.size() > 0)
 		return ID;
@@ -158,7 +171,7 @@ std::string AnimationManager::LoadSprites(std::string fileName)
 
 void AnimationManager::UnloadSprites()
 {
-	for (unsigned int i = 0; i < m_mSprites.size(); i++)
+	for (unsigned int i = 0; i < m_vSpriteNames.size(); i++)
 	{
 		delete m_mSprites[m_vSpriteNames[i]];
 	}
@@ -190,10 +203,10 @@ void AnimationManager::Update(AnimationTimestamp& ants, float dt)
 	}
 }
 
-void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
+void AnimationManager::Render(AnimationTimestamp& ants, float x, float y, float rotation, SGD::Vector center)
 {
 	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
-	g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
+	//g->DrawLine({ (float)x, (float)y }, { (float)x + 2, (float)y + 2 });
 
 	x -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().x;
 	y -= m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetAnchorPoint().y;
@@ -206,7 +219,7 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y)
 
 	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
-	r);
+	r, rotation, center);
 
 	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
 	{
@@ -224,6 +237,14 @@ Sprite* AnimationManager::GetSprite(std::string nameID)
 
 void AnimationManager::LoadAll()
 {
-	LoadSprites("resource/animation/piggy3.xml");
+	LoadSprites("resource/animation/player.xml");
 	LoadSprites("resource/animation/beaver.xml");
+	LoadSprites("resource/animation/fastZombie.xml");
+	LoadSprites("resource/animation/slowZombie.xml");
+	LoadSprites("resource/animation/rocket.xml");
+	LoadSprites("resource/animation/Crab.xml");
+	LoadSprites("resource/animation/Wall.xml");
+	LoadSprites("resource/animation/Window.xml");
+	LoadSprites("resource/animation/bullet.xml");
+	LoadSprites("resource/animation/mine.xml");
 }

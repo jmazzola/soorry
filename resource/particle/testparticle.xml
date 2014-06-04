@@ -1,13 +1,13 @@
 <ParticleManager>
   <emitter>
     <isLooping bool = "1"/>
-    <position x = "20" y = "100"/>
-    <size width= "100" height = "100"/>
+    <position x = "0" y = "0"/>
+    <size width= "200" height = "200"/>
     <particles max = "250"/>
-    <shape number = "1"/>
+    <shape number = "2"/>
   </emitter>
   <flyweight>
-    <velocity startx = "0" starty = "0" endx = "0" endy = "0" spread ="0"/>
+    <velocity startx = "300" starty = "300" endx = "300" endy = "300" spread ="0"/>
     <rotate start = "0" end = "5"/>
     <direction x = "5" y = "5" />
     <color 	startA = "255" startR = "255" startG = "255" startB = "255" endA  = "255" endR = "0" endG = "0" endB = "0"/>

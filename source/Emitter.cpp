@@ -1,8 +1,12 @@
 #include "Emitter.h"
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Particle.h"
 #include <ctime>
 #include <math.h>
+#include "Entity.h"
+#include "Camera.h"
+
 Emitter::Emitter()
 {
 }
@@ -21,7 +25,98 @@ Emitter::~Emitter()
 	}
 	if (deadParticles.size() != 0)
 		deadParticles.clear();
-	delete particleFlyweight;
+	if (particleFlyweight != nullptr)
+	{
+		delete particleFlyweight;
+		particleFlyweight = nullptr;
+	}
+}
+
+Emitter::Emitter(const Emitter& _cpy)
+{
+	for (unsigned int i = aliveParticles.size(); i > 0; i--)
+	{
+		delete aliveParticles[i - 1];
+	}
+	if (aliveParticles.size() != 0)
+		aliveParticles.clear();
+	for (unsigned int i = 0; i < _cpy.aliveParticles.size(); i++)
+	{
+		aliveParticles.push_back(new Particle);
+	}
+	for (unsigned int i = deadParticles.size(); i > 0; i--)
+	{
+		delete deadParticles[i - 1];
+	}
+	if (deadParticles.size() != 0)
+		deadParticles.clear();
+	for (unsigned int i = 0; i < _cpy.deadParticles.size(); i++)
+	{
+		deadParticles.push_back(new Particle);
+	}
+	if (particleFlyweight != nullptr)
+	{
+		delete particleFlyweight;
+		particleFlyweight = nullptr;
+	}
+	particleFlyweight = new ParticleFlyweight;
+	followEnitiy = _cpy.followEnitiy;
+	particleFlyweight = _cpy.particleFlyweight;
+	isLooping = _cpy.isLooping;
+	position = _cpy.position;
+	offset = _cpy.offset;
+	size = _cpy.size;
+	maxParticles = _cpy.maxParticles;
+	spawnRate = _cpy.spawnRate;
+	shape = _cpy.shape;
+	emitterID = _cpy.emitterID;
+	square = _cpy.square;
+}
+
+Emitter& Emitter::operator=(const Emitter& _assign)
+{
+	//check for self assignment
+	if (this != &_assign)
+	{
+		for (unsigned int i = aliveParticles.size(); i > 0; i--)
+		{
+			delete aliveParticles[i - 1];
+		}
+		if (aliveParticles.size() != 0)
+			aliveParticles.clear();
+		for (unsigned int i = 0; i < _assign.aliveParticles.size(); i++)
+		{
+			aliveParticles.push_back(new Particle);
+		}
+		for (unsigned int i = deadParticles.size(); i > 0; i--)
+		{
+			delete deadParticles[i - 1];
+		}
+		if (deadParticles.size() != 0)
+			deadParticles.clear();
+		for (unsigned int i = 0; i < _assign.deadParticles.size(); i++)
+		{
+			deadParticles.push_back(new Particle);
+		}
+		if (particleFlyweight != nullptr)
+		{
+			delete particleFlyweight;
+			particleFlyweight = nullptr;
+		}
+		particleFlyweight = new ParticleFlyweight;
+		followEnitiy = _assign.followEnitiy;
+		particleFlyweight = _assign.particleFlyweight;
+		isLooping = _assign.isLooping;
+		position = _assign.position;
+		offset = _assign.offset;
+		size = _assign.size;
+		maxParticles = _assign.maxParticles;
+		spawnRate = _assign.spawnRate;
+		shape = _assign.shape;
+		emitterID = _assign.emitterID;
+		square = _assign.square;
+	}
+	return *this;
 }
 
 void Emitter::load()
@@ -29,6 +124,12 @@ void Emitter::load()
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
+		if (followEnitiy != nullptr)
+		{
+			position = followEnitiy->GetPosition();
+			position.x -= Camera::x;
+			position.y -= Camera::y;
+		}
 
 		for (int i = 0; i < maxParticles; i++)
 		{
@@ -41,10 +142,10 @@ void Emitter::load()
 			//Create rates to update particles
 			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = 0;
-			tempParticle->colorRateA = (((float)particleFlyweight->startColor.alpha - (float)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (((float)particleFlyweight->startColor.red - (float)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
-			tempParticle->colorRateG = (((float)particleFlyweight->startColor.green - (float)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (((float)particleFlyweight->startColor.blue - (float)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->colorRateA = (int)(((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
+			tempParticle->colorRateR = (int)(((int)particleFlyweight->startColor.red - (int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
+			tempParticle->colorRateG = (int)(((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
+			tempParticle->colorRateB = (int)(((int)particleFlyweight->startColor.blue - (int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
 			tempParticle->scale = particleFlyweight->startScale;
 			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
 			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
@@ -76,21 +177,17 @@ void Emitter::load()
 			{
 				//MAFF very powerful
 				//NOTE:width == radius height is not used
-				float radius = rand() % (int)size.width / 2;
+				float radius = (float)(rand() % (int)size.width / 2);
 				float x = size.width / 2;
 				float y = size.width / 2;
 				//Point for the center of the emitter
 				SGD::Point center = SGD::Point(x, y);
 				//randomize the angle for the circle
-				float randAngle = rand() % 360;
+				float randAngle = (float)(rand() % 360);
 				randAngle = (randAngle / 180)*SGD::PI;
 				//put in the angle
-				tempParticle->position.x = center.x + (radius*cosf(randAngle));
-				tempParticle->position.y = center.y + (radius*sinf(randAngle));
-
-
-				//tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
-				//tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
+				tempParticle->position.x = center.x + (radius*cosf(randAngle) + position.x);
+				tempParticle->position.y = center.y + (radius*sinf(randAngle) + position.y);
 			}
 				break;
 			case 2://line
@@ -99,14 +196,13 @@ void Emitter::load()
 				SGD::Point start = position;
 				SGD::Point end = { size.width, size.height };
 				float slope = (start.y - end.y) / (start.x - end.x);
-				float x,y;
+				float x, y;
 				if (start.x != 0)
 					x = rand() % (int)start.x + end.x;
 				if (end.x != 0)
 					x = rand() % (int)end.x + start.x;
-				y = end.y+(slope*(x - end.x));
+				y = end.y + (slope*(x - end.x));
 				tempParticle->position = { x, y };
-
 			}
 				break;
 			case 3://point
@@ -127,6 +223,12 @@ void Emitter::load()
 
 void Emitter::Update(float dt)
 {
+	if (followEnitiy != nullptr)
+	{
+		position = followEnitiy->GetPosition();
+		position.x -= Camera::x;
+		position.y -= Camera::y;
+	}
 	if (isLooping)
 	{
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)
@@ -161,11 +263,11 @@ void Emitter::Update(float dt)
 				case 1://circle
 				{
 					//NOTE:width == radius height is not used
-					float radius = rand() % (int)size.width / 2;
+					float radius = (float)(rand() % (int)size.width / 2);
 					//Point for the center of the emitter
 					SGD::Point center = SGD::Point(position.x + size.width / 2, position.y + size.width / 2);
 					//randomize the angle for the circle
-					float randAngle = rand() % 360;
+					float randAngle = (float)(rand() % 360);
 					//convert to radians
 					randAngle = (randAngle / 180)*SGD::PI;
 					//put in the angle
@@ -184,7 +286,7 @@ void Emitter::Update(float dt)
 						x = rand() % (int)start.x + end.x;
 					if (end.x != 0)
 						x = rand() % (int)end.x + start.x;
-					y = end.y+(slope*(x - end.x));
+					y = end.y + (slope*(x - end.x));
 					tempParticle->position = { x, y };
 				}
 					break;
@@ -208,11 +310,15 @@ void Emitter::Update(float dt)
 		for (float i = 0; i < spawnRate*dt; i++)
 		{
 			if (deadParticles.size() == 0)
+			{
 				break;
+			}
 			aliveParticles.push_back(deadParticles.front());
 			deadParticles.erase(deadParticles.begin());
 		}
+
 	}
+
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
 		//check if the particle is dead
@@ -226,7 +332,7 @@ void Emitter::Update(float dt)
 		}
 		else if (!update &&!isLooping)
 		{
-			delete aliveParticles[i];
+			deadParticles.push_back(aliveParticles[i]);
 			aliveParticles.erase(aliveParticles.begin() + i);
 			i--;
 		}

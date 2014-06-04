@@ -10,13 +10,19 @@
 
 #include "Entity.h"
 #include "AnimationManager.h"
+#include "ZombieFactory.h"
+#include "AIComponent.h"
+
+#include "../SGD Wrappers/SGD_Geometry.h"
+#include "../SGD Wrappers/SGD_Listener.h"
+#include "EntityManager.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
 class Inventory;
-class Cursor;
+class Tower;
 
-class Player : public Entity
+class Player : public Entity, public SGD::Listener
 {
 public:
 
@@ -26,14 +32,16 @@ public:
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
+	virtual void Render () override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
-	virtual void Render();
-
+	bool Blockable(SGD::Point mouse);
+	virtual void HandleEvent(const SGD::Event* pEvent);
+	bool PlacementCheck(SGD::Point mouse);
 	/**********************************************************/
 	// Accessors
-	int GetMaxHealth() const;
-	int GetCurrHealth() const;
+	float GetMaxHealth() const;
+	float GetCurrHealth() const;
 	int GetCurrWeapon() const;
 	int GetCurrPowerup() const;
 	int GetCurrPlaceable() const;
@@ -43,13 +51,13 @@ public:
 	float GetScoreMultiplier() const;
 	float GetTimeAlive() const;
 	Inventory* GetInventory() const;
-	Cursor* GetCursor() const;
 	Weapon* GetWeapons() const;
+	EntityManager* GetEntityManager() const { return m_pEntityManager; }
 
 	/**********************************************************/
 	// Mutators
-	void SetMaxHealth(int maxHealth);
-	void SetCurrHealth(int currHealth);
+	void SetMaxHealth(float maxHealth);
+	void SetCurrHealth(float currHealth);
 	void SetCurrWeapon(int currWeapon);
 	void SetCurrPowerup(int currPowerup);
 	void SetCurrPlaceable(int currPlaceable);
@@ -59,16 +67,19 @@ public:
 	void SetScoreMultiplier(float multiplier);
 	void SetTimeAlive(float timeAlive);
 	void SetInventory(Inventory* inventory);
-	void SetCursor(Cursor* cursor);
 	void SetWeapons(Weapon* weapons);
+	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
+	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
+	void SetSelectedTower(Tower* tower);
 
 protected:
 
 	/**********************************************************/
 	// Members
 	float m_fShotTimer;
-	int m_nMaxHealth;
-	int m_nCurrHealth;
+	float m_fPlaceTimer;
+	float m_nMaxHealth;
+	float m_nCurrHealth;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
@@ -78,7 +89,14 @@ protected:
 	float m_fScoreMultiplier;
 	float m_fTimeAlive;
 	Inventory* m_pInventory;
-	Cursor* m_pCursor;
 	Weapon* m_pWeapons;
+	ZombieFactory* m_pZombieWave;
+	EntityManager* m_pEntityManager;
+	Tower* m_pSelectedTower;
+	
+private:
+
+	int** m_nNodeChart;
+	bool CheckLegalPlacement(Node end, Node block);
 };
 

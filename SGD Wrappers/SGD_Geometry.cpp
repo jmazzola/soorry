@@ -278,7 +278,7 @@ namespace SGD
 	// Overloaded constructor
 	Point::Point( float X, float Y )
 		: x( X ), y( Y )
-	{	
+	{
 	}
 
 	// Helpers

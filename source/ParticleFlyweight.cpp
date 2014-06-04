@@ -8,6 +8,10 @@ ParticleFlyweight::ParticleFlyweight()
 
 ParticleFlyweight::~ParticleFlyweight()
 {
-	SGD::GraphicsManager::GetInstance()->UnloadTexture(image);
+	if (image != SGD::INVALID_HANDLE)
+	{
+		SGD::GraphicsManager::GetInstance()->UnloadTexture(image);
+		image = SGD::INVALID_HANDLE;
+	}
 }
 

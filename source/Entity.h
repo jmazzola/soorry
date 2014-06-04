@@ -56,6 +56,12 @@ public:
 			ENT_TRAP_BEARTRAP,
 			ENT_TRAP_MINE,
 			ENT_GRENADE,
+			ENT_TOWER,
+				ENT_TOWER_MACHINE_GUN,
+				ENT_TOWER_MAPLE_SYRUP,
+				ENT_TOWER_HOCKEY_STICK,
+				ENT_TOWER_LASER,
+			ENT_MACHINE_GUN_BULLET,
 	};
 
 	
@@ -78,12 +84,17 @@ public:
 	Sprite* GetSprite() const;
 	SGD::Point GetPosition() const;
 	SGD::Vector GetVelocity() const;
-
+	float GetTimeOfFrame() const { return m_antsAnimation.m_fTimeOnFrame; }
+	int GeCurrFrame() const { return m_antsAnimation.m_nCurrFrame; }
+	std::string GetCurrAnimation() const{ return m_antsAnimation.m_nCurrAnimation; }
 	/**********************************************************/
 	// Mutators
 	void SetSprite(Sprite* sprite);
 	void SetPosition(SGD::Point position);
 	void SetVelocity(SGD::Vector velocity);
+	void SetTimeOfFrame(float time) { m_antsAnimation.m_fTimeOnFrame = time; }
+	void SetCurrFrame(int numframe) { m_antsAnimation.m_nCurrFrame = numframe; }
+	void SetCurrAnimation(std::string name) { m_antsAnimation.m_nCurrAnimation = name; }
 
 protected:
 

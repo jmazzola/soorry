@@ -2,11 +2,17 @@
 
 #include "WaveData.h"
 
+#include "../SGD Wrappers/SGD_Listener.h"
+
+#include "EntityManager.h"
+
 #include <string>
 #include <vector>
 using namespace std;
 
-class ZombieFactory
+class Player;
+
+class ZombieFactory : public SGD::Listener
 {
 public:
 
@@ -19,6 +25,7 @@ public:
 	void Start();
 	void Stop();
 	void Update(float dt);
+	virtual void HandleEvent(const SGD::Event* pEvent);
 
 	/**********************************************************/
 	// Accessors
@@ -32,6 +39,7 @@ public:
 	int GetBeaverZombiesToSpawn() const;
 	int GetSpawnWidth() const;
 	int GetSpawnHeight() const;
+	int GetTotalWaves() const;
 	float GetBuildTime() const;
 	float GetBuildTimeRemaining() const;
 	float GetSpawnInterval() const;
@@ -53,6 +61,8 @@ public:
 	void SetBuildTImeRemaining(float buildTimeRemaining);
 	void SetSpawnInterval(float spawnInterval);
 	void SetNextSpawnTime(float nextSpawnTime);
+	void SetEntityManager(EntityManager* entityManager);
+	void SetPlayer(Player* player);
 
 protected:
 
@@ -73,5 +83,7 @@ protected:
 	float m_fSpawnInterval;
 	float m_fNextSpawnTime;
 	vector<WaveData> waveData;
+	EntityManager* m_pEntityManager;
+	Player* m_pPlayer;
 };
 

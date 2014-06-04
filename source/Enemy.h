@@ -2,11 +2,11 @@
 
 #include "Entity.h"
 
-/**********************************************************/
-// Forward Declarations
-class AIComponent;
+#include "../SGD Wrappers/SGD_Listener.h"
 
-class Enemy : public Entity
+#include "AIComponent.h"
+
+class Enemy : public Entity, public SGD::Listener
 {
 public:
 
@@ -17,6 +17,8 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
+	virtual void Render() override;
+	virtual void HandleCollision(const IEntity* pOther);
 
 	/**********************************************************/
 	// Accessors
@@ -26,7 +28,6 @@ public:
 	float GetAttackRate() const;
 	float GetAttackRange() const;
 	float GetSpeed() const;
-	AIComponent* GetAIComponent() const;
 
 	/**********************************************************/
 	// Mutators
@@ -36,7 +37,7 @@ public:
 	void SetAttackRate(float attackRate);
 	void SetAttackRange(float attackRange);
 	void SetSpeed(float speed);
-	void SetAIComponent(AIComponent* aiComponent);
+	void SetPlayer(Entity* player);
 
 protected:
 
@@ -48,6 +49,8 @@ protected:
 	float m_fAttackRate;
 	float m_fAttackRange;
 	float m_fSpeed;
-	AIComponent* m_pAIComponent;
+	float m_fTrapTimer;
+	bool m_bIsTrapped;
+	AIComponent m_AIComponent;
 };
 

@@ -10,6 +10,8 @@
 class IEntity;			// uses IEntity*
 #include <vector>		// uses std::vector
 
+#include "../SGD Wrappers/SGD_Geometry.h"
+
 
 //***********************************************************************
 // EntityManager class
@@ -39,7 +41,8 @@ public:
 	void	RenderAll	( void );
 
 	void	CheckCollisions( unsigned int bucket1, unsigned int bucket2 );
-
+	IEntity* CheckCollision(SGD::Rectangle rect, int bucket = -1);
+	IEntity* CheckCollision(SGD::Point point, float radius, int bucket = -1);
 
 private:
 	//*******************************************************************

@@ -9,10 +9,10 @@
 #include "Entity.h"
 
 #include "Sprite.h"
+#include "Camera.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include <cassert>
-
 
 /**************************************************************/
 // Update
@@ -31,14 +31,44 @@
 	// Verify the image
 	//assert( m_hImage != SGD::INVALID_HANDLE && "Entity::Render - image was not set!" );
 	
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	
+	// Get the current frame
+	int frame = GetSprite()->GetCurrFrame();
 
-	//SGD::GraphicsManager::GetInstance()->DrawRectangle(GetRect(), SGD::Color(100, 0, 0, 0));
+	// Find the center of the image
+	SGD::Vector center;
+	center.x = GetSprite()->GetFrame(frame).GetFrameRect().right - GetSprite()->GetFrame(frame).GetFrameRect().left;
+	center.y = GetSprite()->GetFrame(frame).GetFrameRect().bottom - GetSprite()->GetFrame(frame).GetFrameRect().top;
+	center.x /= 2;
+	center.y /= 2;
+
+	// Calculate the rotation
+	SGD::Vector rotate = m_vtVelocity;
+	rotate.Normalize();
+	float rot = SGD::Vector(0.0f, -1.0f).ComputeSteering(rotate);
+
+	float rotation = 0;
+	if(rot > 0)
+		rotation = SGD::Vector(0.0f, -1.0f).ComputeAngle(rotate);
+	else
+		rotation = -SGD::Vector(0.0f, -1.0f).ComputeAngle(rotate);
+	
+	// Render
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y, rotation, center);
+
+	// Why is this here?
+	SGD::Rectangle drawRect = GetRect();
+	drawRect.left -= Camera::x;
+	drawRect.right -= Camera::x;
+	drawRect.top -= Camera::y;
+	drawRect.bottom -= Camera::y;
+	//SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;
 
 	// Draw the image
-
 }
 
 

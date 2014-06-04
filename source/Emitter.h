@@ -6,6 +6,7 @@
 #include <string>
 
 class Particle;
+class Entity;
 
 class Emitter
 {
@@ -15,13 +16,18 @@ class Emitter
 	float spawnTimer;
 public:
 	Emitter();
-	~Emitter();
+	//The trilogy... OF EVIL!
+	virtual ~Emitter();
+	Emitter(const Emitter& _cpy);
+	Emitter& operator=(const Emitter& _assign);
+	//End of trilogy
 	void Update(float dt);
 	void Render();
 	void load();
 	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
+	SGD::Point offset = { 0, 0};
 	SGD::Size size;
 	int maxParticles;
 	float spawnRate;
@@ -30,6 +36,6 @@ public:
 	std::vector<Particle*> deadParticles;
 	std::string emitterID;
 	SGD::Rectangle square;
-	
+	Entity* followEnitiy = nullptr;
 };
 

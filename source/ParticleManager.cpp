@@ -4,6 +4,9 @@
 #include "Particle.h"
 #include "ParticleFlyweight.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "Entity.h"
+#include <map>
+//TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
 }
@@ -45,7 +48,7 @@ void ParticleManager::load()
 	}
 }
 
-bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
+bool ParticleManager::loadEmitters(std::string fileName)
 {
 	TiXmlDocument doc(fileName.c_str());
 	if (doc.LoadFile())
@@ -68,11 +71,6 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		if (tempInt != 0) tempBool = true;
 		else tempBool = false;
 		tempEmitter->isLooping = tempBool;
-		//Read XML for Emitter Position
-		data = data->NextSiblingElement("position");
-		data->Attribute("x", &x);
-		data->Attribute("y", &y);
-		tempEmitter->position = SGD::Point((float)x, (float)y);
 		//Read XML for Emitter size
 		data = data->NextSiblingElement("size");
 		data->Attribute("width", &width);
@@ -109,11 +107,6 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		tempFlyweight->startRotation = (float)tempDouble;
 		data->Attribute("end", &tempDouble);
 		tempFlyweight->endRotation = (float)tempDouble;
-		//Read XML for Flyweight direction
-		data = data->NextSiblingElement("direction");
-		data->Attribute("x", &x);
-		data->Attribute("y", &y);
-		tempFlyweight->direction = SGD::Vector((float)x, (float)y);
 		//Read XML for Flyweight color
 		data = data->NextSiblingElement("color");
 		data->Attribute("startA",&a);
@@ -153,6 +146,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		//Read XML for the Flyweight Image filename
 		data = data->NextSiblingElement("image");
 		tempStr = data->Attribute("name");
+		tempStr = "resource/images/particles/" + tempStr;
 		tempFlyweight->image = SGD::GraphicsManager::GetInstance()->LoadTexture(tempStr.c_str());
 		//Adding flyweight to vector
 		particleFlyweights.push_back(tempFlyweight);
@@ -161,11 +155,10 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 		tempEmitter->particleFlyweight = tempFlyweight;
 		particleFlyweights.push_back(tempFlyweight);
 		std::pair<std::string, Emitter*> emitterKeyPair;
-		emitterKeyPair.first = EmitterID;
+		emitterKeyPair.first = tempFlyweight->particleID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
-		//NOTE: pushing to active emitters for testing
-		activeEmitters.push_back(tempEmitter);
+
 		return true;
 	}
 	else
@@ -174,7 +167,7 @@ bool ParticleManager::loadEmitters(std::string fileName, std::string EmitterID)
 
 Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filename)
 {
-	if (loadEmitters(filename,emitterID))
+	if (loadEmitters(filename))
 	{
 		return loadedEmitters[emitterID];
 	}
@@ -183,10 +176,30 @@ Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filen
 
 void ParticleManager::unload()
 {
-	for (unsigned int i = activeEmitters.size(); i > 0; i--)
+	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
 	{
-		delete activeEmitters[i-1];
+		delete loadedEmitters.at(iter->first);
 	}
 	activeEmitters.clear();
 	loadedEmitters.clear();
 }
+void ParticleManager::activate(std::string _emitterID,int _x, int _y)
+{
+	//NOTE: should be creating new memory?
+	Emitter* tempEmitter;
+	tempEmitter = loadedEmitters[_emitterID];
+	tempEmitter->position = SGD::Point( (float)_x, (float)_y );
+	tempEmitter->load();
+	activeEmitters.push_back(tempEmitter);
+}
+
+void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
+{
+	Emitter* tempEmitter;
+	tempEmitter = loadedEmitters[_emitterID];
+	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
+	tempEmitter->followEnitiy = _entity;
+	tempEmitter->load();
+	activeEmitters.push_back(tempEmitter);
+}
+

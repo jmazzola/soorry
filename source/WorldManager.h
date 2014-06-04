@@ -8,6 +8,7 @@ using namespace std;
 #include "../SGD Wrappers/SGD_Geometry.h"
 
 #include "Layer.h"
+#include "Tile.h"
 
 #define CAMERA_IMPLEMENTED 1
 
@@ -26,9 +27,13 @@ public:
 	bool LoadWorld(string fileName);
 	void UnloadWorld();
 	void Render(SGD::Point cameraPosition);
-	bool CheckCollision(IEntity* object);
+	bool CheckCollision(IEntity* object, bool ignoreWindows = false);
+	bool CheckCollision(SGD::Rectangle rect, bool ignoreWindows = false);
 	int CheckCollisionID(IEntity* object);
-	int ColliderIDAtPosition(int x, int y) const;
+	bool IsSolidAtPosition(int x, int y) const;
+	void SetColliderID(int x, int y, int id);
+	int GetColliderID(int x, int y);
+	void SetSolidAtPosition(int x, int y, bool solid);
 
 	/**********************************************************/
 	// Accessors
@@ -57,7 +62,10 @@ protected:
 	int m_nTileWidth;
 	int m_nTileHeight;
 	int m_nTilesetWidth;
+	bool** m_bSolidsChart;
 	vector<Layer> m_vLayers;
+	vector<Tile> m_vInitWalls;
+	vector<Tile> m_vInitWindows;
 	SGD::HTexture m_hTilesetImage;
 
 #if !CAMERA_IMPLEMENTED
@@ -70,7 +78,8 @@ private:
 
 	/**********************************************************/
 	// Helper Functions
-	void SendInitialTriggerMessage(const Tile& tile) const;
+	void SendInitialTriggerMessage(Tile& tile);
+	void GenerateSolidsChart();
 
 	/**********************************************************/
 	// Singleton Business

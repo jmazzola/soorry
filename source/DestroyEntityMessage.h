@@ -7,29 +7,18 @@
 //***********************************************************************
 
 #pragma once
+#include "../SGD Wrappers/SGD_Message.h"
+#include "Entity.h"
 
-#include "../SGD Wrappers/SGD_Message.h"	// uses SGD::Message
-class Entity;								// uses Entity*
-
-
-//***********************************************************************
-// DestroyEntityMessage class
-//	- stores the entity to be removed from the Entity Manager
 class DestroyEntityMessage : public SGD::Message
 {
 public:
-	//*******************************************************************
-	// Constructor REQUIRES the entity to remove
-	DestroyEntityMessage(Entity* ptr);
-	virtual ~DestroyEntityMessage(void);
+	DestroyEntityMessage(Entity* ent);
+	~DestroyEntityMessage();
 
-	//*******************************************************************
-	// Accessor:
-	Entity*		GetEntity(void) const		{ return m_pEntity; }
+	Entity* GetEntity() const { return m_pEntity; }
 
 private:
-	//*******************************************************************
-	// entity to destroy
-	Entity*		m_pEntity = nullptr;
+	Entity* m_pEntity;
 };
 

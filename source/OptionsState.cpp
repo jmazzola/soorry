@@ -2,7 +2,7 @@
 |	File:		OptionsState.cpp
 |	Author:		Justin Mazzola
 |	Course:		SGP
-|	Purpose:	This state will allow the player to adjust 
+|	Purpose:	This state will allow the player to adjust
 |				in-game variables such as game volume.
 ***************************************************************/
 
@@ -65,17 +65,7 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 
-	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance();
-	m_pEvents->Initialize();
-
-	//// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
+	SetTransition(false);
 
 
 	// Load Textures
@@ -116,23 +106,6 @@ using namespace std;
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	/*m_pMessages->Terminate();
-	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance();*/
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
 
 	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
@@ -185,11 +158,17 @@ using namespace std;
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
+			case  MENU_TOGGLEFULLSCREEN:
+			{
+				// Toggle fullscreen
+				pGame->ToggleFullscreen();
+			}
+				break;
 
 			case MENU_GOBACK:
 			{
 					//Go to Main Menu
-					pGame->ChangeState(MainMenuState::GetInstance());
+					pGame->Transition(MainMenuState::GetInstance());
 					// Exit immediately
 					return true;
 			}
@@ -203,41 +182,41 @@ using namespace std;
 	{
 		switch (m_nCursor)
 		{
-			case MENU_MUSICVOL:
-			{
-				// Increase the music volume += 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
-			}
-				break;
+		case MENU_MUSICVOL:
+		{
+			// Increase the music volume += 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+		}
+			break;
 
-			case MENU_SFXVOL:
-			{
-				// Increase the sound effects volume += 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
-			}
-				break;
+		case MENU_SFXVOL:
+		{
+			// Increase the sound effects volume += 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+		}
+			break;
 		}
 	}
 	// --- Decreasing an option ---
 	// If the left key (PC) or left dpad (Xbox 360) are pressed
 	// Decrease the value
-	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0,SGD::DPad::Left))
+	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
 	{
 		switch (m_nCursor)
 		{
-			case MENU_MUSICVOL:
-			{
-				// Increase the music volume -= 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
-			}
-				break;
+		case MENU_MUSICVOL:
+		{
+			// Increase the music volume -= 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+		}
+			break;
 
-			case MENU_SFXVOL:
-			{
-				// Increase the sound effects volume -= 5
-				pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
-			}
-				break;
+		case MENU_SFXVOL:
+		{
+			// Increase the sound effects volume -= 5
+			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+		}
+			break;
 		}
 	}
 
@@ -251,17 +230,19 @@ using namespace std;
 /*virtual*/ void OptionsState::Update(float elapsedTime)
 {
 
+	// If we're changing menus, count down the timer
+	if (IsTransitioning())
+	{
+		m_fTransitionTime -= elapsedTime;
 
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
-	// Process the events & messages
-	m_pEvents->Update();
-	//m_pMessages->Update();
-
-
-	// Check collisions
+		if (m_fTransitionTime <= 0)
+			SetTransition(false);
+	}
+	else
+	{
+		// Reset the transition time to allow for transitions again
+		m_fTransitionTime = TRANSITION_TIME;
+	}
 }
 
 
@@ -273,42 +254,66 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Render the background
-	pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
-
-
-	// Render the entities
-	m_pEntities->RenderAll();
-
-	// TODO: Add Strings to STRING TABLE for easy localization
-	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-	
-	// Create the string for the button
-	string musicVol = "Music Vol: ";
-	// Grab the volume
-	int musicVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
-	// Add it to the string since C++ doesn't support [ string + "" ] 
-	musicVol.append(std::to_string(musicVolValue));
-
-	// Same stuff here for the sfx vol
-	string sfxVol = "SFX Vol: ";
-	int sfxVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects);
-	sfxVol.append(std::to_string(sfxVolValue));
-
-	if (m_nCursor == MENU_MUSICVOL)
-		m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+	// If we're transitioning
+	if (IsTransitioning())
+	{
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
+	}
 	else
-		m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	{
 
-	if (m_nCursor == MENU_SFXVOL)
-		m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-	else
-		m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		// Render the background
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
-	if (m_nCursor == MENU_GOBACK)
-		m_pMainButton->Draw("Go Back", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-	else
-		m_pMainButton->Draw("Go Back", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		// TODO: Add Strings to STRING TABLE for easy localization
+		// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
+
+		// Create the string for the button
+		string musicVol = "Music Vol: ";
+		// Grab the volume
+		int musicVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+		// Add it to the string since C++ doesn't support [ string + "" ] 
+		musicVol.append(std::to_string(musicVolValue));
+
+		// Same stuff here for the sfx vol
+		string sfxVol = "SFX Vol: ";
+		int sfxVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+		sfxVol.append(std::to_string(sfxVolValue));
+
+		if (m_nCursor == MENU_MUSICVOL)
+			m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		if (m_nCursor == MENU_SFXVOL)
+			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		// If the game is in fullscreen
+		if (Game::GetInstance()->GetFullscreen())
+		{
+			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
+				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+		// If the game is windowed
+		else
+		{
+			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+		if (m_nCursor == MENU_GOBACK)
+			m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+	}
+
+
 }
 
 /**************************************************************/

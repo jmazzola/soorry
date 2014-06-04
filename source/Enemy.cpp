@@ -1,10 +1,23 @@
 #include "Enemy.h"
 
+#include "../SGD Wrappers/SGD_Event.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
+
 #include "AIComponent.h"
+#include "DestroyEntityMessage.h"
+#include "GameplayState.h"
+#include "MachineGunBullet.h"
+#include "Camera.h"
+
+#define HEALTH_BAR 1
 
 
-Enemy::Enemy()
+Enemy::Enemy() : Listener(this)
 {
+	m_AIComponent.SetAgent(this);
+	m_fTrapTimer = 0;
+	m_nCurrHealth = 100;
+	m_nMaxHeatlh = 100;
 }
 
 
@@ -18,12 +31,99 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
+	m_fTrapTimer -= dt;
+	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
+		m_AIComponent.Update(dt);
+	else if (m_nCurrHealth <= 0)
+	{
+		// Get rid of that bitch
+		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
+		// Queue the message
+		pMsg->QueueMessage();
+		pMsg = nullptr;
 
+		// Increase player's score
+		int score = 20;
+		SGD::Event e("INCREASE_SCORE", (void*)&score);
+		e.SendEventNow();
+		
+		// Update the ZombieFactory to adjust count
+		ZombieFactory* z = GameplayState::GetInstance()->GetZombieFactory();
+		z->SetEnemiesRemaining( z->GetEnemiesRemaining() - 1);
+	}
+	if (m_bIsTrapped == true)
+	{
+		m_fTrapTimer = 2;
+		m_bIsTrapped = false;
+	}
+}
+
+void Enemy::Render()
+{
+	Entity::Render();
+
+	// Draw health bar (for debug purposes or for permenant reasons, we'll see)
+#if HEALTH_BAR
+
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	SGD::Rectangle backRect;
+	backRect.left = m_ptPosition.x - Camera::x;
+	backRect.top = m_ptPosition.y - 5 - Camera::y;
+	backRect.right = m_ptPosition.x + 32 - Camera::x;
+	backRect.bottom = m_ptPosition.y - Camera::y;
+
+	// Get offset from max health
+	int offset = (int)(30 * (m_nMaxHeatlh - m_nCurrHealth) / (float)(m_nMaxHeatlh));
+
+	SGD::Rectangle frontRect;
+	frontRect.left = backRect.left + 1;
+	frontRect.top = backRect.top + 1;
+	frontRect.right = backRect.right - 1 - offset;
+	frontRect.bottom = backRect.bottom - 1;
+
+	pGraphics->DrawRectangle(backRect, SGD::Color(0, 0, 0));
+
+	// Determine bar color
+	SGD::Color color = { (unsigned char)(255 * (float)((m_nMaxHeatlh - m_nCurrHealth) / (float)(m_nMaxHeatlh))), (unsigned char)(255 * (float)(m_nCurrHealth / (float)(m_nMaxHeatlh))), 0 };
+	pGraphics->DrawRectangle(frontRect, color);
+
+#endif
+
+	//m_AIComponent.Render();
 }
 
 int Enemy::GetType() const
 {
 	return ENT_ENEMY;
+}
+
+/*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
+{
+	int type = pOther->GetType();
+	switch (pOther->GetType())
+	{
+		case ENT_BULLET_ASSAULT:
+			m_nCurrHealth -= 40;
+			break;
+		case ENT_BULLET_SHOTGUN:
+			m_nCurrHealth -= 80;
+			break;
+		case ENT_BULLET_ROCKET:
+			m_nCurrHealth -= 100;
+			break;
+		case ENT_TRAP_BEARTRAP:
+			m_bIsTrapped = true;
+			break;
+		case ENT_MACHINE_GUN_BULLET:
+			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+			break;
+			//NOTE: may have to delete
+		case ENT_TRAP_MINE:
+			m_nCurrHealth = 0;
+			break;
+
+	}
 }
 
 /**********************************************************/
@@ -59,11 +159,6 @@ float Enemy::GetSpeed() const
 	return m_fSpeed;
 }
 
-AIComponent* Enemy::GetAIComponent() const
-{
-	return m_pAIComponent;
-}
-
 /**********************************************************/
 // Mutators
 
@@ -97,7 +192,7 @@ void Enemy::SetSpeed(float _speed)
 	m_fSpeed = _speed;
 }
 
-void Enemy::SetAIComponent(AIComponent* _aiComponent)
+void Enemy::SetPlayer(Entity* _player)
 {
-	m_pAIComponent = _aiComponent;
+	m_AIComponent.SetPlayer(_player);
 }

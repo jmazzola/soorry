@@ -1,11 +1,8 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		
-|	Course:		
-|	Purpose:	
-|	Author:
-|	Course:
-|	Purpose:
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Course:		SGP
+|	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
 
 #ifndef GAMEPLAYSTATE_H
@@ -29,6 +26,7 @@ class ParticleManager;
 class Button;
 class BitmapFont;
 #include "../SGD Wrappers/SGD_Declarations.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 #include "ZombieFactory.h"
 
@@ -54,6 +52,18 @@ public:
 	virtual bool	Input(void)				override;	// handle user input
 	virtual void	Update(float elapsedTime)	override;	// update game entities / animations
 	virtual void	Render(void)				override;	// render game entities / menus
+
+	EntityManager* GetEntityManager() const;
+	ZombieFactory* GetZombieFactory() const;
+	char GetCurrentGameSlot() const;
+	void SetCurrentGameSlot(char slot);
+
+	// Create and or save the game
+	void SaveGame(bool newFile);
+	void LoadGameFromSlot(int slot);
+
+	// Player calls this once their hp is <= 0 to lose the game
+	void HasLost(void);
 
 private:
 
@@ -82,10 +92,21 @@ private:
 	Shop* m_pShop;
 	bool m_bIsPaused;
 	Entity* m_pPlayer;
+	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
 	float m_fTimeUntilWave;
-	ZombieFactory zombieFactory;
+	ZombieFactory* zombieFactory;
+	SGD::Point m_ptPlayerSpawnPoint;
+
+	char m_nCurrGameSlot;
+
+	/**********************************************************/
+	// FPS
+	// FPS stuff
+	unsigned int m_unFPS = 60;
+	unsigned int m_unFrames = 0;
+	float m_fFPSTimer = 1.0f;
 
 	/**********************************************************/
 	// Textures
@@ -94,6 +115,31 @@ private:
 
 	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hShotgunPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hShotgunThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hARPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hARThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hRLPic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRLThumb = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
+
+	// Tower textures
+	SGD::HTexture m_hMachineGunBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMachineGunGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMachineGunBulletImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMapleSyrupBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMapleSyrupGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hHockeyStickBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hHockeyStickGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Pause Menu Stuff
@@ -104,20 +150,24 @@ private:
 	int m_nPauseMenuTab;
 	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT };
 	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
-	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_GOBACK };
-
+	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_FULLSCREEN, OPTION_GOBACK };
 
 	/**********************************************************/
-	// 
+	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
-
+	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
 	
 	/**********************************************************/
 	// Factory Methods
-	Entity* CreateBeaverZombie(int _x, int _y);
-	Entity* CreateFastZombie(int _x, int _y);
-	Entity* CreateSlowZombie(int _x, int _y);
-	Entity* CreateProjectile(int _Weapon);
+	Entity* CreateBeaverZombie(int _x, int _y) const;
+	Entity* CreateFastZombie(int _x, int _y) const;
+	Entity* CreateSlowZombie(int _x, int _y) const;
+	Entity* CreateProjectile(int _Weapon) const;
+	Entity* CreatePlaceable(int trap) const;
+	Entity* CreatePickUp(int pick, SGD::Point pos) const;
+	Entity* CreateTower(int x, int y, int type) const;
+	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
+
 	// Create a button
 	Button* CreateButton() const;
 
@@ -130,6 +180,21 @@ private:
 	// Animation Manager
 	AnimationManager* m_pAnimation = nullptr;
 
+	// Winning Functions and Variables
+	void RenderCredits(void);
+	bool m_bCreditsStarted;
+	int m_nTopMargin;
+	int m_nBottomMargin;
+	float m_fCreditsTimer;
+	float m_fWinTimer;
+	SGD::Point m_ptTextPosition;
+	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
+
+	// Losing Functions and Variables
+	void RenderLoss(void);
+	float m_fLossTimer;
+	bool m_bHasLost;
+	bool m_bReplay;
 };
 
 #endif //GAMEPLAYSTATE_H

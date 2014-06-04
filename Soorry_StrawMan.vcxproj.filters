@@ -58,6 +58,12 @@
     <Filter Include="Zombie Factory">
       <UniqueIdentifier>{586b1d6f-5d2f-4fb5-a133-735640ac7459}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{7dd5bce4-c73e-4998-ac86-cf87d298e452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Towers/Traps">
+      <UniqueIdentifier>{d6e332b8-a784-4a15-8d32-ba042f0431ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -272,6 +278,36 @@
     </ClCompile>
     <ClCompile Include="source\ZombieFactory.cpp">
       <Filter>Zombie Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateParticleMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Tower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateTowerMessage.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MachineGunTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MapleSyrupTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HockeyStickTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LaserTower.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateMachineGunBulletMessage.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MachineGunBullet.cpp">
+      <Filter>Towers/Traps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -512,12 +548,39 @@
     <ClInclude Include="source\ZombieFactory.h">
       <Filter>Zombie Factory</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateParticleMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Tower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateTowerMessage.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MachineGunTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MapleSyrupTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HockeyStickTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LaserTower.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateMachineGunBulletMessage.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MachineGunBullet.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
-      <Filter>World Manager</Filter>
-    </Xml>
-    <Xml Include="resource\world\bigWorld.xml">
       <Filter>World Manager</Filter>
     </Xml>
     <Xml Include="resource\data\wave.xml">
@@ -525,6 +588,9 @@
     </Xml>
     <Xml Include="resource\data\config.xml">
       <Filter>Game States</Filter>
+    </Xml>
+    <Xml Include="resource\data\singleEnemy.xml">
+      <Filter>Zombie Factory</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

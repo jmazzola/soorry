@@ -109,7 +109,7 @@ private:
 
 	/**********************************************************/
 	// Enumerations
-	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_GOBACK };
+	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_TOGGLEFULLSCREEN, MENU_GOBACK };
 
 	/**********************************************************/
 	// Menu Items
