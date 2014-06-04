@@ -62,6 +62,9 @@ public:
 	void SaveGame(bool newFile);
 	void LoadGameFromSlot(int slot);
 
+	// Player calls this once their hp is <= 0 to lose the game
+	void HasLost(void);
+
 private:
 
 	/**********************************************************/
@@ -165,6 +168,21 @@ private:
 	// Animation Manager
 	AnimationManager* m_pAnimation = nullptr;
 
+	// Winning Functions and Variables
+	void RenderCredits(void);
+	bool m_bCreditsStarted;
+	int m_nTopMargin;
+	int m_nBottomMargin;
+	float m_fCreditsTimer;
+	float m_fWinTimer;
+	SGD::Point m_ptTextPosition;
+	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
+
+	// Losing Functions and Variables
+	void RenderLoss(void);
+	float m_fLossTimer;
+	bool m_bHasLost;
+	bool m_bReplay;
 };
 
 #endif //GAMEPLAYSTATE_H

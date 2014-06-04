@@ -224,11 +224,7 @@ using namespace std;
 
 		pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
 			SGD::Rectangle(0, 475, 800, 600), {}, {});
-
-		// Render button
-		m_pMainButton->Draw("Go Back", { 200, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
-	}
-}
+ }
 
 /**************************************************************/
 // Factory Methods

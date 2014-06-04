@@ -58,18 +58,6 @@ private:
 	CreditsState( const CreditsState& )				= delete;	// copy constructor
 	CreditsState& operator= ( const CreditsState& )	= delete;	// assignment operator
 
-	
-	/**********************************************************/
-	// Game Entities
-	EntityManager*			m_pEntities			= nullptr;
-	Entity* m_pPlayer = nullptr;
-	
-	
-	/**********************************************************/
-	// Event & Message Managers
-	SGD::EventManager*		m_pEvents			= nullptr;
-	SGD::MessageManager*	m_pMessages			= nullptr;
-
 
 	MenuFlyweight* m_pMenuFlyweight;
 
