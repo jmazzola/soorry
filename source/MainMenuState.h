@@ -49,7 +49,7 @@ public:
 													
 	virtual bool	Input	( void )				override;	// handle user input
 	virtual void	Update	( float elapsedTime )	override;	// update game entities / animations
-	virtual void	Render	( void )				override;	// render game entities / menus
+	virtual void	Render	( void )				override;	// render game entities / menu
 	
 private:
 
@@ -85,7 +85,6 @@ private:
 	// Menu Items
 	Button* m_pButton;
 	BitmapFont* m_pFont;
-
 
 	/**********************************************************/
 	// Textures

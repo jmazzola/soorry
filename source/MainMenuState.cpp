@@ -47,8 +47,9 @@ using namespace std;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-
 #include <cfloat>
+
+
 
 
 /**************************************************************/
@@ -71,23 +72,11 @@ using namespace std;
 	// Game singleton
 	Game* pGame = Game::GetInstance();
 
-	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance();
-	m_pEvents->Initialize();
-
-	// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
+	SetTransition(false);
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/mainMenuBG.png");
-
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
@@ -120,23 +109,6 @@ using namespace std;
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	//m_pMessages->Terminate();
-	//m_pMessages = nullptr;
-	//SGD::MessageManager::DeleteInstance();
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
-
 	// Terminate & deallocate menu items
 	m_pButton->Terminate();
 	delete m_pButton;
@@ -158,6 +130,10 @@ using namespace std;
 
 	if (pInput->IsKeyPressed(SGD::Key::Escape))
 		m_nCursor = MENU_EXIT;
+
+	// If we're transitioning, disable input
+	if (IsTransitioning())
+		return false;
 
 
 	// --- Scrolling through options ---
@@ -191,86 +167,86 @@ using namespace std;
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
-			case MENU_START:
-			{
-				// Play Game
-				pGame->ChangeState(LoadSaveState::GetInstance());
-				// Leave immediately
-				return true;
-			}
-				break;
-
-			case MENU_HOWTOPLAY:
-			{
-				// How to Play (Gameplay loading tutorial level)
-				pGame->ChangeState(GameplayState::GetInstance());
-				// Leave immediately
-				return true;
-			}
-				break;
-
-			case MENU_OPTIONS:
-			{
-				// Options
-				pGame->ChangeState(OptionsState::GetInstance());
-				// Leave immediately
-				return true;
-			}
-				break;
-
-			case MENU_CREDITS:
-			{
-				// Credits
-				pGame->ChangeState(CreditsState::GetInstance());
-				// Leave immediately
-				return true;
-			}
-				break;
-
-			case MENU_EXIT:
-			{
-				// Exit the game
-				return false;
-			}
-
-				break;
+		case MENU_START:
+		{
+			// Play Game
+			pGame->Transition(LoadSaveState::GetInstance());
+			// Leave immediately
+			return true;
 		}
-	}
+			break;
+
+		case MENU_HOWTOPLAY:
+		{
+			// How to Play (Gameplay loading tutorial level)
+			// This doesn't transition since it'll load a tutorial level, no screen.
+			pGame->ChangeState(GameplayState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_OPTIONS:
+		{
+
+			// Options
+			pGame->Transition(OptionsState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_CREDITS:
+		{
+			// Credits
+			pGame->Transition(CreditsState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_EXIT:
+		{
+			// Exit the game
+			return false;
+		}
+
+			break;
+		}
 
 #if _DEBUG	// if statement that says 'if we're running in debug mode' (Visual Studio goody :P)
-			// this won't work in release ;3
+		// this won't work in release ;3
 
-	// Debugging so our team doesn't have to go through so many menus to test stuff
+		// Debugging so our team doesn't have to go through so many menus to test stuff
 
-	// 1	-	Forceload GameplayState
-	// 2	-	Forceload LoadSaveState
-	// 3	-	Forceload OptionsState
-	// 4	-	Forceload CreditsState
+		// 1	-	Forceload GameplayState
+		// 2	-	Forceload LoadSaveState
+		// 3	-	Forceload OptionsState
+		// 4	-	Forceload CreditsState
 
-	if (pInput->IsKeyPressed(SGD::Key::One))
-	{
-		pGame->ChangeState(GameplayState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Two))
-	{
-		pGame->ChangeState(LoadSaveState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Three))
-	{
-		pGame->ChangeState(OptionsState::GetInstance());
-		return true;
-	}
-	else if (pInput->IsKeyPressed(SGD::Key::Four))
-	{
-		pGame->ChangeState(CreditsState::GetInstance());
-		return true;
-	}
+		if (pInput->IsKeyPressed(SGD::Key::One))
+		{
+			pGame->ChangeState(GameplayState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Two))
+		{
+			pGame->ChangeState(LoadSaveState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Three))
+		{
+			pGame->ChangeState(OptionsState::GetInstance());
+			return true;
+		}
+		else if (pInput->IsKeyPressed(SGD::Key::Four))
+		{
+			pGame->ChangeState(CreditsState::GetInstance());
+			return true;
+		}
 
 #endif
-
-	
+	}
 
 	return true;	// keep playing
 }
@@ -281,16 +257,19 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void MainMenuState::Update(float elapsedTime)
 {
+	// If we're changing menus, count down the timer
+	if (IsTransitioning())
+	{
+		m_fTransitionTime -= elapsedTime;
 
-
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
-	// Process the events & messages
-	m_pEvents->Update();
-	//m_pMessages->Update();
-
+		if (m_fTransitionTime <= 0)
+			SetTransition(false);
+	}
+	else
+	{
+		// Reset the transition time to allow for transitions again
+		m_fTransitionTime = TRANSITION_TIME;
+	}
 
 	// Check collisions
 }
@@ -303,45 +282,52 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Draw the background
-	pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
-
-	// Render the entities
-	m_pEntities->RenderAll();
-
 #if _DEBUG
 
 	pGraphics->DrawString("Debugging: TRUE: \n1 - Launch Gameplay\n2 - Launch LoadSave\n3 - Launch Options\n4 - Launch Credits", { 0, 0 }, { 0, 0, 0 });
-
 #endif
 
-	// TODO: Add Strings to STRING TABLE for easy localization
-	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-	if (m_nCursor == MENU_START)
-		m_pButton->Draw("Play Game", { 200, 200 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 0
+	// If we're transitioning
+	if (IsTransitioning())
+	{
+		// TODO: In polish, make different directions
+		// Draw the background moving from the bottom up
+		// As well as grab a screenshot with buttons/text unselected.
+		// I tried to do this, but realized that bitmap saving is a bit more
+		// time consuming with this user story.
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
+		return;
+	}
 	else
-		m_pButton->Draw("Play Game", { 200, 200 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 0
+	{
+		pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+		// TODO: Add Strings to STRING TABLE for easy localization
+		// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
+		if (m_nCursor == MENU_START)
+			m_pButton->Draw("Play Game", { 200, 200 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 0
+		else
+			m_pButton->Draw("Play Game", { 200, 200 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 0
 
-	if (m_nCursor == MENU_HOWTOPLAY)
-		m_pButton->Draw("How to Play", { 150, 270 }, { 255, 0, 0 }, { 1, 1 }, 0);	// 1
-	else
-		m_pButton->Draw("How to Play", { 150, 270 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 1
+		if (m_nCursor == MENU_HOWTOPLAY)
+			m_pButton->Draw("How to Play", { 150, 270 }, { 255, 0, 0 }, { 1, 1 }, 0);	// 1
+		else
+			m_pButton->Draw("How to Play", { 150, 270 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 1
 
-	if (m_nCursor == MENU_OPTIONS)
-		m_pButton->Draw("Options", { 200, 340 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 2
-	else
-		m_pButton->Draw("Options", { 200, 340 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 2
+		if (m_nCursor == MENU_OPTIONS)
+			m_pButton->Draw("Options", { 200, 340 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 2
+		else
+			m_pButton->Draw("Options", { 200, 340 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 2
 
-	if (m_nCursor == MENU_CREDITS)
-		m_pButton->Draw("Credits", { 230, 410 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 3
-	else
-		m_pButton->Draw("Credits", { 230, 410 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 3
+		if (m_nCursor == MENU_CREDITS)
+			m_pButton->Draw("Credits", { 230, 410 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 3
+		else
+			m_pButton->Draw("Credits", { 230, 410 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 3
 
-	if (m_nCursor == MENU_EXIT)
-		m_pButton->Draw("Exit Game", { 180, 480 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 4
-	else
-		m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
-
+		if (m_nCursor == MENU_EXIT)
+			m_pButton->Draw("Exit Game", { 180, 480 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 4
+		else
+			m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
+	}
 
 }
 

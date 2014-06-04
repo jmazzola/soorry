@@ -65,6 +65,7 @@ private:
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hBackground;
+	SGD::HTexture m_hMainMenuSnap;
 
 	/**********************************************************/
 	// Audio
