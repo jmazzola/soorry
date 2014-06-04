@@ -161,7 +161,7 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture("resource/images/tim/tim.png");
+	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load tower images
 	m_hMachineGunBaseImage = pGraphics->LoadTexture("resource/images/towers/machineGunBase.png");
@@ -173,7 +173,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio("resource/audio/JPM_LightsAndSounds.xwm");
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -196,7 +196,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->LoadWaves("resource/data/wave.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -583,7 +583,13 @@ Entity*	GameplayState::CreatePlayer() const
 					}
 						break;
 
-
+					case PauseMenuOptionsOption::OPTION_SFX:
+					{
+															   // Increase the sound effects volume -= 5
+															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+					}
+						break;
+					}
 				}
 
 				// --- Selecting an option ---
@@ -936,17 +942,20 @@ Entity*	GameplayState::CreatePlayer() const
 				// Draw the picture of the selected pic
 				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
 
-			// -- Draw the offhand weapons ammos --
-			m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
-			m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
-			m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-			//Draw the grid rectange
-			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				// Draw the ammo of the selected weapon
+				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
 
-			//NOTE: why did it take this much work? did i do something wrong?
-			/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
-			pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
-			pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+				// -- Draw the offhand weapons ammos --
+				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
+				//Draw the grid rectange
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				//NOTE: why did it take this much work? did i do something wrong?
+				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
+				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
+				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+			}
 		}
 
 		// If you have won the game render You Win and fade to credits
@@ -1037,13 +1046,21 @@ Entity*	GameplayState::CreatePlayer() const
 
 											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
 											 GameplayState* self = GameplayState::GetInstance();
-											 for (int i = 0; i < 10; i++)
+											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
-												 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-												 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-												 bullet->Release();
-												 bullet = nullptr;
+												 for (int i = 0; i < 9; i++)
+												 {
+													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													 bullet->Release();
+													 bullet = nullptr;
+												 }
 											 }
+											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+											 bullet->Release();
+											 bullet = nullptr;
+
 	}
 		break;
 
@@ -1285,7 +1302,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 
 			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
-		return tempProj;
+			   return tempProj;
 	}
 		break;
 	case 3://Fire axe?
@@ -1562,34 +1579,7 @@ void GameplayState::RenderCredits(void)
 
 	// Draw the credits
 	// TODO: Load in a text file
-	string credits = "SOORRY\n\n\
-					 					 By Razor Balloon\n\n\
-										 					 Part of Heavy Square Studios\n\n\
-															 					 Associate Producers\n\
-																				 					 Sean Hathaway\n\
-																									 					 Robert Martinez\n\n\
-																														 					 Executive Producer\n\
-																																			 					 John O' Leske\n\n\
-																																								 					 World Software Engineer\n\
-																																													 					 Justin Patterson\n\n\
-																																																		 					 AI Programmer\n\
-																																																							 					 Justin Patterson\n\n\
-																																																												 					 Particle Software Engineer\n\
-																																																																	 					 Matthew Salow\n\n\
-																																																																						 					 Animation Software Engineer\n\
-																																																																											 					 James Sylvester\n\n\
-																																																																																 					 Game Core\n\
-																																																																																					 					 Justin Mazzola\n\n\
-																																																																																										 					 UI Programmer\n\
-																																																																																															 					 Justin Mazzola\n\n\
-																																																																																																				 					 Mercenary Programmer\n\
-																																																																																																									 					 Ryan Simmons\n\n\
-																																																																																																														 					 Artists\n\
-																																																																																																																			 					 Gregory Bey\n\
-																																																																																																																								 					 Caris Frazier\n\
-																																																																																																																													 					 Justin Mazzola\n\n\
-																																																																																																																																		 					 Special Thanks\n\
-																																																																																																																																							 					 Jordan Butler for ideas.";
+	string credits = "";
 
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
