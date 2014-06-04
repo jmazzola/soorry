@@ -94,42 +94,42 @@ using namespace std;
 // GetInstance
 //	- allocate static global instance
 //	- return THE instance
-/*static*/ GameplayState* GameplayState::GetInstance ( void )
+/*static*/ GameplayState* GameplayState::GetInstance(void)
 {
 	static GameplayState s_Instance;	// stored in global memory once
 	return &s_Instance;
 }
 
-char GameplayState::GetCurrentGameSlot () const
+char GameplayState::GetCurrentGameSlot() const
 {
 	return m_nCurrGameSlot;
 }
 
-void GameplayState::SetCurrentGameSlot ( char slot )
+void GameplayState::SetCurrentGameSlot(char slot)
 {
 	m_nCurrGameSlot = slot;
 }
 
-EntityManager* GameplayState::GetEntityManager () const
+EntityManager* GameplayState::GetEntityManager() const
 {
-	return GetInstance ()->m_pEntities;
+	return GetInstance()->m_pEntities;
 }
 
-ZombieFactory* GameplayState::GetZombieFactory () const
+ZombieFactory* GameplayState::GetZombieFactory() const
 {
-	return GetInstance ()->zombieFactory;
+	return GetInstance()->zombieFactory;
 }
 
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer () const
+Entity*	GameplayState::CreatePlayer() const
 {
-	Player* player = new Player ();
-	player->SetPosition ( m_ptPlayerSpawnPoint );
-	player->SetZombieFactory ( zombieFactory );
-	player->SetEntityManager ( m_pEntities );
+	Player* player = new Player();
+	player->SetPosition(m_ptPlayerSpawnPoint);
+	player->SetZombieFactory(zombieFactory);
+	player->SetEntityManager(m_pEntities);
 	return player;
 }
 
@@ -139,35 +139,35 @@ Entity*	GameplayState::CreatePlayer () const
 //	- reset game
 //	- load resources
 //	- set up entities
-/*virtual*/ void GameplayState::Enter ( void )
+/*virtual*/ void GameplayState::Enter(void)
 {
-	Game* pGame = Game::GetInstance ();
+	Game* pGame = Game::GetInstance();
 
 	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance ();
-	m_pEvents->Initialize ();
+	m_pEvents = SGD::EventManager::GetInstance();
+	m_pEvents->Initialize();
 
 	// Initialize the Message Manager
-	m_pMessages = SGD::MessageManager::GetInstance ();
-	m_pMessages->Initialize ( &MessageProc );
+	m_pMessages = SGD::MessageManager::GetInstance();
+	m_pMessages->Initialize(&MessageProc);
 
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
 	// Load Textures
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture ( L"resource/images/tim/tim.png" );
+	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load Audio
-	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance ();
-	m_hBackgroundMus = pAudio->LoadAudio ( L"resource/audio/JPM_LightsAndSounds.xwm" );
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
 
 	//Load Particle Manager
-	m_pParticleManager = ParticleManager::GetInstance ();
-	m_pParticleManager->loadEmitters ( "resource/particle/test1.xml" );
-	m_pParticleManager->loadEmitters ( "resource/particle/smokeparticle.xml" );
+	m_pParticleManager = ParticleManager::GetInstance();
+	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
+	m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
 	// Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -176,75 +176,75 @@ Entity*	GameplayState::CreatePlayer () const
 	Camera::y = 0;
 
 	// Load all animation
-	m_pAnimation = AnimationManager::GetInstance ();
-	m_pAnimation->LoadAll ();
+	m_pAnimation = AnimationManager::GetInstance();
+	m_pAnimation->LoadAll();
 
 	// Load the world
-	WorldManager* pWorld = WorldManager::GetInstance ();
-	pWorld->LoadWorld ( "resource/world/world.xml" );
+	WorldManager* pWorld = WorldManager::GetInstance();
+	pWorld->LoadWorld("resource/world/world.xml");
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves ( "resource/data/singleEnemy.xml" );
-	zombieFactory->Start ();
-	zombieFactory->SetSpawnWidth ( pWorld->GetWorldWidth () * pWorld->GetTileWidth () );
-	zombieFactory->SetSpawnHeight ( pWorld->GetWorldHeight () * pWorld->GetTileHeight () );
-	zombieFactory->SetEntityManager ( m_pEntities );
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->Start();
+	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
+	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
+	zombieFactory->SetEntityManager(m_pEntities);
 
 	// Load the gamesave
 
 	// If the slot is set
-	if ( m_nCurrGameSlot > 0 )
+	if (m_nCurrGameSlot > 0)
 	{
 		// If we can't load the savegame
-		if ( !LoadSaveState::GetInstance ()->CheckSlotExists ( m_nCurrGameSlot - 1 ) )
+		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 			// Make a new savegame
-			SaveGame ( true );
+			SaveGame(true);
 		else
 			// load the savegame
-			LoadGameFromSlot ( m_nCurrGameSlot );
+			LoadGameFromSlot(m_nCurrGameSlot);
 	}
 
 
 	// Create our player
-	m_pPlayer = CreatePlayer ();
+	m_pPlayer = CreatePlayer();
 
 	// If the slot is set
 
 	// TODO: Make it so I DON'T have to do this twice, since I can't set money because
 	// the player isn't created yet.
-	if ( m_nCurrGameSlot > 0 )
+	if (m_nCurrGameSlot > 0)
 	{
 		// If we can't load the savegame
-		if ( !LoadSaveState::GetInstance ()->CheckSlotExists ( m_nCurrGameSlot - 1 ) )
+		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 			// Make a new savegame
-			SaveGame ( true );
+			SaveGame(true);
 		else
 			// load the savegame
-			LoadGameFromSlot ( m_nCurrGameSlot );
+			LoadGameFromSlot(m_nCurrGameSlot);
 	}
 
 	// Add it to the entity manager
-	m_pEntities->AddEntity ( m_pPlayer , BUCKET_PLAYER );
+	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
 	//// Add it to the entity manager
 	// Load pause menu background
-	m_hPauseMainBackground = pGraphics->LoadTexture ( "resource/images/menus/PausedBG.png" );
-	m_hPauseOptionsBackground = pGraphics->LoadTexture ( "resource/images/menus/OptionsBG.png" );
+	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
+	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
 
 	// Setup BitmapFont
-	BitmapFont* pFont = Game::GetInstance ()->GetFont ();
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
 	m_pFont = pFont;
 
 	// Setup the main button (text)
-	m_pMainButton = CreateButton ();
-	m_pMainButton->SetSize ( { 350 , 70 } );
-	m_pMainButton->Initialize ( "resource/images/menus/mainMenuButton.png" , m_pFont );
+	m_pMainButton = CreateButton();
+	m_pMainButton->SetSize({ 350, 70 });
+	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 
 	// Load Store
 	m_pShop = new Shop;
-	m_pShop->SetShopStatus ( false );
-	m_pShop->Enter ( m_pPlayer );
+	m_pShop->SetShopStatus(false);
+	m_pShop->Enter(m_pPlayer);
 
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
@@ -269,22 +269,22 @@ Entity*	GameplayState::CreatePlayer () const
 	m_fLossTimer = 5.0f;
 
 	// Play the background music
-	pAudio->PlayAudio ( m_hBackgroundMus , true );
+	pAudio->PlayAudio(m_hBackgroundMus, true);
 
-	OptionsState::GetInstance ()->LoadOptions ( "resource/data/config.xml" );
+	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	// HUD
-	m_hHUD = pGraphics->LoadTexture ( "resource/images/hud/hud.png" );
+	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
 
-	m_hShotgunPic = pGraphics->LoadTexture ( "resource/images/hud/shotgun.png" );
-	m_hShotgunThumb = pGraphics->LoadTexture ( "resource/images/hud/shotgunThumb.png" );
-	m_hARPic = pGraphics->LoadTexture ( "resource/images/hud/ar.png" );
-	m_hARThumb = pGraphics->LoadTexture ( "resource/images/hud/arthumb.png" );
-	m_hRLPic = pGraphics->LoadTexture ( "resource/images/hud/rpg.png" );
-	m_hRLThumb = pGraphics->LoadTexture ( "resource/images/hud/rpgthumb.png" );
-	m_hFireAxePic = pGraphics->LoadTexture ( "resource/images/hud/fireaxe.png" );
-	m_hFireAxeThumb = pGraphics->LoadTexture ( "resource/images/hud/fireaxethumb.png" );
-	m_hBackground = pGraphics->LoadTexture ( "resource/images/menus/Blank.png" );
+	m_hShotgunPic = pGraphics->LoadTexture("resource/images/hud/shotgun.png");
+	m_hShotgunThumb = pGraphics->LoadTexture("resource/images/hud/shotgunThumb.png");
+	m_hARPic = pGraphics->LoadTexture("resource/images/hud/ar.png");
+	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
+	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
+	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
+	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
+	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 }
 
 
@@ -292,60 +292,60 @@ Entity*	GameplayState::CreatePlayer () const
 // Exit
 //	- deallocate entities
 //	- unload resources
-/*virtual*/ void GameplayState::Exit ( void )
+/*virtual*/ void GameplayState::Exit(void)
 {
 
 	// Release textures
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 
-	m_pAnimation->UnloadSprites ();
+	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
-	AnimationManager::DeleteInstance ();
+	AnimationManager::DeleteInstance();
 
 	// Release audio
-	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance ();
-	pAudio->UnloadAudio ( m_hBackgroundMus );
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	pAudio->UnloadAudio(m_hBackgroundMus);
 
 	//Matt gets rid of the memory leaks
-	m_pParticleManager->unload ();
+	m_pParticleManager->unload();
 
 	// Delete the zombie factory
 	delete zombieFactory;
 
 	// Save the file
-	SaveGame ( false );
+	SaveGame(false);
 
 	// Release the player
-	if ( m_pPlayer != nullptr )
+	if (m_pPlayer != nullptr)
 	{
-		m_pPlayer->Release ();
+		m_pPlayer->Release();
 		m_pPlayer = nullptr;
 	}
 
 	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll ();
+	m_pEntities->RemoveAll();
 	delete m_pEntities;
 	m_pEntities = nullptr;
 
 	// Unload Assets
-	pGraphics->UnloadTexture ( m_hPlayerImg );
+	pGraphics->UnloadTexture(m_hPlayerImg);
 
 	// Unload pause menu
-	pGraphics->UnloadTexture ( m_hPauseMainBackground );
-	pGraphics->UnloadTexture ( m_hPauseOptionsBackground );
+	pGraphics->UnloadTexture(m_hPauseMainBackground);
+	pGraphics->UnloadTexture(m_hPauseOptionsBackground);
 
 	// Unload HUD
-	pGraphics->UnloadTexture ( m_hHUD );
-	pGraphics->UnloadTexture ( m_hShotgunPic );
-	pGraphics->UnloadTexture ( m_hShotgunThumb );
-	pGraphics->UnloadTexture ( m_hARPic );
-	pGraphics->UnloadTexture ( m_hARThumb );
-	pGraphics->UnloadTexture ( m_hRLPic );
-	pGraphics->UnloadTexture ( m_hRLThumb );
-	pGraphics->UnloadTexture ( m_hFireAxePic );
-	pGraphics->UnloadTexture ( m_hFireAxeThumb );
-	pGraphics->UnloadTexture( m_hBackground );
+	pGraphics->UnloadTexture(m_hHUD);
+	pGraphics->UnloadTexture(m_hShotgunPic);
+	pGraphics->UnloadTexture(m_hShotgunThumb);
+	pGraphics->UnloadTexture(m_hARPic);
+	pGraphics->UnloadTexture(m_hARThumb);
+	pGraphics->UnloadTexture(m_hRLPic);
+	pGraphics->UnloadTexture(m_hRLThumb);
+	pGraphics->UnloadTexture(m_hFireAxePic);
+	pGraphics->UnloadTexture(m_hFireAxeThumb);
+	pGraphics->UnloadTexture(m_hBackground);
 
 	// Unload Blank
 	pGraphics->UnloadTexture(m_hBackground);
@@ -355,26 +355,26 @@ Entity*	GameplayState::CreatePlayer () const
 
 
 	// Unload World Manager
-	WorldManager::GetInstance ()->UnloadWorld ();
+	WorldManager::GetInstance()->UnloadWorld();
 
 
-	m_pMessages->Terminate ();
+	m_pMessages->Terminate();
 	m_pMessages = nullptr;
-	SGD::MessageManager::DeleteInstance ();
+	SGD::MessageManager::DeleteInstance();
 
 	// Terminate & deallocate menu items
-	m_pMainButton->Terminate ();
+	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
 
 	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate ();
+	m_pEvents->Terminate();
 	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance ();
+	SGD::EventManager::DeleteInstance();
 
 
 	// Terminate & deallocate shop
-	m_pShop->Exit ();
+	m_pShop->Exit();
 	delete m_pShop;
 	m_pShop = nullptr;
 
@@ -387,25 +387,25 @@ Entity*	GameplayState::CreatePlayer () const
 /**************************************************************/
 // Input
 //	- handle user input
-/*virtual*/ bool GameplayState::Input ( void )
+/*virtual*/ bool GameplayState::Input(void)
 {
-	Game* pGame = Game::GetInstance ();
-	SGD::InputManager* pInput = SGD::InputManager::GetInstance ();
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
-	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance ();
+	Game* pGame = Game::GetInstance();
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	if ( m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false )
+	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if ( pInput->IsKeyPressed ( SGD::Key::Escape ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::Start ) )
+		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
 		{
-			if ( m_pShop->IsOpen () == false )
+			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
 		}
 
-		if ( pInput->IsKeyPressed ( SGD::Key::Backspace ) )
+		if (pInput->IsKeyPressed(SGD::Key::Backspace))
 		{
-			m_pShop->SetShopStatus ( true );
+			m_pShop->SetShopStatus(true);
 		}
 
 		/*if (pInput->IsKeyPressed(SGD::Key::Z))
@@ -429,34 +429,34 @@ Entity*	GameplayState::CreatePlayer () const
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
 		// If we're paused
-		if ( m_bIsPaused )
+		if (m_bIsPaused)
 		{
 			//-----------------------------------------------------------------------
 			// --- Handling what tab we're in ---
 			// If we're in the Main menu OF the pause menu. 
-			if ( m_nPauseMenuTab == PauseMenuTab::TAB_MAIN )
+			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
 
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if ( pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down ) )
+				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if ( m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT )
+					if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 				}
 				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) up
-				else if ( pInput->IsKeyPressed ( SGD::Key::Up ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Up ) )
+				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if ( m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME )
+					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
 				}
 
@@ -464,66 +464,66 @@ Entity*	GameplayState::CreatePlayer () const
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if ( pInput->IsKeyPressed ( SGD::Key::Enter ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::A ) )
+				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 				{
 					// Switch table for the item selected
-					switch ( m_nPauseMenuCursor )
+					switch (m_nPauseMenuCursor)
 					{
 					case PauseMenuOption::PAUSE_RESUME:
 					{
-						// Resume gameplay
-						m_bIsPaused = false;
-						break;
+														  // Resume gameplay
+														  m_bIsPaused = false;
+														  break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_OPTION:
 					{
-						// Set the cursor to the first option in the options tab
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-						// Go to the options tab
-						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-						// Load the options
-						OptionsState::GetInstance ()->LoadOptions ( "resource/data/config.xml" );
-						break;
+														  // Set the cursor to the first option in the options tab
+														  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+														  // Go to the options tab
+														  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+														  // Load the options
+														  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+														  break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_EXIT:
 					{
-						//Go to Main Menu
-						pGame->ChangeState ( MainMenuState::GetInstance () );
-						// Exit immediately
-						return true;
+														//Go to Main Menu
+														pGame->ChangeState(MainMenuState::GetInstance());
+														// Exit immediately
+														return true;
 					}
 						break;
 					}
 				}
 			}
 			// If we're in the main menu's options tab
-			else if ( m_nPauseMenuTab == PauseMenuTab::TAB_OPTION )
+			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 			{
 
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if ( pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down ) )
+				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if ( m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK )
+					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
 				}
 				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) up
-				else if ( pInput->IsKeyPressed ( SGD::Key::Up ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Up ) )
+				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if ( m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC )
+					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
 				}
 
@@ -531,21 +531,21 @@ Entity*	GameplayState::CreatePlayer () const
 				// --- Increasing an option ---
 				// If the right key (PC) or right dpad (Xbox 360) are pressed
 				// Increase the value
-				if ( pInput->IsKeyPressed ( SGD::Key::Right ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Right ) )
+				if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
 				{
-					switch ( m_nPauseMenuCursor )
+					switch (m_nPauseMenuCursor)
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-						// Increase the music volume += 5
-						pAudio->SetMasterVolume ( SGD::AudioGroup::Music , pAudio->GetMasterVolume ( SGD::AudioGroup::Music ) + 5 );
+																 // Increase the music volume += 5
+																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-						// Increase the sound effects volume += 5
-						pAudio->SetMasterVolume ( SGD::AudioGroup::SoundEffects , pAudio->GetMasterVolume ( SGD::AudioGroup::SoundEffects ) + 5 );
+															   // Increase the sound effects volume += 5
+															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 					}
 						break;
 					}
@@ -553,21 +553,21 @@ Entity*	GameplayState::CreatePlayer () const
 				// --- Decreasing an option ---
 				// If the left key (PC) or left dpad (Xbox 360) are pressed
 				// Decrease the value
-				if ( pInput->IsKeyPressed ( SGD::Key::Left ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Left ) )
+				if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
 				{
-					switch ( m_nPauseMenuCursor )
+					switch (m_nPauseMenuCursor)
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-						// Increase the music volume -= 5
-						pAudio->SetMasterVolume ( SGD::AudioGroup::Music , pAudio->GetMasterVolume ( SGD::AudioGroup::Music ) - 5 );
+																 // Increase the music volume -= 5
+																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-						// Increase the sound effects volume -= 5
-						pAudio->SetMasterVolume ( SGD::AudioGroup::SoundEffects , pAudio->GetMasterVolume ( SGD::AudioGroup::SoundEffects ) - 5 );
+															   // Increase the sound effects volume -= 5
+															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 					}
 						break;
 					}
@@ -576,25 +576,25 @@ Entity*	GameplayState::CreatePlayer () const
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if ( pInput->IsKeyPressed ( SGD::Key::Enter ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::A ) )
+				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 				{
-					switch ( m_nPauseMenuCursor )
+					switch (m_nPauseMenuCursor)
 					{
 					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
 					{
-						pGame->ToggleFullscreen ();
+																	  pGame->ToggleFullscreen();
 					}
 						break;
 					case PauseMenuOptionsOption::OPTION_GOBACK:
 					{
-						// Go back to the pause menu's main menu
-						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-						// Make the highlighted option 'Options'
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-						// Save options
-						OptionsState::GetInstance ()->SaveOptions ( "resource/data/config.xml" );
+																  // Go back to the pause menu's main menu
+																  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+																  // Make the highlighted option 'Options'
+																  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+																  // Save options
+																  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-						break;
+																  break;
 					}
 						break;
 					}
@@ -603,20 +603,20 @@ Entity*	GameplayState::CreatePlayer () const
 		}
 	}
 #pragma endregion
-	if ( m_bCreditsStarted == true && (pInput->IsKeyPressed ( SGD::Key::Enter ) || pInput->IsButtonReleased ( 0 , (unsigned int)SGD::Button::A )) )
+	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
 	{
 		// Since there's only one state..go back to main menu
-		pGame->ChangeState ( MainMenuState::GetInstance () );
+		pGame->ChangeState(MainMenuState::GetInstance());
 		return true;
 	}
-	if(m_bHasLost == true && m_fLossTimer <= 0.0f)
+	if (m_bHasLost == true && m_fLossTimer <= 0.0f)
 	{
-		if(pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+		if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
 			m_bReplay = !m_bReplay;
 
-		else if(pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 		{
-			switch ( m_bReplay )
+			switch (m_bReplay)
 			{
 			case true:
 				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
@@ -631,8 +631,8 @@ Entity*	GameplayState::CreatePlayer () const
 		}
 	}
 
-	if ( m_pShop->IsOpen () )
-		m_pShop->Input ();
+	if (m_pShop->IsOpen())
+		m_pShop->Input();
 
 	return true;	// keep playing
 }
@@ -641,45 +641,45 @@ Entity*	GameplayState::CreatePlayer () const
 /**************************************************************/
 // Update
 //	- update game entities
-/*virtual*/ void GameplayState::Update ( float elapsedTime )
+/*virtual*/ void GameplayState::Update(float elapsedTime)
 {
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 
 	// If the game isn't paused and you haven't won and you haven't lost
-	if ( m_bIsPaused == false && zombieFactory->GetWave () != zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false )
+	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
 	{
 		// Update the entities
-		m_pEntities->UpdateAll ( elapsedTime );
-		m_pParticleManager->Update ( elapsedTime );
+		m_pEntities->UpdateAll(elapsedTime);
+		m_pParticleManager->Update(elapsedTime);
 
 		// Process the events & messages
-		m_pEvents->Update ();
-		m_pMessages->Update ();
+		m_pEvents->Update();
+		m_pMessages->Update();
 
 		// Update Zombie Factory
-		zombieFactory->Update ( elapsedTime );
+		zombieFactory->Update(elapsedTime);
 
 		// Check collisions
-		m_pEntities->CheckCollisions ( BUCKET_PLAYER , BUCKET_PICKUP );
-		m_pEntities->CheckCollisions ( BUCKET_ENEMIES , BUCKET_PROJECTILES );
-		m_pEntities->CheckCollisions ( BUCKET_ENEMIES , BUCKET_PLACEABLE );
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		//draw grid rectangle
 	}
 
 	// If you have won the game
-	else if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
+	else if (zombieFactory->GetWave() == zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
 	{
 		m_bIsPaused = false;
 		// Move the credits if they have started
-		if ( m_bCreditsStarted == true )
+		if (m_bCreditsStarted == true)
 		{
 			m_ptTextPosition.x = 220;
 			m_ptTextPosition.y -= SCROLL_SPEED;
 
-			if ( m_fCreditsTimer < 0.0f )
+			if (m_fCreditsTimer < 0.0f)
 			{
-				Game::GetInstance ()->ChangeState ( MainMenuState::GetInstance () );
+				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
 				return;
 			}
 
@@ -687,20 +687,20 @@ Entity*	GameplayState::CreatePlayer () const
 		}
 
 		// If the screen has faded to black start the credits
-		if ( m_fWinTimer <= 0.0f && m_bCreditsStarted == false )
+		if (m_fWinTimer <= 0.0f && m_bCreditsStarted == false)
 		{
 			m_bCreditsStarted = true;
 			m_fCreditsTimer = 28.0f;
 		}
 
 		// Count down to fade the screen to black and roll the credits
-		if ( m_fWinTimer > 0.0f )
+		if (m_fWinTimer > 0.0f)
 			m_fWinTimer -= elapsedTime;
 	}
 	// If you have lost fade to the replay menu
-	else if(m_bHasLost == true)
+	else if (m_bHasLost == true)
 	{
-		if(m_fLossTimer > 0)
+		if (m_fLossTimer > 0)
 			m_fLossTimer -= elapsedTime;
 	}
 
@@ -712,7 +712,7 @@ Entity*	GameplayState::CreatePlayer () const
 	m_fFPSTimer -= elapsedTime;
 
 	// Has the timer expired?
-	if ( m_fFPSTimer <= 0.0f )
+	if (m_fFPSTimer <= 0.0f)
 	{
 		m_unFPS = m_unFrames;
 		m_unFrames = 0;
@@ -724,35 +724,35 @@ Entity*	GameplayState::CreatePlayer () const
 /**************************************************************/
 // Render
 //	- render the game entities
-/*virtual*/ void GameplayState::Render ( void )
+/*virtual*/ void GameplayState::Render(void)
 {
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 #if _DEBUG
-	pGraphics->DrawString ( "Gameplay State | Debugging" , { 240 , 0 } , { 255 , 0 , 255 } );
+	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 #endif
 	// If the credits aren't rolling and you haven't loss
-	if ( m_bCreditsStarted == false && m_fLossTimer > 0.0f )
+	if (m_bCreditsStarted == false && m_fLossTimer > 0.0f)
 	{
 		// Render test world
-		WorldManager::GetInstance ()->Render ( SGD::Point ( (float)Camera::x , (float)Camera::y ) );
+		WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
 		Player* player = dynamic_cast<Player*>(m_pPlayer);
 
 		//Render test particles
-		m_pParticleManager->Render ();
+		m_pParticleManager->Render();
 
 		// Render the entities
-		m_pEntities->RenderAll ();
+		m_pEntities->RenderAll();
 
 		// Draw health overlay
-		float currHealth = player->GetCurrHealth ();
-		float maxHealth = player->GetMaxHealth ();
-		if ( currHealth != maxHealth )
+		float currHealth = player->GetCurrHealth();
+		float maxHealth = player->GetMaxHealth();
+		if (currHealth != maxHealth)
 		{
 			float ratio = currHealth / maxHealth;
 			unsigned char alpha = 255 - (unsigned int)(255.0f * ratio);
 
-			pGraphics->DrawRectangle ( SGD::Rectangle ( 0.0f , 0.0f , 800.0f , 600.0f ) , SGD::Color ( alpha , 255 , 0 , 0 ) );
+			pGraphics->DrawRectangle(SGD::Rectangle(0.0f, 0.0f, 800.0f, 600.0f), SGD::Color(alpha, 255, 0, 0));
 		}
 
 		// FOR DEBUG PURPOSES ONLY!
@@ -760,216 +760,216 @@ Entity*	GameplayState::CreatePlayer () const
 
 		// --- Pause Menu stuff ---
 		// If we're paused
-		if ( m_bIsPaused )
+		if (m_bIsPaused)
 		{
-			if ( m_nPauseMenuTab == PauseMenuTab::TAB_MAIN )
+			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
 				// Draw the paused main menu background
-				pGraphics->DrawTexture ( m_hPauseMainBackground , { 0 , 0 } );
+				pGraphics->DrawTexture(m_hPauseMainBackground, { 0, 0 });
 
 				// Draw the options
-				if ( m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME )
-					m_pMainButton->Draw ( "Resume Game" , { 170 , 200 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME)
+					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( "Resume Game" , { 170 , 200 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-				if ( m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION )
-					m_pMainButton->Draw ( "Options" , { 150 , 290 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION)
+					m_pMainButton->Draw("Options", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( "Options" , { 150 , 290 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw("Options", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-				if ( m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT )
-					m_pMainButton->Draw ( "Exit Game" , { 165 , 380 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT)
+					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( "Exit Game" , { 165 , 380 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 			}
-			else if ( m_nPauseMenuTab == PauseMenuTab::TAB_OPTION )
+			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 			{
 				// Draw the paused menu option's background
-				pGraphics->DrawTexture ( m_hPauseOptionsBackground , { 0 , 0 } );
+				pGraphics->DrawTexture(m_hPauseOptionsBackground, { 0, 0 });
 
 				// Create the string for the button
 				string musicVol = "Music Vol: ";
 				// Grab the volume
-				int musicVolValue = SGD::AudioManager::GetInstance ()->GetMasterVolume ( SGD::AudioGroup::Music );
+				int musicVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music);
 				// Add it to the string since C++ doesn't support [ string + "" ] 
-				musicVol.append ( std::to_string ( musicVolValue ) );
+				musicVol.append(std::to_string(musicVolValue));
 
 				// Same stuff here for the sfx vol
 				string sfxVol = "SFX Vol: ";
-				int sfxVolValue = SGD::AudioManager::GetInstance ()->GetMasterVolume ( SGD::AudioGroup::SoundEffects );
-				sfxVol.append ( std::to_string ( sfxVolValue ) );
+				int sfxVolValue = SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+				sfxVol.append(std::to_string(sfxVolValue));
 
-				if ( m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_MUSIC )
-					m_pMainButton->Draw ( musicVol , { 140 , 200 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_MUSIC)
+					m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( musicVol , { 140 , 200 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-				if ( m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_SFX )
-					m_pMainButton->Draw ( sfxVol , { 120 , 290 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_SFX)
+					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( sfxVol , { 120 , 290 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 				// If the game is in fullscreen
-				if ( Game::GetInstance ()->GetFullscreen () )
+				if (Game::GetInstance()->GetFullscreen())
 				{
-					if ( m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN )
-						m_pMainButton->Draw ( "Fullscreen: No" , { 160 , 380 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+						m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 					else
-						m_pMainButton->Draw ( "Fullscreen: No" , { 160 , 380 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+						m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 				}
 				// If the game is windowed
 				else
 				{
-					if ( m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN )
-						m_pMainButton->Draw ( "Fullscreen: Yes" , { 160 , 380 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_FULLSCREEN)
+						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 					else
-						m_pMainButton->Draw ( "Fullscreen: Yes" , { 160 , 380 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 				}
 
-				if ( m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK )
-					m_pMainButton->Draw ( "Go Back" , { 150 , 470 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
+					m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw ( "Go Back" , { 150 , 470 } , { 0 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 			}
 
 		}
 
 		// If we're shopping
-		if ( m_pShop->IsOpen () )
+		if (m_pShop->IsOpen())
 		{
-			m_pShop->Render ();
+			m_pShop->Render();
 		}
 
 		// Render the FPS
 		string fps = "FPS: ";
-		fps += std::to_string ( m_unFPS );
-		pGraphics->DrawString ( fps.c_str () , { 0 , 580 } , { 255 , 0 , 0 } );
+		fps += std::to_string(m_unFPS);
+		pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
 
 		// -- Render HUD --
-		if ( !m_bIsPaused )
+		if (!m_bIsPaused)
 		{
-			if ( !m_pShop->IsOpen () )
+			if (!m_pShop->IsOpen())
 			{
-				pGraphics->DrawTexture ( m_hHUD , { 0 , 0 } );
+				pGraphics->DrawTexture(m_hHUD, { 0, 0 });
 
 				// -- Draw the score --
 				string score = "Score: ";
-				score += std::to_string ( player->GetScore () );
-				m_pFont->Draw ( score.c_str () , 50 , 70 , 0.8f , { 255 , 255 , 255 } );
+				score += std::to_string(player->GetScore());
+				m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
 
 				// -- Draw the wave number --
 				string waveNum = "Wave: ";
-				waveNum += std::to_string ( zombieFactory->GetWave () );
-				m_pFont->Draw ( waveNum.c_str () , 350 , 60 , 0.6f , { 255 , 255 , 255 } );
+				waveNum += std::to_string(zombieFactory->GetWave());
+				m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
 
 				// -- Draw the time remaining [during build mode] --
-				if ( zombieFactory->IsBuildMode () )
+				if (zombieFactory->IsBuildMode())
 				{
 					string timeRemaining = "Time remaining: ";
-					timeRemaining += (std::to_string ( zombieFactory->GetBuildTimeRemaining () / 100.0f ));
+					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 					timeRemaining += " secs";
-					m_pFont->Draw ( timeRemaining.c_str () , 180 , 30 , 0.6f , { 255 , 255 , 255 } );
+					m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw ( "Time to Build!" , 340 , 110 , 0.4f , { 255 , 255 , 0 } );
+					m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
 					string enemiesRemaining = "Enemies Remaining: ";
-					m_pFont->Draw ( enemiesRemaining.c_str () , 225 , 30 , 0.6f , { 255 , 255 , 255 } );
+					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
 
-					int numOfEnemies = zombieFactory->GetEnemiesRemaining ();
-					if ( numOfEnemies <= 3 )
-						m_pFont->Draw ( std::to_string ( numOfEnemies ).c_str () , 495 , 30 , 0.6f , { 255 , 0 , 0 } );
+					int numOfEnemies = zombieFactory->GetEnemiesRemaining();
+					if (numOfEnemies <= 3)
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
 					else
-						m_pFont->Draw ( std::to_string ( numOfEnemies ).c_str () , 495 , 30 , 0.6f , { 255 , 255 , 255 } );
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
 
 				}
 
 				// -- Draw the items --
 
 				// Get the inventory
-				Inventory* inv = player->GetInventory ();
+				Inventory* inv = player->GetInventory();
 
 				// Draw the number of healthpacks
-				m_pFont->Draw ( std::to_string ( inv->GetHealthPacks () ).c_str () , 83 , 392 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
 
 				// Draw the number of grenades
-				m_pFont->Draw ( std::to_string ( inv->GetGrenades () ).c_str () , 83 , 462 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
 
 				// Draw the number of walls
-				m_pFont->Draw ( std::to_string ( inv->GetWalls () ).c_str () , 75 , 532 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
 
 				// Draw the number of windows
-				m_pFont->Draw ( std::to_string ( inv->GetWindows () ).c_str () , 140 , 532 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
 
 				// Draw the number of beartraps
-				m_pFont->Draw ( std::to_string ( inv->GetBearTraps () ).c_str () , 220 , 532 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
 
 				// Draw the number of mines
-				m_pFont->Draw ( std::to_string ( inv->GetMines () ).c_str () , 298 , 532 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
 
 				// -- Draw the selected weapon -- 
 
 				// Get the weapons
-				Weapon* weapons = player->GetWeapons ();
-				string names[ 4 ] = { "Assault Rifle" , "Shotgun" , "Rocket Launcher" , "Fire Axe" };
-				SGD::HTexture textures[ 4 ] = { m_hARPic , m_hShotgunPic , m_hRLPic , m_hFireAxePic };
+				Weapon* weapons = player->GetWeapons();
+				string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
+				SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
 
 				// Draw the name of the selected weapon
-				m_pFont->Draw ( names[ player->GetCurrWeapon () ] , 515 , 435 , 0.4f , { 255 , 255 , 255 } );
+				m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
 
 				// Draw the picture of the selected pic
-				pGraphics->DrawTextureSection ( textures[ player->GetCurrWeapon () ] , { 506 , 466 } , { 0 , 0 , 160 , 80 } );
+				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
 
 				// Draw the ammo of the selected weapon
-				m_pFont->Draw ( std::to_string ( weapons[ player->GetCurrWeapon () ].GetCurrAmmo () ).c_str () , 700 , 494 , 0.6f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
 
 				// -- Draw the offhand weapons ammos --
-				m_pFont->Draw ( std::to_string ( weapons[ 0 ].GetCurrAmmo () ).c_str () , 510 , 375 , 0.5f , { 255 , 255 , 255 } );
-				m_pFont->Draw ( std::to_string ( weapons[ 1 ].GetCurrAmmo () ).c_str () , 580 , 375 , 0.5f , { 255 , 255 , 255 } );
-				m_pFont->Draw ( std::to_string ( weapons[ 2 ].GetCurrAmmo () ).c_str () , 660 , 375 , 0.5f , { 255 , 255 , 255 } );
+				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
+				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
 				//Draw the grid rectange
-				SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				//NOTE: why did it take this much work? did i do something wrong?
-				pos.x = (pos.x + player->GetPosition ().x - ((int)pos.x + (int)player->GetPosition ().x) % 32) - Camera::x - 384;
-				pos.y = (pos.y + player->GetPosition ().y - ((int)pos.y + (int)player->GetPosition ().y) % 32) - Camera::y - 288;
-				pGraphics->DrawRectangle ( { pos.x , pos.y , pos.x + 32 , pos.y + 32 } , { 0 , 0 , 0 , 0 } , { 255 , 0 , 0 , 0 } , 2 );
+				pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
+				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
+				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);
 			}
 		}
 
 		// If you have won the game render You Win and fade to credits
-		if ( zombieFactory->GetWave () == zombieFactory->GetTotalWaves () + 1 && m_bHasLost == false)
+		if (zombieFactory->GetWave() == zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
 		{
-			Game * pGame = Game::GetInstance ();
+			Game * pGame = Game::GetInstance();
 
-			pGraphics->DrawRectangle (
-				SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) ,
-				SGD::Color ( 255 - (char)(m_fWinTimer * 51) , 0 , 0 , 0 ) );
+			pGraphics->DrawRectangle(
+				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
+				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
 
-			m_pFont->Draw ( "You Win!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth ( "You Win!" )) , pGame->GetScreenHeight () / 2 - 64 , 2.0f , SGD::Color { 255 , 0 , 0 } );
+			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
-		if(m_bHasLost == true)
+		if (m_bHasLost == true)
 		{
-			Game * pGame = Game::GetInstance ();
+			Game * pGame = Game::GetInstance();
 
-			pGraphics->DrawRectangle (
-				SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) ,
-				SGD::Color ( 255 - (char)(m_fLossTimer * 51) , 0 , 0 , 0 ) );
+			pGraphics->DrawRectangle(
+				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
+				SGD::Color(255 - (char)(m_fLossTimer * 51), 0, 0, 0));
 
-			m_pFont->Draw ( "You Lose!" , (pGame->GetScreenWidth () / 2) - (m_pFont->GetTextWidth ( "You Lose!" )) , pGame->GetScreenHeight () / 2 - 64 , 2.0f , SGD::Color { 0 , 0 , 0 } );
+			m_pFont->Draw("You Lose!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Lose!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 0, 0, 0 });
 		}
 	}
 	// Render the credits if you have won and faded to them
-	else if ( m_bCreditsStarted == true )
+	else if (m_bCreditsStarted == true)
 	{
-		RenderCredits ();
+		RenderCredits();
 	}
 	// Render the Replay menu if you have lost and faded to them
-	else if ( m_bHasLost  && m_fLossTimer <= 0.0f)
+	else if (m_bHasLost  && m_fLossTimer <= 0.0f)
 	{
-		RenderLoss ();
+		RenderLoss();
 	}
 
 }
@@ -981,43 +981,43 @@ Entity*	GameplayState::CreatePlayer () const
 //	- STATIC METHOD
 //		- does NOT have invoking object!!!
 //		- must use singleton to access members
-/*static*/ void GameplayState::MessageProc ( const SGD::Message* pMsg )
+/*static*/ void GameplayState::MessageProc(const SGD::Message* pMsg)
 {
 	/* Show warning when a Message ID enumerator is not handled */
 #pragma warning( push )
 #pragma warning( 1 : 4061 )
 
 	// What type of message?
-	switch ( pMsg->GetMessageID () )
+	switch (pMsg->GetMessageID())
 	{
 	case MessageID::MSG_CREATE_BEAVER_ZOMBIE:
 	{
-		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance ();
-		Entity*beaver = self->CreateBeaverZombie ( pCreateMessage->GetX () , pCreateMessage->GetY () );
-		self->m_pEntities->AddEntity ( beaver , 1 );
-		beaver->Release ();
-		beaver = nullptr;
+												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
+												GameplayState* self = GameplayState::GetInstance();
+												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+												self->m_pEntities->AddEntity(beaver, 1);
+												beaver->Release();
+												beaver = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_FAST_ZOMBIE:
 	{
-		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance ();
-		Entity*zambie = self->CreateFastZombie ( pCreateMessage->GetX () , pCreateMessage->GetY () );
-		self->m_pEntities->AddEntity ( zambie , 1 );
-		zambie->Release ();
-		zambie = nullptr;
+											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
+											  GameplayState* self = GameplayState::GetInstance();
+											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+											  self->m_pEntities->AddEntity(zambie, 1);
+											  zambie->Release();
+											  zambie = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_SLOW_ZOMBIE:
 	{
-		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance ();
-		Entity*zambie = self->CreateSlowZombie ( pCreateMessage->GetX () , pCreateMessage->GetY () );
-		self->m_pEntities->AddEntity ( zambie , 1 );
-		zambie->Release ();
-		zambie = nullptr;
+											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
+											  GameplayState* self = GameplayState::GetInstance();
+											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+											  self->m_pEntities->AddEntity(zambie, 1);
+											  zambie->Release();
+											  zambie = nullptr;
 	}
 		break;
 
@@ -1025,70 +1025,70 @@ Entity*	GameplayState::CreatePlayer () const
 
 	{
 
-		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
-		GameplayState* self = GameplayState::GetInstance ();
-		for ( int i = 0; i < 10; i++ )
-		{
-			Entity*bullet = self->CreateProjectile ( pCreateMessage->GetWeaponNumber () );
-			self->m_pEntities->AddEntity ( bullet , BUCKET_PROJECTILES );
-			bullet->Release ();
-			bullet = nullptr;
-		}
+											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+											 GameplayState* self = GameplayState::GetInstance();
+											 for (int i = 0; i < 10; i++)
+											 {
+												 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+												 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+												 bullet->Release();
+												 bullet = nullptr;
+											 }
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
 	{
-		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		Entity* place = g->CreatePlaceable ( pCreateMessage->GetPlaceableType () );
-		g->m_pEntities->AddEntity ( place , BUCKET_PLACEABLE );
-		place->Release ();
-		place = nullptr;
+											const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+											GameplayState* g = GameplayState::GetInstance();
+											Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+											g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+											place->Release();
+											place = nullptr;
 
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		Entity* place = g->CreatePickUp ( pCreateMessage->GetPickUpID () , pCreateMessage->GetPosition () );
-		g->m_pEntities->AddEntity ( place , BUCKET_PICKUP );
-		place->Release ();
-		place = nullptr;
+										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+										 GameplayState* g = GameplayState::GetInstance();
+										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+										 place->Release();
+										 place = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_PLAYER_SPAWN:
 	{
-		const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX ();
-		g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY ();
+											   const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+											   GameplayState* g = GameplayState::GetInstance();
+											   g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+											   g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
 	case MessageID::MSG_DESTROY_ENTITY:
 	{
 
-		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		Entity* ent = pCreateMessage->GetEntity ();
-		g->m_pEntities->RemoveEntity ( ent );
+										  const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+										  GameplayState* g = GameplayState::GetInstance();
+										  Entity* ent = pCreateMessage->GetEntity();
+										  g->m_pEntities->RemoveEntity(ent);
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
 	{
-		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		ParticleManager::GetInstance ()->activate ( pCreateMessage->GetEmitterID () , pCreateMessage->GetX () , pCreateMessage->GetY () );
+												  const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+												  GameplayState* g = GameplayState::GetInstance();
+												  ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
 	}
 		break;
 	case MessageID::MSG_CREATE_DYNAMIC_PARTICLE:
 	{
-		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-		GameplayState* g = GameplayState::GetInstance ();
-		ParticleManager::GetInstance ()->activate ( pCreateMessage->GetEmitterID () , pCreateMessage->GetParticleEntity () , pCreateMessage->GetXOffset () , pCreateMessage->GetYOffset () );
+												   const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+												   GameplayState* g = GameplayState::GetInstance();
+												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	}
@@ -1104,202 +1104,202 @@ Entity*	GameplayState::CreatePlayer () const
 
 // CreateButton
 // - factory method for buttons
-Button* GameplayState::CreateButton () const
+Button* GameplayState::CreateButton() const
 {
-	Button* pButton = new Button ();
-	pButton->SetColor ( { 0 , 0 , 0 } );
-	pButton->SetPosition ( { 0 , 0 } );
-	pButton->SetScale ( { 1 , 1 } );
-	pButton->SetText ( "" );
-	pButton->SetSize ( { 314 , 70 } );
+	Button* pButton = new Button();
+	pButton->SetColor({ 0, 0, 0 });
+	pButton->SetPosition({ 0, 0 });
+	pButton->SetScale({ 1, 1 });
+	pButton->SetText("");
+	pButton->SetSize({ 314, 70 });
 
 	return pButton;
 }
 
-Entity* GameplayState::CreateBeaverZombie ( int _x , int _y )
+Entity* GameplayState::CreateBeaverZombie(int _x, int _y)
 {
 	BeaverZombie* tempBeav = new BeaverZombie;
-	tempBeav->SetDamage ( 10 );
-	tempBeav->SetPosition ( { (float)_x , (float)_y } );
-	tempBeav->SetAttackRange ( 1.0f );
-	tempBeav->SetMaxHealth ( 100 );
-	tempBeav->SetCurrHealth ( 100 );
-	tempBeav->SetSpeed ( 200.0f );
-	tempBeav->SetVelocity ( { 0 , 0 } );
+	tempBeav->SetDamage(10);
+	tempBeav->SetPosition({ (float)_x, (float)_y });
+	tempBeav->SetAttackRange(1.0f);
+	tempBeav->SetMaxHealth(100);
+	tempBeav->SetCurrHealth(100);
+	tempBeav->SetSpeed(200.0f);
+	tempBeav->SetVelocity({ 0, 0 });
 
 	// AIComponent
-	tempBeav->SetPlayer ( m_pPlayer );
+	tempBeav->SetPlayer(m_pPlayer);
 
 	return tempBeav;
 }
 
-Entity* GameplayState::CreateFastZombie ( int _x , int _y )
+Entity* GameplayState::CreateFastZombie(int _x, int _y)
 {
 	FastZombie* zambie = new FastZombie;
-	zambie->SetDamage ( 10 );
-	zambie->SetPosition ( { (float)_x , (float)_y } );
-	zambie->SetAttackRange ( 1.0f );
-	zambie->SetMaxHealth ( 100 );
-	zambie->SetCurrHealth ( 100 );
-	zambie->SetSpeed ( 150.0f );
-	zambie->SetVelocity ( { 0 , 0 } );
+	zambie->SetDamage(10);
+	zambie->SetPosition({ (float)_x, (float)_y });
+	zambie->SetAttackRange(1.0f);
+	zambie->SetMaxHealth(100);
+	zambie->SetCurrHealth(100);
+	zambie->SetSpeed(150.0f);
+	zambie->SetVelocity({ 0, 0 });
 
 	// AIComponent
-	zambie->SetPlayer ( m_pPlayer );
+	zambie->SetPlayer(m_pPlayer);
 
 	return zambie;
 }
 
-Entity* GameplayState::CreateSlowZombie ( int _x , int _y )
+Entity* GameplayState::CreateSlowZombie(int _x, int _y)
 {
 	SlowZombie* zambie = new SlowZombie;
-	zambie->SetDamage ( 10 );
-	zambie->SetPosition ( { (float)_x , (float)_y } );
-	zambie->SetAttackRange ( 1.0f );
-	zambie->SetMaxHealth ( 100 );
-	zambie->SetCurrHealth ( 100 );
-	zambie->SetSpeed ( 100.0f );
-	zambie->SetVelocity ( { 0 , 0 } );
+	zambie->SetDamage(10);
+	zambie->SetPosition({ (float)_x, (float)_y });
+	zambie->SetAttackRange(1.0f);
+	zambie->SetMaxHealth(100);
+	zambie->SetCurrHealth(100);
+	zambie->SetSpeed(100.0f);
+	zambie->SetVelocity({ 0, 0 });
 
 	// AIComponent
-	zambie->SetPlayer ( m_pPlayer );
+	zambie->SetPlayer(m_pPlayer);
 
 	return zambie;
 }
 
-Entity* GameplayState::CreatePlaceable ( int trap )
+Entity* GameplayState::CreatePlaceable(int trap)
 {
-	if ( trap == 0 )
+	if (trap == 0)
 	{
-		BearTrap* trap = new BearTrap ();
-		trap->SetTrap ( false );
-		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		BearTrap* trap = new BearTrap();
+		trap->SetTrap(false);
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
 		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
-		trap->SetPosition ( pos );
-		trap->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "crab" ) );
-		trap->SetCurrFrame ( 0 );
-		trap->SetTimeOfFrame ( 0 );
-		trap->SetCurrAnimation ( "crab" );
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
+		trap->SetCurrFrame(0);
+		trap->SetTimeOfFrame(0);
+		trap->SetCurrAnimation("crab");
 		return trap;
 	}
 	else
 	{
-		Mine* trap = new Mine ();
-		trap->SetDamage ( 30 );
-		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		Mine* trap = new Mine();
+		trap->SetDamage(30);
+		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
 		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
-		trap->SetPosition ( pos );
-		trap->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "mine" ) );
-		trap->SetCurrFrame ( 0 );
-		trap->SetTimeOfFrame ( 0 );
-		trap->SetCurrAnimation ( "mine" );
+		trap->SetPosition(pos);
+		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("mine"));
+		trap->SetCurrFrame(0);
+		trap->SetTimeOfFrame(0);
+		trap->SetCurrAnimation("mine");
 		return trap;
 	}
 }
 
-Entity* GameplayState::CreateProjectile ( int _Weapon )
+Entity* GameplayState::CreateProjectile(int _Weapon)
 {
-	switch ( _Weapon )
+	switch (_Weapon)
 	{
 	case 0://Assault Rifle
 	{
-		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
-		tempProj->SetDamage ( 20 );
-		tempProj->SetLifeTime ( 5 );
-		tempProj->SetPosition ( m_pPlayer->GetPosition () );
-		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
-		pos.x += Camera::x;
-		pos.y += Camera::y;
-		SGD::Vector vec = pos - m_pPlayer->GetPosition ();
-		vec.Normalize ();
-		vec *= 1000;
-		tempProj->SetVelocity ( vec );
-		return tempProj;
+			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
+			   tempProj->SetDamage(20);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
+			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   vec.Normalize();
+			   vec *= 1000;
+			   tempProj->SetVelocity(vec);
+			   return tempProj;
 	}
 		break;
 	case 1://Shotgun
 	{
 
-		ShotgunPellet* tempProj = new ShotgunPellet;
-		tempProj->SetDamage ( 20 );
-		tempProj->SetLifeTime ( 5 );
-		tempProj->SetPosition ( m_pPlayer->GetPosition () );
-		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
-		pos.x += Camera::x;
-		pos.y += Camera::y;
-		SGD::Vector vec = pos - m_pPlayer->GetPosition ();
-		vec.Normalize ();
-		vec *= (float)(750 + rand () % 500);
+			   ShotgunPellet* tempProj = new ShotgunPellet;
+			   tempProj->SetDamage(20);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
+			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   vec.Normalize();
+			   vec *= (float)(750 + rand() % 500);
 
-		// Rotate bullet at random direction
-		float degree = (-50 + rand () % 100) / 100.0f;
-		vec.Rotate ( degree );
+			   // Rotate bullet at random direction
+			   float degree = (-50 + rand() % 100) / 100.0f;
+			   vec.Rotate(degree);
 
-		tempProj->SetVelocity ( vec );
-		return tempProj;
+			   tempProj->SetVelocity(vec);
+			   return tempProj;
 	}
 		break;
 	case 2://Rocket launcher
 	{
-		Rocket* tempProj = new Rocket;
-		tempProj->SetDamage ( 150 );
-		tempProj->SetLifeTime ( 5 );
-		tempProj->SetPosition ( m_pPlayer->GetPosition () );
-		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
-		pos.x += Camera::x;
-		pos.y += Camera::y;
-		SGD::Vector vec = pos - m_pPlayer->GetPosition ();
-		vec.Normalize ();
-		vec *= 1000;
-		tempProj->SetVelocity ( vec );
+			   Rocket* tempProj = new Rocket;
+			   tempProj->SetDamage(150);
+			   tempProj->SetLifeTime(5);
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
+			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   vec.Normalize();
+			   vec *= 1000;
+			   tempProj->SetVelocity(vec);
 
-		ParticleManager::GetInstance ()->activate ( "Smoke_Particle" , tempProj , 0 , 0 );
+			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 
-		return tempProj;
+			   return tempProj;
 	}
 		break;
 	case 3://Fire axe?
 	{
-		break;
+			   break;
 	}
 	}
 
 	return nullptr;
 }
 
-Entity* GameplayState::CreatePickUp ( int pick , SGD::Point pos )
+Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos)
 {
-	if ( pick == 0 )
+	if (pick == 0)
 	{
-		WallPickup* wall = new WallPickup ();
-		wall->SetPosition ( pos );
-		wall->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "wall" ) );
-		wall->SetCurrFrame ( 0 );
-		wall->SetTimeOfFrame ( 0 );
-		wall->SetCurrAnimation ( "wall" );
+		WallPickup* wall = new WallPickup();
+		wall->SetPosition(pos);
+		wall->SetSprite(AnimationManager::GetInstance()->GetSprite("wall"));
+		wall->SetCurrFrame(0);
+		wall->SetTimeOfFrame(0);
+		wall->SetCurrAnimation("wall");
 		return wall;
 	}
 	else
 	{
-		WindowPickup* window = new WindowPickup ();
-		window->SetPosition ( pos );
-		window->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "window" ) );
-		window->SetCurrFrame ( 0 );
-		window->SetTimeOfFrame ( 0 );
-		window->SetCurrAnimation ( "window" );
+		WindowPickup* window = new WindowPickup();
+		window->SetPosition(pos);
+		window->SetSprite(AnimationManager::GetInstance()->GetSprite("window"));
+		window->SetCurrFrame(0);
+		window->SetTimeOfFrame(0);
+		window->SetCurrAnimation("window");
 		return window;
 	}
 }
 
-Entity* GameplayState::CreateTower ( int _x , int _y , int _type )
+Entity* GameplayState::CreateTower(int _x, int _y, int _type)
 {
-	switch ( _type )
+	switch (_type)
 	{
 	case CreateTowerMessage::TOWER_MACHINE_GUN:
 	{
-		MachineGunTower* tower = new MachineGunTower;
+												  MachineGunTower* tower = new MachineGunTower;
 
 	}
 		break;
@@ -1325,61 +1325,61 @@ Entity* GameplayState::CreateTower ( int _x , int _y , int _type )
 
 // LoadGameFromSlot
 // - Load game from the slot
-void GameplayState::LoadGameFromSlot ( int slot )
+void GameplayState::LoadGameFromSlot(int slot)
 {
 	HRESULT hr;
 	ostringstream stringstream;
-	char path[ MAX_PATH ];
+	char path[MAX_PATH];
 	LPWSTR wszPath = NULL;
 	size_t size;
 
 	// Get the path to the app data folder
-	hr = SHGetKnownFolderPath ( FOLDERID_RoamingAppData , 0 , 0 , &wszPath );
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
 
 	// Convert from LPWSTR to char[]
-	wcstombs_s ( &size , path , MAX_PATH , wszPath , MAX_PATH );
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
 
 	// Convert char types
-	if ( hr == S_OK )
+	if (hr == S_OK)
 		stringstream << path;
-	string pathtowrite = stringstream.str ();
+	string pathtowrite = stringstream.str();
 
 	// Add the company and game information
 	pathtowrite += "\\RazorBalloon\\";
 
 	// Create our directory
-	SHCreateDirectoryEx ( NULL , pathtowrite.c_str () , 0 );
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
 
 	// Create our save file
 	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string ( slot ) + ".xml";
+	pathtowrite += std::to_string(slot) + ".xml";
 
 
 	// Create a TinyXML document
 	TiXmlDocument doc;
 
 	// Attempt to load the file, if not gtfo
-	if ( !doc.LoadFile ( pathtowrite.c_str () ) )
+	if (!doc.LoadFile(pathtowrite.c_str()))
 		return;
 
 	// Access the root element (volume)
-	TiXmlElement* pRoot = doc.RootElement ();
+	TiXmlElement* pRoot = doc.RootElement();
 
 	// Is the root there, if not, gtfo
-	if ( pRoot == nullptr )
+	if (pRoot == nullptr)
 		return;
 
-	m_ptPlayerSpawnPoint.x = float ( atoi ( pRoot->Attribute ( "x" ) ) );
-	m_ptPlayerSpawnPoint.y = float ( atoi ( pRoot->Attribute ( "y" ) ) );
+	m_ptPlayerSpawnPoint.x = float(atoi(pRoot->Attribute("x")));
+	m_ptPlayerSpawnPoint.y = float(atoi(pRoot->Attribute("y")));
 
 	// Get the volume
-	TiXmlElement* pStats = pRoot->NextSiblingElement ( "stats" );
+	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
 
 	// Set the player's score
-	if ( dynamic_cast<Player*>(m_pPlayer) != nullptr )
+	if (dynamic_cast<Player*>(m_pPlayer) != nullptr)
 	{
-		int money = int ( atoi ( pStats->Attribute ( "money" ) ) );
-		dynamic_cast<Player*>(m_pPlayer)->SetScore ( money );
+		int money = int(atoi(pStats->Attribute("money")));
+		dynamic_cast<Player*>(m_pPlayer)->SetScore(money);
 	}
 
 
@@ -1388,72 +1388,72 @@ void GameplayState::LoadGameFromSlot ( int slot )
 // SaveGame
 // - Saves and or creates a savefile in the appdata
 // [in] newFile - if it's creating a file: true, otherwise false
-void GameplayState::SaveGame ( bool newFile )
+void GameplayState::SaveGame(bool newFile)
 {
 
 	// --- Make a new XML file in Appdata ---
 	HRESULT hr;
 	ostringstream stringstream;
-	char path[ MAX_PATH ];
+	char path[MAX_PATH];
 	LPWSTR wszPath = NULL;
 	size_t size;
 
 	// Get the path to the app data folder
-	hr = SHGetKnownFolderPath ( FOLDERID_RoamingAppData , 0 , 0 , &wszPath );
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
 
 	// Convert from LPWSTR to char[]
-	wcstombs_s ( &size , path , MAX_PATH , wszPath , MAX_PATH );
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
 
 	// Convert char types
-	if ( hr == S_OK )
+	if (hr == S_OK)
 		stringstream << path;
-	string pathtowrite = stringstream.str ();
+	string pathtowrite = stringstream.str();
 
 	// Add the company and game information
 	pathtowrite += "\\RazorBalloon\\";
 
 	// Create our directory
-	SHCreateDirectoryEx ( NULL , pathtowrite.c_str () , 0 );
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
 
 	// Create our save file
 	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string ( m_nCurrGameSlot ) + ".xml";
+	pathtowrite += std::to_string(m_nCurrGameSlot) + ".xml";
 
 
 	// If we're making a new file
-	if ( newFile )
+	if (newFile)
 	{
 
 		// Make a document
 		TiXmlDocument doc;
 
 		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration ( "1.0" , "utf-8" , "" );
+		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
 
 		// Attach the declaration to the document
-		doc.LinkEndChild ( pDecl );
+		doc.LinkEndChild(pDecl);
 
 		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement ( "position" );
+		TiXmlElement* pRoot = new TiXmlElement("position");
 
 		// Add the X and Y of position
-		pRoot->SetAttribute ( "x" , 0 );
-		pRoot->SetAttribute ( "y" , 0 );
+		pRoot->SetAttribute("x", 0);
+		pRoot->SetAttribute("y", 0);
 
 		// Link the root to the doc
-		doc.LinkEndChild ( pRoot );
+		doc.LinkEndChild(pRoot);
 
 		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement ( "stats" );
+		TiXmlElement* pStats = new TiXmlElement("stats");
 
 		// Add the money
-		pStats->SetAttribute ( "money" , 0 );
+		pStats->SetAttribute("money", 0);
 
 		// Link the stats to the doc
-		doc.LinkEndChild ( pStats );
+		doc.LinkEndChild(pStats);
 
 		// Save the file
-		doc.SaveFile ( pathtowrite.c_str () );
+		doc.SaveFile(pathtowrite.c_str());
 	}
 	else
 	{
@@ -1461,101 +1461,101 @@ void GameplayState::SaveGame ( bool newFile )
 		TiXmlDocument doc;
 
 		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration ( "1.0" , "utf-8" , "" );
+		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
 
 		// Attach the declaration to the document
-		doc.LinkEndChild ( pDecl );
+		doc.LinkEndChild(pDecl);
 
 		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement ( "position" );
+		TiXmlElement* pRoot = new TiXmlElement("position");
 
 		// Add the X and Y of position
-		pRoot->SetAttribute ( "x" , (int)m_pPlayer->GetPosition ().x );
-		pRoot->SetAttribute ( "y" , (int)m_pPlayer->GetPosition ().y );
+		pRoot->SetAttribute("x", (int)m_pPlayer->GetPosition().x);
+		pRoot->SetAttribute("y", (int)m_pPlayer->GetPosition().y);
 
 		// Link the root to the doc
-		doc.LinkEndChild ( pRoot );
+		doc.LinkEndChild(pRoot);
 
 		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement ( "stats" );
+		TiXmlElement* pStats = new TiXmlElement("stats");
 
 		// Add the money
-		pStats->SetAttribute ( "money" , (int)dynamic_cast<Player*>(m_pPlayer)->GetScore () );
+		pStats->SetAttribute("money", (int)dynamic_cast<Player*>(m_pPlayer)->GetScore());
 
 		// Link the stats to the doc
-		doc.LinkEndChild ( pStats );
+		doc.LinkEndChild(pStats);
 
 		// Save the file
-		doc.SaveFile ( pathtowrite.c_str () );
+		doc.SaveFile(pathtowrite.c_str());
 	}
 }
 
 // Render Credits
 // - Renders the credits upon winning the game
-void GameplayState::RenderCredits ( void )
+void GameplayState::RenderCredits(void)
 {
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Draw the background
-	pGraphics->DrawTexture ( m_hBackground , { 0 , 0 } );
+	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
 	// Draw the credits
 	// TODO: Load in a text file
 	string credits = "SOORRY\n\n\
-					 By Razor Balloon\n\n\
-					 Part of Heavy Square Studios\n\n\
-					 Associate Producers\n\
-					 Sean Hathaway\n\
-					 Robert Martinez\n\n\
-					 Executive Producer\n\
-					 John O' Leske\n\n\
-					 World Software Engineer\n\
-					 Justin Patterson\n\n\
-					 AI Programmer\n\
-					 Justin Patterson\n\n\
-					 Particle Software Engineer\n\
-					 Matthew Salow\n\n\
-					 Animation Software Engineer\n\
-					 James Sylvester\n\n\
-					 Game Core\n\
-					 Justin Mazzola\n\n\
-					 UI Programmer\n\
-					 Justin Mazzola\n\n\
-					 Mercenary Programmer\n\
-					 Ryan Simmons\n\n\
-					 Artists\n\
-					 Gregory Bey\n\
-					 Caris Frazier\n\
-					 Justin Mazzola\n\n\
-					 Special Thanks\n\
-					 Jordan Butler for ideas.";
+					 					 By Razor Balloon\n\n\
+										 					 Part of Heavy Square Studios\n\n\
+															 					 Associate Producers\n\
+																				 					 Sean Hathaway\n\
+																									 					 Robert Martinez\n\n\
+																														 					 Executive Producer\n\
+																																			 					 John O' Leske\n\n\
+																																								 					 World Software Engineer\n\
+																																													 					 Justin Patterson\n\n\
+																																																		 					 AI Programmer\n\
+																																																							 					 Justin Patterson\n\n\
+																																																												 					 Particle Software Engineer\n\
+																																																																	 					 Matthew Salow\n\n\
+																																																																						 					 Animation Software Engineer\n\
+																																																																											 					 James Sylvester\n\n\
+																																																																																 					 Game Core\n\
+																																																																																					 					 Justin Mazzola\n\n\
+																																																																																										 					 UI Programmer\n\
+																																																																																															 					 Justin Mazzola\n\n\
+																																																																																																				 					 Mercenary Programmer\n\
+																																																																																																									 					 Ryan Simmons\n\n\
+																																																																																																														 					 Artists\n\
+																																																																																																																			 					 Gregory Bey\n\
+																																																																																																																								 					 Caris Frazier\n\
+																																																																																																																													 					 Justin Mazzola\n\n\
+																																																																																																																																		 					 Special Thanks\n\
+																																																																																																																																							 					 Jordan Butler for ideas.";
 
-	m_pFont->Draw ( credits , (int)m_ptTextPosition.x , (int)m_ptTextPosition.y , 0.5f , { 255 , 0 , 0 } );
+	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
 	// Draw rectangles to cut off the words to give an illusion of margins
-	pGraphics->DrawTextureSection ( m_hBackground , { 0 , 0 } ,
-		SGD::Rectangle ( 0 , 0 , 800 , 228 ) , {} , {} );
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
+		SGD::Rectangle(0, 0, 800, 228), {}, {});
 
-	pGraphics->DrawTextureSection ( m_hBackground , { 0 , 475 } ,
-		SGD::Rectangle ( 0 , 475 , 800 , 600 ) , {} , {} );
+	pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
+		SGD::Rectangle(0, 475, 800, 600), {}, {});
 
 	// Render button
-	m_pMainButton->Draw ( "Main Menu" , { 180 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
+	m_pMainButton->Draw("Main Menu", { 180, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
 
 	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
 
-	if ( m_fCreditsTimer <= 5.0f )
+	if (m_fCreditsTimer <= 5.0f)
 	{
-		Game * pGame = Game::GetInstance ();
-		pGraphics->DrawRectangle ( SGD::Rectangle ( SGD::Point ( 0.0f , 0.0f ) , SGD::Point ( (float)pGame->GetScreenWidth () , (float)pGame->GetScreenHeight () ) ) , SGD::Color ( 255 - (char)(m_fCreditsTimer * 51) , 0 , 0 , 0 ) );
+		Game * pGame = Game::GetInstance();
+		pGraphics->DrawRectangle(SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())), SGD::Color(255 - (char)(m_fCreditsTimer * 51), 0, 0, 0));
 	}
 }
 
 // HasLost
 // - Lets gameplay know that the player has died
 // sets the game pause to false
-void GameplayState::HasLost ( void )
+void GameplayState::HasLost(void)
 {
 	m_bHasLost = true;
 	m_bIsPaused = false;
@@ -1565,26 +1565,26 @@ void GameplayState::HasLost ( void )
 // - Renders the game over screen
 // Allows the player to replay the current game mode or
 // go to the main menu
-void GameplayState::RenderLoss ( void )
+void GameplayState::RenderLoss(void)
 {
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
-			
+
 	// Draw the paused main menu background
-	pGraphics->DrawTexture ( m_hBackground , { 0 , 0 } );
+	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
 	// Draw the game over at the top
 	m_pFont->Draw("Game Over", Game::GetInstance()->GetScreenWidth() / 2 - (int)(m_pFont->GetTextWidth("Game Over") * .75f), 100, 1.2f, SGD::Color(255, 0, 0, 0));
 
 	// Draw the options
 	if (m_bReplay == true)
-		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 255 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+		m_pMainButton->Draw("Soorry, Try Again?", { 220, 200 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 	else
-		m_pMainButton->Draw ( "Soorry, Try Again?" , { 220 , 200 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+		m_pMainButton->Draw("Soorry, Try Again?", { 220, 200 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
-	if ( m_bReplay == false )
-		m_pMainButton->Draw ( "Main Menu, eh?" , { 200 , 290 } , { 255 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+	if (m_bReplay == false)
+		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 	else
-		m_pMainButton->Draw ( "Main Menu, eh?" , { 200 , 290 } , { 0 , 0 , 0 } , { 0.8f , 0.8f } , 0 );
+		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
-			
+
 }
