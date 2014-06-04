@@ -69,6 +69,9 @@ public:
 	void ChangeState(IGameState* pNewState );
 
 
+	void Transition(IGameState* to);
+
+
 private:
 	/**********************************************************/
 	// Singleton Object:
@@ -102,6 +105,9 @@ private:
 	/**********************************************************/
 	// Current Game State
 	IGameState*				m_pCurrState	= nullptr;
+	
+	// Transition State
+	IGameState*				m_pTransState	= nullptr;
 
 
 	/**********************************************************/

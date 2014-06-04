@@ -59,6 +59,17 @@
 }
 
 
+void Game::Transition(IGameState* to)
+{
+	if (m_pTransState)
+		return;
+
+	m_pTransState = to;
+	to->Enter();
+	to->SetTransition(true);
+}
+
+
 /**************************************************************/
 // Initialize
 //	- initialize the SGD wrappers
@@ -144,15 +155,29 @@ int Game::Main( void )
 	if( m_pCurrState->Input() == false )
 		return 1;	// exit success!
 
-
 	// Testing the rending for the animation
 	//m_pAnimation->m_sAnimationTS.m_nCurrAnimation = "running";
 	//m_pAnimation->m_sAnimationTS.m_nCurrFrame = 0;
 	//m_pAnimation->Render(m_pAnimation->m_sAnimationTS, 0, 0);
 
 	// Update & render the current state
-	m_pCurrState->Update( elapsedTime );
+	if (!m_pTransState)
+		m_pCurrState->Update( elapsedTime );
+
 	m_pCurrState->Render();
+
+	if (m_pTransState)
+	{
+		m_pTransState->Update(elapsedTime);
+		m_pTransState->Render();
+
+		if (m_pTransState->IsTransitioning() == false)
+		{
+			m_pCurrState->Exit();
+			m_pCurrState = m_pTransState;
+			m_pTransState = nullptr;
+		}
+	}
 	
 	return 0;		// keep playing!
 }

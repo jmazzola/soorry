@@ -68,22 +68,12 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 
-	// Initialize the Event Manager
-	m_pEvents = SGD::EventManager::GetInstance();
-	m_pEvents->Initialize();
-
-	// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
-	// Allocate the Entity Manager
-	m_pEntities = new EntityManager;
-
+	SetTransition(false);
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/LoadSaveBG.png");
+	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
 
 	// Load Audio
@@ -136,26 +126,10 @@ using namespace std;
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	pGraphics->UnloadTexture(m_hBackground);
+	pGraphics->UnloadTexture(m_hMainMenuSnap);
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
-
-	// Deallocate the Entity Manager
-	m_pEntities->RemoveAll();
-	delete m_pEntities;
-	m_pEntities = nullptr;
-
-
-	//m_pMessages->Terminate();
-	//m_pMessages = nullptr;
-	//SGD::MessageManager::DeleteInstance();
-
-
-	// Terminate & deallocate the SGD wrappers
-	m_pEvents->Terminate();
-	m_pEvents = nullptr;
-	SGD::EventManager::DeleteInstance();
 
 	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
@@ -240,7 +214,7 @@ using namespace std;
 			case MENU_GOBACK:
 			{
 				// Go Back to Main Menu
-				pGame->ChangeState(MainMenuState::GetInstance());
+				pGame->Transition(MainMenuState::GetInstance());
 				// Exit immediately
 				return true;
 			}
@@ -269,18 +243,19 @@ using namespace std;
 //	- update game entities
 /*virtual*/ void LoadSaveState::Update(float elapsedTime)
 {
+	// If we're changing menus, count down the timer
+	if (IsTransitioning())
+	{
+		m_fTransitionTime -= elapsedTime;
 
-
-	// Update the entities
-	m_pEntities->UpdateAll(elapsedTime);
-
-
-	// Process the events & messages
-	m_pEvents->Update();
-	//m_pMessages->Update();
-
-
-	// Check collisions
+		if (m_fTransitionTime <= 0)
+			SetTransition(false);
+	}
+	else
+	{
+		// Reset the transition time to allow for transitions again
+		m_fTransitionTime = TRANSITION_TIME;
+	}
 }
 
 
@@ -291,71 +266,78 @@ using namespace std;
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Render the background
-	pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
-
-	// Render the entities
-	m_pEntities->RenderAll();
+	// If we're transitioning
+	if(IsTransitioning())
+	{
+		// Draw the main menu snapshot
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 800 / TRANSITION_TIME * m_fTransitionTime });
+	}
 
 	// TODO: Add Strings to STRING TABLE for easy localization
 	// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
 
-
-	// If the first file exists
-	if (m_bFileExists[0])
-	{
-		// Show that the save exists
-		if (m_nCursor == MENU_SLOT1)
-			m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-		else
-			m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-	}
+	// When the transition is done
 	else
 	{
-		// Prompt a new game.
-		if (m_nCursor == MENU_SLOT1)
-			m_pMainButton->Draw("Make New Game", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-		else
-			m_pMainButton->Draw("Make New Game", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-	}
+		// Render the background
+		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
-	if (m_bFileExists[1])
-	{
-		if (m_nCursor == MENU_SLOT2)
-			m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		// If the first file exists
+		if (m_bFileExists[0])
+		{
+			// Show that the save exists
+			if (m_nCursor == MENU_SLOT1)
+				m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
 		else
-			m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-	}
-	else
-	{
-		if (m_nCursor == MENU_SLOT2)
-			m_pMainButton->Draw("Make New Game", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-		else
-			m_pMainButton->Draw("Make New Game", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-	}
+		{
+			// Prompt a new game.
+			if (m_nCursor == MENU_SLOT1)
+				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
 
-	if (m_bFileExists[2])
-	{
-		if (m_nCursor == MENU_SLOT3)
-			m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		if (m_bFileExists[1])
+		{
+			if (m_nCursor == MENU_SLOT2)
+				m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
 		else
-			m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-	}
-	else
-	{
-		if (m_nCursor == MENU_SLOT3)
-			m_pMainButton->Draw("Make New Game", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		{
+			if (m_nCursor == MENU_SLOT2)
+				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+		if (m_bFileExists[2])
+		{
+			if (m_nCursor == MENU_SLOT3)
+				m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
 		else
-			m_pMainButton->Draw("Make New Game", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		{
+			if (m_nCursor == MENU_SLOT3)
+				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			else
+				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+		if (m_nCursor == MENU_GOBACK)
+			m_pMainButton->Draw("Go Back", { 170, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Go Back", { 170, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		// Render game info (basic info for now for selected option)
+		m_pFont->Draw(LoadFileInfo(m_nCursor), 560, 498, 0.4f, { 0, 0, 0 });
 	}
-
-	if (m_nCursor == MENU_GOBACK)
-		m_pMainButton->Draw("Go Back", { 170, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
-	else
-		m_pMainButton->Draw("Go Back", { 170, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-	// Render game info (basic info for now for selected option)
-	m_pFont->Draw(LoadFileInfo(m_nCursor), 560, 498, 0.4f, { 0, 0, 0 });
 }
 
 /**************************************************************/
