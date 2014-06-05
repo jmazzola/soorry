@@ -26,6 +26,8 @@
 #include "../SGD Wrappers/SGD_Message.h"
 #include "Tower.h"
 #include "CreateTowerMessage.h"
+#include "GameplayState.h"
+#include "CreateDroneMessage.h"
 
 #include "Game.h"
 
@@ -162,6 +164,11 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
+	for (unsigned int i = drones.size() -1; i > 0; i--)
+	{
+		m_pEntityManager->RemoveEntity(drones[i]);
+		delete drones[i];
+	}
 }
 
 
@@ -188,7 +195,7 @@ void Player::Update ( float dt )
 	
 	if ( m_nCurrHealth <= 0.0f )
 	{
-		GameplayState::GetInstance ()->HasLost ();
+		GameplayState::GetInstance ()->HasLost();
 		return;
 	}
 	// Regenerate health
@@ -339,6 +346,17 @@ void Player::Update ( float dt )
 		msg->QueueMessage();
 		msg = nullptr;
 
+	}
+	if (pInput->IsKeyPressed(SGD::Key::P) == true)
+	{
+		Drone* tempDrone = new Drone();
+		tempDrone->SetPlayer(this);
+		tempDrone->SetEntityManager(m_pEntityManager);
+		tempDrone->SetNumberID(drones.size() + 1);
+		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
+		msg->QueueMessage();
+		msg = nullptr;
+		drones.push_back(tempDrone);
 	}
 	//GAH Weapons! - Arnold
 	//Switch to Slot One
@@ -702,7 +720,10 @@ void Player::Update ( float dt )
 		}
 
 	}
-
+	for (unsigned int i = 0; i < drones.size(); i++)
+	{
+		drones[i]->Update(dt);
+	}
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
@@ -1272,4 +1293,9 @@ void Player::Render ( void )
 	Game* pGame = Game::GetInstance();
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
+
+	for (unsigned int i = 0; i < drones.size(); i++)
+	{
+		drones[i]->Render();
+	}
 }

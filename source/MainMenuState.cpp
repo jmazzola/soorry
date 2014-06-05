@@ -305,6 +305,8 @@ using namespace std;
 	pGraphics->DrawString("Debugging: TRUE: \n1 - Launch Gameplay\n2 - Launch LoadSave\n3 - Launch Options\n4 - Launch Credits", { 0, 0 }, { 0, 0, 0 });
 #endif
 
+
+
 	// If we're transitioning
 	if (IsTransitioning())
 	{

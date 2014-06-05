@@ -44,6 +44,8 @@ public:
 	IEntity* CheckCollision(SGD::Rectangle rect, int bucket = -1);
 	IEntity* CheckCollision(SGD::Point point, float radius, int bucket = -1);
 
+	const std::vector<IEntity*> GetBucket(int index) const;
+
 private:
 	//*******************************************************************
 	// Not a singleton, but still don't want the Trilogy-of-Evil

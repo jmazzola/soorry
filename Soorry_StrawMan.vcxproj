@@ -30,6 +30,7 @@
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
+    <ClCompile Include="source\CreateDroneMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
     <ClCompile Include="source\CreateParticleMessage.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="source\CreditsState.cpp" />
     <ClCompile Include="source\Cursor.cpp" />
     <ClCompile Include="source\DestroyEntityMessage.cpp" />
+    <ClCompile Include="source\Drone.cpp" />
     <ClCompile Include="source\Emitter.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
     <ClCompile Include="source\Entity.cpp" />
@@ -121,6 +123,7 @@
     <ClInclude Include="source\BitmapFont.h" />
     <ClInclude Include="source\Button.h" />
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
+    <ClInclude Include="source\CreateDroneMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
     <ClInclude Include="source\CreateParticleMessage.h" />
@@ -133,6 +136,7 @@
     <ClInclude Include="source\CreditsState.h" />
     <ClInclude Include="source\Cursor.h" />
     <ClInclude Include="source\DestroyEntityMessage.h" />
+    <ClInclude Include="source\Drone.h" />
     <ClInclude Include="source\Emitter.h" />
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\Entity.h" />
@@ -195,7 +199,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt" />
-    <None Include="resource\images\hud\crosshair.cur" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Soorry_StrawMan.rc" />

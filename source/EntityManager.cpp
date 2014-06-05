@@ -406,3 +406,10 @@ IEntity* EntityManager::CheckCollision(SGD::Point _point, float _radius, int _bu
 
 	return nullptr;
 }
+
+
+
+const std::vector<IEntity*> EntityManager::GetBucket(int _index) const
+{
+	return m_tEntities[_index];
+}

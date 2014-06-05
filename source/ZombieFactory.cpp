@@ -113,7 +113,7 @@ void ZombieFactory::Update(float dt)
 	if (m_bBuildMode)
 	{
 		// Update timers
-		m_fBuildTimeRemaining -= dt;
+		//m_fBuildTimeRemaining -= dt; INFINITE BUILD MODE EVERYWHERE!!!
 
 		// Check to see if we leave build mode
 		if (m_fBuildTimeRemaining <= 0.0f)
