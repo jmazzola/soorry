@@ -309,6 +309,9 @@
     <ClCompile Include="source\MachineGunBullet.cpp">
       <Filter>Towers/Traps</Filter>
     </ClCompile>
+    <ClCompile Include="source\Drone.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -578,8 +581,8 @@
     <ClInclude Include="source\MachineGunBullet.h">
       <Filter>Towers/Traps</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="source\Drone.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -600,13 +603,5 @@
     <None Include="resource\data\BitmapFont_Roboto.fnt">
       <Filter>Bitmap Font</Filter>
     </None>
-    <None Include="resource\images\hud\crosshair.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Soorry_StrawMan.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

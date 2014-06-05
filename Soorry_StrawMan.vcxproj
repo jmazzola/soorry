@@ -42,6 +42,7 @@
     <ClCompile Include="source\CreditsState.cpp" />
     <ClCompile Include="source\Cursor.cpp" />
     <ClCompile Include="source\DestroyEntityMessage.cpp" />
+    <ClCompile Include="source\Drone.cpp" />
     <ClCompile Include="source\Emitter.cpp" />
     <ClCompile Include="source\Enemy.cpp" />
     <ClCompile Include="source\Entity.cpp" />
@@ -95,7 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
@@ -133,6 +133,7 @@
     <ClInclude Include="source\CreditsState.h" />
     <ClInclude Include="source\Cursor.h" />
     <ClInclude Include="source\DestroyEntityMessage.h" />
+    <ClInclude Include="source\Drone.h" />
     <ClInclude Include="source\Emitter.h" />
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\Entity.h" />
@@ -195,10 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt" />
-    <None Include="resource\images\hud\crosshair.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Soorry_StrawMan.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>

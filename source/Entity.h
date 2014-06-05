@@ -62,6 +62,7 @@ public:
 				ENT_TOWER_HOCKEY_STICK,
 				ENT_TOWER_LASER,
 			ENT_MACHINE_GUN_BULLET,
+			ENT_DRONE,
 	};
 
 	
