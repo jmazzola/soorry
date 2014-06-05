@@ -180,12 +180,7 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-
-
-
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost ();
@@ -200,9 +195,9 @@ void Player::Update ( float dt )
 
 	// Grab the left stick for movement
 	SGD::Vector move = pInput->GetLeftJoystick(0);
-	if(abs(move.x) < 0.3f)
+	if(abs(move.x) < 0.1f)
 		move.x = 0.0f;
-	if(abs(move.y) < 0.3f)
+	if(abs(move.y) < 0.1f)
 		move.y = 0.0f;
 
 	// Grab the right stick for shooting/placing
@@ -225,17 +220,17 @@ void Player::Update ( float dt )
 	}
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::Vector mouseMove = pInput->GetMouseMovement();
-	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } )
+	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
 	}
 
-	if ( shoot == SGD::Vector { 0.0f , 0.0f } && m_fCursorFadeTimer <= 0)
+	if ( m_fCursorFadeTimer <= 0)
 	{
 		if(pGraphics->IsCursorShowing() == true)
 			pGraphics->TurnCursorOff();
 	}
-	else if( shoot != SGD::Vector { 0.0f , 0.0f } || m_fCursorFadeTimer > 0)
+	else if( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 		if ( pGraphics->IsCursorShowing () == false )
 			pGraphics->TurnCursorOn ();
@@ -665,6 +660,9 @@ void Player::Update ( float dt )
 
 	}
 
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
 }
 
 int Player::GetType () const
@@ -984,4 +982,6 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+
+	// 
 }

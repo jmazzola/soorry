@@ -170,6 +170,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hMachineGunBulletImage = pGraphics->LoadTexture("resource/images/towers/machineGunBullet.png");
 	m_hMapleSyrupBaseImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBase.png");
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
+	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 
 	// Load Audio
@@ -325,6 +326,7 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hMachineGunBulletImage);
 	pGraphics->UnloadTexture(m_hMapleSyrupBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
+	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
 
 	m_pAnimation->UnloadSprites();
@@ -1118,7 +1120,6 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		RenderLoss();
 	}
-
 }
 
 
@@ -1383,8 +1384,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x;
-			   pos.y += Camera::y;
+			   pos.x += Camera::x - 8;
+			   pos.y += Camera::y - 8;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1501,6 +1502,7 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 												   tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												   tower->SetBaseImage(m_hHockeyStickBaseImage);
+												   tower->SetGunImage(m_hHockeyStickGunImage);
 
 												   return tower;
 	}
