@@ -88,6 +88,9 @@ using namespace std;
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
 
+// Selected Box
+#define DRAWSELECTED(TOP,LEFT,SIZEW,SIZEH) SGD::Rectangle({ TOP, LEFT }, SGD::Size(SIZEW, SIZEH)), {0,0,0,0}, { 255, 255, 255, 0 }, 2
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <cfloat>
@@ -287,6 +290,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// HUD
 	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
+	m_hBuildModeHUD = pGraphics->LoadTexture("resource/images/hud/HUD_BuildMode.png");
 
 	m_hShotgunPic = pGraphics->LoadTexture("resource/images/hud/shotgun.png");
 	m_hShotgunThumb = pGraphics->LoadTexture("resource/images/hud/shotgunThumb.png");
@@ -294,8 +298,6 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
-	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
-	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 }
 
@@ -356,14 +358,13 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Unload HUD
 	pGraphics->UnloadTexture(m_hHUD);
+	pGraphics->UnloadTexture(m_hBuildModeHUD);
 	pGraphics->UnloadTexture(m_hShotgunPic);
 	pGraphics->UnloadTexture(m_hShotgunThumb);
 	pGraphics->UnloadTexture(m_hARPic);
 	pGraphics->UnloadTexture(m_hARThumb);
 	pGraphics->UnloadTexture(m_hRLPic);
 	pGraphics->UnloadTexture(m_hRLThumb);
-	pGraphics->UnloadTexture(m_hFireAxePic);
-	pGraphics->UnloadTexture(m_hFireAxeThumb);
 	pGraphics->UnloadTexture(m_hBackground);
 
 	// Unload Blank
@@ -490,30 +491,30 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOption::PAUSE_RESUME:
 					{
-														  // Resume gameplay
-														  m_bIsPaused = false;
-														  break;
+						// Resume gameplay
+						m_bIsPaused = false;
+						break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_OPTION:
 					{
-														  // Set the cursor to the first option in the options tab
-														  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-														  // Go to the options tab
-														  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-														  // Load the options
-														  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-														  break;
+						// Set the cursor to the first option in the options tab
+						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+						// Go to the options tab
+						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+						// Load the options
+						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+						break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_EXIT:
 					{
-														//Go to Main Menu
-														pGame->ChangeState(MainMenuState::GetInstance());
-														// Exit immediately
-														return true;
+						//Go to Main Menu
+						pGame->ChangeState(MainMenuState::GetInstance());
+						// Exit immediately
+						return true;
 					}
 						break;
 					}
@@ -556,15 +557,15 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-																 // Increase the music volume += 5
-																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+						 // Increase the music volume += 5
+						 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-															   // Increase the sound effects volume += 5
-															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+						 // Increase the sound effects volume += 5
+						 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 					}
 						break;
 					}
@@ -578,15 +579,15 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-																 // Increase the music volume -= 5
-																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+						// Increase the music volume -= 5
+						pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-															   // Increase the sound effects volume -= 5
-															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+						// Increase the sound effects volume -= 5
+						pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 					}
 						break;
 					}
@@ -601,19 +602,19 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
 					{
-																	  pGame->ToggleFullscreen();
+						 pGame->ToggleFullscreen();
 					}
 						break;
 					case PauseMenuOptionsOption::OPTION_GOBACK:
 					{
-																  // Go back to the pause menu's main menu
-																  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-																  // Make the highlighted option 'Options'
-																  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-																  // Save options
-																  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+						// Go back to the pause menu's main menu
+						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+						// Make the highlighted option 'Options'
+						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+						// Save options
+						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-																  break;
+						break;
 					}
 						break;
 					}
@@ -870,7 +871,85 @@ Entity*	GameplayState::CreatePlayer() const
 		{
 			if (!m_pShop->IsOpen())
 			{
-				pGraphics->DrawTexture(m_hHUD, { 0, 0 });
+				// If we're in build mode
+				if (zombieFactory->IsBuildMode())
+				{
+					// Draw the build mode hud
+					pGraphics->DrawTexture(m_hBuildModeHUD, { 0, 0 });
+
+					// Draw the selected box based on the player's selected placeable
+					switch (player->GetCurrPlaceable())
+					{
+					case 0:		// 1 -  Walls
+						pGraphics->DrawRectangle(DRAWSELECTED(53, 494, 66, 66));
+							break;
+
+					case 1:		// 2 - Windows
+						pGraphics->DrawRectangle(DRAWSELECTED(121, 494, 66, 66));
+						break;
+
+					case 2:		// 3 - Mines
+						pGraphics->DrawRectangle(DRAWSELECTED(189, 494, 66, 66));
+						break;
+
+					case 3:		// 4 - Bear Traps
+						pGraphics->DrawRectangle(DRAWSELECTED(257, 494, 66, 66));
+						break;
+
+					case 4:		// 5 - MG Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(325, 494, 66, 66));
+						break;
+
+					case 5:		// 6 - Maple Syrup Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(393, 494, 66, 66));
+						break;
+
+					case 6:		// 7 - Hockey Stick Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(461, 494, 66, 66));
+						break;
+
+					case 7:		// 8 - Laser Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(529, 494, 66, 66));
+						break;
+
+					case 8:		// 9 - Lava Trap
+						pGraphics->DrawRectangle(DRAWSELECTED(597, 494, 66, 66));
+						break;
+
+					case 9:		// 10 - Spike Trap
+						pGraphics->DrawRectangle(DRAWSELECTED(665, 494, 66, 66));
+						break;
+						
+					case -1:	// If nothing is selected, dont draw anything
+						break;
+					}
+				}
+				// If we're kicking ass
+				else
+				{
+					// Draw the killing mode hud
+					pGraphics->DrawTexture(m_hHUD, { 0, 0 });
+
+					switch (player->GetCurrWeapon())
+					{
+						case 0:		// 1 - Assault Rifle
+							pGraphics->DrawRectangle(DRAWSELECTED(266, 497, 60, 60));
+							break;
+
+						case 1:		// 2 - Shotgun
+							pGraphics->DrawRectangle(DRAWSELECTED(329, 497, 60, 60));
+							break;
+
+						case 2:		// 3 - Rocket Launcher
+							pGraphics->DrawRectangle(DRAWSELECTED(392, 497, 58, 60));
+							break;
+
+						case 3:		// 4 - ???
+							pGraphics->DrawRectangle(DRAWSELECTED(455, 497, 58, 60));
+							break;
+
+					}
+				}
 
 				// -- Draw the score --
 				string score = "Score: ";
@@ -906,6 +985,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 				}
 
+				// Temporarily commented
+				/*
 				// -- Draw the items --
 
 				// Get the inventory
@@ -949,12 +1030,14 @@ Entity*	GameplayState::CreatePlayer() const
 				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
 				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
 				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
+				*/
 				//Draw the grid rectange
 				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				//NOTE: why did it take this much work? did i do something wrong?
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
 				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
 				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+
 			}
 		}
 

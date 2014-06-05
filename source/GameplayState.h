@@ -117,6 +117,7 @@ private:
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hBuildModeHUD = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hShotgunPic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hShotgunThumb = SGD::INVALID_HANDLE;
@@ -126,9 +127,6 @@ private:
 
 	SGD::HTexture m_hRLPic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hRLThumb = SGD::INVALID_HANDLE;
-
-	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
-	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
 
 	// Tower textures
 	SGD::HTexture m_hMachineGunBaseImage = SGD::INVALID_HANDLE;
