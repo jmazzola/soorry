@@ -27,6 +27,8 @@
 #include "Tower.h"
 #include "CreateTowerMessage.h"
 
+#include "Game.h"
+
 #include <queue>
 using namespace std;
 
@@ -371,7 +373,10 @@ void Player::Update ( float dt )
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
-			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+			
+			// If we have infinite ammo, don't subtract
+			if (!pGame->HasInfAmmo())
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
 		}
 
@@ -384,7 +389,10 @@ void Player::Update ( float dt )
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
-			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+
+			// If we have infinite ammo, don't subtract
+			if (!pGame->HasInfAmmo())
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 		}
 
 	}
@@ -933,10 +941,11 @@ int Player::GetType () const
 
 void Player::HandleCollision ( const IEntity* pOther )
 {
-	if ( pOther->GetType () == ENT_ZOMBIE_BEAVER )
-	{
-		m_nCurrHealth--;
-	}
+
+	//if ( pOther->GetType () == ENT_ZOMBIE_BEAVER )
+	//{
+	//	m_nCurrHealth--;
+	//}
 	if ( pOther->GetType () == ENT_PICKUP_WALL )
 	{
 		unsigned int newset = m_pInventory->GetWalls ();
@@ -1257,5 +1266,10 @@ void Player::Render ( void )
 	drawRect.left -= Camera::x;
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
-	drawRect.bottom -= Camera::y;
+	drawRect.bottom -= Camera::y; 
+
+	// -- Debugging Mode --
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingRects())
+		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 }

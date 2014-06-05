@@ -8,6 +8,7 @@
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
 #include "Camera.h"
+#include "Game.h"
 
 #define HEALTH_BAR 1
 
@@ -90,7 +91,10 @@ void Enemy::Render()
 
 #endif
 
-	//m_AIComponent.Render();
+	// -- Debugging, if showing paths is on --
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingPaths())
+		m_AIComponent.Render();
 }
 
 int Enemy::GetType() const

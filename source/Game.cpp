@@ -139,6 +139,10 @@ int Game::Main(void)
 	if (elapsedTime > 0.125f)
 		elapsedTime = 0.125f;
 
+	// Toggle debugging mode
+	if (m_pInput->IsKeyPressed(SGD::Key::F1))
+		SetDebugging(!m_bDebugMode);
+
 	// Toggle fullscreen
 
 	if (m_pInput->IsKeyDown(SGD::Key::Alt) &&

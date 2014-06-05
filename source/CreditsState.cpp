@@ -206,7 +206,8 @@ using namespace std;
 					  Artists\n\
 					  Gregory Bey\n\
 					  Caris Frazier\n\
-					  Justin Mazzola\n\n\
+					  Justin Mazzola\n\
+					  Justin Patterson\n\n\
 					  Special Thanks\n\
 					  Jordan Butler for ideas.";
 

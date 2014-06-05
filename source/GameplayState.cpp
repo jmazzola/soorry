@@ -234,8 +234,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
-	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
+	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -711,6 +711,50 @@ Entity*	GameplayState::CreatePlayer() const
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
+
+	// -- Debugging Mode Input always last --
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
+	{
+		#define DEBUG_MAX 3
+		#define DEBUG_MIN 0
+
+		if (pInput->IsKeyPressed(SGD::Key::Up))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur--;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() < DEBUG_MIN)
+				pGame->SetDebugCurs(DEBUG_MAX);
+		}
+		if (pInput->IsKeyPressed(SGD::Key::Down))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur++;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() > DEBUG_MAX)
+				pGame->SetDebugCurs(DEBUG_MIN);
+		}
+
+		if (pInput->IsKeyPressed(SGD::Key::Shift))
+		{
+			if (pGame->GetDebugCurs() == DEBUG_MIN)
+				pGame->SetGod(!pGame->IsGod());
+
+			if (pGame->GetDebugCurs() == 1)
+				pGame->SetInfAmmo(!pGame->HasInfAmmo());
+
+			if (pGame->GetDebugCurs() == 2)
+				pGame->SetShowPaths(!pGame->IsShowingPaths());
+
+			if (pGame->GetDebugCurs() == DEBUG_MAX)
+				pGame->SetShowRects(!pGame->IsShowingRects());
+		}
+	}
+
 	return true;	// keep playing
 }
 
@@ -1126,7 +1170,8 @@ Entity*	GameplayState::CreatePlayer() const
 					//timeRemaining += " secs";
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
+					if (m_bHasLost == false)
+						m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1255,6 +1300,44 @@ Entity*	GameplayState::CreatePlayer() const
 	else if (m_bHasLost  && m_fLossTimer <= 0.0f)
 	{
 		RenderLoss();
+	}
+
+
+	// -- Render Debugging Mode over everything else --
+
+	// If we're debugging
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused)
+	{
+		// Render the debug menu box
+		pGraphics->DrawRectangle(SGD::Rectangle({ 19, 110 }, SGD::Size(205, 331)), { 128, 0, 0, 0 });
+
+		int pos = pGame->GetDebugCurs();
+		// Draw the selected image
+		pGraphics->DrawRectangle(SGD::Rectangle({ 10.0f, float(116 + 20 * pos) }, SGD::Size(10, 10)), { 255, 255, 0 });
+		// Render the options
+		if (pGame->IsGod())
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 255, 0, 0 });
+
+		if (pGame->HasInfAmmo())
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 255, 0, 0 });
+
+
+		if (pGame->IsShowingPaths())
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 255, 0, 0 });
+
+		if (pGame->IsShowingRects())
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 255, 0, 0 });
+
+		
 	}
 }
 
