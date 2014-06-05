@@ -201,7 +201,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -903,11 +904,11 @@ Entity*	GameplayState::CreatePlayer() const
 						pGraphics->DrawRectangle(DRAWSELECTED(121, 494, 66, 66));
 						break;
 
-					case 2:		// 3 - Mines
+					case 2:		// 3 - Bear Traps
 						pGraphics->DrawRectangle(DRAWSELECTED(189, 494, 66, 66));
 						break;
 
-					case 3:		// 4 - Bear Traps
+					case 3:		// 4 - Mines
 						pGraphics->DrawRectangle(DRAWSELECTED(257, 494, 66, 66));
 						break;
 
@@ -967,26 +968,25 @@ Entity*	GameplayState::CreatePlayer() const
 				}
 
 				// -- Draw the score --
-				string score = "Score: ";
-				score += std::to_string(player->GetScore());
-				m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
+				string score = "Points";
+				m_pFont->Draw(std::to_string(player->GetScore()).c_str(), 665, 60, 0.45f, { 255, 255, 255 });
+				m_pFont->Draw(score.c_str(), 665, 35, 0.45f, { 255, 255, 255 });
 
 				// -- Draw the wave number --
 				string waveNum = "Wave: ";
 				waveNum += std::to_string(zombieFactory->GetWave());
-				m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
+				m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
 
-				// -- Draw the time remaining [during build mode] --
 				if (zombieFactory->IsBuildMode())
 				{
 					// Turn the cursor off for build mode
 					if(pGraphics->IsCursorShowing() == true)
 						pGraphics->TurnCursorOff();
 
-					string timeRemaining = "Time remaining: ";
-					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
-					timeRemaining += " secs";
-					m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
+					//string timeRemaining = "Time remaining: ";
+					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
+					//timeRemaining += " secs";
+					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
 					m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
 				}
@@ -996,63 +996,87 @@ Entity*	GameplayState::CreatePlayer() const
 					// Turn the cursor on when not in build mode
 
 					string enemiesRemaining = "Enemies Remaining: ";
-					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
+					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
 
 					int numOfEnemies = zombieFactory->GetEnemiesRemaining();
 					if (numOfEnemies <= 3)
-						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 264, 66, 0.45f, { 255, 0, 0 });
 					else
-						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 264, 66, 0.45f, { 255, 255, 255 });
 
 				}
 
-				// Temporarily commented
-				/*
-				// -- Draw the items --
+				// TODO: In polish, make #defines for hud spacing so you dont have to add/subtract all
+				// the goddamn time.
+				// -- Draw the items and their quantities --
 
 				// Get the inventory
 				Inventory* inv = player->GetInventory();
 
-				// Draw the number of healthpacks
-				m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
+				// If we're in build mode
+				if (zombieFactory->IsBuildMode())
+				{
+					// Draw the number of walls
+					m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of grenades
-				m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+					// Draw the number of windows
+					m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of walls
-				m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of beartraps
+					m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 191, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of windows
-				m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of mines
+					m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 260, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of beartraps
-				m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of MG Towers
+					m_pFont->Draw(std::to_string(inv->GetMachineGunTowers()).c_str(), 327, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of mines
-				m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of Maple Syrup Towers
+					m_pFont->Draw(std::to_string(inv->GetMapleSyrupTowers()).c_str(), 395, 496, 0.4f, { 255, 255, 255 });
 
-				// -- Draw the selected weapon -- 
+					// Draw the number of Hockey Stick Towers
+					m_pFont->Draw(std::to_string(inv->GetHockeyStickTowers()).c_str(), 463, 496, 0.4f, { 255, 255, 255 });
 
-				// Get the weapons
-				Weapon* weapons = player->GetWeapons();
-				string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
-				SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
+					// Draw the number of Laser Towers
+					m_pFont->Draw(std::to_string(inv->GetLaserTowers()).c_str(), 531, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the name of the selected weapon
-				m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
+					// Draw the number of Lava Traps
+					m_pFont->Draw(std::to_string(inv->GetLavaTraps()).c_str(), 599, 496, 0.4f, { 255, 255, 255 });
+					
+					// Draw the number of Spike Traps
+					m_pFont->Draw(std::to_string(inv->GetSpikeTraps()).c_str(), 667, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the picture of the selected pic
-				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
+				}
 
-				// Draw the ammo of the selected weapon
-				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+				// If we're not in build mode
+				else
+				{
 
-				// -- Draw the offhand weapons ammos --
-				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-				*/
-				//Draw the grid rectange
+					// --- Draw grenades and healthpacks --
+
+					// Draw the number of grenades
+					m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 98, 532, 0.4f, { 255, 255, 255 });
+
+					// Draw the number of healthpacks
+					m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 163, 532, 0.4f, { 255, 255, 255 });
+
+					// -- Draw the selected weapon and it's ammo -- 
+
+					// Get the weapons
+					Weapon* weapons = player->GetWeapons();
+					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
+
+					// Draw the picture of the selected pic
+					pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+
+					// Draw the ammo of the selected weapon
+					if (weapons[player->GetCurrWeapon()].GetCurrAmmo() < 10)
+						m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 695, 515, 0.6f, { 255, 0, 0 });
+					else
+						m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 695, 515, 0.6f, { 255, 255, 255 });
+				}
+
+				//Draw the grid rectangle
 				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				//NOTE: why did it take this much work? did i do something wrong?
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;

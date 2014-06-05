@@ -77,6 +77,8 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetMapleSyrupTowers(20);
 	m_pInventory->SetHockeyStickTowers(20);
 	m_pInventory->SetLaserTowers(20);
+	m_pInventory->SetLavaTraps(5);
+	m_pInventory->SetSpikeTraps(5);
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
