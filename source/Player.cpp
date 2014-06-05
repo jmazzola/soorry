@@ -178,12 +178,7 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-
-
-
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost ();
@@ -663,6 +658,9 @@ void Player::Update ( float dt )
 
 	}
 
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
 }
 
 int Player::GetType () const
@@ -982,4 +980,6 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+
+	// 
 }

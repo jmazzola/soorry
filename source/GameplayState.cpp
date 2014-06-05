@@ -199,7 +199,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->LoadWaves("resource/data/wave.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
