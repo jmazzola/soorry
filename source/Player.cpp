@@ -198,9 +198,9 @@ void Player::Update ( float dt )
 
 	// Grab the left stick for movement
 	SGD::Vector move = pInput->GetLeftJoystick(0);
-	if(abs(move.x) < 0.3f)
+	if(abs(move.x) < 0.1f)
 		move.x = 0.0f;
-	if(abs(move.y) < 0.3f)
+	if(abs(move.y) < 0.1f)
 		move.y = 0.0f;
 
 	// Grab the right stick for shooting/placing
