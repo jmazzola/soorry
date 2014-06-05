@@ -200,6 +200,15 @@ void EntityManager::RenderAll( void )
 			for( unsigned int i = 0; i < vec.size( ); i++ )
 				vec[ i ]->Render( );
 		}
+
+		// Render the tower's post render
+		if (m_tEntities.size() > 2)
+		{
+			for (unsigned int tower = 0; tower < m_tEntities[2].size(); tower++)
+			{
+				m_tEntities[2][tower]->PostRender();
+			}
+		}
 	}
 	// Unlock the iterator
 	m_bIterating = false;

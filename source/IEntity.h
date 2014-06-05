@@ -31,6 +31,7 @@ public:
 	//	- pure virtual methods MUST be overridden
 	virtual void	Update		( float elapsedTime )	= 0;
 	virtual void	Render		( void )				= 0;
+	virtual void PostRender() = 0;
 
 	virtual SGD::Rectangle GetRect() const = 0;
 	virtual int		GetType		( void )	const		= 0;
