@@ -1,3 +1,11 @@
+//***********************************************************************
+//	File:		DestroyEntityMessage.cpp
+//	Author:		Doug Monroe
+//	Course:		SGD 1403
+//	Purpose:	DestroyEntityMessage class holds the entity to be
+//				removed from the Entity Manager
+//***********************************************************************
+
 #include "DestroyEntityMessage.h"
 #include "MessageID.h"
 

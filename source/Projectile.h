@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include "../SGD Wrappers/SGD_Handle.h"
 
 class Entity;
 class EntityManager;
@@ -39,7 +40,7 @@ protected:
 	int m_nDamage;
 	float m_fSpeed;
 	float m_fLifeTime;
-
+	SGD::HAudio m_hHit;
 	// Enemy
 	Enemy* m_pEnemy;
 };

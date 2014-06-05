@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ParticleManager>
+  <emitter>
+    <isLooping bool="0" />
+    <size width="32" height="32" />
+    <particles max="22" />
+    <shape number="0" />
+  </emitter>
+  <flyweight>
+    <velocity startx="30.00" starty="30.00" endx="-30.00" endy="-30.00" />
+    <rotate start="0" end="0" />
+    <color startA="255" startR="255" startG="255" startB="255" endA="255" endR="255" endG="255" endB="255" />
+    <scale startx="3" starty="1" endx="0" endy="1" />
+    <size width="16" height="16" />
+    <lifetime max="5" min="2" />
+    <particleID>Dust_Particle1</particleID>
+    <image name="Dust_Particle.png" />
+  </flyweight>
+</ParticleManager>

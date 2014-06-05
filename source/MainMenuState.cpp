@@ -80,6 +80,9 @@ using namespace std;
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	//Load music 
+	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
+
 	// Set the cursor's index to the first option
 	m_nCursor = 0;
 
@@ -93,6 +96,17 @@ using namespace std;
 
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
+
+	// Show the cursor if it is hidden
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
+
+	// Grab the audio
+	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+
+	//Play Audio
+	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	pAudio->PlayAudio(m_hMenuMusic, true);
 }
 
 
@@ -109,11 +123,14 @@ using namespace std;
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
-	// Terminate & deallocate menu items
+	//Release music
+	pAudio->UnloadAudio(m_hMenuMusic);
+
 	m_pButton->Terminate();
 	delete m_pButton;
 	m_pButton = nullptr;
 
+	
 }
 
 
@@ -127,7 +144,7 @@ using namespace std;
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
+	
 	if (pInput->IsKeyPressed(SGD::Key::Escape))
 		m_nCursor = MENU_EXIT;
 
@@ -135,6 +152,7 @@ using namespace std;
 	if (IsTransitioning())
 		return false;
 
+	
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -328,7 +346,7 @@ using namespace std;
 		else
 			m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
 	}
-
+	
 }
 
 /**************************************************************/

@@ -156,7 +156,11 @@ private:
 	// Audio
 	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
-	
+	SGD::HAudio m_hShopMusic = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hGunShoot = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hRocketShoot = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hShotgunShoot = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBulletHit = SGD::INVALID_HANDLE;
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;
