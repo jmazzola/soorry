@@ -62,6 +62,8 @@ Player::Player () : Listener ( this )
 	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
+	m_fCursorFadeLength = 2.0f;
+	m_fCursorFadeTimer = 0.0f;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
@@ -170,6 +172,9 @@ void Player::Update ( float dt )
 	//Update  all Timers
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
+	m_fCursorFadeTimer -= dt;
+	if(m_fCursorFadeTimer < 0.0f)
+		m_fCursorFadeTimer = 0.0f;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
@@ -200,9 +205,9 @@ void Player::Update ( float dt )
 
 	// Grab the right stick for shooting/placing
 	SGD::Vector shoot = pInput->GetRightJoystick(0);
-	if(abs(shoot.x) < 0.1f)
+	if(abs(shoot.x) < 0.2f)
 		shoot.x = 0.0f;
-	if(abs(shoot.y) < 0.1f)
+	if(abs(shoot.y) < 0.2f)
 		shoot.y = 0.0f;
 	if ( shoot.x != 0.0f || shoot.y != 0.0f )
 	{
@@ -215,6 +220,23 @@ void Player::Update ( float dt )
 		dir.y += shoot.y * 150 + 16;
 
 		pInput->SetMousePosition ( dir );
+	}
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::Vector mouseMove = pInput->GetMouseMovement();
+	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } )
+	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+	}
+
+	if ( shoot == SGD::Vector { 0.0f , 0.0f } && m_fCursorFadeTimer <= 0)
+	{
+		if(pGraphics->IsCursorShowing() == true)
+			pGraphics->TurnCursorOff();
+	}
+	else if( shoot != SGD::Vector { 0.0f , 0.0f } || m_fCursorFadeTimer > 0)
+	{
+		if ( pGraphics->IsCursorShowing () == false )
+			pGraphics->TurnCursorOn ();
 	}
 
 	// Input

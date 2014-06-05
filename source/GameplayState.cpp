@@ -440,6 +440,10 @@ Entity*	GameplayState::CreatePlayer() const
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
+			if(m_bIsPaused == true && pGraphics->IsCursorShowing() == false)
+				pGraphics->TurnCursorOn();
+			else if(m_bIsPaused == false && pGraphics->IsCursorShowing() == true)
+				pGraphics->TurnCursorOff();
 		}
 	// enter shop
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
@@ -794,8 +798,6 @@ Entity*	GameplayState::CreatePlayer() const
 		// If we're paused
 		if (m_bIsPaused)
 		{
-			if(pGraphics->IsCursorShowing() == false)
-				pGraphics->TurnCursorOn();
 			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
 				// Draw the paused main menu background
@@ -915,8 +917,6 @@ Entity*	GameplayState::CreatePlayer() const
 				else
 				{
 					// Turn the cursor on when not in build mode
-					if(pGraphics->IsCursorShowing() == false)
-						pGraphics->TurnCursorOn();
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
