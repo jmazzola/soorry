@@ -20,8 +20,7 @@
 #include <cassert>
 
 // Uses OutputDebugString for debug text
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+
 #include <cstring>
 #include <cstdio>
 
@@ -87,9 +86,17 @@ namespace SGD
 			virtual	HTexture	LoadTexture				( const wchar_t* filename, Color colorKey )		override;
 			virtual	HTexture	LoadTexture				( const char* filename, Color colorKey )		override;
 			virtual	bool		DrawTexture				( HTexture handle, Point position, float rotation, Vector rotationOffset, Color color, Size scale )						override;
-			virtual	bool		DrawTextureSection(HTexture handle, Point position, Rectangle section, float rotation, Vector rotationOffset, Color color, Size scale)	override;
+			virtual	bool		DrawTextureSection		(HTexture handle, Point position, Rectangle section, float rotation, Vector rotationOffset, Color color, Size scale)	override;
 			virtual	bool		DrawTextureSectionSimple(HTexture handle, Point position, Rectangle section)	override;
 			virtual	bool		UnloadTexture			( HTexture& handle )							override;
+
+			virtual HWND		GetHWND					( void ) override;
+			
+			virtual bool		IsCursorShowing			( void ) override;
+			virtual void		TurnCursorOn			( void ) override;
+			virtual void		TurnCursorOff			( void ) override;
+			virtual bool		IsFullScreen			( void ) override;
+			virtual void		ToggleFullScreen		( void ) override;
 
 		private:
 			// SINGLETON
@@ -130,7 +137,8 @@ namespace SGD
 
 			wchar_t*					m_pwszBuffer		= nullptr;					// output buffer storage (preallocated to hasten ASCII -> UTF16 conversion)
 			int							m_nBufferSize		= 0;						// size (in wchar_t) of output buffer
-
+			int							m_nCursorCount		= 0;						// used to determine if the cursor is being shown 0 is shown -1 is hidden
+			bool						m_bIsFullScreen		= false;					// is the game fullscreen or not
 
 			// CLEAR SCREEN HELPER METHOD
 			bool			ClearScreen( void );
@@ -386,6 +394,9 @@ namespace SGD
 
 			// Success!
 			m_eStatus = E_INITIALIZED;
+
+			// Containing the mouse
+			m_bCursorClipped = true;
 			return true;
 		}
 		//*************************************************************//
@@ -401,7 +412,47 @@ namespace SGD
 			if( m_eStatus != E_INITIALIZED )
 				return false;
 
-			
+			// Keep the mouse inside the window
+			if ( m_hWnd == GetActiveWindow () )
+			{
+				POINT mouse;
+				RECT window;
+				int X , Y;
+				X = 0;
+				Y = 0;
+				// Grab the client rectangle
+				GetWindowRect ( m_hWnd , &window );
+
+				// Grab the mouse's actual position
+				GetCursorPos ( &mouse );
+				X = mouse.x;
+				Y = mouse.y;
+
+				// Clamp the mouse position to be inside the client window
+				if ( X < window.left + 8 && m_bIsFullScreen == false)
+					X = window.left + 8;
+				else if(X < window.left && m_bIsFullScreen == true)
+					X = window.left;
+
+				if ( X > window.right - 8 && m_bIsFullScreen == false)
+					X = window.right - 8;
+				else if(X > window.right && m_bIsFullScreen == true)
+					X = window.right;
+
+				if ( Y < window.top + 28 && m_bIsFullScreen == false)
+					Y = window.top + 28;
+				else if(Y < window.top && m_bIsFullScreen == true)
+					Y = window.top;
+
+				if ( Y > window.bottom - 8 && m_bIsFullScreen == false)
+					Y = window.bottom - 8;
+				else if( Y > window.bottom && m_bIsFullScreen == true)
+					Y = window.bottom;
+
+				// Set the cursor position based on input and inside the window
+				SetCursorPos ( X , Y );
+			}
+
 			// Centered output onto fullscreen display?
 			float offsetX = (m_WindowSize.width - m_DesiredSize.width) / 2;
 			float offsetY = (m_WindowSize.height - m_DesiredSize.height) / 2;
@@ -1563,7 +1614,46 @@ namespace SGD
 		}
 		//*************************************************************//
 
+		//*************************************************************//
+		// Return the HWND for cursor purposes
+		HWND GraphicsManager::GetHWND( void )
+		{
+			return m_hWnd;
+		}
 
+		 bool		GraphicsManager::IsCursorShowing		( void )
+		 {
+			 if(m_nCursorCount >= 0)
+				 return true;
+			 else
+				 return false;
+		 }
+
+		 void		GraphicsManager::TurnCursorOn			( void )
+		 {
+			while(m_nCursorCount < 0)
+			{
+				m_nCursorCount = ShowCursor(true);
+			}
+		 }
+
+		 void		GraphicsManager::TurnCursorOff			( void )
+		 {
+			while( m_nCursorCount > -1)
+			{
+				m_nCursorCount = ShowCursor(false);
+			}
+		 }
+
+		 bool GraphicsManager::IsFullScreen( void )
+		 {
+			return m_bIsFullScreen;
+		 }
+
+		 void GraphicsManager::ToggleFullScreen( void )
+		 {
+			m_bIsFullScreen = !m_bIsFullScreen;
+		 }
 
 		//*************************************************************//
 		// FIND TEXTURE BY NAME

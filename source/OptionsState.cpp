@@ -91,6 +91,10 @@ using namespace std;
 	// Load the Options
 	LoadOptions(STRING_CONFIGPATH);
 
+	// Show the cursor
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
+
 }
 
 

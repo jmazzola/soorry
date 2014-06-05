@@ -93,12 +93,12 @@ bool Game::Initialize(int width, int height)
 
 	// Initialize each singleton
 	if (m_pAudio->Initialize() == false
+		|| m_pInput->Initialize() == false
 		|| m_pGraphics->Initialize(false) == false
-		|| m_pInput->Initialize() == false)
+		)
 	{
 		return false;
 	}
-
 
 	// Allocate & initialize the font
 	m_pFont = new BitmapFont;
@@ -110,7 +110,6 @@ bool Game::Initialize(int width, int height)
 
 	// Store the current time (in milliseconds)
 	m_ulGameTime = GetTickCount();
-
 
 
 	return true;	// success!
@@ -142,14 +141,46 @@ int Game::Main(void)
 
 	// Toggle fullscreen
 
-	if (SGD::InputManager::GetInstance()->IsKeyDown(SGD::Key::Alt) &&
-		SGD::InputManager::GetInstance()->IsKeyPressed(SGD::Key::Enter))
+	if (m_pInput->IsKeyDown(SGD::Key::Alt) &&
+		m_pInput->IsKeyPressed(SGD::Key::Enter))
 	{
 		ToggleFullscreen();
 		// Disable the 'Enter' input
 		return false;
 	}
+	//if(m_pInput->IsControllerConnected(0))
+	//{
+	//	// Grab the input from the right joystick
+	//	SGD::Vector mouseUpdate = {0.0f, 0.0f};
+	//	mouseUpdate = m_pInput->GetRightJoystick(0);
 
+	//	// Clamp the input to be greater than .1 in either direction
+	//	// so the mouse doesn't drift even when not being used
+	//	if(abs(mouseUpdate.x) < 0.1f)
+	//		mouseUpdate.x = 0.0f;
+	//	if(abs(mouseUpdate.y) < 0.1f)
+	//		mouseUpdate.y = 0.0f;
+
+	//	POINT mouse;
+	//	RECT window;
+	//	int X, Y;
+	//	X = 0;
+	//	Y = 0;
+
+	//	HWND hWnd = m_pGraphics->GetHWND();
+
+	//	// Grab the client rectangle
+	//	GetWindowRect(hWnd, &window);
+
+	//	// Grab the mouse's actual position
+	//	GetCursorPos(&mouse);
+	//	X = (int)(mouse.x + mouseUpdate.x);
+	//	Y = (int)(mouse.y + mouseUpdate.y);
+	//	
+	//	// Set the cursor position based on input and inside the window
+	//	if(GetActiveWindow() == hWnd)
+	//	SetCursorPos(X, Y);
+	//}
 
 	// Let the current state handle input
 	if (m_pCurrState->Input() == false)

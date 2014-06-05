@@ -21,6 +21,8 @@
 #include "SGD_Geometry.h"		// Uses floating-point Rectangles & Points
 #include "SGD_Color.h"			// Uses Color for blending
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 namespace SGD
 {
@@ -62,6 +64,12 @@ namespace SGD
 		virtual bool		DrawTextureSectionSimple(HTexture handle, Point position, Rectangle section) = 0;
 		virtual	bool		UnloadTexture(HTexture& handle) = 0;
 
+		virtual HWND		GetHWND					( void ) = 0;
+		virtual bool		IsCursorShowing			( void ) = 0;
+		virtual void		TurnCursorOn			( void ) = 0;
+		virtual void		TurnCursorOff			( void ) = 0;
+		virtual bool		IsFullScreen			( void ) = 0;
+		virtual void		ToggleFullScreen		( void ) = 0;
 
 	protected:
 		GraphicsManager(void) = default;

@@ -89,7 +89,6 @@ using namespace std;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include <cfloat>
 
 
 /**************************************************************/
@@ -199,7 +198,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -277,7 +276,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Setup You Win message transition timer
 	m_fWinTimer = 5.0f;
-
+	
 	// Setup Losing Screen Variables
 	m_bHasLost = false;
 	m_bReplay = true;
@@ -300,6 +299,10 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
 	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
+
+	// Turn the cursor on
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 
@@ -421,6 +424,12 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+
+	// Manipulate the mouse here
+	SGD::Point mousePt = {0.0f, 0.0f};
+	mousePt = pInput->GetMousePosition();
+
+	
 
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
@@ -783,6 +792,8 @@ Entity*	GameplayState::CreatePlayer() const
 		// If we're paused
 		if (m_bIsPaused)
 		{
+			if(pGraphics->IsCursorShowing() == false)
+				pGraphics->TurnCursorOn();
 			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 			{
 				// Draw the paused main menu background
@@ -887,6 +898,10 @@ Entity*	GameplayState::CreatePlayer() const
 				// -- Draw the time remaining [during build mode] --
 				if (zombieFactory->IsBuildMode())
 				{
+					// Turn the cursor off for build mode
+					if(pGraphics->IsCursorShowing() == true)
+						pGraphics->TurnCursorOff();
+
 					string timeRemaining = "Time remaining: ";
 					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 					timeRemaining += " secs";
@@ -897,6 +912,10 @@ Entity*	GameplayState::CreatePlayer() const
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
+					// Turn the cursor on when not in build mode
+					if(pGraphics->IsCursorShowing() == false)
+						pGraphics->TurnCursorOn();
+
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
 
@@ -1579,6 +1598,9 @@ void GameplayState::RenderCredits(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	if(pGraphics->IsCursorShowing() == true)
+		pGraphics->TurnCursorOn();
+
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
@@ -1653,6 +1675,10 @@ void GameplayState::HasLost(void)
 void GameplayState::RenderLoss(void)
 {
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Turn on the cursor for menu purposes
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 
 	// Draw the paused main menu background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });

@@ -17,6 +17,7 @@
 #include <vld.h>			// Visual Leak Detector!!!
 #include "Game.h"			// Our Game class
 
+
 //*********************************************************************//
 // Preprocessor Constants
 #define WINDOW_CLASS_NAME	((const wchar_t*)L"Soorry")	// window class name
@@ -32,7 +33,8 @@ bool				IsAlreadyRunning	( void );
 HWND				MakeWindow			( HINSTANCE hInstance );
 LRESULT CALLBACK	WindowProc			( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
-
+// Cursor variable
+HCURSOR hCursor;
 
 //*********************************************************************//
 // WinMain
@@ -57,7 +59,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	ShowWindow( hWnd, nCmdShow );
 	UpdateWindow( hWnd );
 
-	
+	// Load the cursor
+	hCursor = LoadCursor( hInstance, MAKEINTRESOURCE(102)); 
 	/////////////////////////////////////////////////////////////////////
 	// Initialize game
 	
@@ -241,7 +244,13 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	case WM_PAINT:			// Window needs repainting
 		ValidateRect( hWnd, nullptr );	// ignore painting
 		break;
-
+	case WM_SETCURSOR:
+        if (LOWORD(lParam) == HTCLIENT)
+        {
+            SetCursor(hCursor);
+            return TRUE;
+        }
+        break;
 	
 	default:				// Any unhandled messages
 		return DefWindowProcW( hWnd, msg, wParam, lParam );	// handled by default proc
