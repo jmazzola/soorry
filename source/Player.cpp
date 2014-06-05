@@ -311,7 +311,7 @@ void Player::Update ( float dt )
 		m_pInventory->SetHealthPacks ( newset );
 	}
 	// Throw Grenade
-	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true) || pInput->GetTrigger ( 0 ) < -0.1f &&
+	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
 		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
 	{
 		// THROW THE GRENADE HERE
