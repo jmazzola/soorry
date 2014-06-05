@@ -107,7 +107,7 @@ int Enemy::GetType() const
 			m_nCurrHealth -= 40;
 			break;
 		case ENT_BULLET_SHOTGUN:
-			m_nCurrHealth -= 15;
+			m_nCurrHealth -= 8;
 			break;
 		case ENT_BULLET_ROCKET:
 			m_nCurrHealth -= 100;
