@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_Event.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_EventManager.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_Geometry.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_GraphicsManager.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_InputManager.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_Listener.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_Message.cpp" />
+    <ClCompile Include="SGD Wrappers\SGD_MessageManager.cpp" />
+    <ClCompile Include="source\AIComponent.cpp" />
+    <ClCompile Include="source\AmmoPickup.cpp" />
+    <ClCompile Include="source\AnimationManager.cpp" />
+    <ClCompile Include="source\AssaultRifleBullet.cpp" />
+    <ClCompile Include="source\BearTrap.cpp" />
+    <ClCompile Include="source\BeaverZombie.cpp" />
+    <ClCompile Include="source\BitmapFont.cpp" />
+    <ClCompile Include="source\Button.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
+    <ClCompile Include="source\CreateFastZombieMessage.cpp" />
+    <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
+    <ClCompile Include="source\CreateParticleMessage.cpp" />
+    <ClCompile Include="source\CreatePickupMessage.cpp" />
+    <ClCompile Include="source\CreatePlaceableMessage.cpp" />
+    <ClCompile Include="source\CreatePlayerSpawnMessage.cpp" />
+    <ClCompile Include="source\CreateProjectileMessage.cpp" />
+    <ClCompile Include="source\CreateSlowZombieMessage.cpp" />
+    <ClCompile Include="source\CreateTowerMessage.cpp" />
+    <ClCompile Include="source\CreditsState.cpp" />
+    <ClCompile Include="source\Cursor.cpp" />
+    <ClCompile Include="source\DestroyEntityMessage.cpp" />
+    <ClCompile Include="source\Emitter.cpp" />
+    <ClCompile Include="source\Enemy.cpp" />
+    <ClCompile Include="source\Entity.cpp" />
+    <ClCompile Include="source\EntityManager.cpp" />
+    <ClCompile Include="source\FastZombie.cpp" />
+    <ClCompile Include="source\FireRatePickup.cpp" />
+    <ClCompile Include="source\Frame.cpp" />
+    <ClCompile Include="source\Game.cpp" />
+    <ClCompile Include="source\GameplayState.cpp" />
+    <ClCompile Include="source\Grenade.cpp" />
+    <ClCompile Include="source\HealthPackPickup.cpp" />
+    <ClCompile Include="source\HockeyStickTower.cpp" />
+    <ClCompile Include="source\IntroState.cpp" />
+    <ClCompile Include="source\Inventory.cpp" />
+    <ClCompile Include="source\LaserTower.cpp" />
+    <ClCompile Include="source\Layer.cpp" />
+    <ClCompile Include="source\LoadingState.cpp" />
+    <ClCompile Include="source\LoadSaveState.cpp" />
+    <ClCompile Include="source\MachineGunBullet.cpp" />
+    <ClCompile Include="source\MachineGunTower.cpp" />
+    <ClCompile Include="source\MainMenuState.cpp" />
+    <ClCompile Include="source\MapleSyrupTower.cpp" />
+    <ClCompile Include="source\MenuFlyweight.cpp" />
+    <ClCompile Include="source\Mine.cpp" />
+    <ClCompile Include="source\OptionsState.cpp" />
+    <ClCompile Include="source\Particle.cpp" />
+    <ClCompile Include="source\ParticleFlyweight.cpp" />
+    <ClCompile Include="source\ParticleManager.cpp" />
+    <ClCompile Include="source\Pickup.cpp" />
+    <ClCompile Include="source\Player.cpp" />
+    <ClCompile Include="source\Projectile.cpp" />
+    <ClCompile Include="source\PurchaseMessage.cpp" />
+    <ClCompile Include="source\Rocket.cpp" />
+    <ClCompile Include="source\Shop.cpp" />
+    <ClCompile Include="source\ShotgunPellet.cpp" />
+    <ClCompile Include="source\SlowZombie.cpp" />
+    <ClCompile Include="source\SpeedPickup.cpp" />
+    <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="source\Tile.cpp" />
+    <ClCompile Include="source\Tower.cpp" />
+    <ClCompile Include="source\WallPickup.cpp" />
+    <ClCompile Include="source\ZombieFactory.cpp" />
+    <ClCompile Include="source\Weapon.cpp" />
+    <ClCompile Include="source\WindowPickup.cpp" />
+    <ClCompile Include="source\WinMain.cpp" />
+    <ClCompile Include="source\WorldManager.cpp" />
+    <ClCompile Include="TinyXML\tinystr.cpp" />
+    <ClCompile Include="TinyXML\tinyxml.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlerror.cpp" />
+    <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Color.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Event.h" />
+    <ClInclude Include="SGD Wrappers\SGD_EventManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Geometry.h" />
+    <ClInclude Include="SGD Wrappers\SGD_GraphicsManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Handle.h" />
+    <ClInclude Include="SGD Wrappers\SGD_HandleManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_HandleManager.hpp" />
+    <ClInclude Include="SGD Wrappers\SGD_InputManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Key.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Listener.h" />
+    <ClInclude Include="SGD Wrappers\SGD_Message.h" />
+    <ClInclude Include="SGD Wrappers\SGD_MessageManager.h" />
+    <ClInclude Include="SGD Wrappers\SGD_String.h" />
+    <ClInclude Include="source\AIComponent.h" />
+    <ClInclude Include="source\AmmoPickup.h" />
+    <ClInclude Include="source\AnimationManager.h" />
+    <ClInclude Include="source\AssaultRifleBullet.h" />
+    <ClInclude Include="source\BearTrap.h" />
+    <ClInclude Include="source\BeaverZombie.h" />
+    <ClInclude Include="source\BitmapFont.h" />
+    <ClInclude Include="source\Button.h" />
+    <ClInclude Include="source\CreateBeaverZombieMessage.h" />
+    <ClInclude Include="source\CreateFastZombieMessage.h" />
+    <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
+    <ClInclude Include="source\CreateParticleMessage.h" />
+    <ClInclude Include="source\CreatePickupMessage.h" />
+    <ClInclude Include="source\CreatePlaceableMessage.h" />
+    <ClInclude Include="source\CreatePlayerSpawnMessage.h" />
+    <ClInclude Include="source\CreateProjectileMessage.h" />
+    <ClInclude Include="source\CreateSlowZombieMessage.h" />
+    <ClInclude Include="source\CreateTowerMessage.h" />
+    <ClInclude Include="source\CreditsState.h" />
+    <ClInclude Include="source\Cursor.h" />
+    <ClInclude Include="source\DestroyEntityMessage.h" />
+    <ClInclude Include="source\Emitter.h" />
+    <ClInclude Include="source\Enemy.h" />
+    <ClInclude Include="source\Entity.h" />
+    <ClInclude Include="source\EntityManager.h" />
+    <ClInclude Include="source\FastZombie.h" />
+    <ClInclude Include="source\FireRatePickup.h" />
+    <ClInclude Include="source\Frame.h" />
+    <ClInclude Include="source\Game.h" />
+    <ClInclude Include="source\GameplayState.h" />
+    <ClInclude Include="source\Grenade.h" />
+    <ClInclude Include="source\HealthPackPickup.h" />
+    <ClInclude Include="source\HockeyStickTower.h" />
+    <ClInclude Include="source\IEntity.h" />
+    <ClInclude Include="source\IGameState.h" />
+    <ClInclude Include="source\IntroState.h" />
+    <ClInclude Include="source\Inventory.h" />
+    <ClInclude Include="source\LaserTower.h" />
+    <ClInclude Include="source\Layer.h" />
+    <ClInclude Include="source\LoadingState.h" />
+    <ClInclude Include="source\LoadSaveState.h" />
+    <ClInclude Include="source\MachineGunBullet.h" />
+    <ClInclude Include="source\MachineGunTower.h" />
+    <ClInclude Include="source\MainMenuState.h" />
+    <ClInclude Include="source\MapleSyrupTower.h" />
+    <ClInclude Include="source\MenuFlyweight.h" />
+    <ClInclude Include="source\MessageID.h" />
+    <ClInclude Include="source\Mine.h" />
+    <ClInclude Include="source\OptionsState.h" />
+    <ClInclude Include="source\Particle.h" />
+    <ClInclude Include="source\ParticleFlyweight.h" />
+    <ClInclude Include="source\ParticleManager.h" />
+    <ClInclude Include="source\Pickup.h" />
+    <ClInclude Include="source\Player.h" />
+    <ClInclude Include="source\Projectile.h" />
+    <ClInclude Include="source\PurchaseMessage.h" />
+    <ClInclude Include="source\Rocket.h" />
+    <ClInclude Include="source\Shop.h" />
+    <ClInclude Include="source\ShotgunPellet.h" />
+    <ClInclude Include="source\SlowZombie.h" />
+    <ClInclude Include="source\SpeedPickup.h" />
+    <ClInclude Include="source\Sprite.h" />
+    <ClInclude Include="source\Tile.h" />
+    <ClInclude Include="source\Tower.h" />
+    <ClInclude Include="source\WallPickup.h" />
+    <ClInclude Include="source\WaveData.h" />
+    <ClInclude Include="source\ZombieFactory.h" />
+    <ClInclude Include="source\Weapon.h" />
+    <ClInclude Include="source\WindowPickup.h" />
+    <ClInclude Include="source\WorldManager.h" />
+    <ClInclude Include="TinyXML\tinystr.h" />
+    <ClInclude Include="TinyXML\tinyxml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resource\data\config.xml" />
+    <Xml Include="resource\data\singleEnemy.xml" />
+    <Xml Include="resource\data\wave.xml" />
+    <Xml Include="resource\world\testWorld.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\data\BitmapFont_Roboto.fnt" />
+    <None Include="resource\images\hud\crosshair.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Soorry_StrawMan.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>
+    <RootNamespace>Soorry_StrawMan</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>F:\Programming\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Programming\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>F:\Programming\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Programming\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

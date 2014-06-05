@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<waves>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="1"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="20"/>
+    <beaver_zombies amount="1"/>
+    <spawn_interval value="0.1"/>
+  </wave>
+</waves>
