@@ -1013,7 +1013,6 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		RenderLoss();
 	}
-
 }
 
 
