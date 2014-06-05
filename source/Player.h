@@ -27,6 +27,8 @@ class Tower;
 class Player : public Entity, public SGD::Listener
 {
 public:
+	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, NUMPLACEABLES, };
+	enum Weapons{ SLOT_ONE, SLOT_TWO, SLOT_THREE, SLOT_FOUR, TOTAL_SLOTS, };
 
 	Player();
 	~Player();
@@ -35,6 +37,7 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render () override;
+	virtual void PostRender() override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
 	bool Blockable(SGD::Point mouse);
@@ -73,12 +76,14 @@ public:
 	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
 	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
 	void SetSelectedTower(Tower* tower);
+	void SetPlaceablesImage(SGD::HTexture placeablesImage);
+	void SetRangeCirclesImage(SGD::HTexture rangeCirclesImage);
 
 protected:
 
 	/**********************************************************/
 	// Members
-	float m_fShotTimer;
+	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
@@ -98,7 +103,9 @@ protected:
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
 	std::vector<Drone*> drones;
-
+	SGD::HTexture m_hPlaceablesImage;
+	SGD::HTexture m_hRangeCirclesImage;
+	
 	//Player sounds
 	SGD::HAudio m_hBlockPlace;
 	SGD::HAudio m_hBlockBreak;
@@ -107,6 +114,7 @@ protected:
 	SGD::HAudio m_hGunClick;
 
 private:
+	
 
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);

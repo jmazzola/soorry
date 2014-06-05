@@ -40,6 +40,10 @@ using namespace std;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#define DEFAULT_MACHINE_GUN_RANGE 128.0f
+#define DEFAULT_MAPLE_SYRUP_RANGE 96.0f
+#define DEFAULT_HOCKEY_STICK_RANGE 48.0f
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -70,7 +74,7 @@ Player::Player () : Listener ( this )
 	// Player Inventory
 	m_pInventory = new Inventory();
 	m_pInventory->SetBearTraps(100);
-	m_pInventory->SetGrenades(0);
+	m_pInventory->SetGrenades(10);
 	m_pInventory->SetHealthPacks(3);
 	m_pInventory->SetMines(1);
 	m_pInventory->SetWalls(100);
@@ -79,6 +83,8 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetMapleSyrupTowers(20);
 	m_pInventory->SetHockeyStickTowers(20);
 	m_pInventory->SetLaserTowers(20);
+	m_pInventory->SetLavaTraps(5);
+	m_pInventory->SetSpikeTraps(5);
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
@@ -86,7 +92,7 @@ Player::Player () : Listener ( this )
 
 	//Assault rifle
 	Weapon tempWeapon;
-	tempWeapon.SetCurrAmmo ( 30 );
+	tempWeapon.SetCurrAmmo ( 100 );
 	tempWeapon.SetMaxAmmo ( 500 );
 	tempWeapon.SetFireRate ( .2f );
 	tempWeapon.SetType ( Guns::TYPE_ASSAULT_RIFLE );
@@ -94,7 +100,7 @@ Player::Player () : Listener ( this )
 
 	//Shotgun
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 10 );
+	tempWeapon.SetCurrAmmo ( 100 );
 	tempWeapon.SetMaxAmmo ( 500 );
 	tempWeapon.SetFireRate ( .5f );
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
@@ -102,7 +108,7 @@ Player::Player () : Listener ( this )
 
 	//rocket launcher
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 5 );
+	tempWeapon.SetCurrAmmo ( 50 );
 	tempWeapon.SetMaxAmmo ( 50 );
 	tempWeapon.SetFireRate ( 2 );
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
@@ -172,25 +178,19 @@ Player::~Player ()
 //	- Handle input and move the character
 void Player::Update ( float dt )
 {
-	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	Game* pGame = Game::GetInstance();
-	WorldManager* pWorld = WorldManager::GetInstance();
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance ();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance ();
+	Game* pGame = Game::GetInstance ();
+	WorldManager* pWorld = WorldManager::GetInstance ();
 	//Update  all Timers
-	m_fShotTimer -= dt;
+	m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[m_nCurrWeapon].GetFireTimer() - dt);
+	m_fGrenadeTimer -= dt;
 	m_fPlaceTimer -= dt;
 	m_fCursorFadeTimer -= dt;
-	if(m_fCursorFadeTimer < 0.0f)
-		m_fCursorFadeTimer = 0.0f;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-
-
-
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost();
@@ -204,19 +204,19 @@ void Player::Update ( float dt )
 	//Update Timers
 
 	// Grab the left stick for movement
-	SGD::Vector move = pInput->GetLeftJoystick(0);
-	if(abs(move.x) < 0.1f)
+	SGD::Vector move = pInput->GetLeftJoystick ( 0 );
+	if ( abs ( move.x ) < 0.1f )
 		move.x = 0.0f;
-	if(abs(move.y) < 0.1f)
+	if ( abs ( move.y ) < 0.1f )
 		move.y = 0.0f;
 
 	// Grab the right stick for shooting/placing
-	SGD::Vector shoot = pInput->GetRightJoystick(0);
-	if(abs(shoot.x) < 0.2f)
+	SGD::Vector shoot = pInput->GetRightJoystick ( 0 );
+	if ( abs ( shoot.x ) < 0.2f )
 		shoot.x = 0.0f;
-	if(abs(shoot.y) < 0.2f)
+	if ( abs ( shoot.y ) < 0.2f )
 		shoot.y = 0.0f;
-	if ( shoot.x != 0.0f || shoot.y != 0.0f )
+	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 		SGD::Point playerPos = GetPosition ();
@@ -228,78 +228,88 @@ void Player::Update ( float dt )
 
 		pInput->SetMousePosition ( dir );
 	}
-	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
-	SGD::Vector mouseMove = pInput->GetMouseMovement();
+
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
+	SGD::Vector mouseMove = pInput->GetMouseMovement ();
+
+	// If you have moved your cursor reset the fade timer
 	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
 	}
 
-	if ( m_fCursorFadeTimer <= 0)
+	// Hide the cursor if you haven't moved it recently
+	if ( m_fCursorFadeTimer <= 0 )
 	{
-		if(pGraphics->IsCursorShowing() == true)
-			pGraphics->TurnCursorOff();
+		if ( pGraphics->IsCursorShowing () == true )
+			pGraphics->TurnCursorOff ();
 	}
-	else if( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode() == false)
+	// Show the cursor if you have moved it recently
+	else if ( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode () == false )
 	{
 		if ( pGraphics->IsCursorShowing () == false )
 			pGraphics->TurnCursorOn ();
 	}
 
 	// Input
-	if ( pInput->IsKeyDown ( SGD::Key::A ) == true || move.x < 0.0f)
+	// Move Left
+	if ( pInput->IsKeyDown ( SGD::Key::A ) == true || move.x < 0.0f )
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
 			m_ptPosition.x = oldpos;
-		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
-			pAudio->PlayAudio(m_hWalking);
+			pAudio->PlayAudio ( m_hWalking );
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::D ) == true || move.x > 0.0f)
+	// Move Right
+	if ( pInput->IsKeyDown ( SGD::Key::D ) == true || move.x > 0.0f )
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
 			m_ptPosition.x = oldpos;
-		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
-			pAudio->PlayAudio(m_hWalking);
+			pAudio->PlayAudio ( m_hWalking );
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::W ) == true || move.y < 0.0f)
+	// Move Up
+	if ( pInput->IsKeyDown ( SGD::Key::W ) == true || move.y < 0.0f )
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
 			m_ptPosition.y = oldpos;
-		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
-			pAudio->PlayAudio(m_hWalking,true);
+			pAudio->PlayAudio ( m_hWalking , true );
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::S ) == true || move.y > 0.0f)
+	// Move Down
+	if ( pInput->IsKeyDown ( SGD::Key::S ) == true || move.y > 0.0f )
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
 			m_ptPosition.y = oldpos;
-		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
-			pAudio->PlayAudio(m_hWalking,true);
+			pAudio->PlayAudio ( m_hWalking , true );
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::E ) == true &&
+	// Use Healthpack
+	if ( (pInput->IsKeyDown ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A )) &&
 		m_pInventory->GetHealthPacks () > 0 && m_nCurrHealth < m_nMaxHealth )
 	{
 		m_nCurrHealth = m_nMaxHealth;
@@ -307,10 +317,27 @@ void Player::Update ( float dt )
 		--newset;
 		m_pInventory->SetHealthPacks ( newset );
 	}
-	if (pInput->IsKeyDown(SGD::Key::W) == false && pInput->IsKeyDown(SGD::Key::A) == false && pInput->IsKeyDown(SGD::Key::S) == false && pInput->IsKeyDown(SGD::Key::D) == false)
+	// Throw Grenade
+	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
+		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
+	{
+		// THROW THE GRENADE HERE
+		m_fGrenadeTimer = 0.75f;
+		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
+	}
+	// Open Shop
+	if((pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X)
+		&& m_pZombieWave->IsBuildMode() == true)
+	{
+		// IMPLEMENT ENTER SHOP HERE
+	}
+	// Turn walking audio off if you're not moving
+	if ( pInput->IsKeyDown ( SGD::Key::W ) == false && pInput->IsKeyDown ( SGD::Key::A ) == false && pInput->IsKeyDown ( SGD::Key::S ) == false && 
+		pInput->IsKeyDown ( SGD::Key::D ) == false && move == SGD::Vector { 0.0f , 0.0f })
 	{
 		pAudio->StopAudio(m_hWalking);
 	}
+	// For testing purposes BLOOOOOOD
 	if (pInput->IsKeyPressed(SGD::Key::Space))
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
@@ -330,69 +357,57 @@ void Player::Update ( float dt )
 		drones.push_back(tempDrone);
 	}
 	//GAH Weapons! - Arnold
-	//Assault rifle
-	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
+	//Switch to Slot One
+	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false)
 	{
-		m_nCurrWeapon = 0;
-		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+		m_nCurrWeapon = SLOT_ONE;
 	}
-	//Shotgun
-	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == false)
+	//Switch to Slot Two
+	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false)
 	{
-		m_nCurrWeapon = 1;
-		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+		m_nCurrWeapon = SLOT_TWO;
 	}
-	//rocket launcher
-	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == false)
+	//Switch to Slot Three
+	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false)
 	{
-		m_nCurrWeapon = 2;
-		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+		m_nCurrWeapon = SLOT_THREE;
 	}
-	//Fire axe
-	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == false)
+	//Switch to Slot Four
+	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false)
 	{
-		m_nCurrWeapon = 3;
-		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+		m_nCurrWeapon = SLOT_FOUR;
 	}
-	//when shot!
-	if (m_fShotTimer < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0)
+	//Shoot
+	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
-		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && m_pZombieWave->IsBuildMode () == false )
+		// Left click
+		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
 		{
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-			m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
 		}
-	
-		if ( shoot.ComputeLength() > 0.9f && m_pZombieWave->IsBuildMode() == false )
+
+		// With Xbox Right Trigger
+		if ( pInput->GetTrigger(0) > 0.1f)
 		{
-
-			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			SGD::Point playerPos = GetPosition();
-			playerPos.x -= Camera::x;
-			playerPos.y -= Camera::y;
-			SGD::Point dir = playerPos;
-			dir.x += shoot.x * 50 + 16;
-			dir.y += shoot.y * 50 + 16;
-			
-			pInput->SetMousePosition(dir);
-
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-			m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 		}
 
 	}
-	else if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
+	// Make the empty click noise
+	else if ((pInput->IsKeyDown(SGD::Key::MouseLeft) == true || pInput->GetTrigger(0) > 0.1f) && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
 	{
 		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hGunClick) == false)
 		{
@@ -400,40 +415,85 @@ void Player::Update ( float dt )
 		}
 	}
 	
+	// Cycle Selected Items
+	// Cycle Left
+	if ( pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::LB ) )
+	{
+		if ( m_pZombieWave->IsBuildMode () == true )
+		{
+			m_nCurrPlaceable--;
+			if(m_nCurrPlaceable <= -1)
+				m_nCurrPlaceable = NUMPLACEABLES - 1;
+		}
+		else
+		{
+			m_nCurrWeapon--;
+			if ( m_nCurrWeapon <= -1 )
+				m_nCurrWeapon = TOTAL_SLOTS - 1;
+		}
+	}
+	// Cycle Right
+	if ( pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::RB ) )
+	{
+		if ( m_pZombieWave->IsBuildMode () == true )
+		{
+			m_nCurrPlaceable++;
+			if(m_nCurrPlaceable >= NUMPLACEABLES)
+				m_nCurrPlaceable = WALLS;
+		}
+		else
+		{
+			m_nCurrWeapon++;
+			if ( m_nCurrWeapon >= TOTAL_SLOTS )
+				m_nCurrWeapon = SLOT_ONE;
+		}
+	}
+
+
+
+	
+
 	// Selecting Walls
 	if ( pInput->IsKeyPressed ( SGD::Key::One ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 0;
+		m_nCurrPlaceable = WALLS;
 
 	// Selecting Windows
 	if ( pInput->IsKeyPressed ( SGD::Key::Two ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 1;
+		m_nCurrPlaceable = WINDOWS;
 
 	// Selecting Bear Trap
 	if ( pInput->IsKeyPressed ( SGD::Key::Three ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 2;
+		m_nCurrPlaceable = BEARTRAP;
 
 	// Selecting Mine
 	if ( pInput->IsKeyPressed ( SGD::Key::Four ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 3;
+		m_nCurrPlaceable = MINE;
 
 	// Selecting Machine gun towers
 	if ( pInput->IsKeyPressed ( SGD::Key::Five ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 4;
+		m_nCurrPlaceable = MGTOWER;
 
 	// Selecting Maple Syrup towers
 	if ( pInput->IsKeyPressed ( SGD::Key::Six ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 5;
+		m_nCurrPlaceable = MSTOWER;
 
 	// Selecting Hockey Stick towers
 	if ( pInput->IsKeyPressed ( SGD::Key::Seven ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 6;
+		m_nCurrPlaceable = HSTOWER;
 
 	// Selecting Laser towers
 	if ( pInput->IsKeyPressed ( SGD::Key::Eight ) == true && m_pZombieWave->IsBuildMode () == true )
-		m_nCurrPlaceable = 7;
+		m_nCurrPlaceable = LTOWER;
 
-	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && m_pZombieWave->IsBuildMode())
-	{
+	// Selecting lava trap
+	if (pInput->IsKeyPressed(SGD::Key::Nine) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 8;
+
+	// Selecting spike trap
+	if (pInput->IsKeyPressed(SGD::Key::Zero) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 9;
+
+	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
 		SGD::Rectangle rect;
 		rect.left = pos.x * pWorld->GetTileWidth () + pWorld->GetTileWidth () / 4;
@@ -519,163 +579,135 @@ void Player::Update ( float dt )
 	else
 	{
 		// Place item
-		if ( m_nCurrPlaceable != -1 )
+		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && PlacementCheck ( pos )  )
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps () > 0 )
 			{
-				if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && m_fPlaceTimer <= 0 && PlacementCheck ( pos ) )
+				// Cooldown for placing objects
+				m_fPlaceTimer = 1;
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				pmsg->QueueMessage ();
+				pmsg = nullptr;
+				// Decreasing the amount of bear traps left for the player
+				unsigned int newset = m_pInventory->GetBearTraps ();
+				--newset;
+				m_pInventory->SetBearTraps ( newset );
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
-					// Cooldown for placing objects
-					m_fPlaceTimer = 1;
-					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
-					pmsg->QueueMessage ();
-					pmsg = nullptr;
-					// Decreasing the amount of bear traps left for the player
-					unsigned int newset = m_pInventory->GetBearTraps ();
-					--newset;
-					m_pInventory->SetBearTraps ( newset );
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
 			// Mine
 			else if ( m_nCurrPlaceable == 3 && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
 			{
-				if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && PlacementCheck ( pos ) )
+				// Cooldown for placing objects
+				m_fPlaceTimer = 1;
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				pmsg->QueueMessage ();
+				pmsg = nullptr;
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetMines ();
+				--newset;
+				m_pInventory->SetMines ( newset );
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
-					// Cooldown for placing objects
-					m_fPlaceTimer = 1;
-					CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
-					pmsg->QueueMessage ();
-					pmsg = nullptr;
-					// Decreasing the amount of mines left for the player
-					unsigned int newset = m_pInventory->GetMines ();
-					--newset;
-					m_pInventory->SetMines ( newset );
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
 			// Walls
 			else if ( m_nCurrPlaceable == 0 && m_pInventory->GetWalls () > 0 )
 			{
-				if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && PlacementCheck ( pos ) )
+				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWalls ();
+				--newset;
+				m_pInventory->SetWalls ( newset );
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
-					pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
-					// Decreasing the amount of mines left for the player
-					unsigned int newset = m_pInventory->GetWalls ();
-					--newset;
-					m_pInventory->SetWalls ( newset );
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
 			// Windows
 			else if ( m_nCurrPlaceable == 1 && m_pInventory->GetWindows () > 0 )
 			{
-				if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && PlacementCheck ( pos ) )
+				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
+				// Decreasing the amount of mines left for the player
+				unsigned int newset = m_pInventory->GetWindows ();
+				--newset;
+				m_pInventory->SetWindows ( newset );
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
-					pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
-					// Decreasing the amount of mines left for the player
-					unsigned int newset = m_pInventory->GetWindows ();
-					--newset;
-					m_pInventory->SetWindows ( newset );
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
 			// Machine gun tower
 			else if ( m_nCurrPlaceable == 4 && m_pInventory->GetMachineGunTowers () > 0 )
 			{
-				if ( pInput->IsKeyPressed ( SGD::Key::MouseLeft ) == true && PlacementCheck ( pos ) )
+				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+					CreateTowerMessage::TOWER_MACHINE_GUN);
+				msg->QueueMessage();
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetMachineGunTowers ( m_pInventory->GetMachineGunTowers () - 1 );
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
-						CreateTowerMessage::TOWER_MACHINE_GUN);
-					msg->QueueMessage();
-
-					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-
-					// Decreasing the amount of machine gun towers left for the player
-					m_pInventory->SetMachineGunTowers ( m_pInventory->GetMachineGunTowers () - 1 );
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 			}
 
 			// Maple Syrup tower
 			else if (m_nCurrPlaceable == 5 && m_pInventory->GetMapleSyrupTowers() > 0)
 			{
-				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
-				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
-						CreateTowerMessage::TOWER_MAPLE_SYRUP);
-					msg->QueueMessage();
+				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+					CreateTowerMessage::TOWER_MAPLE_SYRUP);
+				msg->QueueMessage();
 
-					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-					// Decreasing the amount of machine gun towers left for the player
-					m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
 			}
 
 			// Hockey Stick tower
 			else if (m_nCurrPlaceable == 6 && m_pInventory->GetHockeyStickTowers() > 0)
 			{
-				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
-				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_HOCKEY_STICK);
-					msg->QueueMessage();
+				msg->QueueMessage();
 
-					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-					// Decreasing the amount of machine gun towers left for the player
-					m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
 			}
 
 			// Laser tower
 			else if (m_nCurrPlaceable == 7 && m_pInventory->GetLaserTowers() > 0)
 			{
-				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
-				{
-					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_LASER);
-					msg->QueueMessage();
+				msg->QueueMessage();
 
-					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
-					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
-					{
-						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
-					}
-					// Decreasing the amount of machine gun towers left for the player
-					m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 			}
 		}
 
@@ -683,6 +715,235 @@ void Player::Update ( float dt )
 	for (unsigned int i = 0; i < drones.size(); i++)
 	{
 		drones[i]->Update(dt);
+	}
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
+}
+
+void Player::PostRender()
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Get the tile
+	SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
+	tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
+	tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+
+	// Get tiles world position
+	SGD::Point worldPosition = tilePos;
+	worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
+	worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
+	worldPosition.x -= Camera::x;
+	worldPosition.y -= Camera::y;
+
+	// Show the item in the location of the placement
+	if (m_pZombieWave->IsBuildMode())
+	{
+		// Check if legal placement
+		bool legalPlacement = PlacementCheck(tilePos);
+
+		// Walls
+		if (m_nCurrPlaceable == 0)
+		{
+			// Make sure we have walls
+			if (m_pInventory->GetWalls() < 0)
+				legalPlacement = false;
+
+			// Draw wall image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 0, 32, 32));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 0, 64, 32));
+		}
+
+		// Windows
+		else if (m_nCurrPlaceable == 1)
+		{
+			// Make sure we have windows
+			if (m_pInventory->GetWindows() < 0)
+				legalPlacement = false;
+
+			// Draw window image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 32, 32, 64));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 32, 64, 64));
+		}
+
+		// Bear traps
+		else if (m_nCurrPlaceable == 2)
+		{
+			// Make sure we have bear traps
+			if (m_pInventory->GetBearTraps() < 0)
+				legalPlacement = false;
+
+			// Draw bear trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 64, 32, 96));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 64, 64, 96));
+		}
+
+		// Mines
+		else if (m_nCurrPlaceable == 3)
+		{
+			// Make sure we have mines
+			if (m_pInventory->GetMines() < 0)
+				legalPlacement = false;
+
+			// Draw mine image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 96, 32, 128));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 96, 64, 128));
+		}
+
+		// Machine gun towers
+		else if (m_nCurrPlaceable == 4)
+		{
+			// Make sure we have machine gun towers
+			if (m_pInventory->GetMachineGunTowers() < 0)
+				legalPlacement = false;
+
+			// Draw machine gun tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_MACHINE_GUN_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 128, 32, 192));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_MACHINE_GUN_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 128, 64, 192));
+			}
+		}
+
+		// Maple syrup towers
+		else if (m_nCurrPlaceable == 5)
+		{
+			// Make sure we have maple syrup towers
+			if (m_pInventory->GetMapleSyrupTowers() < 0)
+				legalPlacement = false;
+
+			// Draw maple syrup tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_MAPLE_SYRUP_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 192, 32, 256));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_MAPLE_SYRUP_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 192, 64, 256));
+			}
+		}
+
+		// Hockey stick towers
+		else if (m_nCurrPlaceable == 6)
+		{
+			// Make sure we have hockey stick towers
+			if (m_pInventory->GetHockeyStickTowers() < 0)
+				legalPlacement = false;
+
+			// Draw hockey stick tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_HOCKEY_STICK_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 256, 32, 320));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_HOCKEY_STICK_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 256, 64, 320));
+			}
+		}
+
+		// Laser tower
+		if (m_nCurrPlaceable == 7)
+		{
+			// Make sure we have laser towers
+			if (m_pInventory->GetLaserTowers() < 0)
+				legalPlacement = false;
+
+			// Draw laser tower image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 320, 32, 352));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 320, 64, 352));
+		}
+
+		// Lava trap
+		if (m_nCurrPlaceable == 8)
+		{
+			// Make sure we have lava traps
+			/*if (m_pInventory->GetLavaTraps() < 0)
+				legalPlacement = false;*/
+
+			// Draw lava trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 352, 32, 384));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 352, 64, 384));
+		}
+
+		// Spike trap
+		if (m_nCurrPlaceable == 9)
+		{
+			// Make sure we have spike traps
+			/*if (m_pInventory->GetSpikeTraps() < 0)
+			legalPlacement = false;*/
+
+			// Draw spike trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 384, 32, 416));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 384, 64, 416));
+		}
 	}
 }
 
@@ -879,6 +1140,16 @@ void Player::SetSelectedTower(Tower* _tower)
 	}
 }
 
+void Player::SetPlaceablesImage(SGD::HTexture _placeablesImage)
+{
+	m_hPlaceablesImage = _placeablesImage;
+}
+
+void Player::SetRangeCirclesImage(SGD::HTexture _rangeCirclesImage)
+{
+	m_hRangeCirclesImage = _rangeCirclesImage;
+}
+
 bool Player::CheckLegalPlacement(Node end, Node block)
 {
 	WorldManager* pWorld = WorldManager::GetInstance ();
@@ -950,6 +1221,11 @@ bool Player::CheckLegalPlacement(Node end, Node block)
 
 bool Player::PlacementCheck ( SGD::Point mouse )
 {
+	WorldManager* pWorld = WorldManager::GetInstance();
+
+	if (mouse.x < 0 || mouse.y < 0 || (int)mouse.x >= pWorld->GetWorldWidth() || (int)mouse.y >= pWorld->GetWorldHeight())
+		return false;
+
 	bool a = Blockable(mouse);
 	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
 	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;

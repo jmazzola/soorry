@@ -1,6 +1,7 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester
 |	Course:		SGP
 |	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
@@ -118,6 +119,7 @@ private:
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hBuildModeHUD = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hShotgunPic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hShotgunThumb = SGD::INVALID_HANDLE;
@@ -127,9 +129,6 @@ private:
 
 	SGD::HTexture m_hRLPic = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hRLThumb = SGD::INVALID_HANDLE;
-
-	SGD::HTexture m_hFireAxePic = SGD::INVALID_HANDLE;
-	SGD::HTexture m_hFireAxeThumb = SGD::INVALID_HANDLE;
 
 	// Tower textures
 	SGD::HTexture m_hMachineGunBaseImage = SGD::INVALID_HANDLE;
@@ -141,6 +140,9 @@ private:
 	SGD::HTexture m_hHockeyStickGunImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
+
+	SGD::HTexture m_hPlaceablesImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Pause Menu Stuff

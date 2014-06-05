@@ -132,7 +132,7 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
 	{
 		// Since there's only one state..go back to main menu
 		pGame->Transition(MainMenuState::GetInstance());

@@ -1,6 +1,9 @@
 /***************************************************************
-|	File:		GameplayState.cpp
-|	Author:		Justin Mazzola
+|	File:		GameplayState.h
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester 
+|	Course:		SGP
+|	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -90,6 +93,13 @@ using namespace std;
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
 
+// Selected Box
+#define DRAWSELECTED(TOP,LEFT,SIZEW,SIZEH) SGD::Rectangle({ TOP, LEFT }, SGD::Size(SIZEW, SIZEH)), {0,0,0,0}, { 255, 255, 255, 0 }, 2
+
+
+// Colors
+// Todo make Colors.h 
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -131,9 +141,13 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
+
 	player->SetPosition(m_ptPlayerSpawnPoint);
 	player->SetZombieFactory(zombieFactory);
 	player->SetEntityManager(m_pEntities);
+	player->SetPlaceablesImage(m_hPlaceablesImage);
+	player->SetRangeCirclesImage(m_hRangeCirclesImage);
+
 	return player;
 }
 
@@ -146,6 +160,7 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
 	m_pEvents = SGD::EventManager::GetInstance();
@@ -158,8 +173,9 @@ Entity*	GameplayState::CreatePlayer() const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-	// Load Textures
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Textures", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Load Tim
 	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
@@ -170,7 +186,15 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hMachineGunBulletImage = pGraphics->LoadTexture("resource/images/towers/machineGunBullet.png");
 	m_hMapleSyrupBaseImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBase.png");
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
+	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
+
+	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
+	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
+
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -191,17 +215,30 @@ Entity*	GameplayState::CreatePlayer() const
 	Camera::x = 0;
 	Camera::y = 0;
 
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Animations", SGD::Point(280, 300));
+	pGraphics->Update();
+
 	// Load all animation
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
+
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
 	pWorld->LoadWorld("resource/world/world.xml");
 
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
+	pGraphics->Update();
+
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -292,6 +329,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// HUD
 	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
+	m_hBuildModeHUD = pGraphics->LoadTexture("resource/images/hud/HUD_BuildMode.png");
 
 	m_hShotgunPic = pGraphics->LoadTexture("resource/images/hud/shotgun.png");
 	m_hShotgunThumb = pGraphics->LoadTexture("resource/images/hud/shotgunThumb.png");
@@ -299,8 +337,6 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
-	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/fireaxe.png");
-	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/fireaxethumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 
 	// Turn the cursor on
@@ -315,7 +351,6 @@ Entity*	GameplayState::CreatePlayer() const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
-
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -325,7 +360,12 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hMachineGunBulletImage);
 	pGraphics->UnloadTexture(m_hMapleSyrupBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
+	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
+	pGraphics->UnloadTexture(m_hPlaceablesImage);
+
+	pGraphics->UnloadTexture(m_hPlaceablesImage);
+	pGraphics->UnloadTexture(m_hRangeCirclesImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -371,14 +411,13 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Unload HUD
 	pGraphics->UnloadTexture(m_hHUD);
+	pGraphics->UnloadTexture(m_hBuildModeHUD);
 	pGraphics->UnloadTexture(m_hShotgunPic);
 	pGraphics->UnloadTexture(m_hShotgunThumb);
 	pGraphics->UnloadTexture(m_hARPic);
 	pGraphics->UnloadTexture(m_hARThumb);
 	pGraphics->UnloadTexture(m_hRLPic);
 	pGraphics->UnloadTexture(m_hRLThumb);
-	pGraphics->UnloadTexture(m_hFireAxePic);
-	pGraphics->UnloadTexture(m_hFireAxeThumb);
 	pGraphics->UnloadTexture(m_hBackground);
 
 	// Unload Blank
@@ -437,7 +476,7 @@ Entity*	GameplayState::CreatePlayer() const
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
+		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start))
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
@@ -446,7 +485,7 @@ Entity*	GameplayState::CreatePlayer() const
 			else if(m_bIsPaused == false && pGraphics->IsCursorShowing() == true)
 				pGraphics->TurnCursorOff();
 		}
-	// enter shop
+	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
 		pAudio->StopAudio(m_hBackgroundMus);
@@ -456,6 +495,15 @@ Entity*	GameplayState::CreatePlayer() const
 			pAudio->PlayAudio(m_hShopMusic, true);
 		}
 		m_pShop->SetShopStatus(true);
+	}
+	// Start the wave if in build mode
+	if(zombieFactory->IsBuildMode() == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+		zombieFactory->SetBuildTImeRemaining(0.0f);
+
+	// Toggle the camera mode
+	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
+	{
+		//TOGGLE THE CAMERA
 	}
 
 #pragma region Pause Menu Navigation Clutter
@@ -503,30 +551,30 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOption::PAUSE_RESUME:
 					{
-														  // Resume gameplay
-														  m_bIsPaused = false;
-														  break;
+						// Resume gameplay
+						m_bIsPaused = false;
+						break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_OPTION:
 					{
-														  // Set the cursor to the first option in the options tab
-														  m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-														  // Go to the options tab
-														  m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-														  // Load the options
-														  OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-														  break;
+						// Set the cursor to the first option in the options tab
+						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+						// Go to the options tab
+						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+						// Load the options
+						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+						break;
 					}
 						break;
 
 					case PauseMenuOption::PAUSE_EXIT:
 					{
-														//Go to Main Menu
-														pGame->ChangeState(MainMenuState::GetInstance());
-														// Exit immediately
-														return true;
+						//Go to Main Menu
+						pGame->ChangeState(MainMenuState::GetInstance());
+						// Exit immediately
+						return true;
 					}
 						break;
 					}
@@ -569,15 +617,15 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-																 // Increase the music volume += 5
-																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+						 // Increase the music volume += 5
+						 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-															   // Increase the sound effects volume += 5
-															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+						 // Increase the sound effects volume += 5
+						 pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
 					}
 						break;
 					}
@@ -591,15 +639,15 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_MUSIC:
 					{
-																 // Increase the music volume -= 5
-																 pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+						// Increase the music volume -= 5
+						pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
 					}
 						break;
 
 					case PauseMenuOptionsOption::OPTION_SFX:
 					{
-															   // Increase the sound effects volume -= 5
-															   pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+						// Increase the sound effects volume -= 5
+						pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
 					}
 						break;
 					}
@@ -614,19 +662,19 @@ Entity*	GameplayState::CreatePlayer() const
 					{
 					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
 					{
-																	  pGame->ToggleFullscreen();
+						 pGame->ToggleFullscreen();
 					}
 						break;
 					case PauseMenuOptionsOption::OPTION_GOBACK:
 					{
-																  // Go back to the pause menu's main menu
-																  m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-																  // Make the highlighted option 'Options'
-																  m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-																  // Save options
-																  OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
+						// Go back to the pause menu's main menu
+						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+						// Make the highlighted option 'Options'
+						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+						// Save options
+						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-																  break;
+						break;
 					}
 						break;
 					}
@@ -888,31 +936,200 @@ Entity*	GameplayState::CreatePlayer() const
 		{
 			if (!m_pShop->IsOpen())
 			{
-				pGraphics->DrawTexture(m_hHUD, { 0, 0 });
+				// If we're in build mode
+				if (zombieFactory->IsBuildMode())
+				{
+					// -- Draw the build mode hud --
+					pGraphics->DrawTexture(m_hBuildModeHUD, { 0, 0 });
+
+
+					// --- Draw the pictures of the items and tints ---
+					Inventory* inv = player->GetInventory();
+
+					// Draw the walls picture if the player has more than 0 of them
+					if (inv->GetWalls() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						// Tint it red
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the windows picture
+					if (inv->GetWindows() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the bear traps
+					if (inv->GetBearTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the mines
+					if (inv->GetMines() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the MG Towers
+					if (inv->GetMachineGunTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Maple Syrup Towers
+					if (inv->GetMapleSyrupTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Hockey Stick Towers
+					if (inv->GetHockeyStickTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Laser Towers
+					if (inv->GetLaserTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Lava Traps
+					if (inv->GetLavaTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Spike Traps
+					if (inv->GetSpikeTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the selected box based on the player's selected placeable
+					switch (player->GetCurrPlaceable())
+					{
+					case 0:		// 1 -  Walls
+						pGraphics->DrawRectangle(DRAWSELECTED(53, 494, 66, 66));
+							break;
+
+					case 1:		// 2 - Windows
+						pGraphics->DrawRectangle(DRAWSELECTED(121, 494, 66, 66));
+						break;
+
+					case 2:		// 3 - Bear Traps
+						pGraphics->DrawRectangle(DRAWSELECTED(189, 494, 66, 66));
+						break;
+
+					case 3:		// 4 - Mines
+						pGraphics->DrawRectangle(DRAWSELECTED(257, 494, 66, 66));
+						break;
+
+					case 4:		// 5 - MG Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(325, 494, 66, 66));
+						break;
+
+					case 5:		// 6 - Maple Syrup Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(393, 494, 66, 66));
+						break;
+
+					case 6:		// 7 - Hockey Stick Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(461, 494, 66, 66));
+						break;
+
+					case 7:		// 8 - Laser Tower
+						pGraphics->DrawRectangle(DRAWSELECTED(529, 494, 66, 66));
+						break;
+
+					case 8:		// 9 - Lava Trap
+						pGraphics->DrawRectangle(DRAWSELECTED(597, 494, 66, 66));
+						break;
+
+					case 9:		// 10 - Spike Trap
+						pGraphics->DrawRectangle(DRAWSELECTED(665, 494, 66, 66));
+						break;
+						
+					case -1:	// If nothing is selected, dont draw anything
+						break;
+					}
+				}
+				// If we're kicking ass
+				else
+				{		
+					// --- Draw the killing mode hud ---
+					pGraphics->DrawTexture(m_hHUD, { 0, 0 });
+					
+					// --- Draw the pictures of the weapons ---
+					Weapon* weapons = player->GetWeapons();
+
+					// Assault Rifle
+					if (weapons[0].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Shotgun
+					if (weapons[1].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Rocket Launcher
+					if (weapons[2].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Who the fuck knows
+					if (weapons[3].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					switch (player->GetCurrWeapon())
+					{
+						case 0:		// 1 - Assault Rifle
+							pGraphics->DrawRectangle(DRAWSELECTED(266, 497, 60, 60));
+							break;
+
+						case 1:		// 2 - Shotgun
+							pGraphics->DrawRectangle(DRAWSELECTED(329, 497, 60, 60));
+							break;
+
+						case 2:		// 3 - Rocket Launcher
+							pGraphics->DrawRectangle(DRAWSELECTED(392, 497, 58, 60));
+							break;
+
+						case 3:		// 4 - ???
+							pGraphics->DrawRectangle(DRAWSELECTED(455, 497, 58, 60));
+							break;
+
+					}
+				}
 
 				// -- Draw the score --
-				string score = "Score: ";
-				score += std::to_string(player->GetScore());
-				m_pFont->Draw(score.c_str(), 50, 70, 0.8f, { 255, 255, 255 });
+				string score = "Points";
+				m_pFont->Draw(std::to_string(player->GetScore()).c_str(), 665, 60, 0.45f, { 255, 255, 255 });
+				m_pFont->Draw(score.c_str(), 665, 35, 0.45f, { 255, 255, 255 });
 
 				// -- Draw the wave number --
 				string waveNum = "Wave: ";
 				waveNum += std::to_string(zombieFactory->GetWave());
-				m_pFont->Draw(waveNum.c_str(), 350, 60, 0.6f, { 255, 255, 255 });
+				m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
 
-				// -- Draw the time remaining [during build mode] --
 				if (zombieFactory->IsBuildMode())
 				{
 					// Turn the cursor off for build mode
 					if(pGraphics->IsCursorShowing() == true)
 						pGraphics->TurnCursorOff();
 
-					string timeRemaining = "Time remaining: ";
-					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
-					timeRemaining += " secs";
-					m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
+					//string timeRemaining = "Time remaining: ";
+					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
+					//timeRemaining += " secs";
+					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
+					m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -920,65 +1137,93 @@ Entity*	GameplayState::CreatePlayer() const
 					// Turn the cursor on when not in build mode
 
 					string enemiesRemaining = "Enemies Remaining: ";
-					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
+					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
 
 					int numOfEnemies = zombieFactory->GetEnemiesRemaining();
+
 					if (numOfEnemies <= 3)
-						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 0, 0 });
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 264, 66, 0.45f, { 255, 0, 0 });
 					else
-						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 495, 30, 0.6f, { 255, 255, 255 });
+						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 264, 66, 0.45f, { 255, 255, 255 });
 
 				}
 
-				// -- Draw the items --
+				// TODO: In polish, make #defines for hud spacing so you dont have to add/subtract all
+				// the goddamn time.
+				// -- Draw the items and their quantities --
 
 				// Get the inventory
 				Inventory* inv = player->GetInventory();
 
-				// Draw the number of healthpacks
-				m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 83, 392, 0.4f, { 255, 255, 255 });
+				// If we're in build mode
+				if (zombieFactory->IsBuildMode())
+				{
+					// Draw the number of walls
+					m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of grenades
-				m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 83, 462, 0.4f, { 255, 255, 255 });
+					// Draw the number of windows
+					m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of walls
-				m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 75, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of beartraps
+					m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 191, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of windows
-				m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 140, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of mines
+					m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 260, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of beartraps
-				m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 220, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of MG Towers
+					m_pFont->Draw(std::to_string(inv->GetMachineGunTowers()).c_str(), 327, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the number of mines
-				m_pFont->Draw(std::to_string(inv->GetMines()).c_str(), 298, 532, 0.4f, { 255, 255, 255 });
+					// Draw the number of Maple Syrup Towers
+					m_pFont->Draw(std::to_string(inv->GetMapleSyrupTowers()).c_str(), 395, 496, 0.4f, { 255, 255, 255 });
 
-				// -- Draw the selected weapon -- 
+					// Draw the number of Hockey Stick Towers
+					m_pFont->Draw(std::to_string(inv->GetHockeyStickTowers()).c_str(), 463, 496, 0.4f, { 255, 255, 255 });
 
-				// Get the weapons
-				Weapon* weapons = player->GetWeapons();
-				string names[4] = { "Assault Rifle", "Shotgun", "Rocket Launcher", "Fire Axe" };
-				SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
+					// Draw the number of Laser Towers
+					m_pFont->Draw(std::to_string(inv->GetLaserTowers()).c_str(), 531, 496, 0.4f, { 255, 255, 255 });
 
-				// Draw the name of the selected weapon
-				m_pFont->Draw(names[player->GetCurrWeapon()], 515, 435, 0.4f, { 255, 255, 255 });
+					// Draw the number of Lava Traps
+					m_pFont->Draw(std::to_string(inv->GetLavaTraps()).c_str(), 599, 496, 0.4f, { 255, 255, 255 });
+					
+					// Draw the number of Spike Traps
+					m_pFont->Draw(std::to_string(inv->GetSpikeTraps()).c_str(), 667, 496, 0.4f, { 255, 255, 255 });
+				}
 
-				// Draw the picture of the selected pic
-				pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 506, 466 }, { 0, 0, 160, 80 });
+				// If we're not in build mode
+				else
+				{
 
-				// Draw the ammo of the selected weapon
-				m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 700, 494, 0.6f, { 255, 255, 255 });
+					// --- Draw grenades and healthpacks --
 
-				// -- Draw the offhand weapons ammos --
-				m_pFont->Draw(std::to_string(weapons[0].GetCurrAmmo()).c_str(), 510, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[1].GetCurrAmmo()).c_str(), 580, 375, 0.5f, { 255, 255, 255 });
-				m_pFont->Draw(std::to_string(weapons[2].GetCurrAmmo()).c_str(), 660, 375, 0.5f, { 255, 255, 255 });
-				//Draw the grid rectange
+					// Draw the number of grenades
+					m_pFont->Draw(std::to_string(inv->GetGrenades()).c_str(), 98, 532, 0.4f, { 255, 255, 255 });
+
+					// Draw the number of healthpacks
+					m_pFont->Draw(std::to_string(inv->GetHealthPacks()).c_str(), 163, 532, 0.4f, { 255, 255, 255 });
+
+					// -- Draw the selected weapon and it's ammo -- 
+
+					// Get the weapons
+					Weapon* weapons = player->GetWeapons();
+					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
+
+					// Draw the picture of the selected pic
+					pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+
+					// Draw the ammo of the selected weapon
+					if (weapons[player->GetCurrWeapon()].GetCurrAmmo() < 10)
+						m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 695, 515, 0.6f, { 255, 0, 0 });
+					else
+						m_pFont->Draw(std::to_string(weapons[player->GetCurrWeapon()].GetCurrAmmo()).c_str(), 695, 515, 0.6f, { 255, 255, 255 });
+				}
+
+				//Draw the grid rectangle
 				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				//NOTE: why did it take this much work? did i do something wrong?
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
 				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
 				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
+
 			}
 		}
 
@@ -1014,7 +1259,6 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		RenderLoss();
 	}
-
 }
 
 
@@ -1288,8 +1532,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x;
-			   pos.y += Camera::y;
+			   pos.x += Camera::x - 8;
+			   pos.y += Camera::y - 8;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1406,6 +1650,7 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 												   tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												   tower->SetBaseImage(m_hHockeyStickBaseImage);
+												   tower->SetGunImage(m_hHockeyStickGunImage);
 
 												   return tower;
 	}

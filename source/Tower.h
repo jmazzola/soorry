@@ -21,6 +21,7 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render() override;
+	virtual void PostRender();
 	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
 

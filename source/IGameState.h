@@ -9,7 +9,7 @@
 #ifndef IGAMESTATE_H
 #define IGAMESTATE_H
 
-#define TRANSITION_TIME 1.0f
+#define TRANSITION_TIME 0.3f
 
 
 /**************************************************************/

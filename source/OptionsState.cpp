@@ -223,7 +223,17 @@ using namespace std;
 			break;
 		}
 	}
+	// Quick Exit Options
+	if(pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+	{
+		// Save the options to a config file
+		SaveOptions(STRING_CONFIGPATH);
 
+		//Go to Main Menu
+		pGame->Transition(MainMenuState::GetInstance());
+		// Exit immediately
+		return true;
+	}
 	return true;	// keep playing
 }
 

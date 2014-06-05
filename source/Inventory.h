@@ -17,6 +17,9 @@ public:
 	unsigned int GetMapleSyrupTowers() { return m_unMapleSyrupTowers; }
 	unsigned int GetHockeyStickTowers() { return m_unHockeyStickTowers; }
 	unsigned int GetLaserTowers() { return m_unLaserTowers; }
+	unsigned int GetLavaTraps() { return m_unLavaTraps; }
+	unsigned int GetSpikeTraps() { return m_unSpikeTraps; }
+	
 
 	/**********************************************************/
 	// Mutators
@@ -30,6 +33,8 @@ public:
 	void SetMapleSyrupTowers(unsigned int mapleSyrupTowers) { m_unMapleSyrupTowers = mapleSyrupTowers; }
 	void SetHockeyStickTowers(unsigned int hockeyStickTowers) { m_unHockeyStickTowers = hockeyStickTowers; }
 	void SetLaserTowers(unsigned int laserTowers) { m_unLaserTowers = laserTowers; }
+	void SetLavaTraps(unsigned int lavaTraps) { m_unLavaTraps = lavaTraps; }
+	void SetSpikeTraps(unsigned int spikeTraps) { m_unSpikeTraps = spikeTraps; }
 
 private:
 
@@ -43,5 +48,7 @@ private:
 	unsigned int m_unMapleSyrupTowers;
 	unsigned int m_unHockeyStickTowers;
 	unsigned int m_unLaserTowers;
+	unsigned int m_unLavaTraps;
+	unsigned int m_unSpikeTraps;
 };
 

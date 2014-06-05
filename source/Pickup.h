@@ -4,6 +4,7 @@ class Pickup :
 	public Entity
 {
 public:
+	enum PickUpType { HEALTHPACK, AMMOPACK};
 	Pickup();
 	~Pickup();
 
