@@ -3,6 +3,7 @@
 
 Weapon::Weapon()
 {
+	m_fFireTimer = 0.0f;
 }
 
 
@@ -22,6 +23,10 @@ int			Weapon::GetCurrAmmo() const
 int			Weapon::GetMaxAmmo() const
 {
 	return m_nMaxAmmo;
+}
+float		Weapon::GetFireTimer() const
+{
+	return m_fFireTimer;
 }
 //Projectile* Weapon::GetProjectile() const
 //{
@@ -43,6 +48,10 @@ void Weapon::SetCurrAmmo(int _CurrAmmo)
 void Weapon::SetMaxAmmo(int _MaxAmmo)
 {
 	m_nMaxAmmo = _MaxAmmo;
+}
+void Weapon::SetFireTimer(float _FireTimer)
+{
+	m_fFireTimer = _FireTimer;
 }
 //void Weapon::SetProjectile(Projectile* _Projectile)
 //{

@@ -235,6 +235,15 @@ using namespace std;
 		for (int i = 0; i < NUM_SLOTS; i++)
 			CheckSlotExists(i);
 	}
+	// If we hit escape or B exit and go to main menu
+	// Quick Exit Options
+	if(pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+	{
+		//Go to Main Menu
+		pGame->Transition(MainMenuState::GetInstance());
+		// Exit immediately
+		return true;
+	}
 
 	return true;	// keep playing
 }

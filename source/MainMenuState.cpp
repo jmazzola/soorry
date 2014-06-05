@@ -145,7 +145,7 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
-	if (pInput->IsKeyPressed(SGD::Key::Escape))
+	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
 		m_nCursor = MENU_EXIT;
 
 	// If we're transitioning, disable input
@@ -304,10 +304,6 @@ using namespace std;
 
 	pGraphics->DrawString("Debugging: TRUE: \n1 - Launch Gameplay\n2 - Launch LoadSave\n3 - Launch Options\n4 - Launch Credits", { 0, 0 }, { 0, 0, 0 });
 #endif
-
-	// Make sure the cursor is showing
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
 
 	// If we're transitioning
 	if (IsTransitioning())

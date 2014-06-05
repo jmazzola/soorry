@@ -26,6 +26,8 @@ class Tower;
 class Player : public Entity, public SGD::Listener
 {
 public:
+	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, NUMPLACEABLES, };
+	enum Weapons{ SLOT_ONE, SLOT_TWO, SLOT_THREE, SLOT_FOUR, TOTAL_SLOTS, };
 
 	Player();
 	~Player();
@@ -77,7 +79,7 @@ protected:
 
 	/**********************************************************/
 	// Members
-	float m_fShotTimer;
+	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
@@ -105,6 +107,7 @@ protected:
 	SGD::HAudio m_hGunClick;
 
 private:
+	
 
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);

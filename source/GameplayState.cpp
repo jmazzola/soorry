@@ -434,7 +434,7 @@ Entity*	GameplayState::CreatePlayer() const
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::Start))
+		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start))
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
@@ -443,7 +443,7 @@ Entity*	GameplayState::CreatePlayer() const
 			else if(m_bIsPaused == false && pGraphics->IsCursorShowing() == true)
 				pGraphics->TurnCursorOff();
 		}
-	// enter shop
+	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
 		pAudio->StopAudio(m_hBackgroundMus);
@@ -453,6 +453,15 @@ Entity*	GameplayState::CreatePlayer() const
 			pAudio->PlayAudio(m_hShopMusic, true);
 		}
 		m_pShop->SetShopStatus(true);
+	}
+	// Start the wave if in build mode
+	if(zombieFactory->IsBuildMode() == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+		zombieFactory->SetBuildTImeRemaining(0.0f);
+
+	// Toggle the camera mode
+	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
+	{
+		//TOGGLE THE CAMERA
 	}
 
 #pragma region Pause Menu Navigation Clutter
