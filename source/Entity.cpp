@@ -72,6 +72,12 @@
 }
 
 
+void Entity::PostRender()
+{
+
+}
+
+
 /**************************************************************/
 // GetRect
 //	- calculate the entity's bounding rectangle

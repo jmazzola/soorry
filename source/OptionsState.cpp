@@ -91,6 +91,10 @@ using namespace std;
 	// Load the Options
 	LoadOptions(STRING_CONFIGPATH);
 
+	// Show the cursor
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
+
 }
 
 
@@ -111,9 +115,6 @@ using namespace std;
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
-
-	// Save the options to a config file
-	SaveOptions(STRING_CONFIGPATH);
 
 }
 
@@ -165,13 +166,16 @@ using namespace std;
 		}
 			break;
 
-		case MENU_GOBACK:
-		{
-			//Go to Main Menu
-			pGame->Transition(MainMenuState::GetInstance());
-			// Exit immediately
-			return true;
-		}
+			case MENU_GOBACK:
+			{
+				// Save the options to a config file
+				SaveOptions(STRING_CONFIGPATH);
+
+					//Go to Main Menu
+					pGame->Transition(MainMenuState::GetInstance());
+					// Exit immediately
+					return true;
+			}
 			break;
 		}
 	}

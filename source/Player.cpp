@@ -3,6 +3,7 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -34,6 +35,9 @@ using namespace std;
 #define GRIDWIDTH 32
 #define GRIDHEIGHT 32
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -58,19 +62,21 @@ Player::Player () : Listener ( this )
 	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
+	m_fCursorFadeLength = 2.0f;
+	m_fCursorFadeTimer = 0.0f;
 
 	// Player Inventory
-	m_pInventory = new Inventory ();
-	m_pInventory->SetBearTraps ( 100 );
-	m_pInventory->SetGrenades ( 0 );
-	m_pInventory->SetHealthPacks ( 3 );
-	m_pInventory->SetMines ( 1 );
-	m_pInventory->SetWalls ( 100 );
-	m_pInventory->SetWindows ( 100 );
-	m_pInventory->SetMachineGunTowers ( 2 );
-	m_pInventory->SetMapleSyrupTowers ( 2 );
-	m_pInventory->SetHockeyStickTowers ( 2 );
-	m_pInventory->SetLaserTowers ( 2 );
+	m_pInventory = new Inventory();
+	m_pInventory->SetBearTraps(100);
+	m_pInventory->SetGrenades(0);
+	m_pInventory->SetHealthPacks(3);
+	m_pInventory->SetMines(1);
+	m_pInventory->SetWalls(100);
+	m_pInventory->SetWindows(100);
+	m_pInventory->SetMachineGunTowers(20);
+	m_pInventory->SetMapleSyrupTowers(20);
+	m_pInventory->SetHockeyStickTowers(20);
+	m_pInventory->SetLaserTowers(20);
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
@@ -120,6 +126,15 @@ Player::Player () : Listener ( this )
 	m_nNodeChart = new int*[ worldWidth ];
 	for ( int x = 0; x < worldWidth; x++ )
 		m_nNodeChart[ x ] = new int[ worldHeight ];
+
+	// load audio
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	m_hBlockPlace = pAudio->LoadAudio("resource/audio/block_place.wav");
+	m_hBlockBreak = pAudio->LoadAudio("resource/audio/Block_Break.wav");
+	m_hPickup = pAudio->LoadAudio("resource/audio/block_pickup.wav");
+	m_hWalking = pAudio->LoadAudio("resource/audio/walking2.wav");
+	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
+
 }
 
 
@@ -131,6 +146,14 @@ Player::~Player ()
 	for ( int x = 0; x < WorldManager::GetInstance ()->GetWorldWidth (); x++ )
 		delete [] m_nNodeChart[ x ];
 	delete [] m_nNodeChart;
+
+	//Delete audio
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	pAudio->UnloadAudio(m_hBlockPlace);
+	pAudio->UnloadAudio(m_hBlockBreak);
+	pAudio->UnloadAudio(m_hPickup);
+	pAudio->UnloadAudio(m_hWalking);
+	pAudio->UnloadAudio(m_hGunClick);
 }
 
 
@@ -142,21 +165,20 @@ Player::~Player ()
 //	- Handle input and move the character
 void Player::Update ( float dt )
 {
-	SGD::InputManager* pInput = SGD::InputManager::GetInstance ();
-	Game* pGame = Game::GetInstance ();
-	WorldManager* pWorld = WorldManager::GetInstance ();
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	Game* pGame = Game::GetInstance();
+	WorldManager* pWorld = WorldManager::GetInstance();
 	//Update  all Timers
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
+	m_fCursorFadeTimer -= dt;
+	if(m_fCursorFadeTimer < 0.0f)
+		m_fCursorFadeTimer = 0.0f;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-
-
-
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost ();
@@ -169,45 +191,100 @@ void Player::Update ( float dt )
 
 	//Update Timers
 
+	// Grab the left stick for movement
+	SGD::Vector move = pInput->GetLeftJoystick(0);
+	if(abs(move.x) < 0.1f)
+		move.x = 0.0f;
+	if(abs(move.y) < 0.1f)
+		move.y = 0.0f;
+
+	// Grab the right stick for shooting/placing
+	SGD::Vector shoot = pInput->GetRightJoystick(0);
+	if(abs(shoot.x) < 0.2f)
+		shoot.x = 0.0f;
+	if(abs(shoot.y) < 0.2f)
+		shoot.y = 0.0f;
+	if ( shoot.x != 0.0f || shoot.y != 0.0f )
+	{
+		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		SGD::Point playerPos = GetPosition ();
+		playerPos.x -= Camera::x;
+		playerPos.y -= Camera::y;
+		SGD::Point dir = playerPos;
+		dir.x += shoot.x * 150 + 16;
+		dir.y += shoot.y * 150 + 16;
+
+		pInput->SetMousePosition ( dir );
+	}
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::Vector mouseMove = pInput->GetMouseMovement();
+	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
+	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+	}
+
+	if ( m_fCursorFadeTimer <= 0)
+	{
+		if(pGraphics->IsCursorShowing() == true)
+			pGraphics->TurnCursorOff();
+	}
+	else if( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode() == false)
+	{
+		if ( pGraphics->IsCursorShowing () == false )
+			pGraphics->TurnCursorOn ();
+	}
+
 	// Input
-	if ( pInput->IsKeyDown ( SGD::Key::A ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::A ) == true || move.x < 0.0f)
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
 			m_ptPosition.x = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking);
+		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::D ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::D ) == true || move.x > 0.0f)
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
 			m_ptPosition.x = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking);
+		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::W ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::W ) == true || move.y < 0.0f)
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
 			m_ptPosition.y = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking,true);
+		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::S ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::S ) == true || move.y > 0.0f)
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
 			m_ptPosition.y = oldpos;
-
+		if (pAudio->IsAudioPlaying(m_hWalking) == false)
+		{
+			pAudio->PlayAudio(m_hWalking,true);
+		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
 	if ( pInput->IsKeyDown ( SGD::Key::E ) == true &&
@@ -218,35 +295,44 @@ void Player::Update ( float dt )
 		--newset;
 		m_pInventory->SetHealthPacks ( newset );
 	}
-	if ( pInput->IsKeyPressed ( SGD::Key::Space ) )
+	if (pInput->IsKeyDown(SGD::Key::W) == false && pInput->IsKeyDown(SGD::Key::A) == false && pInput->IsKeyDown(SGD::Key::S) == false && pInput->IsKeyDown(SGD::Key::D) == false)
 	{
-		CreateParticleMessage* msg = new CreateParticleMessage ( "Temp_Particle" , this , 0 , 0 );
-		msg->QueueMessage ();
+		pAudio->StopAudio(m_hWalking);
+	}
+	if (pInput->IsKeyPressed(SGD::Key::Space))
+	{
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
+		msg->QueueMessage();
 		msg = nullptr;
 
 	}
 	//GAH Weapons! - Arnold
-	if ( pInput->IsKeyPressed ( SGD::Key::One ) == true && m_pZombieWave->IsBuildMode () == false )
+	//Assault rifle
+	if (pInput->IsKeyPressed(SGD::Key::One) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 0;
 		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
 	}
-	if ( pInput->IsKeyPressed ( SGD::Key::Two ) == true && m_pZombieWave->IsBuildMode () == false )
+	//Shotgun
+	if (pInput->IsKeyPressed(SGD::Key::Two) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 1;
 		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
 	}
-	if ( pInput->IsKeyPressed ( SGD::Key::Three ) == true && m_pZombieWave->IsBuildMode () == false )
+	//rocket launcher
+	if (pInput->IsKeyPressed(SGD::Key::Three) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 2;
 		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
 	}
-	if ( pInput->IsKeyPressed ( SGD::Key::Four ) == true && m_pZombieWave->IsBuildMode () == false )
+	//Fire axe
+	if (pInput->IsKeyPressed(SGD::Key::Four) == true && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_nCurrWeapon = 3;
 		m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
 	}
-	if ( m_fShotTimer < 0 && m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () > 0 )
+	//when shot!
+	if (m_fShotTimer < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0)
 	{
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && m_pZombieWave->IsBuildMode () == false )
 		{
@@ -257,8 +343,40 @@ void Player::Update ( float dt )
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
 			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+
+		}
+	
+		if ( shoot.ComputeLength() > 0.9f && m_pZombieWave->IsBuildMode() == false )
+		{
+
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			SGD::Point playerPos = GetPosition();
+			playerPos.x -= Camera::x;
+			playerPos.y -= Camera::y;
+			SGD::Point dir = playerPos;
+			dir.x += shoot.x * 50 + 16;
+			dir.y += shoot.y * 50 + 16;
+			
+			pInput->SetMousePosition(dir);
+
+			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
+			msg->QueueMessage ();
+			msg = nullptr;
+			//set the shot timer to the rate of fire
+			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
+			m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+		}
+
+	}
+	else if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
+	{
+		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hGunClick) == false)
+		{
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hGunClick);
 		}
 	}
+	
 	// Selecting Walls
 	if ( pInput->IsKeyPressed ( SGD::Key::One ) == true && m_pZombieWave->IsBuildMode () == true )
 		m_nCurrPlaceable = 0;
@@ -291,7 +409,7 @@ void Player::Update ( float dt )
 	if ( pInput->IsKeyPressed ( SGD::Key::Eight ) == true && m_pZombieWave->IsBuildMode () == true )
 		m_nCurrPlaceable = 7;
 
-	if ( pInput->IsKeyPressed ( SGD::Key::MouseRight ) == true && Blockable ( pos ) )
+	if (pInput->IsKeyPressed(SGD::Key::MouseRight) == true && m_pZombieWave->IsBuildMode())
 	{
 		// Test rect
 		SGD::Rectangle rect;
@@ -300,13 +418,13 @@ void Player::Update ( float dt )
 		rect.right = rect.left + pWorld->GetTileWidth () / 2;
 		rect.bottom = rect.top + pWorld->GetTileHeight () / 2;
 
+		SetSelectedTower(nullptr);
+
 		// Check if tower is there
-		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision ( rect , 5 ));
+		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 2));
 
 		if ( tower )
-		{
-
-		}
+			SetSelectedTower(tower);
 
 #if 0
 		//Colliding with wall
@@ -394,7 +512,10 @@ void Player::Update ( float dt )
 					unsigned int newset = m_pInventory->GetBearTraps ();
 					--newset;
 					m_pInventory->SetBearTraps ( newset );
-
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
 				}
 			}
 
@@ -412,6 +533,11 @@ void Player::Update ( float dt )
 					unsigned int newset = m_pInventory->GetMines ();
 					--newset;
 					m_pInventory->SetMines ( newset );
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+
 				}
 			}
 
@@ -425,6 +551,11 @@ void Player::Update ( float dt )
 					unsigned int newset = m_pInventory->GetWalls ();
 					--newset;
 					m_pInventory->SetWalls ( newset );
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+
 				}
 			}
 
@@ -438,6 +569,11 @@ void Player::Update ( float dt )
 					unsigned int newset = m_pInventory->GetWindows ();
 					--newset;
 					m_pInventory->SetWindows ( newset );
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+
 				}
 			}
 
@@ -446,17 +582,85 @@ void Player::Update ( float dt )
 			{
 				if ( pInput->IsKeyPressed ( SGD::Key::MouseLeft ) == true && PlacementCheck ( pos ) )
 				{
-					CreateTowerMessage* msg = new CreateTowerMessage ( (int)(pos.x + pWorld->GetTileWidth ()) , (int)(pos.y + pWorld->GetTileHeight ()) ,
-						CreateTowerMessage::TOWER_MACHINE_GUN );
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_MACHINE_GUN);
+					msg->QueueMessage();
 
-					// Decreasing the amount of mines left for the player
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+
+					// Decreasing the amount of machine gun towers left for the player
 					m_pInventory->SetMachineGunTowers ( m_pInventory->GetMachineGunTowers () - 1 );
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+
+				}
+			}
+
+			// Maple Syrup tower
+			else if (m_nCurrPlaceable == 5 && m_pInventory->GetMapleSyrupTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_MAPLE_SYRUP);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
+				}
+			}
+
+			// Hockey Stick tower
+			else if (m_nCurrPlaceable == 6 && m_pInventory->GetHockeyStickTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_HOCKEY_STICK);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
+				}
+			}
+
+			// Laser tower
+			else if (m_nCurrPlaceable == 7 && m_pInventory->GetLaserTowers() > 0)
+			{
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) == true && PlacementCheck(pos))
+				{
+					CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTowerMessage::TOWER_LASER);
+					msg->QueueMessage();
+
+					pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
+					if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+					}
+					// Decreasing the amount of machine gun towers left for the player
+					m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 				}
 			}
 		}
 
 	}
 
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
 }
 
 int Player::GetType () const
@@ -634,14 +838,25 @@ void Player::SetInventory ( Inventory* _inventory )
 	m_pInventory = _inventory;
 }
 
-
 void Player::SetWeapons ( Weapon* _weapons )
 {
 	m_pWeapons = _weapons;
 }
 
+void Player::SetSelectedTower(Tower* _tower)
+{
+	if (m_pSelectedTower)
+		m_pSelectedTower->SetSelected(false);
 
-bool Player::CheckLegalPlacement ( Node end , Node block )
+	m_pSelectedTower = nullptr;
+	if (_tower)
+	{
+		m_pSelectedTower = _tower;
+		m_pSelectedTower->SetSelected(true);
+	}
+}
+
+bool Player::CheckLegalPlacement(Node end, Node block)
 {
 	WorldManager* pWorld = WorldManager::GetInstance ();
 
@@ -712,10 +927,15 @@ bool Player::CheckLegalPlacement ( Node end , Node block )
 
 bool Player::PlacementCheck ( SGD::Point mouse )
 {
-	if ( Blockable ( mouse )
-		&& WorldManager::GetInstance ()->IsSolidAtPosition ( (int)mouse.x , (int)mouse.y ) == false
-		&& m_pEntityManager->CheckCollision ( { mouse.x * GRIDWIDTH , mouse.y * GRIDHEIGHT , mouse.x * GRIDWIDTH + GRIDWIDTH , mouse.y * GRIDHEIGHT + GRIDHEIGHT } ) == false
-		&& CheckLegalPlacement ( Node ( (int)(m_ptPosition.x + 16) / GRIDWIDTH , (int)(m_ptPosition.y + 16) / GRIDHEIGHT ) , Node ( (int)mouse.x , (int)mouse.y ) ) )
+	bool a = Blockable(mouse);
+	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
+	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
+	bool d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+
+	if (a
+		&& b
+		&& c
+		&& d)
 	{
 		return true;
 	}
@@ -737,8 +957,9 @@ void Player::Render ( void )
 	center.x /= 2;
 	center.y /= 2;
 
+	
 	// Calculate the rotation
-	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	SGD::Point playerPos = GetPosition();
 	playerPos.x -= Camera::x;
 	playerPos.y -= Camera::y;
@@ -759,4 +980,6 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+
+	// 
 }

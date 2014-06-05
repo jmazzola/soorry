@@ -3,12 +3,16 @@
 #include "CreateSlowZombieMessage.h"
 #include "CreateFastZombieMessage.h"
 #include "CreateBeaverZombieMessage.h"
+#include "Player.h"
 
 #include "../TinyXML/tinyxml.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 ZombieFactory::ZombieFactory() : Listener(this)
 {
@@ -76,6 +80,7 @@ void ZombieFactory::Start()
 	// Default start behavior
 	m_bIsPaused = false;
 	m_bBuildMode = true;
+	ShowCursor(false);
 
 	// Start at wave one
 	m_nWave = 1;
@@ -113,11 +118,16 @@ void ZombieFactory::Update(float dt)
 		// Check to see if we leave build mode
 		if (m_fBuildTimeRemaining <= 0.0f)
 		{
+			ShowCursor(true);
 			m_bBuildMode = false;
 			m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
 			m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
 			m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
 			m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+
+			// Deselect all towers
+			m_pPlayer->SetSelectedTower(nullptr);
+
 			return;
 		}
 	}
@@ -130,6 +140,7 @@ void ZombieFactory::Update(float dt)
 		if (m_nEnemiesRemaining <= 0 && zombiesToSpawn == 0)
 		{
 			m_bBuildMode = true;
+			ShowCursor(false);
 			m_nWave++;
 
 			// Pause if last wave
@@ -415,4 +426,9 @@ void ZombieFactory::SetNextSpawnTime(float _nextSpawnTime)
 void ZombieFactory::SetEntityManager(EntityManager* _entityManager)
 {
 	m_pEntityManager = _entityManager;
+}
+
+void ZombieFactory::SetPlayer(Player* _player)
+{
+	m_pPlayer = _player;
 }

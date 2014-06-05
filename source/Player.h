@@ -15,11 +15,13 @@
 
 #include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Handle.h"
 #include "EntityManager.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
 class Inventory;
+class Tower;
 
 class Player : public Entity, public SGD::Listener
 {
@@ -52,6 +54,7 @@ public:
 	Inventory* GetInventory() const;
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
+
 	/**********************************************************/
 	// Mutators
 	void SetMaxHealth(float maxHealth);
@@ -68,6 +71,8 @@ public:
 	void SetWeapons(Weapon* weapons);
 	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
 	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
+	void SetSelectedTower(Tower* tower);
+
 protected:
 
 	/**********************************************************/
@@ -76,6 +81,8 @@ protected:
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
+	float m_fCursorFadeLength;
+	float m_fCursorFadeTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
@@ -88,7 +95,15 @@ protected:
 	Weapon* m_pWeapons;
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
+	Tower* m_pSelectedTower;
 	
+	//Player sounds
+	SGD::HAudio m_hBlockPlace;
+	SGD::HAudio m_hBlockBreak;
+	SGD::HAudio m_hPickup;
+	SGD::HAudio m_hWalking;
+	SGD::HAudio m_hGunClick;
+
 private:
 
 	int** m_nNodeChart;

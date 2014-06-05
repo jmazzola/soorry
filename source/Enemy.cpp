@@ -1,15 +1,23 @@
 #include "Enemy.h"
 
 #include "../SGD Wrappers/SGD_Event.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 
 #include "AIComponent.h"
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
+#include "MachineGunBullet.h"
+#include "Camera.h"
+
+#define HEALTH_BAR 1
+
 
 Enemy::Enemy() : Listener(this)
 {
 	m_AIComponent.SetAgent(this);
 	m_fTrapTimer = 0;
+	m_nCurrHealth = 100;
+	m_nMaxHeatlh = 100;
 }
 
 
@@ -53,6 +61,35 @@ void Enemy::Update(float dt)
 void Enemy::Render()
 {
 	Entity::Render();
+
+	// Draw health bar (for debug purposes or for permenant reasons, we'll see)
+#if HEALTH_BAR
+
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	SGD::Rectangle backRect;
+	backRect.left = m_ptPosition.x - Camera::x;
+	backRect.top = m_ptPosition.y - 5 - Camera::y;
+	backRect.right = m_ptPosition.x + 32 - Camera::x;
+	backRect.bottom = m_ptPosition.y - Camera::y;
+
+	// Get offset from max health
+	int offset = (int)(30 * (m_nMaxHeatlh - m_nCurrHealth) / (float)(m_nMaxHeatlh));
+
+	SGD::Rectangle frontRect;
+	frontRect.left = backRect.left + 1;
+	frontRect.top = backRect.top + 1;
+	frontRect.right = backRect.right - 1 - offset;
+	frontRect.bottom = backRect.bottom - 1;
+
+	pGraphics->DrawRectangle(backRect, SGD::Color(0, 0, 0));
+
+	// Determine bar color
+	SGD::Color color = { (unsigned char)(255 * (float)((m_nMaxHeatlh - m_nCurrHealth) / (float)(m_nMaxHeatlh))), (unsigned char)(255 * (float)(m_nCurrHealth / (float)(m_nMaxHeatlh))), 0 };
+	pGraphics->DrawRectangle(frontRect, color);
+
+#endif
+
 	//m_AIComponent.Render();
 }
 
@@ -70,13 +107,16 @@ int Enemy::GetType() const
 			m_nCurrHealth -= 40;
 			break;
 		case ENT_BULLET_SHOTGUN:
-			m_nCurrHealth -= 80;
+			m_nCurrHealth -= 15;
 			break;
 		case ENT_BULLET_ROCKET:
 			m_nCurrHealth -= 100;
 			break;
 		case ENT_TRAP_BEARTRAP:
 			m_bIsTrapped = true;
+			break;
+		case ENT_MACHINE_GUN_BULLET:
+			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
 			break;
 			//NOTE: may have to delete
 		case ENT_TRAP_MINE:

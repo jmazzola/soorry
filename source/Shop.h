@@ -80,6 +80,9 @@ private:
 	SGD::HTexture m_hItem[TOTAL_ITEMS];
 	SGD::HTexture m_hUpgrade[TOTAL_UPGRADES];
 
+	//Audio
+	SGD::HAudio m_hShopMusic;
+
 	// Menu cursor
 	int m_nCursor;
 	int m_nMenuTab;

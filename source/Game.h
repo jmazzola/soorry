@@ -60,6 +60,7 @@ public:
 	{
 		SGD::GraphicsManager::GetInstance()->Resize({ 800, 600 }, !m_bFullscreen);
 		m_bFullscreen = !m_bFullscreen;
+		m_pGraphics->ToggleFullScreen();
 	}
 
 

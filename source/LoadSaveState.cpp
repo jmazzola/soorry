@@ -114,6 +114,9 @@ using namespace std;
 	for (int i = 0; i < NUM_SLOTS; i++)
 		CheckSlotExists(i);
 
+	// Show the cursor
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 
@@ -213,13 +216,12 @@ using namespace std;
 
 		case MENU_GOBACK:
 		{
-			//Go to Main Menu
 			pGame->Transition(MainMenuState::GetInstance());
-			// Exit immediately
 			return true;
+
+
 		}
 			break;
-
 
 		}
 	}

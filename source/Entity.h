@@ -56,6 +56,12 @@ public:
 			ENT_TRAP_BEARTRAP,
 			ENT_TRAP_MINE,
 			ENT_GRENADE,
+			ENT_TOWER,
+				ENT_TOWER_MACHINE_GUN,
+				ENT_TOWER_MAPLE_SYRUP,
+				ENT_TOWER_HOCKEY_STICK,
+				ENT_TOWER_LASER,
+			ENT_MACHINE_GUN_BULLET,
 	};
 
 	
@@ -63,6 +69,7 @@ public:
 	// Interface Methods
 	virtual void Update	(float dt) override;
 	virtual void Render () override;
+	virtual void PostRender() override;
 	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
 	virtual void HandleCollision (const IEntity* pOther) override;
