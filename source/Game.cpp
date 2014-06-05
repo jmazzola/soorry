@@ -148,39 +148,61 @@ int Game::Main(void)
 		// Disable the 'Enter' input
 		return false;
 	}
-	//if(m_pInput->IsControllerConnected(0))
-	//{
-	//	// Grab the input from the right joystick
-	//	SGD::Vector mouseUpdate = {0.0f, 0.0f};
-	//	mouseUpdate = m_pInput->GetRightJoystick(0);
+	if(m_pInput->IsControllerConnected(0))
+	{
+		// Grab the input from the right joystick
+		SGD::Vector mouseUpdate = {0.0f, 0.0f};
+		mouseUpdate = m_pInput->GetRightJoystick(0);
 
-	//	// Clamp the input to be greater than .1 in either direction
-	//	// so the mouse doesn't drift even when not being used
-	//	if(abs(mouseUpdate.x) < 0.1f)
-	//		mouseUpdate.x = 0.0f;
-	//	if(abs(mouseUpdate.y) < 0.1f)
-	//		mouseUpdate.y = 0.0f;
+		// Clamp the input to be greater than .1 in either direction
+		// so the mouse doesn't drift even when not being used
+		if(abs(mouseUpdate.x) < 0.1f)
+			mouseUpdate.x = 0.0f;
+		if(abs(mouseUpdate.y) < 0.1f)
+			mouseUpdate.y = 0.0f;
 
-	//	POINT mouse;
-	//	RECT window;
-	//	int X, Y;
-	//	X = 0;
-	//	Y = 0;
+		POINT mouse;
+		RECT window;
+		int X, Y;
+		X = 0;
+		Y = 0;
 
-	//	HWND hWnd = m_pGraphics->GetHWND();
+		HWND hWnd = m_pGraphics->GetHWND();
 
-	//	// Grab the client rectangle
-	//	GetWindowRect(hWnd, &window);
+		// Grab the client rectangle
+		GetWindowRect(hWnd, &window);
 
-	//	// Grab the mouse's actual position
-	//	GetCursorPos(&mouse);
-	//	X = (int)(mouse.x + mouseUpdate.x);
-	//	Y = (int)(mouse.y + mouseUpdate.y);
-	//	
-	//	// Set the cursor position based on input and inside the window
-	//	if(GetActiveWindow() == hWnd)
-	//	SetCursorPos(X, Y);
-	//}
+		// Grab the mouse's actual position
+		GetCursorPos(&mouse);
+		X = (int)(mouse.x + mouseUpdate.x);
+		Y = (int)(mouse.y + mouseUpdate.y);
+		
+
+		// Clamp the mouse position to be inside the client window
+		if ( X < window.left + 8 && m_bFullscreen == false)
+			X = window.left + 8;
+		else if(X < window.left && m_bFullscreen == true)
+			X = window.left;
+
+		if ( X > window.right - 8 && m_bFullscreen == false)
+			X = window.right - 8;
+		else if(X > window.right && m_bFullscreen == true)
+			X = window.right;
+
+		if ( Y < window.top + 28 && m_bFullscreen == false)
+			Y = window.top + 28;
+		else if(Y < window.top && m_bFullscreen == true)
+			Y = window.top;
+
+		if ( Y > window.bottom - 8 && m_bFullscreen == false)
+			Y = window.bottom - 8;
+		else if( Y > window.bottom && m_bFullscreen == true)
+			Y = window.bottom;
+
+		// Set the cursor position based on input and inside the window
+		if(GetActiveWindow() == hWnd)
+		SetCursorPos(X, Y);
+	}
 
 	// Let the current state handle input
 	if (m_pCurrState->Input() == false)
