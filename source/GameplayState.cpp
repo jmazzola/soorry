@@ -1,6 +1,9 @@
 /***************************************************************
-|	File:		GameplayState.cpp
-|	Author:		Justin Mazzola
+|	File:		GameplayState.h
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester 
+|	Course:		SGP
+|	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
 
 #include "GameplayState.h"
@@ -90,6 +93,10 @@ using namespace std;
 // Selected Box
 #define DRAWSELECTED(TOP,LEFT,SIZEW,SIZEH) SGD::Rectangle({ TOP, LEFT }, SGD::Size(SIZEW, SIZEH)), {0,0,0,0}, { 255, 255, 255, 0 }, 2
 
+
+// Colors
+// Todo make Colors.h 
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -173,6 +180,8 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 
+	m_hPlaceables = pGraphics->LoadTexture("resource/images/towers/placeables.png");
+
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
@@ -202,8 +211,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
-	zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -328,6 +337,7 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
+	pGraphics->UnloadTexture(m_hPlaceables);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -892,8 +902,73 @@ Entity*	GameplayState::CreatePlayer() const
 				// If we're in build mode
 				if (zombieFactory->IsBuildMode())
 				{
-					// Draw the build mode hud
+					// -- Draw the build mode hud --
 					pGraphics->DrawTexture(m_hBuildModeHUD, { 0, 0 });
+
+
+					// --- Draw the pictures of the items and tints ---
+					Inventory* inv = player->GetInventory();
+
+					// Draw the walls picture if the player has more than 0 of them
+					if (inv->GetWalls() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						// Tint it red
+						pGraphics->DrawTextureSection(m_hPlaceables, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the windows picture
+					if (inv->GetWindows() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the bear traps
+					if (inv->GetBearTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the mines
+					if (inv->GetMines() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the MG Towers
+					if (inv->GetMachineGunTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Maple Syrup Towers
+					if (inv->GetMapleSyrupTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Hockey Stick Towers
+					if (inv->GetHockeyStickTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Laser Towers
+					if (inv->GetLaserTowers() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Lava Traps
+					if (inv->GetLavaTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+
+					// Draw the Spike Traps
+					if (inv->GetSpikeTraps() > 0)
+						pGraphics->DrawTextureSection(m_hPlaceables, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+					else
+						pGraphics->DrawTextureSection(m_hPlaceables, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the selected box based on the player's selected placeable
 					switch (player->GetCurrPlaceable())
@@ -990,7 +1065,7 @@ Entity*	GameplayState::CreatePlayer() const
 					//timeRemaining += " secs";
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw("Time to Build!", 340, 110, 0.4f, { 255, 255, 0 });
+					m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1001,6 +1076,7 @@ Entity*	GameplayState::CreatePlayer() const
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
 
 					int numOfEnemies = zombieFactory->GetEnemiesRemaining();
+
 					if (numOfEnemies <= 3)
 						m_pFont->Draw(std::to_string(numOfEnemies).c_str(), 264, 66, 0.45f, { 255, 0, 0 });
 					else
@@ -1047,7 +1123,6 @@ Entity*	GameplayState::CreatePlayer() const
 					
 					// Draw the number of Spike Traps
 					m_pFont->Draw(std::to_string(inv->GetSpikeTraps()).c_str(), 667, 496, 0.4f, { 255, 255, 255 });
-
 				}
 
 				// If we're not in build mode
