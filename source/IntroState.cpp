@@ -131,7 +131,7 @@ using namespace std;
 
 
 	// Press Space to skip to the Main Menu at any time
-	if (pInput->IsKeyPressed(SGD::Key::Space))
+	if (pInput->IsAnyKeyPressed())
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}
@@ -166,7 +166,7 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Render the text to press Space to skip in bottom right corner WITH 90% SPACE!!!!!!!!11111111111
-	m_pFont->Draw("Press Space to Skip", 550, 500, 0.4f, { 255, 0, 0 });
+	m_pFont->Draw("Press Any Key to Skip", 550, 500, 0.4f, { 255, 0, 0 });
 
 	// Run the animation
 

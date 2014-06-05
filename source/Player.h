@@ -34,6 +34,7 @@ public:
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render () override;
+	virtual void PostRender() override;
 	virtual int GetType() const override;
 	virtual void HandleCollision(const IEntity* pOther) override;
 	bool Blockable(SGD::Point mouse);
@@ -72,6 +73,8 @@ public:
 	void SetZombieFactory(ZombieFactory* wave)  { m_pZombieWave = wave; }
 	void SetEntityManager(EntityManager* manager) { m_pEntityManager = manager; }
 	void SetSelectedTower(Tower* tower);
+	void SetPlaceablesImage(SGD::HTexture placeablesImage);
+	void SetRangeCirclesImage(SGD::HTexture rangeCirclesImage);
 
 protected:
 
@@ -96,6 +99,9 @@ protected:
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
+
+	SGD::HTexture m_hPlaceablesImage;
+	SGD::HTexture m_hRangeCirclesImage;
 	
 	//Player sounds
 	SGD::HAudio m_hBlockPlace;

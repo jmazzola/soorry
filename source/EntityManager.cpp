@@ -209,6 +209,9 @@ void EntityManager::RenderAll( void )
 				m_tEntities[2][tower]->PostRender();
 			}
 		}
+
+		// Render player's post render
+		m_tEntities[0][0]->PostRender();
 	}
 	// Unlock the iterator
 	m_bIterating = false;

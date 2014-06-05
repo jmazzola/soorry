@@ -141,6 +141,9 @@ private:
 	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hPlaceablesImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;

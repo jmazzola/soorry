@@ -128,9 +128,13 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 Entity*	GameplayState::CreatePlayer() const
 {
 	Player* player = new Player();
+
 	player->SetPosition(m_ptPlayerSpawnPoint);
 	player->SetZombieFactory(zombieFactory);
 	player->SetEntityManager(m_pEntities);
+	player->SetPlaceablesImage(m_hPlaceablesImage);
+	player->SetRangeCirclesImage(m_hRangeCirclesImage);
+
 	return player;
 }
 
@@ -143,6 +147,7 @@ Entity*	GameplayState::CreatePlayer() const
 /*virtual*/ void GameplayState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
 	m_pEvents = SGD::EventManager::GetInstance();
@@ -155,8 +160,9 @@ Entity*	GameplayState::CreatePlayer() const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-	// Load Textures
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Textures", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Load Tim
 	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
@@ -169,6 +175,13 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
+
+	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
+	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
+
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -189,13 +202,25 @@ Entity*	GameplayState::CreatePlayer() const
 	Camera::x = 0;
 	Camera::y = 0;
 
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading Animations", SGD::Point(280, 300));
+	pGraphics->Update();
+
 	// Load all animation
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
+	pGraphics->Update();
+
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
 	pWorld->LoadWorld("resource/world/world.xml");
+
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
+	pGraphics->Update();
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
@@ -313,7 +338,6 @@ Entity*	GameplayState::CreatePlayer() const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
-
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -325,6 +349,9 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
+
+	pGraphics->UnloadTexture(m_hPlaceablesImage);
+	pGraphics->UnloadTexture(m_hRangeCirclesImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
