@@ -359,7 +359,7 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
-	pGraphics->UnloadTexture(m_hPlaceables);
+	pGraphics->UnloadTexture(m_hPlaceablesImage);
 
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
@@ -945,64 +945,64 @@ Entity*	GameplayState::CreatePlayer() const
 
 					// Draw the walls picture if the player has more than 0 of them
 					if (inv->GetWalls() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
 						// Tint it red
-						pGraphics->DrawTextureSection(m_hPlaceables, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 54, 496 }, SGD::Rectangle({ 0, 0 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the windows picture
 					if (inv->GetWindows() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 123, 496 }, SGD::Rectangle({ 0, 32 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the bear traps
 					if (inv->GetBearTraps() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 191, 496 }, SGD::Rectangle({ 0, 64 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the mines
 					if (inv->GetMines() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 259, 496 }, SGD::Rectangle({ 0, 96 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the MG Towers
 					if (inv->GetMachineGunTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 327, 496 }, SGD::Rectangle({ 0, 156 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Maple Syrup Towers
 					if (inv->GetMapleSyrupTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Hockey Stick Towers
 					if (inv->GetHockeyStickTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 463, 496 }, SGD::Rectangle({ 0, 273 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Laser Towers
 					if (inv->GetLaserTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 531, 496 }, SGD::Rectangle({ 0, 321 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Lava Traps
 					if (inv->GetLavaTraps() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 599, 496 }, SGD::Rectangle({ 0, 352 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Spike Traps
 					if (inv->GetSpikeTraps() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceables, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceables, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the selected box based on the player's selected placeable
 					switch (player->GetCurrPlaceable())
@@ -1056,6 +1056,33 @@ Entity*	GameplayState::CreatePlayer() const
 				{		
 					// --- Draw the killing mode hud ---
 					pGraphics->DrawTexture(m_hHUD, { 0, 0 });
+					
+					// --- Draw the pictures of the weapons ---
+					Weapon* weapons = player->GetWeapons();
+
+					// Assault Rifle
+					if (weapons[0].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Shotgun
+					if (weapons[1].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Rocket Launcher
+					if (weapons[2].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+
+					// Who the fuck knows
+					if (weapons[3].GetCurrAmmo() > 0)
+						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+					else
+						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					switch (player->GetCurrWeapon())
 					{
