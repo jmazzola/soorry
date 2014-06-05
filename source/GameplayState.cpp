@@ -1028,8 +1028,8 @@ Entity*	GameplayState::CreatePlayer() const
 				}
 				// If we're kicking ass
 				else
-				{
-					// Draw the killing mode hud
+				{		
+					// --- Draw the killing mode hud ---
 					pGraphics->DrawTexture(m_hHUD, { 0, 0 });
 
 					switch (player->GetCurrWeapon())
