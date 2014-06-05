@@ -93,6 +93,10 @@ using namespace std;
 
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
+
+	// Show the cursor if it is hidden
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 
@@ -127,7 +131,7 @@ using namespace std;
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
+	
 	if (pInput->IsKeyPressed(SGD::Key::Escape))
 		m_nCursor = MENU_EXIT;
 
@@ -135,6 +139,7 @@ using namespace std;
 	if (IsTransitioning())
 		return false;
 
+	
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -328,7 +333,7 @@ using namespace std;
 		else
 			m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
 	}
-
+	
 }
 
 /**************************************************************/

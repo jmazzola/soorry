@@ -90,6 +90,10 @@ using namespace std;
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
+	// Show the cursor if it
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 

@@ -759,8 +759,8 @@ namespace SGD
 			assert( m_eStatus == E_INITIALIZED && "InputManager::GetMousePosition - wrapper has not been initialized" );
 			if( m_eStatus != E_INITIALIZED )
 				return Point{ 0, 0 };
-
-			return m_ptMouse;
+			
+			return Point { m_ptMouse.x - 16 , m_ptMouse.y - 16 };
 		}
 		//*************************************************************//
 

@@ -11,6 +11,9 @@
 #include "../SGD Wrappers/SGD_Event.h"
 
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 ZombieFactory::ZombieFactory() : Listener(this)
 {
 	RegisterForEvent("TEST");
@@ -77,6 +80,7 @@ void ZombieFactory::Start()
 	// Default start behavior
 	m_bIsPaused = false;
 	m_bBuildMode = true;
+	ShowCursor(false);
 
 	// Start at wave one
 	m_nWave = 1;
@@ -114,6 +118,7 @@ void ZombieFactory::Update(float dt)
 		// Check to see if we leave build mode
 		if (m_fBuildTimeRemaining <= 0.0f)
 		{
+			ShowCursor(true);
 			m_bBuildMode = false;
 			m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
 			m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
@@ -135,6 +140,7 @@ void ZombieFactory::Update(float dt)
 		if (m_nEnemiesRemaining <= 0 && zombiesToSpawn == 0)
 		{
 			m_bBuildMode = true;
+			ShowCursor(false);
 			m_nWave++;
 
 			// Pause if last wave
