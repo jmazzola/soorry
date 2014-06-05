@@ -84,6 +84,10 @@ using namespace std;
 
 	// Set background color
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
+
+	// Hide the cursor for the intro
+	if(pGraphics->IsCursorShowing() == true)
+		pGraphics->TurnCursorOff();
 }
 
 
@@ -109,7 +113,9 @@ using namespace std;
 	m_pEvents->Terminate();
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
-
+	
+	// Show the cursor
+	ShowCursor(true);
 }
 
 

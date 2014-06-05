@@ -35,6 +35,9 @@ using namespace std;
 #define GRIDWIDTH 32
 #define GRIDHEIGHT 32
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -59,6 +62,8 @@ Player::Player () : Listener ( this )
 	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
+	m_fCursorFadeLength = 2.0f;
+	m_fCursorFadeTimer = 0.0f;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
@@ -167,6 +172,9 @@ void Player::Update ( float dt )
 	//Update  all Timers
 	m_fShotTimer -= dt;
 	m_fPlaceTimer -= dt;
+	m_fCursorFadeTimer -= dt;
+	if(m_fCursorFadeTimer < 0.0f)
+		m_fCursorFadeTimer = 0.0f;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
@@ -188,8 +196,51 @@ void Player::Update ( float dt )
 
 	//Update Timers
 
+	// Grab the left stick for movement
+	SGD::Vector move = pInput->GetLeftJoystick(0);
+	if(abs(move.x) < 0.3f)
+		move.x = 0.0f;
+	if(abs(move.y) < 0.3f)
+		move.y = 0.0f;
+
+	// Grab the right stick for shooting/placing
+	SGD::Vector shoot = pInput->GetRightJoystick(0);
+	if(abs(shoot.x) < 0.2f)
+		shoot.x = 0.0f;
+	if(abs(shoot.y) < 0.2f)
+		shoot.y = 0.0f;
+	if ( shoot.x != 0.0f || shoot.y != 0.0f )
+	{
+		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		SGD::Point playerPos = GetPosition ();
+		playerPos.x -= Camera::x;
+		playerPos.y -= Camera::y;
+		SGD::Point dir = playerPos;
+		dir.x += shoot.x * 150 + 16;
+		dir.y += shoot.y * 150 + 16;
+
+		pInput->SetMousePosition ( dir );
+	}
+	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::Vector mouseMove = pInput->GetMouseMovement();
+	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } )
+	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+	}
+
+	if ( shoot == SGD::Vector { 0.0f , 0.0f } && m_fCursorFadeTimer <= 0)
+	{
+		if(pGraphics->IsCursorShowing() == true)
+			pGraphics->TurnCursorOff();
+	}
+	else if( shoot != SGD::Vector { 0.0f , 0.0f } || m_fCursorFadeTimer > 0)
+	{
+		if ( pGraphics->IsCursorShowing () == false )
+			pGraphics->TurnCursorOn ();
+	}
+
 	// Input
-	if ( pInput->IsKeyDown ( SGD::Key::A ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::A ) == true || move.x < 0.0f)
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
@@ -202,7 +253,7 @@ void Player::Update ( float dt )
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::D ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::D ) == true || move.x > 0.0f)
 	{
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
@@ -215,7 +266,7 @@ void Player::Update ( float dt )
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::W ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::W ) == true || move.y < 0.0f)
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
@@ -228,7 +279,7 @@ void Player::Update ( float dt )
 		}
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
-	if ( pInput->IsKeyDown ( SGD::Key::S ) == true )
+	if ( pInput->IsKeyDown ( SGD::Key::S ) == true || move.y > 0.0f)
 	{
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y += m_fSpeed * dt;
@@ -299,6 +350,29 @@ void Player::Update ( float dt )
 			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
 		}
+	
+		if ( shoot.ComputeLength() > 0.9f && m_pZombieWave->IsBuildMode() == false )
+		{
+
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			SGD::Point playerPos = GetPosition();
+			playerPos.x -= Camera::x;
+			playerPos.y -= Camera::y;
+			SGD::Point dir = playerPos;
+			dir.x += shoot.x * 50 + 16;
+			dir.y += shoot.y * 50 + 16;
+			
+			pInput->SetMousePosition(dir);
+
+			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
+			msg->QueueMessage ();
+			msg = nullptr;
+			//set the shot timer to the rate of fire
+			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
+			m_fShotTimer = m_pWeapons[ m_nCurrWeapon ].GetFireRate ();
+			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+		}
+
 	}
 	else if (pInput->IsKeyDown(SGD::Key::MouseLeft) == true && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
 	{
@@ -885,8 +959,9 @@ void Player::Render ( void )
 	center.x /= 2;
 	center.y /= 2;
 
+	
 	// Calculate the rotation
-	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 	SGD::Point playerPos = GetPosition();
 	playerPos.x -= Camera::x;
 	playerPos.y -= Camera::y;

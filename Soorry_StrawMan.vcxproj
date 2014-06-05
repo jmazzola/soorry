@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
@@ -194,6 +195,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt" />
+    <None Include="resource\images\hud\crosshair.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Soorry_StrawMan.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>

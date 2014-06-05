@@ -81,6 +81,8 @@ protected:
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
+	float m_fCursorFadeLength;
+	float m_fCursorFadeTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
