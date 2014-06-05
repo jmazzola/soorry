@@ -1,6 +1,7 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester
 |	Course:		SGP
 |	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
@@ -138,6 +139,9 @@ private:
 	SGD::HTexture m_hHockeyStickGunImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
+
+	// HUD Placeables
+	SGD::HTexture m_hPlaceables = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Pause Menu Stuff
