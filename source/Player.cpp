@@ -223,17 +223,17 @@ void Player::Update ( float dt )
 	}
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::Vector mouseMove = pInput->GetMouseMovement();
-	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } )
+	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
 	}
 
-	if ( shoot == SGD::Vector { 0.0f , 0.0f } && m_fCursorFadeTimer <= 0)
+	if ( m_fCursorFadeTimer <= 0)
 	{
 		if(pGraphics->IsCursorShowing() == true)
 			pGraphics->TurnCursorOff();
 	}
-	else if( shoot != SGD::Vector { 0.0f , 0.0f } || m_fCursorFadeTimer > 0)
+	else if( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 		if ( pGraphics->IsCursorShowing () == false )
 			pGraphics->TurnCursorOn ();

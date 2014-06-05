@@ -156,9 +156,9 @@ int Game::Main(void)
 
 		// Clamp the input to be greater than .1 in either direction
 		// so the mouse doesn't drift even when not being used
-		if(abs(mouseUpdate.x) < 0.1f)
+		if(abs(mouseUpdate.x) < 0.2f)
 			mouseUpdate.x = 0.0f;
-		if(abs(mouseUpdate.y) < 0.1f)
+		if(abs(mouseUpdate.y) < 0.2f)
 			mouseUpdate.y = 0.0f;
 
 		POINT mouse;
