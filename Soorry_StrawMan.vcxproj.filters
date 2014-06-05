@@ -584,6 +584,9 @@
     <ClInclude Include="source\Drone.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -603,5 +606,10 @@
     <None Include="resource\data\BitmapFont_Roboto.fnt">
       <Filter>Bitmap Font</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Soorry_StrawMan1.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
