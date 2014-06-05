@@ -140,8 +140,8 @@ private:
 	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserGunImage = SGD::INVALID_HANDLE;
 
-	// HUD Placeables
-	SGD::HTexture m_hPlaceables = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hPlaceablesImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Pause Menu Stuff
