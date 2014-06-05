@@ -37,6 +37,7 @@
 #include "CreateParticleMessage.h"
 #include "CreateTowerMessage.h"
 #include "CreateMachineGunBulletMessage.h"
+#include "CreateDroneMessage.h"
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -44,6 +45,7 @@
 #include "ShotgunPellet.h"
 #include "Rocket.h"
 #include "AssaultRifleBullet.h"
+#include "Drone.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -83,6 +85,7 @@ using namespace std;
 #define BUCKET_PLACEABLE 3
 #define BUCKET_PICKUP 4
 #define BUCKET_TOWERS 2
+#define BUCKET_DRONE 6
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -1157,6 +1160,15 @@ Entity*	GameplayState::CreatePlayer() const
 													 bullet->Release();
 	}
 		break;
+	case MessageID::MSG_CREATE_DRONE:
+	{
+		const CreateDroneMessage* pCreateMessage = dynamic_cast<const CreateDroneMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* drone = pCreateMessage->GetDrone();
+		g->m_pEntities->AddEntity(drone, BUCKET_PROJECTILES);
+		drone->Release();
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1424,6 +1436,7 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 
 	return bullet;
 }
+
 
 // LoadGameFromSlot
 // - Load game from the slot

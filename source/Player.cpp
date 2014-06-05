@@ -26,6 +26,8 @@
 #include "../SGD Wrappers/SGD_Message.h"
 #include "Tower.h"
 #include "CreateTowerMessage.h"
+#include "GameplayState.h"
+#include "CreateDroneMessage.h"
 
 #include <queue>
 using namespace std;
@@ -154,6 +156,11 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
+	for (unsigned int i = drones.size() -1; i > 0; i--)
+	{
+		m_pEntityManager->RemoveEntity(drones[i]);
+		delete drones[i];
+	}
 }
 
 
@@ -186,7 +193,7 @@ void Player::Update ( float dt )
 	Camera::y = (int)m_ptPosition.y - 284;
 	if ( m_nCurrHealth <= 0.0f )
 	{
-		GameplayState::GetInstance ()->HasLost ();
+		GameplayState::GetInstance ()->HasLost();
 		return;
 	}
 	// Regenerate health
@@ -310,6 +317,17 @@ void Player::Update ( float dt )
 		msg->QueueMessage();
 		msg = nullptr;
 
+	}
+	if (pInput->IsKeyPressed(SGD::Key::P) == true)
+	{
+		Drone* tempDrone = new Drone();
+		tempDrone->SetPlayer(this);
+		tempDrone->SetEntityManager(m_pEntityManager);
+		tempDrone->SetNumberID(drones.size() + 1);
+		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
+		msg->QueueMessage();
+		msg = nullptr;
+		drones.push_back(tempDrone);
 	}
 	//GAH Weapons! - Arnold
 	//Assault rifle
@@ -662,7 +680,10 @@ void Player::Update ( float dt )
 		}
 
 	}
-
+	for (unsigned int i = 0; i < drones.size(); i++)
+	{
+		drones[i]->Update(dt);
+	}
 }
 
 int Player::GetType () const
@@ -982,4 +1003,9 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+
+	for (unsigned int i = 0; i < drones.size(); i++)
+	{
+		drones[i]->Render();
+	}
 }

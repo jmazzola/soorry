@@ -30,6 +30,7 @@
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
+    <ClCompile Include="source\CreateDroneMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
     <ClCompile Include="source\CreateParticleMessage.cpp" />
@@ -96,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h" />
     <ClInclude Include="SGD Wrappers\SGD_Color.h" />
     <ClInclude Include="SGD Wrappers\SGD_Declarations.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="source\BitmapFont.h" />
     <ClInclude Include="source\Button.h" />
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
+    <ClInclude Include="source\CreateDroneMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
     <ClInclude Include="source\CreateParticleMessage.h" />
@@ -199,7 +201,7 @@
     <None Include="resource\data\BitmapFont_Roboto.fnt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Soorry_StrawMan1.rc" />
+    <ResourceCompile Include="Soorry_StrawMan.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>

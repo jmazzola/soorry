@@ -25,6 +25,7 @@ class Player;
 class ParticleManager;
 class Button;
 class BitmapFont;
+class Drone;
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
 

@@ -309,6 +309,8 @@ using namespace std;
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+
+
 	// If we're transitioning
 	if (IsTransitioning())
 	{

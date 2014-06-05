@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <animation Sprites="1">
   <sprite>Drone.png</sprite>
+  <spriteID>drone</spriteID>
   <isLooping isIt="0" />
   <Frames numbers="1" />
   <frame>

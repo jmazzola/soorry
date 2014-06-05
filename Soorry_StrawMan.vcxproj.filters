@@ -312,6 +312,9 @@
     <ClCompile Include="source\Drone.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="source\CreateDroneMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -584,8 +587,11 @@
     <ClInclude Include="source\Drone.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateDroneMessage.h">
+      <Filter>Messages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -608,7 +614,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Soorry_StrawMan1.rc">
+    <ResourceCompile Include="Soorry_StrawMan.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
