@@ -747,7 +747,7 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 0)
 		{
 			// Make sure we have walls
-			if (m_pInventory->GetWalls() < 0)
+			if (m_pInventory->GetWalls() == 0)
 				legalPlacement = false;
 
 			// Draw wall image
@@ -763,7 +763,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 1)
 		{
 			// Make sure we have windows
-			if (m_pInventory->GetWindows() < 0)
+			if (m_pInventory->GetWindows() == 0)
 				legalPlacement = false;
 
 			// Draw window image
@@ -779,7 +779,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 2)
 		{
 			// Make sure we have bear traps
-			if (m_pInventory->GetBearTraps() < 0)
+			if (m_pInventory->GetBearTraps() == 0)
 				legalPlacement = false;
 
 			// Draw bear trap image
@@ -795,7 +795,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 3)
 		{
 			// Make sure we have mines
-			if (m_pInventory->GetMines() < 0)
+			if (m_pInventory->GetMines() == 0)
 				legalPlacement = false;
 
 			// Draw mine image
@@ -811,7 +811,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 4)
 		{
 			// Make sure we have machine gun towers
-			if (m_pInventory->GetMachineGunTowers() < 0)
+			if (m_pInventory->GetMachineGunTowers() == 0)
 				legalPlacement = false;
 
 			// Draw machine gun tower image
@@ -841,7 +841,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 5)
 		{
 			// Make sure we have maple syrup towers
-			if (m_pInventory->GetMapleSyrupTowers() < 0)
+			if (m_pInventory->GetMapleSyrupTowers() == 0)
 				legalPlacement = false;
 
 			// Draw maple syrup tower image
@@ -871,7 +871,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 6)
 		{
 			// Make sure we have hockey stick towers
-			if (m_pInventory->GetHockeyStickTowers() < 0)
+			if (m_pInventory->GetHockeyStickTowers() == 0)
 				legalPlacement = false;
 
 			// Draw hockey stick tower image
@@ -901,7 +901,7 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 7)
 		{
 			// Make sure we have laser towers
-			if (m_pInventory->GetLaserTowers() < 0)
+			if (m_pInventory->GetLaserTowers() == 0)
 				legalPlacement = false;
 
 			// Draw laser tower image
@@ -917,8 +917,8 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 8)
 		{
 			// Make sure we have lava traps
-			/*if (m_pInventory->GetLavaTraps() < 0)
-				legalPlacement = false;*/
+			if (m_pInventory->GetLavaTraps() == 0)
+				legalPlacement = false;
 
 			// Draw lava trap image
 			if (legalPlacement)
@@ -933,8 +933,8 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 9)
 		{
 			// Make sure we have spike traps
-			/*if (m_pInventory->GetSpikeTraps() < 0)
-			legalPlacement = false;*/
+			if (m_pInventory->GetSpikeTraps() == 0)
+			legalPlacement = false;
 
 			// Draw spike trap image
 			if (legalPlacement)

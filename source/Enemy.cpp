@@ -62,6 +62,11 @@ void Enemy::Render()
 {
 	Entity::Render();
 
+	//m_AIComponent.Render();
+}
+
+void Enemy::PostRender()
+{
 	// Draw health bar (for debug purposes or for permenant reasons, we'll see)
 #if HEALTH_BAR
 
@@ -89,8 +94,6 @@ void Enemy::Render()
 	pGraphics->DrawRectangle(frontRect, color);
 
 #endif
-
-	//m_AIComponent.Render();
 }
 
 int Enemy::GetType() const

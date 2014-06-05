@@ -212,6 +212,15 @@ void EntityManager::RenderAll( void )
 
 		// Render player's post render
 		m_tEntities[0][0]->PostRender();
+
+		// Render enemies' post render
+		if (m_tEntities.size() > 1)
+		{
+			for (unsigned int tower = 0; tower < m_tEntities[1].size(); tower++)
+			{
+				m_tEntities[1][tower]->PostRender();
+			}
+		}
 	}
 	// Unlock the iterator
 	m_bIterating = false;
