@@ -77,6 +77,8 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetMapleSyrupTowers(20);
 	m_pInventory->SetHockeyStickTowers(20);
 	m_pInventory->SetLaserTowers(20);
+	m_pInventory->SetLavaTraps(5);
+	m_pInventory->SetSpikeTraps(5);
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
@@ -177,12 +179,7 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
-
-
-
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost ();
@@ -687,6 +684,9 @@ void Player::Update ( float dt )
 
 	}
 
+	// Set camera
+	Camera::x = (int)m_ptPosition.x - 384;
+	Camera::y = (int)m_ptPosition.y - 284;
 }
 
 int Player::GetType () const
@@ -1006,4 +1006,6 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+
+	// 
 }
