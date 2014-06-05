@@ -38,6 +38,10 @@ using namespace std;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#define DEFAULT_MACHINE_GUN_RANGE 128.0f
+#define DEFAULT_MAPLE_SYRUP_RANGE 96.0f
+#define DEFAULT_HOCKEY_STICK_RANGE 48.0f
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -86,7 +90,7 @@ Player::Player () : Listener ( this )
 
 	//Assault rifle
 	Weapon tempWeapon;
-	tempWeapon.SetCurrAmmo ( 30 );
+	tempWeapon.SetCurrAmmo ( 100 );
 	tempWeapon.SetMaxAmmo ( 500 );
 	tempWeapon.SetFireRate ( .2f );
 	tempWeapon.SetType ( Guns::TYPE_ASSAULT_RIFLE );
@@ -94,7 +98,7 @@ Player::Player () : Listener ( this )
 
 	//Shotgun
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 10 );
+	tempWeapon.SetCurrAmmo ( 100 );
 	tempWeapon.SetMaxAmmo ( 500 );
 	tempWeapon.SetFireRate ( .5f );
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
@@ -102,7 +106,7 @@ Player::Player () : Listener ( this )
 
 	//rocket launcher
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 5 );
+	tempWeapon.SetCurrAmmo ( 50 );
 	tempWeapon.SetMaxAmmo ( 50 );
 	tempWeapon.SetFireRate ( 2 );
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
@@ -463,8 +467,15 @@ void Player::Update ( float dt )
 	if ( pInput->IsKeyPressed ( SGD::Key::Eight ) == true && m_pZombieWave->IsBuildMode () == true )
 		m_nCurrPlaceable = LTOWER;
 
-	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())
-	{
+	// Selecting lava trap
+	if (pInput->IsKeyPressed(SGD::Key::Nine) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 8;
+
+	// Selecting spike trap
+	if (pInput->IsKeyPressed(SGD::Key::Zero) == true && m_pZombieWave->IsBuildMode() == true)
+		m_nCurrPlaceable = 9;
+
+	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
 		SGD::Rectangle rect;
 		rect.left = pos.x * pWorld->GetTileWidth () + pWorld->GetTileWidth () / 4;
@@ -689,6 +700,232 @@ void Player::Update ( float dt )
 	Camera::y = (int)m_ptPosition.y - 284;
 }
 
+void Player::PostRender()
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Get the tile
+	SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
+	tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
+	tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+
+	// Get tiles world position
+	SGD::Point worldPosition = tilePos;
+	worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
+	worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
+	worldPosition.x -= Camera::x;
+	worldPosition.y -= Camera::y;
+
+	// Show the item in the location of the placement
+	if (m_pZombieWave->IsBuildMode())
+	{
+		// Check if legal placement
+		bool legalPlacement = PlacementCheck(tilePos);
+
+		// Walls
+		if (m_nCurrPlaceable == 0)
+		{
+			// Make sure we have walls
+			if (m_pInventory->GetWalls() < 0)
+				legalPlacement = false;
+
+			// Draw wall image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 0, 32, 32));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 0, 64, 32));
+		}
+
+		// Windows
+		else if (m_nCurrPlaceable == 1)
+		{
+			// Make sure we have windows
+			if (m_pInventory->GetWindows() < 0)
+				legalPlacement = false;
+
+			// Draw window image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 32, 32, 64));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 32, 64, 64));
+		}
+
+		// Bear traps
+		else if (m_nCurrPlaceable == 2)
+		{
+			// Make sure we have bear traps
+			if (m_pInventory->GetBearTraps() < 0)
+				legalPlacement = false;
+
+			// Draw bear trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 64, 32, 96));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 64, 64, 96));
+		}
+
+		// Mines
+		else if (m_nCurrPlaceable == 3)
+		{
+			// Make sure we have mines
+			if (m_pInventory->GetMines() < 0)
+				legalPlacement = false;
+
+			// Draw mine image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 96, 32, 128));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 96, 64, 128));
+		}
+
+		// Machine gun towers
+		else if (m_nCurrPlaceable == 4)
+		{
+			// Make sure we have machine gun towers
+			if (m_pInventory->GetMachineGunTowers() < 0)
+				legalPlacement = false;
+
+			// Draw machine gun tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_MACHINE_GUN_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 128, 32, 192));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_MACHINE_GUN_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 128, 64, 192));
+			}
+		}
+
+		// Maple syrup towers
+		else if (m_nCurrPlaceable == 5)
+		{
+			// Make sure we have maple syrup towers
+			if (m_pInventory->GetMapleSyrupTowers() < 0)
+				legalPlacement = false;
+
+			// Draw maple syrup tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_MAPLE_SYRUP_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 192, 32, 256));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_MAPLE_SYRUP_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 192, 64, 256));
+			}
+		}
+
+		// Hockey stick towers
+		else if (m_nCurrPlaceable == 6)
+		{
+			// Make sure we have hockey stick towers
+			if (m_pInventory->GetHockeyStickTowers() < 0)
+				legalPlacement = false;
+
+			// Draw hockey stick tower image
+			if (legalPlacement)
+			{
+				float scale = DEFAULT_HOCKEY_STICK_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(0, 0, 128, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(0, 256, 32, 320));
+			}
+
+			// Non-legal placement
+			else
+			{
+				float scale = DEFAULT_HOCKEY_STICK_RANGE / 128.0f;
+
+				pGraphics->DrawTextureSection(m_hRangeCirclesImage, SGD::Point(worldPosition.x + 16 - scale * 128.0f, worldPosition.y + 16 - scale * 128.0f), SGD::Rectangle(128, 0, 256, 128),
+					0.0f, {}, {}, SGD::Size(scale * 2, scale * 2));
+
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, SGD::Point(worldPosition.x, worldPosition.y - 32), SGD::Rectangle(32, 256, 64, 320));
+			}
+		}
+
+		// Laser tower
+		if (m_nCurrPlaceable == 7)
+		{
+			// Make sure we have laser towers
+			if (m_pInventory->GetLaserTowers() < 0)
+				legalPlacement = false;
+
+			// Draw laser tower image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 320, 32, 352));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 320, 64, 352));
+		}
+
+		// Lava trap
+		if (m_nCurrPlaceable == 8)
+		{
+			// Make sure we have lava traps
+			/*if (m_pInventory->GetLavaTraps() < 0)
+				legalPlacement = false;*/
+
+			// Draw lava trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 352, 32, 384));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 352, 64, 384));
+		}
+
+		// Spike trap
+		if (m_nCurrPlaceable == 9)
+		{
+			// Make sure we have spike traps
+			/*if (m_pInventory->GetSpikeTraps() < 0)
+			legalPlacement = false;*/
+
+			// Draw spike trap image
+			if (legalPlacement)
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(0, 384, 32, 416));
+
+			// Non-legal placement
+			else
+				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 384, 64, 416));
+		}
+	}
+}
+
 int Player::GetType () const
 {
 	return ENT_PLAYER;
@@ -882,6 +1119,16 @@ void Player::SetSelectedTower(Tower* _tower)
 	}
 }
 
+void Player::SetPlaceablesImage(SGD::HTexture _placeablesImage)
+{
+	m_hPlaceablesImage = _placeablesImage;
+}
+
+void Player::SetRangeCirclesImage(SGD::HTexture _rangeCirclesImage)
+{
+	m_hRangeCirclesImage = _rangeCirclesImage;
+}
+
 bool Player::CheckLegalPlacement(Node end, Node block)
 {
 	WorldManager* pWorld = WorldManager::GetInstance ();
@@ -953,6 +1200,11 @@ bool Player::CheckLegalPlacement(Node end, Node block)
 
 bool Player::PlacementCheck ( SGD::Point mouse )
 {
+	WorldManager* pWorld = WorldManager::GetInstance();
+
+	if (mouse.x < 0 || mouse.y < 0 || (int)mouse.x >= pWorld->GetWorldWidth() || (int)mouse.y >= pWorld->GetWorldHeight())
+		return false;
+
 	bool a = Blockable(mouse);
 	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
 	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
@@ -1006,6 +1258,4 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
-
-	// 
 }
