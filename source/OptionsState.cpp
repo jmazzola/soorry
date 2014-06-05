@@ -91,6 +91,10 @@ using namespace std;
 	// Load the Options
 	LoadOptions(STRING_CONFIGPATH);
 
+	// Show the cursor
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
+
 }
 
 
@@ -111,9 +115,6 @@ using namespace std;
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
-
-	// Save the options to a config file
-	SaveOptions(STRING_CONFIGPATH);
 
 }
 
@@ -167,6 +168,9 @@ using namespace std;
 
 			case MENU_GOBACK:
 			{
+				// Save the options to a config file
+				SaveOptions(STRING_CONFIGPATH);
+
 					//Go to Main Menu
 					pGame->Transition(MainMenuState::GetInstance());
 					// Exit immediately

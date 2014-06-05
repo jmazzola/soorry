@@ -20,7 +20,6 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
-
 #include "../SGD Wrappers/SGD_EventManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_MessageManager.h"
@@ -93,7 +92,6 @@ using namespace std;
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#include <cfloat>
 
 
 /**************************************************************/
@@ -176,13 +174,17 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/JPM_LightsAndSounds.xwm");
-
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
+	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
+	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocket_launch.wav");
+	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
+	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/test1.xml");
-	m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
-	// Set background color
+	m_pParticleManager->loadEmitters("resource/particle/Blood_Particle1.xml");
+	//m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
+	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
 	// Camera
@@ -199,7 +201,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
@@ -277,7 +279,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Setup You Win message transition timer
 	m_fWinTimer = 5.0f;
-
+	
 	// Setup Losing Screen Variables
 	m_bHasLost = false;
 	m_bReplay = true;
@@ -286,7 +288,7 @@ Entity*	GameplayState::CreatePlayer() const
 	// Play the background music
 	pAudio->PlayAudio(m_hBackgroundMus, true);
 
-	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	// HUD
 	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
@@ -299,6 +301,10 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
+
+	// Turn the cursor on
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 
@@ -327,6 +333,12 @@ Entity*	GameplayState::CreatePlayer() const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
+	pAudio->StopAudio(m_hShopMusic);
+	pAudio->UnloadAudio(m_hShopMusic);
+	pAudio->UnloadAudio(m_hBulletHit);
+	pAudio->UnloadAudio(m_hGunShoot);
+	pAudio->UnloadAudio(m_hShotgunShoot);
+	pAudio->UnloadAudio(m_hRocketShoot);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -414,6 +426,12 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+	// Manipulate the mouse here
+	SGD::Point mousePt = {0.0f, 0.0f};
+	mousePt = pInput->GetMousePosition();
+
+	
+
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
@@ -421,31 +439,23 @@ Entity*	GameplayState::CreatePlayer() const
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
+			if(m_bIsPaused == true && pGraphics->IsCursorShowing() == false)
+				pGraphics->TurnCursorOn();
+			else if(m_bIsPaused == false && pGraphics->IsCursorShowing() == true)
+				pGraphics->TurnCursorOff();
 		}
+	// enter shop
+	if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	{
+		pAudio->StopAudio(m_hBackgroundMus);
+		// to stop audio from playing after every backspace
+		if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
+		{
+			pAudio->PlayAudio(m_hShopMusic, true);
+		}
+		m_pShop->SetShopStatus(true);
+	}
 
-		if (pInput->IsKeyPressed(SGD::Key::Backspace))
-		{
-			m_pShop->SetShopStatus(true);
-		}
-
-		/*if (pInput->IsKeyPressed(SGD::Key::Z))
-		{
-		CreateBeaverZombieMessage* msg = new CreateBeaverZombieMessage(0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
-		}
-		if (pInput->IsKeyPressed(SGD::Key::X))
-		{
-		CreateSlowZombieMessage* msg = new CreateSlowZombieMessage(0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
-		}
-		if (pInput->IsKeyPressed(SGD::Key::C))
-		{
-		CreateFastZombieMessage* msg = new CreateFastZombieMessage(0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
-		}*/
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
 		// If we're paused
@@ -665,7 +675,12 @@ Entity*	GameplayState::CreatePlayer() const
 {
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
-
+	// when shop closes play game background music
+	if (m_pShop->IsOpen() == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == false)
+	{
+		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hBackgroundMus);
+	}
 	// If the game isn't paused and you haven't won and you haven't lost
 	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
 	{
@@ -964,6 +979,10 @@ Entity*	GameplayState::CreatePlayer() const
 				// -- Draw the time remaining [during build mode] --
 				if (zombieFactory->IsBuildMode())
 				{
+					// Turn the cursor off for build mode
+					if(pGraphics->IsCursorShowing() == true)
+						pGraphics->TurnCursorOff();
+
 					string timeRemaining = "Time remaining: ";
 					timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 					timeRemaining += " secs";
@@ -974,6 +993,8 @@ Entity*	GameplayState::CreatePlayer() const
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
+					// Turn the cursor on when not in build mode
+
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 225, 30, 0.6f, { 255, 255, 255 });
 
@@ -1297,7 +1318,7 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 
 Entity* GameplayState::CreatePlaceable(int trap) const
 {
-	if (trap == 0)
+	if (trap == 2)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
@@ -1344,7 +1365,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
-			   return tempProj;
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hGunShoot);
+		return tempProj;
 	}
 		break;
 	case 1://Shotgun
@@ -1364,6 +1386,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;
 			   vec.Rotate(degree);
+			   SGD::AudioManager::GetInstance()->PlayAudio(m_hShotgunShoot);
 
 			   tempProj->SetVelocity(vec);
 			   return tempProj;
@@ -1383,7 +1406,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
 
-			   ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+			   //ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
 
 			   return tempProj;
 	}
@@ -1657,6 +1681,9 @@ void GameplayState::RenderCredits(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	if(pGraphics->IsCursorShowing() == true)
+		pGraphics->TurnCursorOn();
+
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
@@ -1731,6 +1758,10 @@ void GameplayState::HasLost(void)
 void GameplayState::RenderLoss(void)
 {
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance();
+
+	// Turn on the cursor for menu purposes
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 
 	// Draw the paused main menu background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });

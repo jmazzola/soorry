@@ -13,10 +13,11 @@
 #include "Player.h"
 #include "Inventory.h"
 #include "Weapon.h"
+#include "GameplayState.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
-
+#include "../SGD Wrappers/SGD_AudioManager.h"
 #include "BitmapFont.h"
 
 // Enter
@@ -40,6 +41,9 @@ void Shop::Enter(Entity* player)
 	// Load the prices
 	LoadPrices("resource/data/shop.xml");
 
+	// Load the audio
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	
 	// Bitmap Font
 	m_pFont = new BitmapFont;
 	m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png", "resource/data/BitmapFont_Roboto.fnt");
@@ -65,6 +69,8 @@ void Shop::Exit()
 
 	m_nMenuTab = MAIN_TAB;
 
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	
 	// Terminate and clean up bitmapfont
 	m_pFont->Terminate();
 	delete m_pFont;

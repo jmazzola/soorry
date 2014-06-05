@@ -114,6 +114,9 @@ using namespace std;
 	for (int i = 0; i < NUM_SLOTS; i++)
 		CheckSlotExists(i);
 
+	// Show the cursor
+	if(pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 

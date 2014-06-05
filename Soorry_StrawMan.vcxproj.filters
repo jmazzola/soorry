@@ -578,6 +578,9 @@
     <ClInclude Include="source\MachineGunBullet.h">
       <Filter>Towers/Traps</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -597,5 +600,13 @@
     <None Include="resource\data\BitmapFont_Roboto.fnt">
       <Filter>Bitmap Font</Filter>
     </None>
+    <None Include="resource\images\hud\crosshair.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Soorry_StrawMan.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

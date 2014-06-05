@@ -15,6 +15,7 @@
 
 #include "../SGD Wrappers/SGD_Geometry.h"
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Handle.h"
 #include "EntityManager.h"
 /**********************************************************/
 // Forward Declarations
@@ -80,6 +81,8 @@ protected:
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
+	float m_fCursorFadeLength;
+	float m_fCursorFadeTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
@@ -94,6 +97,13 @@ protected:
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
 	
+	//Player sounds
+	SGD::HAudio m_hBlockPlace;
+	SGD::HAudio m_hBlockBreak;
+	SGD::HAudio m_hPickup;
+	SGD::HAudio m_hWalking;
+	SGD::HAudio m_hGunClick;
+
 private:
 
 	int** m_nNodeChart;
