@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<shop>
-	<items wall = "100" window = "200" beartrap = "250" mine = "300" grenade = "350" ammo = "500"/>
-	<upgrades shotgun_rof = "200" shotgun_dmg = "500" ar_rof ="1000" ar_dmg="3000" rl_rof ="5000" rl_dmg="6500" 
-            grenade="4000" fireaxe="30000" />
-</shop>
