@@ -1,5 +1,6 @@
 #include "Tower.h"
 
+#include "Game.h"
 #include "EntityManager.h"
 #include "GameplayState.h"
 #include "Camera.h"
@@ -29,16 +30,21 @@ void Tower::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	if (m_bSelected)
-	{
-		SGD::Rectangle rect = GetRect();
-		rect.left -= Camera::x;
-		rect.right -= Camera::x;
-		rect.top -= Camera::y;
-		rect.bottom -= Camera::y;
+	SGD::Rectangle rect = GetRect();
+	rect.left -= Camera::x;
+	rect.right -= Camera::x;
+	rect.top -= Camera::y;
+	rect.bottom -= Camera::y;
 
+	
+	Game* pGame = Game::GetInstance();
+
+	// -- Debugging --
+	if (pGame->IsShowingRects())
+		pGraphics->DrawRectangle(rect, SGD::Color(128, 0, 0, 255));
+
+	if (m_bSelected)
 		pGraphics->DrawRectangle(rect, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 0), 2);
-	}
 }
 
 void Tower::PostRender()

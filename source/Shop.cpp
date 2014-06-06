@@ -39,7 +39,7 @@ void Shop::Enter(Entity* player)
 		m_hUpgrade[i] = pGraphics->LoadTexture("resource/images/menus/picturePlacehold.png");
 
 	// Load the prices
-	LoadPrices("resource/data/shop.xml");
+	//LoadPrices("resource/data/shop.xml");
 
 	// Load the audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();

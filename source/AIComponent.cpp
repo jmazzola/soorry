@@ -4,6 +4,7 @@
 #include "GameplayState.h"
 #include "Enemy.h"
 #include "Camera.h"
+#include "Game.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
@@ -190,9 +191,15 @@ void AIComponent::Update(float dt)
 
 	if (m_pEntityManager->CheckCollision(m_pAgent->GetRect(), 0))
 	{
-		float damage = 8.0f * dt;
-		SGD::Event e("TAKE_DAMAGE", (void*)&damage);
-		e.SendEventNow();
+		Game* pGame = Game::GetInstance();
+
+		// If we're godmode, don't do anything
+		if (!pGame->IsGod())
+		{
+			float damage = 8.0f * dt;
+			SGD::Event e("TAKE_DAMAGE", (void*)&damage);
+			e.SendEventNow();
+		}
 
 		newPosition = oldPosition;
 	}

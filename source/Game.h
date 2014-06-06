@@ -64,6 +64,24 @@ public:
 	}
 
 
+	// Debug Mode Accessor:
+	bool IsDebugMode() { return m_bDebugMode; }
+	int GetDebugCurs() { return m_nDebugCurs; }
+	bool IsGod() { return m_bGodMode; }
+	bool IsShowingPaths() { return m_bShowPaths; }
+	bool IsShowingRects() { return m_bShowCollisionRects; }
+	bool HasInfAmmo() { return m_bInfiniteAmmo; }
+
+	// Debug Mode Mutator:
+	void SetDebugging(bool debugging) { m_bDebugMode = debugging; }
+	void SetDebugCurs(int pos) { m_nDebugCurs = pos; }
+	void SetGod(bool god) { m_bGodMode = god; }
+	void SetShowPaths(bool paths) { m_bShowPaths = paths; }
+	void SetShowRects(bool rect) { m_bShowCollisionRects = rect; }
+	void SetInfAmmo(bool inf) { m_bInfiniteAmmo = inf; }
+
+
+
 	/**********************************************************/
 	// Game State Machine:
 	//	- can ONLY be called by the state's Input, Update, or Render methods!!!
@@ -124,6 +142,15 @@ private:
 
 	// Fullscreen
 	bool m_bFullscreen = true;
+
+	// Debug Mode
+	bool m_bDebugMode = false;
+	int m_nDebugCurs = 0;
+
+	bool m_bGodMode = false;
+	bool m_bInfiniteAmmo = false;
+	bool m_bShowPaths = false;
+	bool m_bShowCollisionRects = false;
 
 
 };

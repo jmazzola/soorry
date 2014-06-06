@@ -28,6 +28,8 @@
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
 
+#include "Game.h"
+
 #include <queue>
 using namespace std;
 
@@ -161,7 +163,12 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
-	
+
+	//for (unsigned int i = drones.size() -1; i > 0; i--)
+	//{
+		//m_pEntityManager->RemoveEntity(drones[i]);
+		//delete drones[i];
+	//}
 }
 
 
@@ -374,11 +381,18 @@ void Player::Update ( float dt )
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
+			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
+			
+			// If we have infinite ammo, don't subtract
+			if (!pGame->HasInfAmmo())
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
 			
 			if ( m_fSuperTimer <= 0.0f )
 			{
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				// If we have infinite ammo, don't subtract
+				if (!pGame->HasInfAmmo())
+					m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
 			}
 			else
@@ -398,7 +412,9 @@ void Player::Update ( float dt )
 
 			if ( m_fSuperTimer <= 0.0f )
 			{
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				// If we have infinite ammo, don't subtract
+				if(!pGame->HasInfAmmo())
+					m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
 			}
 			else
@@ -953,10 +969,11 @@ int Player::GetType () const
 
 void Player::HandleCollision ( const IEntity* pOther )
 {
-	if ( pOther->GetType () == ENT_ZOMBIE_BEAVER )
-	{
-		m_nCurrHealth--;
-	}
+
+	//if ( pOther->GetType () == ENT_ZOMBIE_BEAVER )
+	//{
+	//	m_nCurrHealth--;
+	//}
 	if ( pOther->GetType () == ENT_PICKUP_WALL )
 	{
 		unsigned int newset = m_pInventory->GetWalls ();
@@ -1309,11 +1326,13 @@ void Player::Render ( void )
 	drawRect.left -= Camera::x;
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
-	drawRect.bottom -= Camera::y;
+	drawRect.bottom -= Camera::y; 
 	// Testing purposes but also will do something like this with actual art
 	if(m_fSuperTimer > 0 && rand() % 2 == 0)
 		pGraphics->DrawRectangle(drawRect, {255, 0, 255});
 
-
-	
+	// -- Debugging Mode --
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingRects())
+		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 }
