@@ -352,7 +352,7 @@ void Player::Update ( float dt )
 		tempDrone->SetPlayer(this);
 		tempDrone->SetEntityManager(m_pEntityManager);
 		tempDrone->SetNumberID(drones.size() + 1);
-		tempDrone->SetHealth(m_nMaxHealth);
+		tempDrone->SetHealth((int)m_nMaxHealth);
 		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
 		msg->QueueMessage();
 		msg = nullptr;
