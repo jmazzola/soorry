@@ -4,6 +4,7 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 
 #include "AIComponent.h"
+#include "CreatePickupMessage.h"
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
@@ -36,6 +37,26 @@ void Enemy::Update(float dt)
 		m_AIComponent.Update(dt);
 	else if (m_nCurrHealth <= 0)
 	{
+		float chance = (float)((float)(rand() % 1000 + 1) / 1000.0f);
+
+		if(chance >= 0 && chance <= m_fHealthChance)
+		{
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_HEALTHPACK, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		else if(chance > m_fHealthChance && chance <= m_fHealthChance + m_fSuperChance)
+		{
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_SUPER, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
+		else if( chance > m_fHealthChance + m_fSuperChance && chance <= m_fAmmoChance)
+		{
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_AMMO, m_ptPosition);
+			pmsg->QueueMessage();
+			pmsg = nullptr;
+		}
 		// Get rid of that bitch
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		// Queue the message
@@ -162,6 +183,21 @@ float Enemy::GetSpeed() const
 	return m_fSpeed;
 }
 
+float Enemy::GetHealthChance() const
+{
+	return m_fHealthChance;
+}
+
+float Enemy::GetAmmoChance() const
+{
+	return m_fAmmoChance;
+}
+
+float Enemy::GetSuperChance() const
+{
+	return m_fSuperChance;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -198,4 +234,19 @@ void Enemy::SetSpeed(float _speed)
 void Enemy::SetPlayer(Entity* _player)
 {
 	m_AIComponent.SetPlayer(_player);
+}
+
+void Enemy::SetHealthChance(float _chance)
+{
+	m_fHealthChance = _chance;
+}
+
+void Enemy::SetAmmoChance(float _chance)
+{
+	m_fAmmoChance = _chance;
+}
+
+void Enemy::SetSuperChance(float _chance)
+{
+	m_fSuperChance = _chance;
 }
