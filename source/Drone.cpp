@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Sprite.h"
 #include "DestroyEntityMessage.h"
+#include <math.h>
 
 Drone::Drone()
 {
@@ -19,7 +20,7 @@ Drone::Drone()
 	SetCurrFrame(0);
 	SetCurrAnimation("drone");
 	m_fBulletSpeed = 1000;
-	
+	m_fAngle = 0;
 }
 
 Drone::~Drone()
@@ -29,6 +30,12 @@ Drone::~Drone()
 
 void Drone::Update(float dt)
 {
+	//update timers
+	m_fHitTimer -= dt;
+	m_fLagTimer -= dt;
+	m_fNextShotTimer -= dt;
+
+	//if its dead kill it
 	if (m_nHealth <= 0)
 	{
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
@@ -36,15 +43,35 @@ void Drone::Update(float dt)
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 	}
+	//only update when lag timer is < 0 to create a following effect
+	if (m_fLagTimer <= 0)
+	{
+		//radius from the center(player pos)
+		float radius = 16;
+		// center x and y
+		float x = m_pPlayer->GetPosition().x;
+		float y = m_pPlayer->GetPosition().y;
+		//center point
+		SGD::Point center = SGD::Point(x, y);
+		//Angle that will incriment to spin it around the player
+		m_fAngle++;
 
-	m_fHitTimer -= dt;
-	
+		//If the angle is over 360 reset to 0
+		if (m_fAngle > 360)
+			m_fAngle = 0;
+		//set position to the center plus 
+		m_ptPosition.x = center.x + (radius*cosf(m_fAngle) + m_ptPosition.x);
+		m_ptPosition.y = center.y + (radius*sinf(m_fAngle) + m_ptPosition.y);
+
+		m_fLagTimer = .5;
+	}
+
+	/*
 	SGD::Point tempPoint = { m_pPlayer->GetPosition().x - 32, m_pPlayer->GetPosition().y + 32 };
 	
-	SetPosition(tempPoint);
+	SetPosition(tempPoint);*/
 
-	m_fNextShotTimer -= dt;
-
+	//Find enemy and shoot at it
 	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), m_fRange, 1));
 	SGD::Vector toEnemy;
 	if (enemy)

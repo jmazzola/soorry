@@ -64,7 +64,7 @@
 #include "WindowPickup.h"
 #include "AmmoPickup.h"
 #include "HealthPackPickup.h"
-#include "SuperPack.h"
+//#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
@@ -473,7 +473,13 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::Point mousePt = {0.0f, 0.0f};
 	mousePt = pInput->GetMousePosition();
 
-	
+	//NOTE: to remove for testing the drone only
+	if (pInput->IsKeyPressed(SGD::Key::P))
+	{
+		CreateDroneMessage* pMsg = new CreateDroneMessage();
+		pMsg->QueueMessage();
+			pMsg = nullptr;
+	}
 
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
@@ -684,7 +690,9 @@ Entity*	GameplayState::CreatePlayer() const
 			}
 		}
 	}
+
 #pragma endregion
+
 	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
 	{
 		// Since there's only one state..go back to main menu
@@ -1412,7 +1420,7 @@ Entity*	GameplayState::CreatePlayer() const
 	{
 		const CreateDroneMessage* pCreateMessage = dynamic_cast<const CreateDroneMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		Entity* drone = pCreateMessage->GetDrone();
+		Entity* drone = g->CreateDrone();
 		g->m_pEntities->AddEntity(drone, BUCKET_PROJECTILES);
 		drone->Release();
 	}
@@ -1652,7 +1660,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		return hp;
 		break;
 	}
-	case (int)Entity::ENT_PICKUP_SUPER:
+	/*case (int)Entity::ENT_PICKUP_SUPER:
 	{
 		SuperPack* super = new SuperPack ();
 		super->SetPosition ( pos );
@@ -1662,7 +1670,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		super->SetCurrAnimation ( "super" );
 		return super;
 		break;
-	}
+	}*/
 	}
 
 	return nullptr;
@@ -1732,10 +1740,16 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 	return bullet;
 }
 
-Entity* GameplayState::CreateDrone()
+Entity* GameplayState::CreateDrone() const
 {
+	Drone* drone = new Drone();
 
+	drone->SetPlayer((Player*)m_pPlayer);
+	drone->SetHealth((int)dynamic_cast<Player*>(m_pPlayer)->GetMaxHealth());
+	drone->SetNumberID(0);
+	return drone;
 }
+
 // LoadGameFromSlot
 // - Load game from the slot
 void GameplayState::LoadGameFromSlot(int slot)

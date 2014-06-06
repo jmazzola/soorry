@@ -44,6 +44,8 @@ protected:
 	int				m_nDamage													;
 	int				m_nNumberID													;
 	int				m_nHealth													;
+	float			m_fAngle													;
+	float			m_fLagTimer = .5											;
 	float			m_fNextShotTimer											;
 	float			m_fFireRate													;
 	float			m_fBulletSpeed												;

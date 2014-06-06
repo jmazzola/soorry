@@ -5,11 +5,8 @@
 class CreateDroneMessage : public SGD::Message
 {
 public:
-	CreateDroneMessage(Drone* _Drone);
+	CreateDroneMessage();
 	~CreateDroneMessage();
-	Drone* GetDrone() const;
-	void SetDrone(Drone*);
 private:
-	Drone* m_pDrone;
 };
 
