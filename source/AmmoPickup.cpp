@@ -1,11 +1,17 @@
 #include "AmmoPickup.h"
+#include "DestroyEntityMessage.h"
 
-
-AmmoPickup::AmmoPickup()
+int AmmoPickup::GetType() const
 {
+	return ENT_PICKUP_AMMO;
 }
 
-
-AmmoPickup::~AmmoPickup()
+void AmmoPickup::HandleCollision(const IEntity* pOther)
 {
+	if (pOther->GetType() == ENT_PLAYER)
+	{
+		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
+		pmsg->QueueMessage();
+		pmsg = nullptr;
+	}
 }

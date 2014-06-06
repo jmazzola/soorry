@@ -4,7 +4,10 @@ class HealthPackPickup :
 	public Pickup
 {
 public:
-	HealthPackPickup();
-	~HealthPackPickup();
+	HealthPackPickup() = default;
+	~HealthPackPickup() = default;
+
+	int GetType() const;
+	void HandleCollision(const IEntity* pOther);
 };
 

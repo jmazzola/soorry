@@ -180,6 +180,7 @@ void Player::Update ( float dt )
 	m_fGrenadeTimer -= dt;
 	m_fPlaceTimer -= dt;
 	m_fCursorFadeTimer -= dt;
+	m_fSuperTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
@@ -223,6 +224,7 @@ void Player::Update ( float dt )
 	}
 
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
+	// Grab the mouse movement to hide the cursor if necessary
 	SGD::Vector mouseMove = pInput->GetMouseMovement ();
 
 	// If you have moved your cursor reset the fade timer
@@ -234,7 +236,7 @@ void Player::Update ( float dt )
 	// Hide the cursor if you haven't moved it recently
 	if ( m_fCursorFadeTimer <= 0 )
 	{
-		if ( pGraphics->IsCursorShowing () == true )
+		if ( pGraphics->IsCursorShowing () == true && m_pZombieWave->IsBuildMode() == false)
 			pGraphics->TurnCursorOff ();
 	}
 	// Show the cursor if you have moved it recently
@@ -336,26 +338,25 @@ void Player::Update ( float dt )
 		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-
 	}
 	//GAH Weapons! - Arnold
 	//Switch to Slot One
-	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_ONE;
 	}
 	//Switch to Slot Two
-	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false)
+	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_TWO;
 	}
 	//Switch to Slot Three
-	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_THREE;
 	}
 	//Switch to Slot Four
-	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_FOUR;
 	}
@@ -370,9 +371,17 @@ void Player::Update ( float dt )
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
-			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
+			
+			if ( m_fSuperTimer <= 0.0f )
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
+			}
+			else
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
+			}
 		}
 
 		// With Xbox Right Trigger
@@ -383,8 +392,16 @@ void Player::Update ( float dt )
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
-			m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+
+			if ( m_fSuperTimer <= 0.0f )
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
+			}
+			else
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
+			}
 		}
 
 	}
@@ -407,7 +424,7 @@ void Player::Update ( float dt )
 			if(m_nCurrPlaceable <= -1)
 				m_nCurrPlaceable = NUMPLACEABLES - 1;
 		}
-		else
+		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon--;
 			if ( m_nCurrWeapon <= -1 )
@@ -423,7 +440,7 @@ void Player::Update ( float dt )
 			if(m_nCurrPlaceable >= NUMPLACEABLES)
 				m_nCurrPlaceable = WALLS;
 		}
-		else
+		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon++;
 			if ( m_nCurrWeapon >= TOTAL_SLOTS )
@@ -496,14 +513,14 @@ void Player::Update ( float dt )
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WALL, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
 		else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WINDOW, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
@@ -949,7 +966,20 @@ void Player::HandleCollision ( const IEntity* pOther )
 		unsigned int newset = m_pInventory->GetWindows ();
 		++newset;
 		m_pInventory->SetWindows ( newset );
-
+	}
+	if( pOther->GetType() == ENT_PICKUP_AMMO )
+	{
+		// NEED TO FIX HOW AMMO IS HANDLED AND GET AMOUNT FOR EACH PICKUP
+		m_pWeapons[m_nCurrWeapon].SetCurrAmmo(m_pWeapons[m_nCurrWeapon].GetCurrAmmo() + 25);
+	}
+	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
+	{
+		int curr = m_pInventory->GetHealthPacks();
+		m_pInventory->SetHealthPacks ( curr + 1 );
+	}
+	if ( pOther->GetType() == ENT_PICKUP_SUPER )
+	{
+		m_fSuperTimer = m_fSuperLength;
 	}
 }
 
@@ -1030,6 +1060,16 @@ float Player::GetScoreMultiplier () const
 float Player::GetTimeAlive () const
 {
 	return m_fTimeAlive;
+}
+
+float Player::GetSuperTimer() const
+{
+	return m_fSuperTimer;
+}
+
+float Player::GetSuperLength() const
+{
+	return m_fSuperLength;
 }
 
 Inventory* Player::GetInventory () const
@@ -1127,6 +1167,16 @@ void Player::SetPlaceablesImage(SGD::HTexture _placeablesImage)
 void Player::SetRangeCirclesImage(SGD::HTexture _rangeCirclesImage)
 {
 	m_hRangeCirclesImage = _rangeCirclesImage;
+}
+
+void Player::SetSuperTimer(float timer)
+{
+	m_fSuperTimer = timer;
+}
+
+void Player::SetSuperLength(float timer)
+{
+	m_fSuperLength = timer;
 }
 
 bool Player::CheckLegalPlacement(Node end, Node block)
@@ -1258,4 +1308,6 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
+	if(m_fSuperTimer > 0 && rand() % 2 == 0)
+		pGraphics->DrawRectangle(drawRect, {255, 0, 255});
 }
