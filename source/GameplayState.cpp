@@ -1746,6 +1746,7 @@ Entity* GameplayState::CreateDrone() const
 
 	drone->SetPlayer((Player*)m_pPlayer);
 	drone->SetHealth((int)dynamic_cast<Player*>(m_pPlayer)->GetMaxHealth());
+	drone->SetEntityManager(GetEntityManager());
 	drone->SetNumberID(0);
 	return drone;
 }

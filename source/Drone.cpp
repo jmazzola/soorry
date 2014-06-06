@@ -32,7 +32,6 @@ void Drone::Update(float dt)
 {
 	//update timers
 	m_fHitTimer -= dt;
-	m_fLagTimer -= dt;
 	m_fNextShotTimer -= dt;
 
 	//if its dead kill it
@@ -44,27 +43,24 @@ void Drone::Update(float dt)
 		pMsg = nullptr;
 	}
 	//only update when lag timer is < 0 to create a following effect
-	if (m_fLagTimer <= 0)
-	{
+	
 		//radius from the center(player pos)
-		float radius = 16;
+		float radius = 36;
 		// center x and y
-		float x = m_pPlayer->GetPosition().x;
-		float y = m_pPlayer->GetPosition().y;
+		float x = m_pPlayer->GetPosition().x +8;
+		float y = m_pPlayer->GetPosition().y +8;
 		//center point
 		SGD::Point center = SGD::Point(x, y);
 		//Angle that will incriment to spin it around the player
-		m_fAngle++;
+		m_fAngle += 0.02f;
 
 		//If the angle is over 360 reset to 0
 		if (m_fAngle > 360)
 			m_fAngle = 0;
 		//set position to the center plus 
-		m_ptPosition.x = center.x + (radius*cosf(m_fAngle) + m_ptPosition.x);
-		m_ptPosition.y = center.y + (radius*sinf(m_fAngle) + m_ptPosition.y);
+		m_ptPosition.x = center.x + (radius*cosf(m_fAngle));
+		m_ptPosition.y = center.y + (radius*sinf(m_fAngle));
 
-		m_fLagTimer = .5;
-	}
 
 	/*
 	SGD::Point tempPoint = { m_pPlayer->GetPosition().x - 32, m_pPlayer->GetPosition().y + 32 };
