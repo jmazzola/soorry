@@ -1,11 +1,11 @@
 #pragma once
 #include "Pickup.h"
-class AmmoPickup :
+class SuperPack :
 	public Pickup
 {
 public:
-	AmmoPickup() = default;
-	~AmmoPickup() = default;
+	SuperPack () = default;
+	~SuperPack () = default;
 
 	virtual int GetType() const;
 	virtual void HandleCollision(const IEntity* pOther);

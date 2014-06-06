@@ -27,7 +27,6 @@
 #include "Tower.h"
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
-#include "CreateDroneMessage.h"
 
 #include "Game.h"
 
@@ -164,11 +163,15 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
-	for (unsigned int i = drones.size() -1; i > 0; i--)
-	{
-		m_pEntityManager->RemoveEntity(drones[i]);
-		delete drones[i];
-	}
+<<<<<<< HEAD
+	
+=======
+	//for (unsigned int i = drones.size() -1; i > 0; i--)
+	//{
+		//m_pEntityManager->RemoveEntity(drones[i]);
+		//delete drones[i];
+	//}
+>>>>>>> Justin'sBranch
 }
 
 
@@ -189,6 +192,7 @@ void Player::Update ( float dt )
 	m_fGrenadeTimer -= dt;
 	m_fPlaceTimer -= dt;
 	m_fCursorFadeTimer -= dt;
+	m_fSuperTimer -= dt;
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
@@ -232,6 +236,7 @@ void Player::Update ( float dt )
 	}
 
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
+	// Grab the mouse movement to hide the cursor if necessary
 	SGD::Vector mouseMove = pInput->GetMouseMovement ();
 
 	// If you have moved your cursor reset the fade timer
@@ -243,7 +248,7 @@ void Player::Update ( float dt )
 	// Hide the cursor if you haven't moved it recently
 	if ( m_fCursorFadeTimer <= 0 )
 	{
-		if ( pGraphics->IsCursorShowing () == true )
+		if ( pGraphics->IsCursorShowing () == true && m_pZombieWave->IsBuildMode() == false)
 			pGraphics->TurnCursorOff ();
 	}
 	// Show the cursor if you have moved it recently
@@ -345,37 +350,26 @@ void Player::Update ( float dt )
 		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-
 	}
-	if (pInput->IsKeyPressed(SGD::Key::P) == true)
-	{
-		Drone* tempDrone = new Drone();
-		tempDrone->SetPlayer(this);
-		tempDrone->SetEntityManager(m_pEntityManager);
-		tempDrone->SetNumberID(drones.size() + 1);
-		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
-		msg->QueueMessage();
-		msg = nullptr;
-		drones.push_back(tempDrone);
-	}
+	
 	//GAH Weapons! - Arnold
 	//Switch to Slot One
-	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_ONE;
 	}
 	//Switch to Slot Two
-	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false)
+	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_TWO;
 	}
 	//Switch to Slot Three
-	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_THREE;
 	}
 	//Switch to Slot Four
-	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false)
+	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SLOT_FOUR;
 	}
@@ -396,6 +390,16 @@ void Player::Update ( float dt )
 			if (!pGame->HasInfAmmo())
 				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 
+			
+			if ( m_fSuperTimer <= 0.0f )
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
+			}
+			else
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
+			}
 		}
 
 		// With Xbox Right Trigger
@@ -406,11 +410,18 @@ void Player::Update ( float dt )
 			msg = nullptr;
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 
-			// If we have infinite ammo, don't subtract
-			if (!pGame->HasInfAmmo())
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+			if ( m_fSuperTimer <= 0.0f )
+			{
+				// If we have infinite ammo, don't subtract
+				if(!pGame->HasInfAmmo())
+					m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
+			}
+			else
+			{
+				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
+			}
 		}
 
 	}
@@ -433,7 +444,7 @@ void Player::Update ( float dt )
 			if(m_nCurrPlaceable <= -1)
 				m_nCurrPlaceable = NUMPLACEABLES - 1;
 		}
-		else
+		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon--;
 			if ( m_nCurrWeapon <= -1 )
@@ -449,7 +460,7 @@ void Player::Update ( float dt )
 			if(m_nCurrPlaceable >= NUMPLACEABLES)
 				m_nCurrPlaceable = WALLS;
 		}
-		else
+		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon++;
 			if ( m_nCurrWeapon >= TOTAL_SLOTS )
@@ -522,14 +533,14 @@ void Player::Update ( float dt )
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WALLPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WALL, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
 		else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
 		{
 			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(WINDOWPICK, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WINDOW, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
@@ -720,10 +731,7 @@ void Player::Update ( float dt )
 		}
 
 	}
-	for (unsigned int i = 0; i < drones.size(); i++)
-	{
-		drones[i]->Update(dt);
-	}
+	
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
@@ -755,7 +763,7 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 0)
 		{
 			// Make sure we have walls
-			if (m_pInventory->GetWalls() < 0)
+			if (m_pInventory->GetWalls() == 0)
 				legalPlacement = false;
 
 			// Draw wall image
@@ -771,7 +779,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 1)
 		{
 			// Make sure we have windows
-			if (m_pInventory->GetWindows() < 0)
+			if (m_pInventory->GetWindows() == 0)
 				legalPlacement = false;
 
 			// Draw window image
@@ -787,7 +795,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 2)
 		{
 			// Make sure we have bear traps
-			if (m_pInventory->GetBearTraps() < 0)
+			if (m_pInventory->GetBearTraps() == 0)
 				legalPlacement = false;
 
 			// Draw bear trap image
@@ -803,7 +811,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 3)
 		{
 			// Make sure we have mines
-			if (m_pInventory->GetMines() < 0)
+			if (m_pInventory->GetMines() == 0)
 				legalPlacement = false;
 
 			// Draw mine image
@@ -819,7 +827,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 4)
 		{
 			// Make sure we have machine gun towers
-			if (m_pInventory->GetMachineGunTowers() < 0)
+			if (m_pInventory->GetMachineGunTowers() == 0)
 				legalPlacement = false;
 
 			// Draw machine gun tower image
@@ -849,7 +857,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 5)
 		{
 			// Make sure we have maple syrup towers
-			if (m_pInventory->GetMapleSyrupTowers() < 0)
+			if (m_pInventory->GetMapleSyrupTowers() == 0)
 				legalPlacement = false;
 
 			// Draw maple syrup tower image
@@ -879,7 +887,7 @@ void Player::PostRender()
 		else if (m_nCurrPlaceable == 6)
 		{
 			// Make sure we have hockey stick towers
-			if (m_pInventory->GetHockeyStickTowers() < 0)
+			if (m_pInventory->GetHockeyStickTowers() == 0)
 				legalPlacement = false;
 
 			// Draw hockey stick tower image
@@ -909,7 +917,7 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 7)
 		{
 			// Make sure we have laser towers
-			if (m_pInventory->GetLaserTowers() < 0)
+			if (m_pInventory->GetLaserTowers() == 0)
 				legalPlacement = false;
 
 			// Draw laser tower image
@@ -925,8 +933,8 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 8)
 		{
 			// Make sure we have lava traps
-			/*if (m_pInventory->GetLavaTraps() < 0)
-				legalPlacement = false;*/
+			if (m_pInventory->GetLavaTraps() == 0)
+				legalPlacement = false;
 
 			// Draw lava trap image
 			if (legalPlacement)
@@ -941,8 +949,8 @@ void Player::PostRender()
 		if (m_nCurrPlaceable == 9)
 		{
 			// Make sure we have spike traps
-			/*if (m_pInventory->GetSpikeTraps() < 0)
-			legalPlacement = false;*/
+			if (m_pInventory->GetSpikeTraps() == 0)
+			legalPlacement = false;
 
 			// Draw spike trap image
 			if (legalPlacement)
@@ -979,7 +987,20 @@ void Player::HandleCollision ( const IEntity* pOther )
 		unsigned int newset = m_pInventory->GetWindows ();
 		++newset;
 		m_pInventory->SetWindows ( newset );
-
+	}
+	if( pOther->GetType() == ENT_PICKUP_AMMO )
+	{
+		// NEED TO FIX HOW AMMO IS HANDLED AND GET AMOUNT FOR EACH PICKUP
+		m_pWeapons[m_nCurrWeapon].SetCurrAmmo(m_pWeapons[m_nCurrWeapon].GetCurrAmmo() + 25);
+	}
+	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
+	{
+		int curr = m_pInventory->GetHealthPacks();
+		m_pInventory->SetHealthPacks ( curr + 1 );
+	}
+	if ( pOther->GetType() == ENT_PICKUP_SUPER )
+	{
+		m_fSuperTimer = m_fSuperLength;
 	}
 }
 
@@ -1060,6 +1081,16 @@ float Player::GetScoreMultiplier () const
 float Player::GetTimeAlive () const
 {
 	return m_fTimeAlive;
+}
+
+float Player::GetSuperTimer() const
+{
+	return m_fSuperTimer;
+}
+
+float Player::GetSuperLength() const
+{
+	return m_fSuperLength;
 }
 
 Inventory* Player::GetInventory () const
@@ -1157,6 +1188,16 @@ void Player::SetPlaceablesImage(SGD::HTexture _placeablesImage)
 void Player::SetRangeCirclesImage(SGD::HTexture _rangeCirclesImage)
 {
 	m_hRangeCirclesImage = _rangeCirclesImage;
+}
+
+void Player::SetSuperTimer(float timer)
+{
+	m_fSuperTimer = timer;
+}
+
+void Player::SetSuperLength(float timer)
+{
+	m_fSuperLength = timer;
 }
 
 bool Player::CheckLegalPlacement(Node end, Node block)
@@ -1264,7 +1305,6 @@ void Player::Render ( void )
 	center.y = GetSprite()->GetFrame(frame).GetFrameRect().bottom - GetSprite()->GetFrame(frame).GetFrameRect().top;
 	center.x /= 2;
 	center.y /= 2;
-
 	
 	// Calculate the rotation
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -1288,6 +1328,9 @@ void Player::Render ( void )
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y; 
+	// Testing purposes but also will do something like this with actual art
+	if(m_fSuperTimer > 0 && rand() % 2 == 0)
+		pGraphics->DrawRectangle(drawRect, {255, 0, 255});
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();

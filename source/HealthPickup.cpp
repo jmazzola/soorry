@@ -1,12 +1,12 @@
-#include "AmmoPickup.h"
+#include "HealthPickup.h"
 #include "DestroyEntityMessage.h"
 
-int AmmoPickup::GetType() const
+int HealthPickup::GetType() const
 {
-	return ENT_PICKUP_AMMO;
+	return ENT_PICKUP_HEALTHPACK;
 }
 
-void AmmoPickup::HandleCollision(const IEntity* pOther)
+void HealthPickup::HandleCollision(const IEntity* pOther)
 {
 	if (pOther->GetType() == ENT_PLAYER)
 	{

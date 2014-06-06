@@ -1,12 +1,12 @@
-#include "AmmoPickup.h"
+#include "SuperPack.h"
 #include "DestroyEntityMessage.h"
 
-int AmmoPickup::GetType() const
+int SuperPack::GetType() const
 {
-	return ENT_PICKUP_AMMO;
+	return ENT_PICKUP_SUPER;
 }
 
-void AmmoPickup::HandleCollision(const IEntity* pOther)
+void SuperPack::HandleCollision(const IEntity* pOther)
 {
 	if (pOther->GetType() == ENT_PLAYER)
 	{

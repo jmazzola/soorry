@@ -18,6 +18,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual int GetType() const override;
 	virtual void Render() override;
+	virtual void PostRender() override;
 	virtual void HandleCollision(const IEntity* pOther);
 
 	/**********************************************************/
@@ -28,6 +29,9 @@ public:
 	float GetAttackRate() const;
 	float GetAttackRange() const;
 	float GetSpeed() const;
+	float GetHealthChance() const;
+	float GetAmmoChance() const;
+	float GetSuperChance() const;
 
 	/**********************************************************/
 	// Mutators
@@ -38,6 +42,9 @@ public:
 	void SetAttackRange(float attackRange);
 	void SetSpeed(float speed);
 	void SetPlayer(Entity* player);
+	void SetHealthChance(float chance);
+	void SetAmmoChance(float chance);
+	void SetSuperChance(float chance);
 
 protected:
 
@@ -50,6 +57,9 @@ protected:
 	float m_fAttackRange;
 	float m_fSpeed;
 	float m_fTrapTimer;
+	float m_fHealthChance;
+	float m_fAmmoChance;
+	float m_fSuperChance;
 	bool m_bIsTrapped;
 	AIComponent m_AIComponent;
 };

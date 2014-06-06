@@ -1,11 +1,17 @@
 #include "HealthPackPickup.h"
+#include "DestroyEntityMessage.h"
 
-
-HealthPackPickup::HealthPackPickup()
+int HealthPackPickup::GetType() const
 {
+	return ENT_PICKUP_HEALTHPACK;
 }
 
-
-HealthPackPickup::~HealthPackPickup()
+void HealthPackPickup::HandleCollision(const IEntity* pOther)
 {
+	if (pOther->GetType() == ENT_PLAYER)
+	{
+		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
+		pmsg->QueueMessage();
+		pmsg = nullptr;
+	}
 }

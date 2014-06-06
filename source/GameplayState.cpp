@@ -62,6 +62,9 @@
 #include "Camera.h"
 #include "WallPickup.h"
 #include "WindowPickup.h"
+#include "AmmoPickup.h"
+#include "HealthPackPickup.h"
+//#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
@@ -103,7 +106,6 @@ using namespace std;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-
 /**************************************************************/
 // GetInstance
 //	- allocate static global instance
@@ -138,7 +140,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Player* player = new Player();
 
@@ -147,6 +149,61 @@ Entity*	GameplayState::CreatePlayer() const
 	player->SetEntityManager(m_pEntities);
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
+	player->SetSuperLength(4.0f);
+
+	// Load player stats
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(_playerStatsFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Temp variables to store data
+	int health;
+	int speed;
+	int walls;
+	int windows;
+	int bearTraps;
+	int mines;
+	int machineGuns;
+	int mapleSyrups;
+	int hockeySticks;
+	int lasers;
+	int lavaTraps;
+	int spikeTraps;
+
+	// Load data
+	pRoot->FirstChildElement("health")->Attribute("value", &health);
+	pRoot->FirstChildElement("speed")->Attribute("value", &speed);
+	pRoot->FirstChildElement("walls")->Attribute("amount", &walls);
+	pRoot->FirstChildElement("windows")->Attribute("amount", &windows);
+	pRoot->FirstChildElement("bear_traps")->Attribute("amount", &bearTraps);
+	pRoot->FirstChildElement("mines")->Attribute("amount", &mines);
+	pRoot->FirstChildElement("machine_guns")->Attribute("amount", &machineGuns);
+	pRoot->FirstChildElement("maple_syrups")->Attribute("amount", &mapleSyrups);
+	pRoot->FirstChildElement("hockey_sticks")->Attribute("amount", &hockeySticks);
+	pRoot->FirstChildElement("lasers")->Attribute("amount", &lasers);
+	pRoot->FirstChildElement("lava_traps")->Attribute("amount", &lavaTraps);
+	pRoot->FirstChildElement("spike_traps")->Attribute("amount", &spikeTraps);
+
+	// Assign data
+	player->SetMaxHealth((float)health);
+	player->SetCurrHealth(player->GetMaxHealth());
+	player->SetSpeed((float)speed);
+	
+	Inventory* inventory = player->GetInventory();
+	inventory->SetWalls(walls);
+	inventory->SetWindows(windows);
+	inventory->SetBearTraps(bearTraps);
+	inventory->SetMines(mines);
+	inventory->SetMachineGunTowers(machineGuns);
+	inventory->SetMapleSyrupTowers(mapleSyrups);
+	inventory->SetHockeyStickTowers(hockeySticks);
+	inventory->SetLaserTowers(lasers);
+	inventory->SetLavaTraps(lavaTraps);
+	inventory->SetSpikeTraps(spikeTraps);
 
 	return player;
 }
@@ -188,7 +245,6 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
-
 	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
 
@@ -223,13 +279,35 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+#pragma region Load Game Mode
+
+	// Load game mode information
+	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(gameModeFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	string worldFileName = pRoot->FirstChildElement("world")->GetText();
+	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
+	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
+	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
+	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
+
+#pragma endregion
+
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
 	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/world.xml");
+	pWorld->LoadWorld(worldFileName);
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
@@ -237,7 +315,11 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/wave.xml");
+<<<<<<< HEAD
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+=======
+	zombieFactory->LoadWaves(waveFileName);
+>>>>>>> Justin'sBranch
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
@@ -260,7 +342,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 
 	// Create our player
-	m_pPlayer = CreatePlayer();
+	m_pPlayer = CreatePlayer(playerStatsFileName);
 	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
 
 	// If the slot is set
@@ -299,6 +381,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pShop = new Shop;
 	m_pShop->SetShopStatus(false);
 	m_pShop->Enter(m_pPlayer);
+	m_pShop->LoadPrices(shopFileName);
 
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
@@ -363,7 +446,6 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
-
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
 
@@ -471,7 +553,13 @@ Entity*	GameplayState::CreatePlayer() const
 	SGD::Point mousePt = {0.0f, 0.0f};
 	mousePt = pInput->GetMousePosition();
 
-	
+	//NOTE: to remove for testing the drone only
+	if (pInput->IsKeyPressed(SGD::Key::P))
+	{
+		CreateDroneMessage* pMsg = new CreateDroneMessage();
+		pMsg->QueueMessage();
+			pMsg = nullptr;
+	}
 
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
@@ -682,7 +770,9 @@ Entity*	GameplayState::CreatePlayer() const
 			}
 		}
 	}
+
 #pragma endregion
+
 	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
 	{
 		// Since there's only one state..go back to main menu
@@ -793,6 +883,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		//draw grid rectangle
 	}
 
@@ -1165,8 +1256,8 @@ Entity*	GameplayState::CreatePlayer() const
 				if (zombieFactory->IsBuildMode())
 				{
 					// Turn the cursor off for build mode
-					if(pGraphics->IsCursorShowing() == true)
-						pGraphics->TurnCursorOff();
+					/*if(pGraphics->IsCursorShowing() == true)
+						pGraphics->TurnCursorOff();*/
 
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
@@ -1283,6 +1374,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
+		// If you have lost render You Lose and go to replay menu
 		if (m_bHasLost == true)
 		{
 			Game * pGame = Game::GetInstance();
@@ -1399,7 +1491,7 @@ Entity*	GameplayState::CreatePlayer() const
 											 GameplayState* self = GameplayState::GetInstance();
 											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
-												 for (int i = 0; i < 19; i++)
+												 for (int i = 0; i < 9; i++)
 												 {
 													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
 													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
@@ -1480,18 +1572,18 @@ Entity*	GameplayState::CreatePlayer() const
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
 	{
-													 const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
-													 GameplayState* g = GameplayState::GetInstance();
-													 Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
-													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
+													const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
+													GameplayState* g = GameplayState::GetInstance();
+													Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
+													g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_DRONE:
 	{
 		const CreateDroneMessage* pCreateMessage = dynamic_cast<const CreateDroneMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		Entity* drone = pCreateMessage->GetDrone();
+		Entity* drone = g->CreateDrone();
 		g->m_pEntities->AddEntity(drone, BUCKET_PROJECTILES);
 		drone->Release();
 	}
@@ -1531,7 +1623,9 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	tempBeav->SetCurrHealth(100);
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
-
+	tempBeav->SetAmmoChance(0.1f);
+	tempBeav->SetSuperChance(0.03f);
+	tempBeav->SetHealthChance(0.005f);
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -1548,7 +1642,9 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(150.0f);
 	zambie->SetVelocity({ 0, 0 });
-
+	zambie->SetAmmoChance(0.1f);
+	zambie->SetSuperChance(0.03f);
+	zambie->SetHealthChance(0.01f);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1565,7 +1661,9 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
-
+	zambie->SetAmmoChance(0.1f);
+	zambie->SetSuperChance(0.03f);
+	zambie->SetHealthChance(0.01f);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1613,10 +1711,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition() + SGD::Vector(12, 12));
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 4;
-			   pos.y += Camera::y - 4;
+			   pos.x += Camera::x - 8;
+			   pos.y += Camera::y - 8;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1631,10 +1729,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition() + SGD::Vector(12, 12));
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 4;
-			   pos.y += Camera::y - 4;
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= (float)(750 + rand() % 500);
@@ -1679,26 +1777,66 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 
 Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 {
-	if (pick == 0)
+	switch ( pick )
 	{
-		WallPickup* wall = new WallPickup();
-		wall->SetPosition(pos);
-		wall->SetSprite(AnimationManager::GetInstance()->GetSprite("wall"));
-		wall->SetCurrFrame(0);
-		wall->SetTimeOfFrame(0);
-		wall->SetCurrAnimation("wall");
+	case (int)Entity::ENT_PICKUP_WALL:
+	{
+		WallPickup* wall = new WallPickup ();
+		wall->SetPosition ( pos );
+		wall->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "wall" ) );
+		wall->SetCurrFrame ( 0 );
+		wall->SetTimeOfFrame ( 0 );
+		wall->SetCurrAnimation ( "wall" );
 		return wall;
+		break;
 	}
-	else
+	case (int)Entity::ENT_PICKUP_WINDOW:
 	{
-		WindowPickup* window = new WindowPickup();
-		window->SetPosition(pos);
-		window->SetSprite(AnimationManager::GetInstance()->GetSprite("window"));
-		window->SetCurrFrame(0);
-		window->SetTimeOfFrame(0);
-		window->SetCurrAnimation("window");
+		WindowPickup* window = new WindowPickup ();
+		window->SetPosition ( pos );
+		window->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "window" ) );
+		window->SetCurrFrame ( 0 );
+		window->SetTimeOfFrame ( 0 );
+		window->SetCurrAnimation ( "window" );
 		return window;
+		break;
 	}
+	case (int)Entity::ENT_PICKUP_AMMO:
+	{
+		AmmoPickup* ammo = new AmmoPickup ();
+		ammo->SetPosition ( pos );
+		ammo->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "ammo" ) );
+		ammo->SetCurrFrame ( 0 );
+		ammo->SetTimeOfFrame ( 0 );
+		ammo->SetCurrAnimation ( "ammo" );
+		return ammo;
+		break;
+	}
+	case (int)Entity::ENT_PICKUP_HEALTHPACK:
+	{
+		HealthPackPickup* hp = new HealthPackPickup ();
+		hp->SetPosition ( pos );
+		hp->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "health" ) );
+		hp->SetCurrFrame ( 0 );
+		hp->SetTimeOfFrame ( 0 );
+		hp->SetCurrAnimation ( "health" );
+		return hp;
+		break;
+	}
+	/*case (int)Entity::ENT_PICKUP_SUPER:
+	{
+		SuperPack* super = new SuperPack ();
+		super->SetPosition ( pos );
+		super->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "super" ) );
+		super->SetCurrFrame ( 0 );
+		super->SetTimeOfFrame ( 0 );
+		super->SetCurrAnimation ( "super" );
+		return super;
+		break;
+	}*/
+	}
+
+	return nullptr;
 }
 
 Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
@@ -1765,6 +1903,16 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 	return bullet;
 }
 
+Entity* GameplayState::CreateDrone() const
+{
+	Drone* drone = new Drone();
+
+	drone->SetPlayer((Player*)m_pPlayer);
+	drone->SetHealth((int)dynamic_cast<Player*>(m_pPlayer)->GetMaxHealth());
+	drone->SetEntityManager(GetEntityManager());
+	drone->SetNumberID(0);
+	return drone;
+}
 
 // LoadGameFromSlot
 // - Load game from the slot
@@ -1940,7 +2088,7 @@ void GameplayState::RenderCredits(void)
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOn();
+		pGraphics->TurnCursorOff();
 
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
