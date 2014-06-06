@@ -64,7 +64,7 @@
 #include "WindowPickup.h"
 #include "AmmoPickup.h"
 #include "HealthPackPickup.h"
-//#include "SuperPack.h"
+#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
@@ -1659,7 +1659,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		return hp;
 		break;
 	}
-	/*case (int)Entity::ENT_PICKUP_SUPER:
+	case (int)Entity::ENT_PICKUP_SUPER:
 	{
 		SuperPack* super = new SuperPack ();
 		super->SetPosition ( pos );
@@ -1669,7 +1669,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		super->SetCurrAnimation ( "super" );
 		return super;
 		break;
-	}*/
+	}
 	}
 
 	return nullptr;

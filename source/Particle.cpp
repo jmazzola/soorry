@@ -16,22 +16,26 @@ Particle::~Particle()
 bool Particle::Update(float dt)
 {
 	//if statement to determine if the particle is dead
-	if (currLifeTime > maxLifeTime)
+	if (currLifeTime <= 0)
 		return false;
+	float percent = currLifeTime / maxLifeTime;
 	//change based on the rates
-	Color.alpha		-=	(char)((float)colorRateA*dt);
-	Color.red		-=	(char)((float)colorRateR*dt);
-	Color.green		-=	(char)((float)colorRateG*dt);
-	Color.blue		-=	(char)((float)colorRateB*dt);
-	velocity.x		-=	velocityRateX*dt;
-	velocity.y		-=	velocityRateY*dt;
-	scale.width		-=	scaleRateX*dt;
-	scale.height	-=	scaleRateY*dt;
+	Color.alpha		-=	(char)((percent*(particleFlyweight->endColor.alpha - particleFlyweight->startColor.alpha))	*dt)		;
+	Color.red		-=	(char)((percent*(particleFlyweight->endColor.red - particleFlyweight->startColor.red)	 )	*dt)		;
+	Color.green		-=	(char)((percent*(particleFlyweight->endColor.green - particleFlyweight->startColor.green))	*dt)		;
+	Color.blue		-=	(char)((percent*(particleFlyweight->endColor.green - particleFlyweight->startColor.green))	*dt)		;
+	if					(particleFlyweight->isSpread == false)
+	{
+		velocity.x -=	(percent*(particleFlyweight->endVelocity.x - particleFlyweight->startVelocity.x))	*dt					;
+		velocity.y -=	(percent*(particleFlyweight->endVelocity.y - particleFlyweight->startVelocity.y))	*dt					;
+	}
+	scale.width		-=	(percent*(particleFlyweight->startScale.width - particleFlyweight->endScale.width))	*dt					;
+	scale.height	-=	(percent*(particleFlyweight->startScale.height - particleFlyweight->endScale.height))*dt				;
 	position.x		+=	velocity.x*dt;
 	position.y		+=	velocity.y*dt;
 	rotation		-=	rotationRate*dt;
 	//return true to signal that the particle is alive
-	currLifeTime	+=	dt;
+	currLifeTime	-=	dt;
 	return true;
 }
 

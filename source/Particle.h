@@ -16,16 +16,8 @@ public:
 	ParticleFlyweight*	particleFlyweight;
 	SGD::Point			position;
 	SGD::Vector			velocity;
-	float				velocityRateX;
-	float				velocityRateY;
 	SGD::Color			Color;
-	int					colorRateA;
-	int					colorRateR;
-	int					colorRateG;
-	int					colorRateB;
 	SGD::Size			scale;
-	float				scaleRateX;
-	float				scaleRateY;
 	SGD::Size			size;
 	float				currLifeTime;
 	float				maxLifeTime;
