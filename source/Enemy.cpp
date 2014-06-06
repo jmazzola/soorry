@@ -9,6 +9,7 @@
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
 #include "Camera.h"
+#include "SpikeTrap.h"
 
 #define HEALTH_BAR 1
 
@@ -145,6 +146,19 @@ int Enemy::GetType() const
 			//NOTE: may have to delete
 		case ENT_TRAP_MINE:
 			m_nCurrHealth = 0;
+			break;
+		case ENT_TRAP_SPIKE:
+		{
+			const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);
+			// If the spikes are up do take damage
+			if(spike->GetActive() == true)
+				m_nCurrHealth -= spike->GetDamage();
+		}
+			break;
+		case ENT_TRAP_LAVA:
+		{
+			// DO LAVA DAMAGE HERE
+		}
 			break;
 
 	}

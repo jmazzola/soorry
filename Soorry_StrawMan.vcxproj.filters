@@ -150,12 +150,6 @@
     <ClCompile Include="source\Projectile.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="source\BearTrap.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Mine.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="source\Rocket.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
@@ -309,17 +303,29 @@
     <ClCompile Include="source\MachineGunBullet.cpp">
       <Filter>Towers/Traps</Filter>
     </ClCompile>
-    <ClCompile Include="source\HealthPickup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\SuperPack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Drone.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="source\CreateDroneMessage.cpp">
       <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HealthPickup.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SuperPack.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SpikeTrap.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BearTrap.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Mine.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateTrapMessage.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -432,12 +438,6 @@
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="source\Projectile.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BearTrap.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Mine.h">
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="source\Rocket.h">
@@ -596,14 +596,26 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\HealthPickup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\SuperPack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\CreateDroneMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HealthPickup.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SuperPack.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SpikeTrap.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BearTrap.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Mine.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateTrapMessage.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

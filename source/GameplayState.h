@@ -145,6 +145,12 @@ private:
 	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBuildModeHUD = SGD::INVALID_HANDLE;
 
+	// Trap textures
+	SGD::HTexture m_hSpikeTrapBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hSpikeTrapSpikeImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
@@ -174,6 +180,7 @@ private:
 	Entity* CreatePlaceable(int trap) const;
 	Entity* CreatePickUp(int pick, SGD::Point pos) const;
 	Entity* CreateTower(int x, int y, int type) const;
+	Entity* CreateTrap(int x, int y, int type) const;
 	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
 	Entity* CreateDrone() const;
 

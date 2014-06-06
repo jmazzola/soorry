@@ -27,6 +27,7 @@
 #include "Tower.h"
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
+#include "CreateTrapMessage.h"
 
 #include <queue>
 using namespace std;
@@ -375,7 +376,7 @@ void Player::Update ( float dt )
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 
-			
+			// If you don't have the super buff
 			if ( m_fSuperTimer <= 0.0f )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
@@ -396,6 +397,7 @@ void Player::Update ( float dt )
 			//set the shot timer to the rate of fire
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 
+			// If you don't have the super buff
 			if ( m_fSuperTimer <= 0.0f )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
@@ -506,7 +508,7 @@ void Player::Update ( float dt )
 		SetSelectedTower(nullptr);
 
 		// Check if tower is there
-		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 2));
+		Tower* tower = dynamic_cast<Tower*>(m_pEntityManager->CheckCollision(rect, 3));
 
 		if ( tower )
 			SetSelectedTower(tower);
@@ -710,6 +712,25 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
+			}
+			else if ( m_nCurrPlaceable == 8 && m_pInventory->GetLavaTraps () > 0 )
+			{
+				// DO LAVA TRAP HERE
+
+			}
+			else if ( m_nCurrPlaceable == 9 && m_pInventory->GetSpikeTraps () > 0 )
+			{
+				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTrapMessage::TRAP_SPIKE);
+				msg->QueueMessage();
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetSpikeTraps(m_pInventory->GetSpikeTraps() - 1);
 			}
 		}
 
@@ -1290,6 +1311,8 @@ void Player::Render ( void )
 	
 	// Calculate the rotation
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+	pos.x -= 16;
+	pos.y -= 16;
 	SGD::Point playerPos = GetPosition();
 	playerPos.x -= Camera::x;
 	playerPos.y -= Camera::y;

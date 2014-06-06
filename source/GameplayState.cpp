@@ -41,6 +41,8 @@
 #include "CreateTowerMessage.h"
 #include "CreateMachineGunBulletMessage.h"
 #include "CreateDroneMessage.h"
+#include "CreateTrapMessage.h"
+
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -64,12 +66,14 @@
 #include "WindowPickup.h"
 #include "AmmoPickup.h"
 #include "HealthPackPickup.h"
-//#include "SuperPack.h"
+#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
 #include "HockeyStickTower.h"
 #include "LaserTower.h"
+#include "SpikeTrap.h"
+//#include "FlameTrap.h"
 
 #include "MachineGunBullet.h"
 
@@ -85,13 +89,14 @@ using namespace std;
 
 
 // Buckets
-#define BUCKET_PLAYER 0
-#define BUCKET_ENEMIES 1
-#define BUCKET_PROJECTILES 5
-#define BUCKET_PLACEABLE 3
-#define BUCKET_PICKUP 4
-#define BUCKET_TOWERS 2
-#define BUCKET_DRONE 6
+#define BUCKET_TRAPS 0
+#define BUCKET_PLAYER 1
+#define BUCKET_ENEMIES 2
+#define BUCKET_TOWERS 3
+#define BUCKET_PLACEABLE 4
+#define BUCKET_PICKUP 5
+#define BUCKET_PROJECTILES 6
+#define BUCKET_DRONE 7
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -194,6 +199,10 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
+	m_hSpikeTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapDown.png");
+	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
+	//m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
+	//m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -368,6 +377,10 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapBaseImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -760,6 +773,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
 	}
 
@@ -1294,7 +1308,7 @@ Entity*	GameplayState::CreatePlayer() const
 												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 												GameplayState* self = GameplayState::GetInstance();
 												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, 1);
+												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
 												beaver->Release();
 												beaver = nullptr;
 	}
@@ -1304,7 +1318,7 @@ Entity*	GameplayState::CreatePlayer() const
 											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1314,7 +1328,7 @@ Entity*	GameplayState::CreatePlayer() const
 											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1405,6 +1419,15 @@ Entity*	GameplayState::CreatePlayer() const
 										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
 										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
 										tower->Release();
+	}
+		break;
+	case MessageID::MSG_CREATE_TRAP:
+	{
+									const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
+									GameplayState* g = GameplayState::GetInstance();
+									Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
+									g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
+									trap->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
@@ -1721,6 +1744,39 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 											tower->SetBaseImage(m_hLaserBaseImage);
 
 											return tower;
+	}
+		break;
+	
+	}
+
+	return nullptr;
+}
+
+Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
+{
+	switch ( _trapType )
+	{
+	case CreateTrapMessage::TRAP_SPIKE:
+	{
+		SpikeTrap* spike = new SpikeTrap;
+
+		spike->SetPosition ( SGD::Point ( (float)_x , (float)_y ) );
+		spike->SetBaseImage ( m_hSpikeTrapBaseImage );
+		spike->SetGunImage ( m_hSpikeTrapSpikeImage );
+
+		return spike;
+	}
+		break;
+	case CreateTrapMessage::TRAP_LAVA:
+	{
+		//LavaTrap* lava = new LavaTrap;
+
+		//lava->SetPosition(SGD::Point((float)_x, (float)_y));
+		//lava->SetBaseImage(m_hLavaTrapBaseImage);
+		//lava->SetGunImage(m_hLavaTrapFlameImage);
+
+		//return lava;
+
 	}
 		break;
 	}

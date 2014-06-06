@@ -188,7 +188,7 @@ void AIComponent::Update(float dt)
 		m_pAgent->SetPosition(newPosition);
 	}
 
-	if (m_pEntityManager->CheckCollision(m_pAgent->GetRect(), 0))
+	if (m_pEntityManager->CheckCollision(m_pAgent->GetRect(), 1))
 	{
 		float damage = 8.0f * dt;
 		SGD::Event e("TAKE_DAMAGE", (void*)&damage);
