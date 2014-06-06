@@ -6,6 +6,7 @@
 #include "AnimationManager.h"
 #include "Camera.h"
 #include "Sprite.h"
+#include "DestroyEntityMessage.h"
 
 Drone::Drone()
 {
@@ -18,6 +19,7 @@ Drone::Drone()
 	SetCurrFrame(0);
 	SetCurrAnimation("drone");
 	m_fBulletSpeed = 1000;
+	
 }
 
 Drone::~Drone()
@@ -27,6 +29,16 @@ Drone::~Drone()
 
 void Drone::Update(float dt)
 {
+	if (m_nHealth <= 0)
+	{
+		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
+		// Queue the message
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+	}
+
+	m_fHitTimer -= dt;
+	
 	SGD::Point tempPoint = { m_pPlayer->GetPosition().x - 32, m_pPlayer->GetPosition().y + 32 };
 	
 	SetPosition(tempPoint);
@@ -97,7 +109,11 @@ int  Drone::GetType() const
 
 void Drone::HandleCollision(const IEntity* pOther)
 {
-
+	if ((pOther->GetType() == ENT_ZOMBIE_BEAVER || pOther->GetType() == ENT_ZOMBIE_FAST || pOther->GetType() == ENT_ZOMBIE_SLOW) && m_fHitTimer <= 0)
+	{
+		m_nHealth -= 5;
+		m_fHitTimer = 1.0f;
+	}
 }
 
 void			Drone::SetDamage(int _Damage)
@@ -107,6 +123,10 @@ void			Drone::SetDamage(int _Damage)
 void			Drone::SetNumberID(int _ID)
 {
 	m_nNumberID = _ID;
+}
+void			Drone::SetHealth(int _Health)
+{
+	m_nHealth = _Health;
 }
 void			Drone::SetNextShotTimer(float _Timer)
 {
@@ -140,43 +160,43 @@ void			Drone::SetDroneImage(SGD::HTexture _DroneImage)
 {
 	m_hDroneImage = _DroneImage;
 }
-int				Drone::GetDamage()
+int				Drone::GetDamage() const
 {
 	return m_nDamage;
 }
-int				Drone::GetNumberID()
+int				Drone::GetNumberID() const
 {
 	return m_nNumberID;
 }
-float			Drone::GetNextShotTimer()
+float			Drone::GetNextShotTimer() const
 {
 	return m_fNextShotTimer;
 }
-float			Drone::GetFireRate()
+float			Drone::GetFireRate() const
 {
 	return m_fFireRate;
 }
-float			Drone::GetBulletSpeed()
+float			Drone::GetBulletSpeed() const
 {
 	return m_fBulletSpeed;
 }
-float			Drone::GetRotation()
+float			Drone::GetRotation() const
 {
 	return m_fRotation;
 }
-float			Drone::GetRange()
-{
+float			Drone::GetRange()const
+{ 
 	return m_fRange;
 }
-Player*			Drone::GetPlayer()
+Player*			Drone::GetPlayer()const
 {
 	return m_pPlayer;
 }
-EntityManager*	Drone::GetEntityManager()
+EntityManager*	Drone::GetEntityManager()const
 {
 	return m_pEntityManager;
 }
-SGD::HTexture	Drone::GetDroneImage()
+SGD::HTexture	Drone::GetDroneImage()const
 {
 	return m_hDroneImage;
 }

@@ -749,6 +749,7 @@ Entity*	GameplayState::CreatePlayer() const
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		//draw grid rectangle
 	}
 

@@ -167,6 +167,7 @@ Player::~Player ()
 		m_pEntityManager->RemoveEntity(drones[i]);
 		delete drones[i];
 	}
+	drones.clear();
 }
 
 
@@ -351,6 +352,7 @@ void Player::Update ( float dt )
 		tempDrone->SetPlayer(this);
 		tempDrone->SetEntityManager(m_pEntityManager);
 		tempDrone->SetNumberID(drones.size() + 1);
+		tempDrone->SetHealth(m_nMaxHealth);
 		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
 		msg->QueueMessage();
 		msg = nullptr;
@@ -1255,7 +1257,6 @@ void Player::Render ( void )
 	center.y = GetSprite()->GetFrame(frame).GetFrameRect().bottom - GetSprite()->GetFrame(frame).GetFrameRect().top;
 	center.x /= 2;
 	center.y /= 2;
-
 	
 	// Calculate the rotation
 	SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -1282,6 +1283,10 @@ void Player::Render ( void )
 
 	for (unsigned int i = 0; i < drones.size(); i++)
 	{
+		if (drones[i] == nullptr)
+		{
+			drones.clear();
+		}
 		drones[i]->Render();
 	}
 }
