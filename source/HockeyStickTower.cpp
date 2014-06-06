@@ -1,6 +1,7 @@
 #include "HockeyStickTower.h"
 
 #include "Camera.h"
+#include "EntityManager.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 
@@ -8,6 +9,7 @@
 HockeyStickTower::HockeyStickTower()
 {
 	m_fRotationRate = 12.0f;
+	m_fRadius = 48.0f;
 }
 
 
@@ -35,7 +37,39 @@ void HockeyStickTower::Update(float dt)
 		}
 	}
 
+	SGD::Vector heading = SGD::Vector(-1, 0);
+	heading.Rotate(m_fRotation);
 
+	// Attack enemies
+	const vector<IEntity*> enemies = m_pEntityManager->GetBucket(1);
+
+	for (unsigned int i = 0; i < enemies.size(); i++)
+	{
+		// Make sure it's not on the hit list
+		if (CheckHitList(enemies[i]))
+			continue;
+
+		// Compute vector
+		SGD::Vector distanceVector = enemies[i]->GetRect().ComputeCenter() - (m_ptPosition + SGD::Vector(16, 16));
+		float distance = distanceVector.ComputeLength();
+
+		// Check if within radius
+		if (distance < m_fRadius)
+		{
+			// Check if we hit it
+			distanceVector.Normalize();
+
+			if (heading.ComputeAngle(distanceVector) < 0.2 || heading.ComputeAngle(distanceVector) > -0.2)
+			{
+				Enemy* enemy = dynamic_cast<Enemy*>(enemies[i]);
+
+				// Add to the hit list
+				m_vEnemiesHit.push_back(EnemyHit(enemy));
+
+				enemy->SetCurrHealth(enemy->GetCurrHealth() - 5);
+			}
+		}
+	}
 }
 
 void HockeyStickTower::Render()
@@ -59,4 +93,18 @@ void HockeyStickTower::PostRender()
 int HockeyStickTower::GetType() const
 {
 	return ENT_TOWER_HOCKEY_STICK;
+}
+
+/**********************************************************/
+// Helper functions
+
+bool HockeyStickTower::CheckHitList(IEntity* _enemy) const
+{
+	for (unsigned int enemy = 0; enemy < m_vEnemiesHit.size(); enemy++)
+	{
+		if (m_vEnemiesHit[enemy].enemy == _enemy)
+			return true;
+	}
+
+	return false;
 }

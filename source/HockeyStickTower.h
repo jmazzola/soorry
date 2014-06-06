@@ -24,13 +24,25 @@ protected:
 
 	/**********************************************************/
 	// Data members
+	float m_fRadius;
 	float m_fRotationRate;
 	vector<EnemyHit> m_vEnemiesHit;
+
+private:
+
+	/**********************************************************/
+	// Helper functions
+	bool CheckHitList(IEntity* enemy) const;
 };
 
 
 struct EnemyHit
 {
+	EnemyHit(Enemy* _enemy) :
+	enemy(_enemy),
+	angleRemaining(3.0f)
+	{ }
+
 	float angleRemaining;
 	Enemy* enemy;
 };
