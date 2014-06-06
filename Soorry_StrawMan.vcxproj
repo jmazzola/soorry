@@ -40,6 +40,7 @@
     <ClCompile Include="source\CreateProjectileMessage.cpp" />
     <ClCompile Include="source\CreateSlowZombieMessage.cpp" />
     <ClCompile Include="source\CreateTowerMessage.cpp" />
+    <ClCompile Include="source\CreateTrapMessage.cpp" />
     <ClCompile Include="source\CreditsState.cpp" />
     <ClCompile Include="source\Cursor.cpp" />
     <ClCompile Include="source\DestroyEntityMessage.cpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="source\ShotgunPellet.cpp" />
     <ClCompile Include="source\SlowZombie.cpp" />
     <ClCompile Include="source\SpeedPickup.cpp" />
+    <ClCompile Include="source\SpikeTrap.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
     <ClCompile Include="source\SuperPack.cpp" />
     <ClCompile Include="source\Tile.cpp" />
@@ -135,6 +137,7 @@
     <ClInclude Include="source\CreateProjectileMessage.h" />
     <ClInclude Include="source\CreateSlowZombieMessage.h" />
     <ClInclude Include="source\CreateTowerMessage.h" />
+    <ClInclude Include="source\CreateTrapMessage.h" />
     <ClInclude Include="source\CreditsState.h" />
     <ClInclude Include="source\Cursor.h" />
     <ClInclude Include="source\DestroyEntityMessage.h" />
@@ -180,6 +183,7 @@
     <ClInclude Include="source\ShotgunPellet.h" />
     <ClInclude Include="source\SlowZombie.h" />
     <ClInclude Include="source\SpeedPickup.h" />
+    <ClInclude Include="source\SpikeTrap.h" />
     <ClInclude Include="source\Sprite.h" />
     <ClInclude Include="source\SuperPack.h" />
     <ClInclude Include="source\Tile.h" />

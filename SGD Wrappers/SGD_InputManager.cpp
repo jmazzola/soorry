@@ -760,7 +760,7 @@ namespace SGD
 			if( m_eStatus != E_INITIALIZED )
 				return Point{ 0, 0 };
 			
-			return Point { m_ptMouse.x - 16 , m_ptMouse.y - 16 };
+			return Point { m_ptMouse.x , m_ptMouse.y };
 		}
 		//*************************************************************//
 

@@ -41,6 +41,8 @@
 #include "CreateTowerMessage.h"
 #include "CreateMachineGunBulletMessage.h"
 #include "CreateDroneMessage.h"
+#include "CreateTrapMessage.h"
+
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -70,6 +72,8 @@
 #include "MapleSyrupTower.h"
 #include "HockeyStickTower.h"
 #include "LaserTower.h"
+#include "SpikeTrap.h"
+//#include "FlameTrap.h"
 
 #include "MachineGunBullet.h"
 
@@ -85,13 +89,14 @@ using namespace std;
 
 
 // Buckets
-#define BUCKET_PLAYER 0
-#define BUCKET_ENEMIES 1
-#define BUCKET_PROJECTILES 5
-#define BUCKET_PLACEABLE 3
-#define BUCKET_PICKUP 4
-#define BUCKET_TOWERS 2
-#define BUCKET_DRONE 6
+#define BUCKET_TRAPS 0
+#define BUCKET_PLAYER 1
+#define BUCKET_ENEMIES 2
+#define BUCKET_TOWERS 3
+#define BUCKET_PLACEABLE 4
+#define BUCKET_PICKUP 5
+#define BUCKET_PROJECTILES 6
+#define BUCKET_DRONE 7
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -247,6 +252,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
+	m_hSpikeTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapDown.png");
+	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
+	//m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
+	//m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -322,6 +331,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
+
+	// Load enemy stats recipes
+	LoadEnemyRecipes(enemyStatsFileName);
 
 	// Load the gamesave
 
@@ -445,6 +457,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapBaseImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -881,6 +897,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
 	}
 
@@ -1454,7 +1471,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 												GameplayState* self = GameplayState::GetInstance();
 												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, 1);
+												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
 												beaver->Release();
 												beaver = nullptr;
 	}
@@ -1464,7 +1481,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1474,7 +1491,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1567,6 +1584,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										tower->Release();
 	}
 		break;
+	case MessageID::MSG_CREATE_TRAP:
+	{
+									const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
+									GameplayState* g = GameplayState::GetInstance();
+									Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
+									g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
+									trap->Release();
+	}
+		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
 	{
 													const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
@@ -1616,13 +1642,14 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	tempBeav->SetDamage(10);
 	tempBeav->SetPosition({ (float)_x, (float)_y });
 	tempBeav->SetAttackRange(1.0f);
-	tempBeav->SetMaxHealth(100);
-	tempBeav->SetCurrHealth(100);
-	tempBeav->SetSpeed(200.0f);
+	tempBeav->SetMaxHealth(m_fBeaverHealth);
+	tempBeav->SetCurrHealth(m_fBeaverHealth);
+	tempBeav->SetSpeed(m_fBeaverSpeed);
 	tempBeav->SetVelocity({ 0, 0 });
-	tempBeav->SetAmmoChance(0.1f);
-	tempBeav->SetSuperChance(0.03f);
-	tempBeav->SetHealthChance(0.005f);
+	tempBeav->SetAmmoChance(m_fBeaverAmmoChance);
+	tempBeav->SetSuperChance(m_fBeaverSuperChance);
+	tempBeav->SetHealthChance(m_fBeaverHealthChance);
+	tempBeav->SetRegeneration(m_fBeaverRegeneration);
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -1635,13 +1662,14 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
-	zambie->SetMaxHealth(100);
-	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(150.0f);
+	zambie->SetMaxHealth(m_fFastHealth);
+	zambie->SetCurrHealth(m_fFastHealth);
+	zambie->SetSpeed(m_fFastSpeed);
 	zambie->SetVelocity({ 0, 0 });
-	zambie->SetAmmoChance(0.1f);
-	zambie->SetSuperChance(0.03f);
-	zambie->SetHealthChance(0.01f);
+	zambie->SetAmmoChance(m_fFastAmmoChance);
+	zambie->SetSuperChance(m_fFastSuperChance);
+	zambie->SetHealthChance(m_fFastHealthChance);
+	zambie->SetRegeneration(m_fFastRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1654,13 +1682,14 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
-	zambie->SetMaxHealth(100);
-	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(100.0f);
+	zambie->SetMaxHealth(m_fSlowHealth);
+	zambie->SetCurrHealth(m_fSlowHealth);
+	zambie->SetSpeed(m_fSlowSpeed);
 	zambie->SetVelocity({ 0, 0 });
-	zambie->SetAmmoChance(0.1f);
-	zambie->SetSuperChance(0.03f);
-	zambie->SetHealthChance(0.01f);
+	zambie->SetAmmoChance(m_fSlowAmmoChance);
+	zambie->SetSuperChance(m_fSlowSuperChance);
+	zambie->SetHealthChance(m_fSlowHealthChance);
+	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1881,6 +1910,39 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 											tower->SetBaseImage(m_hLaserBaseImage);
 
 											return tower;
+	}
+		break;
+	
+	}
+
+	return nullptr;
+}
+
+Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
+{
+	switch ( _trapType )
+	{
+	case CreateTrapMessage::TRAP_SPIKE:
+	{
+		SpikeTrap* spike = new SpikeTrap;
+
+		spike->SetPosition ( SGD::Point ( (float)_x , (float)_y ) );
+		spike->SetBaseImage ( m_hSpikeTrapBaseImage );
+		spike->SetGunImage ( m_hSpikeTrapSpikeImage );
+
+		return spike;
+	}
+		break;
+	case CreateTrapMessage::TRAP_LAVA:
+	{
+		//LavaTrap* lava = new LavaTrap;
+
+		//lava->SetPosition(SGD::Point((float)_x, (float)_y));
+		//lava->SetBaseImage(m_hLavaTrapBaseImage);
+		//lava->SetGunImage(m_hLavaTrapFlameImage);
+
+		//return lava;
+
 	}
 		break;
 	}
@@ -2184,4 +2246,89 @@ void GameplayState::RenderLoss(void)
 		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 
+}
+
+
+void GameplayState::LoadEnemyRecipes(string fileName)
+{
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(fileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Temp variabes to store data
+	double healthScaling;
+	double slowHealth;
+	double slowSpeed;
+	double slowRegen;
+	double slowHealthChance;
+	double slowAmmoChance;
+	double slowSuperChance;
+	double fastHealth;
+	double fastSpeed;
+	double fastRegen;
+	double fastHealthChance;
+	double fastAmmoChance;
+	double fastSuperChance;
+	double beaverHealth;
+	double beaverSpeed;
+	double beaverRegen;
+	double beaverHealthChance;
+	double beaverAmmoChance;
+	double beaverSuperChance;
+
+	// Load health scaling value
+	pRoot->FirstChildElement("health_scaling")->Attribute("value", &healthScaling);
+
+	// Load slow zombie stats
+	TiXmlElement* slowZombie = pRoot->FirstChildElement("slow_zombie");
+	slowZombie->FirstChildElement("health")->Attribute("value", &slowHealth);
+	slowZombie->FirstChildElement("speed")->Attribute("value", &slowSpeed);
+	slowZombie->FirstChildElement("regeneration")->Attribute("value", &slowRegen);
+	slowZombie->FirstChildElement("health_chance")->Attribute("value", &slowHealthChance);
+	slowZombie->FirstChildElement("ammo_chance")->Attribute("value", &slowAmmoChance);
+	slowZombie->FirstChildElement("super_chance")->Attribute("value", &slowSuperChance);
+
+	// Load fast zombie stats
+	TiXmlElement* fastZombie = pRoot->FirstChildElement("fast_zombie");
+	fastZombie->FirstChildElement("health")->Attribute("value", &fastHealth);
+	fastZombie->FirstChildElement("speed")->Attribute("value", &fastSpeed);
+	fastZombie->FirstChildElement("regeneration")->Attribute("value", &fastRegen);
+	fastZombie->FirstChildElement("health_chance")->Attribute("value", &fastHealthChance);
+	fastZombie->FirstChildElement("ammo_chance")->Attribute("value", &fastAmmoChance);
+	fastZombie->FirstChildElement("super_chance")->Attribute("value", &fastSuperChance);
+
+	// Load beaver zombie stats
+	TiXmlElement* beaverZombie = pRoot->FirstChildElement("beaver_zombie");
+	beaverZombie->FirstChildElement("health")->Attribute("value", &beaverHealth);
+	beaverZombie->FirstChildElement("speed")->Attribute("value", &beaverSpeed);
+	beaverZombie->FirstChildElement("regeneration")->Attribute("value", &beaverRegen);
+	beaverZombie->FirstChildElement("health_chance")->Attribute("value", &beaverHealthChance);
+	beaverZombie->FirstChildElement("ammo_chance")->Attribute("value", &beaverAmmoChance);
+	beaverZombie->FirstChildElement("super_chance")->Attribute("value", &beaverSuperChance);
+
+	// Assign values
+	m_fHealthScaling = (float)healthScaling;
+	m_fSlowHealth = (float)slowHealth;
+	m_fSlowSpeed = (float)slowSpeed;
+	m_fSlowRegeneration = (float)slowRegen;
+	m_fSlowHealthChance = (float)slowHealthChance;
+	m_fSlowAmmoChance = (float)slowAmmoChance;
+	m_fSlowSuperChance = (float)slowSuperChance;
+	m_fFastHealth = (float)fastHealth;
+	m_fFastSpeed = (float)fastSpeed;
+	m_fFastRegeneration = (float)fastRegen;
+	m_fFastHealthChance = (float)fastHealthChance;
+	m_fFastAmmoChance = (float)fastAmmoChance;
+	m_fFastSuperChance = (float)fastSuperChance;
+	m_fBeaverHealth = (float)beaverHealth;
+	m_fBeaverSpeed = (float)beaverSpeed;
+	m_fBeaverRegeneration = (float)beaverRegen;
+	m_fBeaverHealthChance = (float)beaverHealthChance;
+	m_fBeaverAmmoChance = (float)beaverAmmoChance;
+	m_fBeaverSuperChance = (float)beaverSuperChance;
 }

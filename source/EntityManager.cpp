@@ -202,23 +202,32 @@ void EntityManager::RenderAll( void )
 		}
 
 		// Render the tower's post render
-		if (m_tEntities.size() > 2)
+		if (m_tEntities.size() > 3)
 		{
-			for (unsigned int tower = 0; tower < m_tEntities[2].size(); tower++)
+			for (unsigned int tower = 0; tower < m_tEntities[3].size(); tower++)
 			{
-				m_tEntities[2][tower]->PostRender();
+				m_tEntities[3][tower]->PostRender();
+			}
+		}
+
+		// Render the trap's post render
+		if(m_tEntities[0].size() > 0)
+		{
+			for(unsigned int trap = 0; trap < m_tEntities[0].size(); trap++)
+			{
+				m_tEntities[0][trap]->PostRender();
 			}
 		}
 
 		// Render player's post render
-		m_tEntities[0][0]->PostRender();
+		m_tEntities[1][0]->PostRender();
 
 		// Render enemies' post render
-		if (m_tEntities.size() > 1)
+		if (m_tEntities.size() > 2)
 		{
-			for (unsigned int tower = 0; tower < m_tEntities[1].size(); tower++)
+			for (unsigned int enemies = 0; enemies < m_tEntities[2].size(); enemies++)
 			{
-				m_tEntities[1][tower]->PostRender();
+				m_tEntities[2][enemies]->PostRender();
 			}
 		}
 	}

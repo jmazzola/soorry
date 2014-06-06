@@ -145,6 +145,12 @@ private:
 	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBuildModeHUD = SGD::INVALID_HANDLE;
 
+	// Trap textures
+	SGD::HTexture m_hSpikeTrapBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hSpikeTrapSpikeImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
@@ -174,6 +180,7 @@ private:
 	Entity* CreatePlaceable(int trap) const;
 	Entity* CreatePickUp(int pick, SGD::Point pos) const;
 	Entity* CreateTower(int x, int y, int type) const;
+	Entity* CreateTrap(int x, int y, int type) const;
 	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
 	Entity* CreateDrone() const;
 
@@ -204,6 +211,28 @@ private:
 	float m_fLossTimer;
 	bool m_bHasLost;
 	bool m_bReplay;
+
+	// Enemy recipes
+	void LoadEnemyRecipes(string fileName);
+	float m_fHealthScaling;
+	float m_fSlowHealth;
+	float m_fSlowSpeed;
+	float m_fSlowRegeneration;
+	float m_fSlowHealthChance;
+	float m_fSlowAmmoChance;
+	float m_fSlowSuperChance;
+	float m_fFastHealth;
+	float m_fFastSpeed;
+	float m_fFastRegeneration;
+	float m_fFastHealthChance;
+	float m_fFastAmmoChance;
+	float m_fFastSuperChance;
+	float m_fBeaverHealth;
+	float m_fBeaverSpeed;
+	float m_fBeaverRegeneration;
+	float m_fBeaverHealthChance;
+	float m_fBeaverAmmoChance;
+	float m_fBeaverSuperChance;
 };
 
 #endif //GAMEPLAYSTATE_H

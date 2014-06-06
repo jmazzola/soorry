@@ -2,6 +2,27 @@
 <enemy_stats>
   <health_scaling value="1.2"/>
   <slow_zombie>
-    
+    <health value="300"/>
+    <speed value="100"/>
+    <regeneration value="5"/>
+    <health_chance value="0.01"/>
+    <ammo_chance value="0.1"/>
+    <super_chance value="0.3"/>
   </slow_zombie>
+  <fast_zombie>
+    <health value="100"/>
+    <speed value="150"/>
+    <regeneration value="0"/>
+    <health_chance value="0.01"/>
+    <ammo_chance value="0.1"/>
+    <super_chance value="0.3"/>
+  </fast_zombie>
+  <beaver_zombie>
+    <health value="80"/>
+    <speed value="400"/>
+    <regeneration value="0"/>
+    <health_chance value="0.01"/>
+    <ammo_chance value="0.1"/>
+    <super_chance value="0.3"/>
+  </beaver_zombie>
 </enemy_stats>
