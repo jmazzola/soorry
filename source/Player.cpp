@@ -390,7 +390,9 @@ void Player::Update ( float dt )
 			
 			if ( m_fSuperTimer <= 0.0f )
 			{
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
+				// If we have infinite ammo, don't subtract
+				if (!pGame->HasInfAmmo())
+					m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
 			}
 			else
