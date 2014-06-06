@@ -1461,8 +1461,8 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
 	tempBeav->SetAmmoChance(0.1f);
-	tempBeav->SetSuperChance(0.3f);
-	tempBeav->SetHealthChance(0.01f);
+	tempBeav->SetSuperChance(0.03f);
+	tempBeav->SetHealthChance(0.005f);
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
