@@ -41,6 +41,8 @@
 #include "CreateTowerMessage.h"
 #include "CreateMachineGunBulletMessage.h"
 #include "CreateDroneMessage.h"
+#include "CreateTrapMessage.h"
+
 //Object Includes
 #include "BeaverZombie.h"
 #include "FastZombie.h"
@@ -64,12 +66,14 @@
 #include "WindowPickup.h"
 #include "AmmoPickup.h"
 #include "HealthPackPickup.h"
-//#include "SuperPack.h"
+#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
 #include "HockeyStickTower.h"
 #include "LaserTower.h"
+#include "SpikeTrap.h"
+//#include "FlameTrap.h"
 
 #include "MachineGunBullet.h"
 
@@ -85,13 +89,14 @@ using namespace std;
 
 
 // Buckets
-#define BUCKET_PLAYER 0
-#define BUCKET_ENEMIES 1
-#define BUCKET_PROJECTILES 5
-#define BUCKET_PLACEABLE 3
-#define BUCKET_PICKUP 4
-#define BUCKET_TOWERS 2
-#define BUCKET_DRONE 6
+#define BUCKET_TRAPS 0
+#define BUCKET_PLAYER 1
+#define BUCKET_ENEMIES 2
+#define BUCKET_TOWERS 3
+#define BUCKET_PLACEABLE 4
+#define BUCKET_PICKUP 5
+#define BUCKET_PROJECTILES 6
+#define BUCKET_DRONE 7
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -247,6 +252,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
 	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
+	m_hSpikeTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapDown.png");
+	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
+	//m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
+	//m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -315,6 +324,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
+	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
 	zombieFactory->LoadWaves(waveFileName);
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
@@ -447,6 +457,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapBaseImage);
+	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
+	//pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -803,6 +817,50 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
+
+	// -- Debugging Mode Input always last --
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
+	{
+		#define DEBUG_MAX 3
+		#define DEBUG_MIN 0
+
+		if (pInput->IsKeyPressed(SGD::Key::Up))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur--;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() < DEBUG_MIN)
+				pGame->SetDebugCurs(DEBUG_MAX);
+		}
+		if (pInput->IsKeyPressed(SGD::Key::Down))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur++;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() > DEBUG_MAX)
+				pGame->SetDebugCurs(DEBUG_MIN);
+		}
+
+		if (pInput->IsKeyPressed(SGD::Key::Shift))
+		{
+			if (pGame->GetDebugCurs() == DEBUG_MIN)
+				pGame->SetGod(!pGame->IsGod());
+
+			if (pGame->GetDebugCurs() == 1)
+				pGame->SetInfAmmo(!pGame->HasInfAmmo());
+
+			if (pGame->GetDebugCurs() == 2)
+				pGame->SetShowPaths(!pGame->IsShowingPaths());
+
+			if (pGame->GetDebugCurs() == DEBUG_MAX)
+				pGame->SetShowRects(!pGame->IsShowingRects());
+		}
+	}
+
 	return true;	// keep playing
 }
 
@@ -839,6 +897,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
 	}
 
@@ -1219,7 +1278,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					//timeRemaining += " secs";
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
+					if (m_bHasLost == false)
+						m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1350,6 +1410,44 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		RenderLoss();
 	}
+
+
+	// -- Render Debugging Mode over everything else --
+
+	// If we're debugging
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused)
+	{
+		// Render the debug menu box
+		pGraphics->DrawRectangle(SGD::Rectangle({ 19, 110 }, SGD::Size(205, 331)), { 128, 0, 0, 0 });
+
+		int pos = pGame->GetDebugCurs();
+		// Draw the selected image
+		pGraphics->DrawRectangle(SGD::Rectangle({ 10.0f, float(116 + 20 * pos) }, SGD::Size(10, 10)), { 255, 255, 0 });
+		// Render the options
+		if (pGame->IsGod())
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 255, 0, 0 });
+
+		if (pGame->HasInfAmmo())
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 255, 0, 0 });
+
+
+		if (pGame->IsShowingPaths())
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 255, 0, 0 });
+
+		if (pGame->IsShowingRects())
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 255, 0, 0 });
+
+		
+	}
 }
 
 
@@ -1373,7 +1471,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
 												GameplayState* self = GameplayState::GetInstance();
 												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, 1);
+												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
 												beaver->Release();
 												beaver = nullptr;
 	}
@@ -1383,7 +1481,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1393,7 +1491,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
 											  GameplayState* self = GameplayState::GetInstance();
 											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, 1);
+											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
 											  zambie->Release();
 											  zambie = nullptr;
 	}
@@ -1484,6 +1582,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
 										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
 										tower->Release();
+	}
+		break;
+	case MessageID::MSG_CREATE_TRAP:
+	{
+									const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
+									GameplayState* g = GameplayState::GetInstance();
+									Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
+									g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
+									trap->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
@@ -1742,7 +1849,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		return hp;
 		break;
 	}
-	/*case (int)Entity::ENT_PICKUP_SUPER:
+	case (int)Entity::ENT_PICKUP_SUPER:
 	{
 		SuperPack* super = new SuperPack ();
 		super->SetPosition ( pos );
@@ -1752,7 +1859,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		super->SetCurrAnimation ( "super" );
 		return super;
 		break;
-	}*/
+	}
 	}
 
 	return nullptr;
@@ -1803,6 +1910,39 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 											tower->SetBaseImage(m_hLaserBaseImage);
 
 											return tower;
+	}
+		break;
+	
+	}
+
+	return nullptr;
+}
+
+Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
+{
+	switch ( _trapType )
+	{
+	case CreateTrapMessage::TRAP_SPIKE:
+	{
+		SpikeTrap* spike = new SpikeTrap;
+
+		spike->SetPosition ( SGD::Point ( (float)_x , (float)_y ) );
+		spike->SetBaseImage ( m_hSpikeTrapBaseImage );
+		spike->SetGunImage ( m_hSpikeTrapSpikeImage );
+
+		return spike;
+	}
+		break;
+	case CreateTrapMessage::TRAP_LAVA:
+	{
+		//LavaTrap* lava = new LavaTrap;
+
+		//lava->SetPosition(SGD::Point((float)_x, (float)_y));
+		//lava->SetBaseImage(m_hLavaTrapBaseImage);
+		//lava->SetGunImage(m_hLavaTrapFlameImage);
+
+		//return lava;
+
 	}
 		break;
 	}

@@ -68,7 +68,7 @@ void Drone::Update(float dt)
 	SetPosition(tempPoint);*/
 
 	//Find enemy and shoot at it
-	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), m_fRange, 1));
+	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), m_fRange, 2));
 	SGD::Vector toEnemy;
 	if (enemy)
 	{

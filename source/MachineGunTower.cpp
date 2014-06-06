@@ -32,7 +32,7 @@ void MachineGunTower::Update(float dt)
 	m_fNextShotTimer -= dt;
 
 	// Aim at enemy
-	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), 128.0f, 1));
+	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), 128.0f, 2));
 	SGD::Vector toEnemy;
 	if (enemy)
 	{
