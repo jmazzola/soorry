@@ -55,6 +55,7 @@
     <ClCompile Include="source\GameplayState.cpp" />
     <ClCompile Include="source\Grenade.cpp" />
     <ClCompile Include="source\HealthPackPickup.cpp" />
+    <ClCompile Include="source\HealthPickup.cpp" />
     <ClCompile Include="source\HockeyStickTower.cpp" />
     <ClCompile Include="source\IntroState.cpp" />
     <ClCompile Include="source\Inventory.cpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="source\SlowZombie.cpp" />
     <ClCompile Include="source\SpeedPickup.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="source\SuperPack.cpp" />
     <ClCompile Include="source\Tile.cpp" />
     <ClCompile Include="source\Tower.cpp" />
     <ClCompile Include="source\WallPickup.cpp" />
@@ -148,6 +150,7 @@
     <ClInclude Include="source\GameplayState.h" />
     <ClInclude Include="source\Grenade.h" />
     <ClInclude Include="source\HealthPackPickup.h" />
+    <ClInclude Include="source\HealthPickup.h" />
     <ClInclude Include="source\HockeyStickTower.h" />
     <ClInclude Include="source\IEntity.h" />
     <ClInclude Include="source\IGameState.h" />
@@ -178,6 +181,7 @@
     <ClInclude Include="source\SlowZombie.h" />
     <ClInclude Include="source\SpeedPickup.h" />
     <ClInclude Include="source\Sprite.h" />
+    <ClInclude Include="source\SuperPack.h" />
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\Tower.h" />
     <ClInclude Include="source\WallPickup.h" />

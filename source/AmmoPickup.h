@@ -4,7 +4,10 @@ class AmmoPickup :
 	public Pickup
 {
 public:
-	AmmoPickup();
-	~AmmoPickup();
+	AmmoPickup() = default;
+	~AmmoPickup() = default;
+
+	virtual int GetType() const;
+	virtual void HandleCollision(const IEntity* pOther);
 };
 

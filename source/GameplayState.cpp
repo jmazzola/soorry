@@ -62,6 +62,9 @@
 #include "Camera.h"
 #include "WallPickup.h"
 #include "WindowPickup.h"
+#include "AmmoPickup.h"
+#include "HealthPackPickup.h"
+#include "SuperPack.h"
 
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
@@ -147,6 +150,7 @@ Entity*	GameplayState::CreatePlayer() const
 	player->SetEntityManager(m_pEntities);
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
+	player->SetSuperLength(4.0f);
 
 	return player;
 }
@@ -188,7 +192,6 @@ Entity*	GameplayState::CreatePlayer() const
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
-
 	m_hPlaceablesImage = pGraphics->LoadTexture("resource/images/towers/placeables.png");
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
 
@@ -363,7 +366,6 @@ Entity*	GameplayState::CreatePlayer() const
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
-
 	pGraphics->UnloadTexture(m_hPlaceablesImage);
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
 
@@ -1122,8 +1124,8 @@ Entity*	GameplayState::CreatePlayer() const
 				if (zombieFactory->IsBuildMode())
 				{
 					// Turn the cursor off for build mode
-					if(pGraphics->IsCursorShowing() == true)
-						pGraphics->TurnCursorOff();
+					/*if(pGraphics->IsCursorShowing() == true)
+						pGraphics->TurnCursorOff();*/
 
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
@@ -1239,6 +1241,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
+		// If you have lost render You Lose and go to replay menu
 		if (m_bHasLost == true)
 		{
 			Game * pGame = Game::GetInstance();
@@ -1398,11 +1401,11 @@ Entity*	GameplayState::CreatePlayer() const
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
 	{
-													 const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
-													 GameplayState* g = GameplayState::GetInstance();
-													 Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
-													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
+													const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
+													GameplayState* g = GameplayState::GetInstance();
+													Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
+													g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_DRONE:
@@ -1449,7 +1452,9 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	tempBeav->SetCurrHealth(100);
 	tempBeav->SetSpeed(200.0f);
 	tempBeav->SetVelocity({ 0, 0 });
-
+	tempBeav->SetAmmoChance(0.1f);
+	tempBeav->SetSuperChance(0.3f);
+	tempBeav->SetHealthChance(0.01f);
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -1466,7 +1471,9 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(150.0f);
 	zambie->SetVelocity({ 0, 0 });
-
+	zambie->SetAmmoChance(0.1f);
+	zambie->SetSuperChance(0.03f);
+	zambie->SetHealthChance(0.01f);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1483,7 +1490,9 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetCurrHealth(100);
 	zambie->SetSpeed(100.0f);
 	zambie->SetVelocity({ 0, 0 });
-
+	zambie->SetAmmoChance(0.1f);
+	zambie->SetSuperChance(0.03f);
+	zambie->SetHealthChance(0.01f);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1597,26 +1606,66 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 
 Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 {
-	if (pick == 0)
+	switch ( pick )
 	{
-		WallPickup* wall = new WallPickup();
-		wall->SetPosition(pos);
-		wall->SetSprite(AnimationManager::GetInstance()->GetSprite("wall"));
-		wall->SetCurrFrame(0);
-		wall->SetTimeOfFrame(0);
-		wall->SetCurrAnimation("wall");
+	case (int)Entity::ENT_PICKUP_WALL:
+	{
+		WallPickup* wall = new WallPickup ();
+		wall->SetPosition ( pos );
+		wall->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "wall" ) );
+		wall->SetCurrFrame ( 0 );
+		wall->SetTimeOfFrame ( 0 );
+		wall->SetCurrAnimation ( "wall" );
 		return wall;
+		break;
 	}
-	else
+	case (int)Entity::ENT_PICKUP_WINDOW:
 	{
-		WindowPickup* window = new WindowPickup();
-		window->SetPosition(pos);
-		window->SetSprite(AnimationManager::GetInstance()->GetSprite("window"));
-		window->SetCurrFrame(0);
-		window->SetTimeOfFrame(0);
-		window->SetCurrAnimation("window");
+		WindowPickup* window = new WindowPickup ();
+		window->SetPosition ( pos );
+		window->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "window" ) );
+		window->SetCurrFrame ( 0 );
+		window->SetTimeOfFrame ( 0 );
+		window->SetCurrAnimation ( "window" );
 		return window;
+		break;
 	}
+	case (int)Entity::ENT_PICKUP_AMMO:
+	{
+		AmmoPickup* ammo = new AmmoPickup ();
+		ammo->SetPosition ( pos );
+		ammo->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "ammo" ) );
+		ammo->SetCurrFrame ( 0 );
+		ammo->SetTimeOfFrame ( 0 );
+		ammo->SetCurrAnimation ( "ammo" );
+		return ammo;
+		break;
+	}
+	case (int)Entity::ENT_PICKUP_HEALTHPACK:
+	{
+		HealthPackPickup* hp = new HealthPackPickup ();
+		hp->SetPosition ( pos );
+		hp->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "health" ) );
+		hp->SetCurrFrame ( 0 );
+		hp->SetTimeOfFrame ( 0 );
+		hp->SetCurrAnimation ( "health" );
+		return hp;
+		break;
+	}
+	case (int)Entity::ENT_PICKUP_SUPER:
+	{
+		SuperPack* super = new SuperPack ();
+		super->SetPosition ( pos );
+		super->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "super" ) );
+		super->SetCurrFrame ( 0 );
+		super->SetTimeOfFrame ( 0 );
+		super->SetCurrAnimation ( "super" );
+		return super;
+		break;
+	}
+	}
+
+	return nullptr;
 }
 
 Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
@@ -1858,7 +1907,7 @@ void GameplayState::RenderCredits(void)
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOn();
+		pGraphics->TurnCursorOff();
 
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });

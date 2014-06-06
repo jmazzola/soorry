@@ -47,6 +47,8 @@ public:
 	// Accessors
 	float GetMaxHealth() const;
 	float GetCurrHealth() const;
+	float GetSuperTimer() const;
+	float GetSuperLength() const;
 	int GetCurrWeapon() const;
 	int GetCurrPowerup() const;
 	int GetCurrPlaceable() const;
@@ -63,6 +65,8 @@ public:
 	// Mutators
 	void SetMaxHealth(float maxHealth);
 	void SetCurrHealth(float currHealth);
+	void SetSuperTimer(float timer);
+	void SetSuperLength(float timer);
 	void SetCurrWeapon(int currWeapon);
 	void SetCurrPowerup(int currPowerup);
 	void SetCurrPlaceable(int currPlaceable);
@@ -89,6 +93,8 @@ protected:
 	float m_nCurrHealth;
 	float m_fCursorFadeLength;
 	float m_fCursorFadeTimer;
+	float m_fSuperTimer;
+	float m_fSuperLength;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
