@@ -140,7 +140,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Player* player = new Player();
 
@@ -150,6 +150,60 @@ Entity*	GameplayState::CreatePlayer() const
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
 	player->SetSuperLength(4.0f);
+
+	// Load player stats
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(_playerStatsFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Temp variables to store data
+	int health;
+	int speed;
+	int walls;
+	int windows;
+	int bearTraps;
+	int mines;
+	int machineGuns;
+	int mapleSyrups;
+	int hockeySticks;
+	int lasers;
+	int lavaTraps;
+	int spikeTraps;
+
+	// Load data
+	pRoot->FirstChildElement("health")->Attribute("value", &health);
+	pRoot->FirstChildElement("speed")->Attribute("value", &speed);
+	pRoot->FirstChildElement("walls")->Attribute("amount", &walls);
+	pRoot->FirstChildElement("windows")->Attribute("amount", &windows);
+	pRoot->FirstChildElement("bear_traps")->Attribute("amount", &bearTraps);
+	pRoot->FirstChildElement("mines")->Attribute("amount", &mines);
+	pRoot->FirstChildElement("machine_guns")->Attribute("amount", &machineGuns);
+	pRoot->FirstChildElement("maple_syrups")->Attribute("amount", &mapleSyrups);
+	pRoot->FirstChildElement("hockey_sticks")->Attribute("amount", &hockeySticks);
+	pRoot->FirstChildElement("lasers")->Attribute("amount", &lasers);
+	pRoot->FirstChildElement("lava_traps")->Attribute("amount", &lavaTraps);
+	pRoot->FirstChildElement("spike_traps")->Attribute("amount", &spikeTraps);
+
+	// Assign data
+	player->SetMaxHealth((float)health);
+	player->SetCurrHealth(player->GetMaxHealth());
+	player->SetSpeed((float)speed);
+	
+	Inventory* inventory = player->GetInventory();
+	inventory->SetWalls(walls);
+	inventory->SetWindows(windows);
+	inventory->SetBearTraps(bearTraps);
+	inventory->SetMines(mines);
+	inventory->SetMachineGunTowers(machineGuns);
+	inventory->SetMapleSyrupTowers(mapleSyrups);
+	inventory->SetHockeyStickTowers(hockeySticks);
+	inventory->SetLaserTowers(lasers);
+	inventory->SetLavaTraps(lavaTraps);
+	inventory->SetSpikeTraps(spikeTraps);
 
 	return player;
 }
@@ -225,13 +279,35 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+#pragma region Load Game Mode
+
+	// Load game mode information
+	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(gameModeFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	string worldFileName = pRoot->FirstChildElement("world")->GetText();
+	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
+	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
+	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
+	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
+
+#pragma endregion
+
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
 	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/world.xml");
+	pWorld->LoadWorld(worldFileName);
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
@@ -239,7 +315,11 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
+<<<<<<< HEAD
 	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+=======
+	zombieFactory->LoadWaves(waveFileName);
+>>>>>>> Justin'sBranch
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
@@ -262,7 +342,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 
 	// Create our player
-	m_pPlayer = CreatePlayer();
+	m_pPlayer = CreatePlayer(playerStatsFileName);
 	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
 
 	// If the slot is set
@@ -301,6 +381,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pShop = new Shop;
 	m_pShop->SetShopStatus(false);
 	m_pShop->Enter(m_pPlayer);
+	m_pShop->LoadPrices(shopFileName);
 
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;

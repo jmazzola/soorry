@@ -181,7 +181,7 @@ private:
 	Button* CreateButton() const;
 
 	// Creates a player
-	Entity*	CreatePlayer() const;
+	Entity*	CreatePlayer(string playerStatsFileName) const;
 
 	// Message Callback Function:
 	static void MessageProc(const SGD::Message* pMsg);
