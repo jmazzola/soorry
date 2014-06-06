@@ -163,15 +163,12 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
-<<<<<<< HEAD
-	
-=======
+
 	//for (unsigned int i = drones.size() -1; i > 0; i--)
 	//{
 		//m_pEntityManager->RemoveEntity(drones[i]);
 		//delete drones[i];
 	//}
->>>>>>> Justin'sBranch
 }
 
 
@@ -1336,9 +1333,4 @@ void Player::Render ( void )
 	Game* pGame = Game::GetInstance();
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
-
-	for (unsigned int i = 0; i < drones.size(); i++)
-	{
-		drones[i]->Render();
-	}
 }
