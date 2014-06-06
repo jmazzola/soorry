@@ -18,12 +18,12 @@ bool Particle::Update(float dt)
 	//if statement to determine if the particle is dead
 	if (currLifeTime <= 0)
 		return false;
-	float percent = currLifeTime / maxLifeTime;
+	float percent = (currLifeTime / maxLifeTime)*dt;
 	//change based on the rates
-	Color.alpha		-=	(char)((percent*(particleFlyweight->endColor.alpha - particleFlyweight->startColor.alpha))	*dt)		;
-	Color.red		-=	(char)((percent*(particleFlyweight->endColor.red - particleFlyweight->startColor.red)	 )	*dt)		;
-	Color.green		-=	(char)((percent*(particleFlyweight->endColor.green - particleFlyweight->startColor.green))	*dt)		;
-	Color.blue		-=	(char)((percent*(particleFlyweight->endColor.green - particleFlyweight->startColor.green))	*dt)		;
+	Color.alpha		+=	(char)((long)((percent*(particleFlyweight->endColor.alpha - particleFlyweight->startColor.alpha)))	)*dt		;
+	Color.red		+=	(char)((long)((percent*(particleFlyweight->endColor.red - particleFlyweight->startColor.red)	))	)*dt		;
+	Color.green		+=	(char)((long)((percent*(particleFlyweight->endColor.green - particleFlyweight->startColor.green)))	)*dt		;
+	Color.blue		+=	(char)((long)((percent*(particleFlyweight->endColor.blue - particleFlyweight->startColor.blue)))	)*dt		;
 	if					(particleFlyweight->isSpread == false)
 	{
 		velocity.x -=	(percent*(particleFlyweight->endVelocity.x - particleFlyweight->startVelocity.x))	*dt					;
