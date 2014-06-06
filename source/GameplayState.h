@@ -204,6 +204,28 @@ private:
 	float m_fLossTimer;
 	bool m_bHasLost;
 	bool m_bReplay;
+
+	// Enemy recipes
+	void LoadEnemyRecipes(string fileName);
+	float m_fHealthScaling;
+	float m_fSlowHealth;
+	float m_fSlowSpeed;
+	float m_fSlowRegeneration;
+	float m_fSlowHealthChance;
+	float m_fSlowAmmoChance;
+	float m_fSlowSuperChance;
+	float m_fFastHealth;
+	float m_fFastSpeed;
+	float m_fFastRegeneration;
+	float m_fFastHealthChance;
+	float m_fFastAmmoChance;
+	float m_fFastSuperChance;
+	float m_fBeaverHealth;
+	float m_fBeaverSpeed;
+	float m_fBeaverRegeneration;
+	float m_fBeaverHealthChance;
+	float m_fBeaverAmmoChance;
+	float m_fBeaverSuperChance;
 };
 
 #endif //GAMEPLAYSTATE_H

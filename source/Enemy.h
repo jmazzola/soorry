@@ -24,8 +24,9 @@ public:
 	/**********************************************************/
 	// Accessors
 	int GetDamage() const;
-	int GetMaxHealth() const;
-	int GetCurrHealth() const;
+	float GetMaxHealth() const;
+	float GetCurrHealth() const;
+	float GetRegeneration() const;
 	float GetAttackRate() const;
 	float GetAttackRange() const;
 	float GetSpeed() const;
@@ -36,8 +37,9 @@ public:
 	/**********************************************************/
 	// Mutators
 	void SetDamage(int damage);
-	void SetMaxHealth(int maxHealth);
-	void SetCurrHealth(int currHealth);
+	void SetMaxHealth(float maxHealth);
+	void SetCurrHealth(float currHealth);
+	void SetRegeneration(float regeneration);
 	void SetAttackRate(float attackRate);
 	void SetAttackRange(float attackRange);
 	void SetSpeed(float speed);
@@ -51,8 +53,9 @@ protected:
 	/**********************************************************/
 	// Members
 	int m_nDamage;
-	int m_nMaxHeatlh;
-	int m_nCurrHealth;
+	float m_nMaxHeatlh;
+	float m_nCurrHealth;
+	float m_fRegeneration;
 	float m_fAttackRate;
 	float m_fAttackRange;
 	float m_fSpeed;
