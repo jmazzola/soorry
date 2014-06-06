@@ -237,7 +237,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/wave.xml");
+	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
@@ -1317,7 +1317,7 @@ Entity*	GameplayState::CreatePlayer() const
 											 GameplayState* self = GameplayState::GetInstance();
 											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
-												 for (int i = 0; i < 19; i++)
+												 for (int i = 0; i < 9; i++)
 												 {
 													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
 													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
@@ -1531,10 +1531,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition() + SGD::Vector(12, 12));
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 4;
-			   pos.y += Camera::y - 4;
+			   pos.x += Camera::x - 8;
+			   pos.y += Camera::y - 8;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1549,10 +1549,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition() + SGD::Vector(12, 12));
+			   tempProj->SetPosition(m_pPlayer->GetPosition());
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 4;
-			   pos.y += Camera::y - 4;
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
 			   vec.Normalize();
 			   vec *= (float)(750 + rand() % 500);
@@ -1683,7 +1683,10 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 	return bullet;
 }
 
+Entity* GameplayState::CreateDrone()
+{
 
+}
 // LoadGameFromSlot
 // - Load game from the slot
 void GameplayState::LoadGameFromSlot(int slot)

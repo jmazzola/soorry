@@ -27,7 +27,6 @@
 #include "Tower.h"
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
-#include "CreateDroneMessage.h"
 
 #include <queue>
 using namespace std;
@@ -162,12 +161,7 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
-	for (unsigned int i = drones.size() -1; i > 0; i--)
-	{
-		m_pEntityManager->RemoveEntity(drones[i]);
-		delete drones[i];
-	}
-	drones.clear();
+	
 }
 
 
@@ -346,18 +340,7 @@ void Player::Update ( float dt )
 		msg = nullptr;
 
 	}
-	if (pInput->IsKeyPressed(SGD::Key::P) == true)
-	{
-		Drone* tempDrone = new Drone();
-		tempDrone->SetPlayer(this);
-		tempDrone->SetEntityManager(m_pEntityManager);
-		tempDrone->SetNumberID(drones.size() + 1);
-		tempDrone->SetHealth((int)m_nMaxHealth);
-		CreateDroneMessage* msg = new CreateDroneMessage(tempDrone);
-		msg->QueueMessage();
-		msg = nullptr;
-		drones.push_back(tempDrone);
-	}
+	
 	//GAH Weapons! - Arnold
 	//Switch to Slot One
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false)
@@ -714,10 +697,7 @@ void Player::Update ( float dt )
 		}
 
 	}
-	for (unsigned int i = 0; i < drones.size(); i++)
-	{
-		drones[i]->Update(dt);
-	}
+	
 	// Set camera
 	Camera::x = (int)m_ptPosition.x - 384;
 	Camera::y = (int)m_ptPosition.y - 284;
@@ -1281,12 +1261,5 @@ void Player::Render ( void )
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
 
-	for (unsigned int i = 0; i < drones.size(); i++)
-	{
-		if (drones[i] == nullptr)
-		{
-			drones.clear();
-		}
-		drones[i]->Render();
-	}
+	
 }

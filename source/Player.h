@@ -17,7 +17,6 @@
 #include "../SGD Wrappers/SGD_Listener.h"
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "EntityManager.h"
-#include "Drone.h"
 /**********************************************************/
 // Forward Declarations
 class Weapon;
@@ -102,7 +101,6 @@ protected:
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
-	std::vector<Drone*> drones;
 	SGD::HTexture m_hPlaceablesImage;
 	SGD::HTexture m_hRangeCirclesImage;
 	
