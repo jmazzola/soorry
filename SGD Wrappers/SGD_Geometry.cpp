@@ -542,7 +542,28 @@ namespace SGD
 	{
 		return ( (this->x * other.y) - (this->y * other.x) );
 	}
+	//The percent range is from 1.0f to 0.0f
+	Vector Vector::Lerp(Vector start, Vector  end, float percent) const
+	{
+		float x = percent*(end.x - start.x);
+		float y = percent*(end.y - start.y);
+		return (start + Vector(x, y));
+	}
 
+	Vector Vector::Slerp(Vector start, Vector  end, float percent) const
+	{
+		//Dot product
+		float dot = (start.x*end.x) + (start.y*end.y);
+		//clamp it to the range of Acos
+		if (dot < -1.0f)
+			dot = -1.0f;
+		if (dot > 1.0f)
+			dot = 1.0f;
+		float angle = acos(dot)*percent;
+		Vector relativeVec = end - start*dot;
+		relativeVec.Normalize(); //Orthonormal
+		return (start*cos(angle)) + (relativeVec*sin(angle));
+	}
 
 	// Operators
 	bool Vector::operator== ( const Vector& other ) const

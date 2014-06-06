@@ -217,7 +217,8 @@ namespace SGD
 
 		void		Rotate				( float radians );
 		Vector		ComputeRotated		( float radians )	const;
-
+		Vector		Lerp				(Vector start, Vector  end, float percent) const;
+		Vector		Slerp				(Vector start, Vector end, float percent) const;
 		float		ComputeDotProduct	( const Vector& other )		const;
 		float		ComputeAngle		( const Vector& other )		const;
 		float		ComputeSteering		( const Vector& other )		const;
