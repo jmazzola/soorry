@@ -67,7 +67,7 @@ void Enemy::Render()
 
 void Enemy::PostRender()
 {
-	// Draw health bar (for debug purposes or for permenant reasons, we'll see)
+	// Draw health bar
 #if HEALTH_BAR
 
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();

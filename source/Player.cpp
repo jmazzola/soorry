@@ -162,11 +162,11 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
-	for (unsigned int i = drones.size() -1; i > 0; i--)
-	{
-		m_pEntityManager->RemoveEntity(drones[i]);
-		delete drones[i];
-	}
+	//for (unsigned int i = drones.size() -1; i > 0; i--)
+	//{
+		//m_pEntityManager->RemoveEntity(drones[i]);
+		//delete drones[i];
+	//}
 }
 
 

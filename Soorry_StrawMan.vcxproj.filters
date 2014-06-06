@@ -64,6 +64,12 @@
     <Filter Include="Towers/Traps">
       <UniqueIdentifier>{d6e332b8-a784-4a15-8d32-ba042f0431ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{408d2eee-a134-4e4f-a2e0-22c1be6f35de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Arcade Mode">
+      <UniqueIdentifier>{c04aa398-daab-456e-a4cb-cb92adb2e74d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -606,6 +612,21 @@
     </Xml>
     <Xml Include="resource\data\singleEnemy.xml">
       <Filter>Zombie Factory</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\arcadeMode.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\playerStats.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\enemyStats.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
+      <Filter>Data\Arcade Mode</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

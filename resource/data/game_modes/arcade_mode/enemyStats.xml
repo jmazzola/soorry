@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<enemy_stats>
+  <health_scaling value="1.2"/>
+  <slow_zombie>
+    
+  </slow_zombie>
+</enemy_stats>
