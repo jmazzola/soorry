@@ -7,6 +7,7 @@
 ***************************************************************/
 
 #include "Entity.h"
+#include "Game.h"
 
 #include "Sprite.h"
 #include "Camera.h"
@@ -63,12 +64,16 @@
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y;
-	//SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(100, 0, 0, 0));
 
 	// HACK: Modify the rotation
 	//m_fRotation += 0.01f;
 
 	// Draw the image
+
+	// -- Debugging Mode --
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingRects())
+		SGD::GraphicsManager::GetInstance()->DrawRectangle(drawRect, SGD::Color(128, 255, 0, 0));
 }
 
 

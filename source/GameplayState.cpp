@@ -111,7 +111,6 @@ using namespace std;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-
 /**************************************************************/
 // GetInstance
 //	- allocate static global instance
@@ -146,7 +145,7 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer() const
+Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Player* player = new Player();
 
@@ -156,6 +155,60 @@ Entity*	GameplayState::CreatePlayer() const
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
 	player->SetSuperLength(4.0f);
+
+	// Load player stats
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(_playerStatsFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Temp variables to store data
+	int health;
+	int speed;
+	int walls;
+	int windows;
+	int bearTraps;
+	int mines;
+	int machineGuns;
+	int mapleSyrups;
+	int hockeySticks;
+	int lasers;
+	int lavaTraps;
+	int spikeTraps;
+
+	// Load data
+	pRoot->FirstChildElement("health")->Attribute("value", &health);
+	pRoot->FirstChildElement("speed")->Attribute("value", &speed);
+	pRoot->FirstChildElement("walls")->Attribute("amount", &walls);
+	pRoot->FirstChildElement("windows")->Attribute("amount", &windows);
+	pRoot->FirstChildElement("bear_traps")->Attribute("amount", &bearTraps);
+	pRoot->FirstChildElement("mines")->Attribute("amount", &mines);
+	pRoot->FirstChildElement("machine_guns")->Attribute("amount", &machineGuns);
+	pRoot->FirstChildElement("maple_syrups")->Attribute("amount", &mapleSyrups);
+	pRoot->FirstChildElement("hockey_sticks")->Attribute("amount", &hockeySticks);
+	pRoot->FirstChildElement("lasers")->Attribute("amount", &lasers);
+	pRoot->FirstChildElement("lava_traps")->Attribute("amount", &lavaTraps);
+	pRoot->FirstChildElement("spike_traps")->Attribute("amount", &spikeTraps);
+
+	// Assign data
+	player->SetMaxHealth((float)health);
+	player->SetCurrHealth(player->GetMaxHealth());
+	player->SetSpeed((float)speed);
+	
+	Inventory* inventory = player->GetInventory();
+	inventory->SetWalls(walls);
+	inventory->SetWindows(windows);
+	inventory->SetBearTraps(bearTraps);
+	inventory->SetMines(mines);
+	inventory->SetMachineGunTowers(machineGuns);
+	inventory->SetMapleSyrupTowers(mapleSyrups);
+	inventory->SetHockeyStickTowers(hockeySticks);
+	inventory->SetLaserTowers(lasers);
+	inventory->SetLavaTraps(lavaTraps);
+	inventory->SetSpikeTraps(spikeTraps);
 
 	return player;
 }
@@ -235,13 +288,35 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+#pragma region Load Game Mode
+
+	// Load game mode information
+	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(gameModeFileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	string worldFileName = pRoot->FirstChildElement("world")->GetText();
+	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
+	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
+	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
+	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
+
+#pragma endregion
+
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
 	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
-	pWorld->LoadWorld("resource/world/world.xml");
+	pWorld->LoadWorld(worldFileName);
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
@@ -249,7 +324,8 @@ Entity*	GameplayState::CreatePlayer() const
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
-	zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
+	zombieFactory->LoadWaves(waveFileName);
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
@@ -272,7 +348,7 @@ Entity*	GameplayState::CreatePlayer() const
 
 
 	// Create our player
-	m_pPlayer = CreatePlayer();
+	m_pPlayer = CreatePlayer(playerStatsFileName);
 	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
 
 	// If the slot is set
@@ -311,6 +387,7 @@ Entity*	GameplayState::CreatePlayer() const
 	m_pShop = new Shop;
 	m_pShop->SetShopStatus(false);
 	m_pShop->Enter(m_pPlayer);
+	m_pShop->LoadPrices(shopFileName);
 
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
@@ -737,6 +814,50 @@ Entity*	GameplayState::CreatePlayer() const
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
 
+
+	// -- Debugging Mode Input always last --
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
+	{
+		#define DEBUG_MAX 3
+		#define DEBUG_MIN 0
+
+		if (pInput->IsKeyPressed(SGD::Key::Up))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur--;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() < DEBUG_MIN)
+				pGame->SetDebugCurs(DEBUG_MAX);
+		}
+		if (pInput->IsKeyPressed(SGD::Key::Down))
+		{
+			int cur = pGame->GetDebugCurs();
+			cur++;
+			pGame->SetDebugCurs(cur);
+
+			// Wrap around
+			if (pGame->GetDebugCurs() > DEBUG_MAX)
+				pGame->SetDebugCurs(DEBUG_MIN);
+		}
+
+		if (pInput->IsKeyPressed(SGD::Key::Shift))
+		{
+			if (pGame->GetDebugCurs() == DEBUG_MIN)
+				pGame->SetGod(!pGame->IsGod());
+
+			if (pGame->GetDebugCurs() == 1)
+				pGame->SetInfAmmo(!pGame->HasInfAmmo());
+
+			if (pGame->GetDebugCurs() == 2)
+				pGame->SetShowPaths(!pGame->IsShowingPaths());
+
+			if (pGame->GetDebugCurs() == DEBUG_MAX)
+				pGame->SetShowRects(!pGame->IsShowingRects());
+		}
+	}
+
 	return true;	// keep playing
 }
 
@@ -1154,7 +1275,8 @@ Entity*	GameplayState::CreatePlayer() const
 					//timeRemaining += " secs";
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
-					m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
+					if (m_bHasLost == false)
+						m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1284,6 +1406,44 @@ Entity*	GameplayState::CreatePlayer() const
 	else if (m_bHasLost  && m_fLossTimer <= 0.0f)
 	{
 		RenderLoss();
+	}
+
+
+	// -- Render Debugging Mode over everything else --
+
+	// If we're debugging
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused)
+	{
+		// Render the debug menu box
+		pGraphics->DrawRectangle(SGD::Rectangle({ 19, 110 }, SGD::Size(205, 331)), { 128, 0, 0, 0 });
+
+		int pos = pGame->GetDebugCurs();
+		// Draw the selected image
+		pGraphics->DrawRectangle(SGD::Rectangle({ 10.0f, float(116 + 20 * pos) }, SGD::Size(10, 10)), { 255, 255, 0 });
+		// Render the options
+		if (pGame->IsGod())
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("God Mode", { 20, 111 }, { 255, 0, 0 });
+
+		if (pGame->HasInfAmmo())
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Infinite Ammo", { 20, 131 }, { 255, 0, 0 });
+
+
+		if (pGame->IsShowingPaths())
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Zombie Paths", { 20, 151 }, { 255, 0, 0 });
+
+		if (pGame->IsShowingRects())
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 255, 0, 0 });
+
+		
 	}
 }
 
@@ -1683,7 +1843,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		return hp;
 		break;
 	}
-	/*case (int)Entity::ENT_PICKUP_SUPER:
+	case (int)Entity::ENT_PICKUP_SUPER:
 	{
 		SuperPack* super = new SuperPack ();
 		super->SetPosition ( pos );
@@ -1693,7 +1853,7 @@ Entity* GameplayState::CreatePickUp(int pick, SGD::Point pos) const
 		super->SetCurrAnimation ( "super" );
 		return super;
 		break;
-	}*/
+	}
 	}
 
 	return nullptr;

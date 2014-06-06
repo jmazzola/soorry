@@ -9,6 +9,7 @@
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
 #include "Camera.h"
+#include "Game.h"
 #include "SpikeTrap.h"
 
 #define HEALTH_BAR 1
@@ -89,7 +90,7 @@ void Enemy::Render()
 
 void Enemy::PostRender()
 {
-	// Draw health bar (for debug purposes or for permenant reasons, we'll see)
+	// Draw health bar
 #if HEALTH_BAR
 
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -116,6 +117,11 @@ void Enemy::PostRender()
 	pGraphics->DrawRectangle(frontRect, color);
 
 #endif
+
+	// -- Debugging, if showing paths is on --
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingPaths())
+		m_AIComponent.Render();
 }
 
 int Enemy::GetType() const
