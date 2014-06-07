@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enemy_stats>
-  <health_scaling value="1.15"/>
+  <health_scaling value="1.4"/>
   <slow_zombie>
     <health value="300"/>
     <speed value="100"/>
