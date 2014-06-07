@@ -165,6 +165,8 @@ int Enemy::GetType() const
 			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
 			break;
 		case ENT_MAPLE_SYRUP_BULLET:
+			if (m_fSlowTime < 0.0f)
+				m_fSlowTime = 0.0f;
 			m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
 			break;
 			//NOTE: may have to delete

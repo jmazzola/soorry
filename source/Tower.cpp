@@ -49,7 +49,7 @@ void Tower::Render()
 
 void Tower::PostRender()
 {
-
+	
 }
 
 SGD::Rectangle Tower::GetRect() const
