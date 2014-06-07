@@ -40,7 +40,7 @@ using namespace std;
 
 #include <cfloat>
 
-#define SCROLL_SPEED 0.04f;
+#define SCROLL_SPEED 35.0f
 
 
 /**************************************************************/
@@ -90,10 +90,6 @@ using namespace std;
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
-
-	// Show the cursor if it
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
 }
 
 
@@ -132,7 +128,7 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
 		// Since there's only one state..go back to main menu
 		pGame->Transition(MainMenuState::GetInstance());
@@ -160,7 +156,7 @@ using namespace std;
 	{
 		// Move the credits
 		textPosition.x = 220;
-		textPosition.y -= SCROLL_SPEED;
+		textPosition.y -= (SCROLL_SPEED * elapsedTime);
 
 		// Reset the transition time to allow for transitions again
 		m_fTransitionTime = TRANSITION_TIME;

@@ -103,9 +103,10 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 			delete particleFlyweight;
 			particleFlyweight = nullptr;
 		}
-		particleFlyweight = new ParticleFlyweight;
+		ParticleFlyweight* tempParticle = new ParticleFlyweight;
 		followEnitiy = _assign.followEnitiy;
-		particleFlyweight = _assign.particleFlyweight;
+		*tempParticle = *_assign.particleFlyweight;
+		particleFlyweight = tempParticle;
 		isLooping = _assign.isLooping;
 		position = _assign.position;
 		offset = _assign.offset;
@@ -132,7 +133,7 @@ void Emitter::load()
 			position.y -= Camera::y;
 		}
 
-		for (int i = 0; i < maxParticles; i++)
+		for (unsigned int i = 0; i < maxParticles; i++)
 		{
 			//Create a new particle
 			Particle* tempParticle = new Particle;
@@ -167,7 +168,6 @@ void Emitter::load()
 			case 1://circle
 			{
 				//MAFF very powerful
-				//NOTE:width == radius height is not used
 				float radius = (float)(rand() % (int)size.width / 2);
 				float x = size.width / 2;
 				float y = size.width / 2;
@@ -254,7 +254,6 @@ bool Emitter::Update(float dt)
 					break;
 				case 1://circle
 				{
-					//NOTE:width == radius height is not used
 					float radius = (float)(rand() % (int)size.width / 2);
 					//Point for the center of the emitter
 					SGD::Point center = SGD::Point(position.x + size.width / 2, position.y + size.width / 2);
@@ -329,7 +328,7 @@ bool Emitter::Update(float dt)
 			i--;
 		}
 	}
-	if (deadParticles.size() == maxParticles)
+	if (deadParticles.size() >= maxParticles)
 	{
 		allParticlesCreated = false;
 		return false;

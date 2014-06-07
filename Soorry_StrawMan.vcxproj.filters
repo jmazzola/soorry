@@ -667,7 +667,7 @@
     <Xml Include="resource\data\game_modes\arcade_mode\enemyStats.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
-    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
+    <Xml Include="resource\data\shop.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
   </ItemGroup>
