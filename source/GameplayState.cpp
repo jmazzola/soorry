@@ -460,8 +460,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hRangeCirclesImage);
 	pGraphics->UnloadTexture(m_hSpikeTrapBaseImage);
 	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
-	//pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
-	//pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
+	pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
+	pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;

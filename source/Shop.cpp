@@ -343,7 +343,7 @@ void Shop::Render()
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
-			m_pFont->Draw(money.c_str(), 570, 60, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
 			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
@@ -374,7 +374,7 @@ void Shop::Render()
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
-			m_pFont->Draw(money.c_str(), 570, 60, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the upgrade's descriptions --
 			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
@@ -422,7 +422,7 @@ void Shop::Render()
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
-			m_pFont->Draw(money.c_str(), 570, 60, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
 			m_pFont->Draw(towerDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
