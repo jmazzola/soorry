@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Game.h"
 #include "SpikeTrap.h"
+#include "LavaTrap.h"
 
 #define HEALTH_BAR 1
 
@@ -21,6 +22,7 @@ Enemy::Enemy() : Listener(this)
 	m_fTrapTimer = 0;
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
+	m_bIsInLava = false;
 }
 
 
@@ -87,6 +89,7 @@ void Enemy::Update(float dt)
 		m_fTrapTimer = 2;
 		m_bIsTrapped = false;
 	}
+	m_bIsInLava = false;
 }
 
 void Enemy::Render()
@@ -171,7 +174,9 @@ int Enemy::GetType() const
 			break;
 		case ENT_TRAP_LAVA:
 		{
-			// DO LAVA DAMAGE HERE
+			const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
+			m_nCurrHealth -= lava->GetDamage();
+			m_bIsInLava = true;
 		}
 			break;
 
@@ -213,7 +218,10 @@ float Enemy::GetAttackRange() const
 
 float Enemy::GetSpeed() const
 {
-	return m_fSpeed;
+	if(m_bIsInLava == true)
+		return m_fSpeed * .50f;
+	else
+		return m_fSpeed;
 }
 
 float Enemy::GetHealthChance() const
@@ -229,6 +237,11 @@ float Enemy::GetAmmoChance() const
 float Enemy::GetSuperChance() const
 {
 	return m_fSuperChance;
+}
+
+bool Enemy::GetInLava() const
+{
+	return m_bIsInLava;
 }
 
 /**********************************************************/
@@ -287,4 +300,9 @@ void Enemy::SetAmmoChance(float _chance)
 void Enemy::SetSuperChance(float _chance)
 {
 	m_fSuperChance = _chance;
+}
+
+void Enemy::SetInLava(bool yes)
+{
+	m_bIsInLava = yes;
 }

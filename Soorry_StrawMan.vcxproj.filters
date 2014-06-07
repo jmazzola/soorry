@@ -331,7 +331,10 @@
       <Filter>Towers/Traps</Filter>
     </ClCompile>
     <ClCompile Include="source\CreateTrapMessage.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LavaTrap.cpp">
+      <Filter>Towers/Traps</Filter>
     </ClCompile>
     <ClCompile Include="source\WaveCompleteMessage.cpp">
       <Filter>Messages</Filter>
@@ -602,9 +605,6 @@
     <ClInclude Include="source\Drone.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\CreateDroneMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
@@ -624,7 +624,13 @@
       <Filter>Towers/Traps</Filter>
     </ClInclude>
     <ClInclude Include="source\CreateTrapMessage.h">
-      <Filter>Header Files</Filter>
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Game Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LavaTrap.h">
+      <Filter>Towers/Traps</Filter>
     </ClInclude>
     <ClInclude Include="source\WaveCompleteMessage.h">
       <Filter>Messages</Filter>

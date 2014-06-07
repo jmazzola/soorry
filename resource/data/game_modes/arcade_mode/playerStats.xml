@@ -3,13 +3,13 @@
   <health value="80"/>
   <speed value="250"/>
   <walls amount="100"/>
-  <windows amount="10"/>
+  <windows amount="100"/>
   <bear_traps amount="10"/>
   <mines amount="10"/>
-  <machine_guns amount="15"/>
+  <machine_guns amount="150"/>
   <maple_syrups amount="10"/>
   <hockey_sticks amount="5"/>
   <lasers amount="10"/>
-  <lava_traps amount="5"/>
-  <spike_traps amount="5"/>
+  <lava_traps amount="50"/>
+  <spike_traps amount="50"/>
 </player_stats>
