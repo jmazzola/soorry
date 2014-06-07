@@ -90,10 +90,6 @@ using namespace std;
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
-
-	// Show the cursor if it
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
 }
 
 
@@ -132,7 +128,7 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
 		// Since there's only one state..go back to main menu
 		pGame->Transition(MainMenuState::GetInstance());
@@ -206,8 +202,7 @@ using namespace std;
 					  Artists\n\
 					  Gregory Bey\n\
 					  Caris Frazier\n\
-					  Justin Mazzola\n\
-					  Justin Patterson\n\n\
+					  Justin Mazzola\n\n\
 					  Special Thanks\n\
 					  Jordan Butler for ideas.";
 

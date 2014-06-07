@@ -208,8 +208,8 @@
     <Xml Include="resource\data\game_modes\arcade_mode\playerStats.xml">
       <SubType>Designer</SubType>
     </Xml>
-    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml" />
     <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml" />
+    <Xml Include="resource\data\shop.xml" />
     <Xml Include="resource\data\singleEnemy.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\testWorld.xml">

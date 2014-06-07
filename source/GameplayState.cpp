@@ -599,7 +599,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pShop->SetShopStatus(true);
 	}
 	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
 		zombieFactory->SetBuildTImeRemaining(0.0f);
 
 	// Toggle the camera mode
@@ -822,7 +822,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// -- Debugging Mode Input always last --
 	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
 	{
-		#define DEBUG_MAX 3
+		#define DEBUG_MAX 4
 		#define DEBUG_MIN 0
 
 		if (pInput->IsKeyPressed(SGD::Key::Up))
@@ -857,8 +857,11 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (pGame->GetDebugCurs() == 2)
 				pGame->SetShowPaths(!pGame->IsShowingPaths());
 
-			if (pGame->GetDebugCurs() == DEBUG_MAX)
+			if (pGame->GetDebugCurs() == 3)
 				pGame->SetShowRects(!pGame->IsShowingRects());
+
+			if (pGame->GetDebugCurs() == DEBUG_MAX)
+				dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
 		}
 	}
 
@@ -1280,7 +1283,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
 					if (m_bHasLost == false)
-						m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
+						m_pFont->Draw("Time to Build! Press Enter to Start Wave", 220, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1446,6 +1449,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 0, 255, 0 });
 		else
 			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 255, 0, 0 });
+
+		pGraphics->DrawString("Add 1000000 Cash", { 20, 191 }, { 255, 255, 0 });
 
 		
 	}

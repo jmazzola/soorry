@@ -152,6 +152,10 @@ int Game::Main(void)
 		// Disable the 'Enter' input
 		return false;
 	}
+
+	// Check for new controllers
+	m_pInput->CheckForNewControllers();
+
 	if(m_pInput->IsControllerConnected(0))
 	{
 		// Grab the input from the right joystick
