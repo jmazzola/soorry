@@ -21,7 +21,7 @@ public:
 	Emitter(const Emitter& _cpy);
 	Emitter& operator=(const Emitter& _assign);
 	//End of trilogy
-	void Update(float dt);
+	bool Update(float dt);
 	void Render();
 	void load();
 	ParticleFlyweight* particleFlyweight;
@@ -34,7 +34,7 @@ public:
 	int shape;
 	std::vector<Particle*> aliveParticles;
 	std::vector<Particle*> deadParticles;
-	std::string emitterID;
+	int emitterID;
 	SGD::Rectangle square;
 	Entity* followEnitiy = nullptr;
 };

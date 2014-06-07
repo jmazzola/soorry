@@ -121,6 +121,7 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 
 void Emitter::load()
 {
+	
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
@@ -141,26 +142,16 @@ void Emitter::load()
 			tempParticle->Color = particleFlyweight->startColor;
 			//Create rates to update particles
 			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
-			tempParticle->currLifeTime = 0;
-			tempParticle->colorRateA = (int)(((int)particleFlyweight->startColor.alpha - (int)particleFlyweight->endColor.alpha) / tempParticle->maxLifeTime);
-			tempParticle->colorRateR = (int)(((int)particleFlyweight->startColor.red - (int)particleFlyweight->endColor.red) / tempParticle->maxLifeTime);
-			tempParticle->colorRateG = (int)(((int)particleFlyweight->startColor.green - (int)particleFlyweight->endColor.green) / tempParticle->maxLifeTime);
-			tempParticle->colorRateB = (int)(((int)particleFlyweight->startColor.blue - (int)particleFlyweight->endColor.blue) / tempParticle->maxLifeTime);
+			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			tempParticle->scale = particleFlyweight->startScale;
-			tempParticle->scaleRateX = ((particleFlyweight->startScale.width - particleFlyweight->endScale.width) / tempParticle->maxLifeTime);
-			tempParticle->scaleRateY = ((particleFlyweight->startScale.height - particleFlyweight->endScale.height) / tempParticle->maxLifeTime);
 			if (!particleFlyweight->isSpread)
 			{
 				tempParticle->velocity = particleFlyweight->startVelocity;
-				tempParticle->velocityRateX = ((particleFlyweight->startVelocity.x - particleFlyweight->endVelocity.x) / tempParticle->maxLifeTime);
-				tempParticle->velocityRateY = ((particleFlyweight->startVelocity.y - particleFlyweight->endVelocity.y) / tempParticle->maxLifeTime);
 			}
 			else
 			{
 				tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
 				tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
-				tempParticle->velocityRateX = 0;
-				tempParticle->velocityRateY = 0;
 			}
 			tempParticle->rotation = particleFlyweight->startRotation;
 			tempParticle->rotationRate = ((particleFlyweight->startRotation - particleFlyweight->endRotation) / tempParticle->maxLifeTime);
@@ -213,15 +204,16 @@ void Emitter::load()
 			}
 
 			tempParticle->particleFlyweight = particleFlyweight;
+			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
 			spawnRate = deadParticles.size() / ((particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime) / 2);
 		}
-		allParticlesCreated = true;
+ 		allParticlesCreated = true;
 	}
 }
 
-void Emitter::Update(float dt)
+bool Emitter::Update(float dt)
 {
 	if (followEnitiy != nullptr)
 	{
@@ -229,10 +221,12 @@ void Emitter::Update(float dt)
 		position.x -= Camera::x;
 		position.y -= Camera::y;
 	}
+	
 	if (isLooping)
 	{
+		//NOTE: may cause bugs not sure
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)
-			return;
+			return false;
 		for (float i = 0; i < spawnRate*dt; i++)
 		{
 			//create Particle then add it to the alive particles
@@ -240,7 +234,7 @@ void Emitter::Update(float dt)
 			if (aliveParticles.size() < (unsigned int)maxParticles)
 			{
 				Particle* tempParticle = deadParticles.front();
-				tempParticle->currLifeTime = 0;
+				tempParticle->currLifeTime = tempParticle->maxLifeTime;
 				if (!particleFlyweight->isSpread)
 				{
 					tempParticle->velocity = particleFlyweight->startVelocity;
@@ -249,8 +243,6 @@ void Emitter::Update(float dt)
 				{
 					tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
 					tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
-					tempParticle->velocityRateX = 0;
-					tempParticle->velocityRateY = 0;
 				}
 				switch (shape)
 				{
@@ -337,7 +329,14 @@ void Emitter::Update(float dt)
 			i--;
 		}
 	}
+	if (deadParticles.size() == maxParticles)
+	{
+		allParticlesCreated = false;
+		return false;
+	}
+	return true;
 }
+
 void Emitter::Render()
 {
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)

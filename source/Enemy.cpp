@@ -39,7 +39,14 @@ void Enemy::Update(float dt)
 	m_fTrapTimer -= dt;
 
 	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
+	{
 		m_AIComponent.Update(dt);
+		
+		m_nCurrHealth += m_fRegeneration * dt;
+		if (m_nCurrHealth > m_nMaxHeatlh)
+			m_nCurrHealth = m_nMaxHeatlh;
+	}
+
 	else if (m_nCurrHealth <= 0)
 	{
 		float chance = (float)((float)(rand() % 1000 + 1) / 1000.0f);
@@ -184,14 +191,19 @@ int Enemy::GetDamage() const
 	return m_nDamage;
 }
 
-int Enemy::GetMaxHealth() const
+float Enemy::GetMaxHealth() const
 {
 	return m_nMaxHeatlh;
 }
 
-int Enemy::GetCurrHealth() const
+float Enemy::GetCurrHealth() const
 {
 	return m_nCurrHealth;
+}
+
+float Enemy::GetRegeneration() const
+{
+	return m_fRegeneration;
 }
 
 float Enemy::GetAttackRate() const
@@ -240,14 +252,19 @@ void Enemy::SetDamage(int _damage)
 	m_nDamage = _damage;
 }
 
-void Enemy::SetMaxHealth(int _maxHealth)
+void Enemy::SetMaxHealth(float _maxHealth)
 {
 	m_nMaxHeatlh = _maxHealth;
 }
 
-void Enemy::SetCurrHealth(int _currHealth)
+void Enemy::SetCurrHealth(float _currHealth)
 {
 	m_nCurrHealth = _currHealth;
+}
+
+void Enemy::SetRegeneration(float _regeneration)
+{
+	m_fRegeneration = _regeneration;
 }
 
 void Enemy::SetAttackRate(float _attackRate)

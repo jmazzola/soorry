@@ -42,6 +42,7 @@
 #include "CreateMachineGunBulletMessage.h"
 #include "CreateDroneMessage.h"
 #include "CreateTrapMessage.h"
+#include "WaveCompleteMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -271,7 +272,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/Blood_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
 	//m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -331,6 +332,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
+
+	// Load enemy stats recipes
+	LoadEnemyRecipes(enemyStatsFileName);
 
 	// Load the gamesave
 
@@ -1498,6 +1502,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											 GameplayState* self = GameplayState::GetInstance();
 											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
+												 SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
 												 for (int i = 0; i < 9; i++)
 												 {
 													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
@@ -1604,6 +1609,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		drone->Release();
 	}
 		break;
+	case MessageID::MSG_WAVE_COMPLETE:
+	{
+										 GameplayState* g = GameplayState::GetInstance();
+										 g->m_fSlowHealth *= g->m_fHealthScaling;
+										 g->m_fFastHealth *= g->m_fHealthScaling;
+										 g->m_fBeaverHealth *= g->m_fHealthScaling;
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1635,13 +1648,14 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	tempBeav->SetDamage(10);
 	tempBeav->SetPosition({ (float)_x, (float)_y });
 	tempBeav->SetAttackRange(1.0f);
-	tempBeav->SetMaxHealth(100);
-	tempBeav->SetCurrHealth(100);
-	tempBeav->SetSpeed(200.0f);
+	tempBeav->SetMaxHealth(m_fBeaverHealth);
+	tempBeav->SetCurrHealth(m_fBeaverHealth);
+	tempBeav->SetSpeed(m_fBeaverSpeed);
 	tempBeav->SetVelocity({ 0, 0 });
-	tempBeav->SetAmmoChance(0.1f);
-	tempBeav->SetSuperChance(0.03f);
-	tempBeav->SetHealthChance(0.005f);
+	tempBeav->SetAmmoChance(m_fBeaverAmmoChance);
+	tempBeav->SetSuperChance(m_fBeaverSuperChance);
+	tempBeav->SetHealthChance(m_fBeaverHealthChance);
+	tempBeav->SetRegeneration(m_fBeaverRegeneration);
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
@@ -1654,13 +1668,14 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
-	zambie->SetMaxHealth(100);
-	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(150.0f);
+	zambie->SetMaxHealth(m_fFastHealth);
+	zambie->SetCurrHealth(m_fFastHealth);
+	zambie->SetSpeed(m_fFastSpeed);
 	zambie->SetVelocity({ 0, 0 });
-	zambie->SetAmmoChance(0.1f);
-	zambie->SetSuperChance(0.03f);
-	zambie->SetHealthChance(0.01f);
+	zambie->SetAmmoChance(m_fFastAmmoChance);
+	zambie->SetSuperChance(m_fFastSuperChance);
+	zambie->SetHealthChance(m_fFastHealthChance);
+	zambie->SetRegeneration(m_fFastRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1673,13 +1688,14 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetDamage(10);
 	zambie->SetPosition({ (float)_x, (float)_y });
 	zambie->SetAttackRange(1.0f);
-	zambie->SetMaxHealth(100);
-	zambie->SetCurrHealth(100);
-	zambie->SetSpeed(100.0f);
+	zambie->SetMaxHealth(m_fSlowHealth);
+	zambie->SetCurrHealth(m_fSlowHealth);
+	zambie->SetSpeed(m_fSlowSpeed);
 	zambie->SetVelocity({ 0, 0 });
-	zambie->SetAmmoChance(0.1f);
-	zambie->SetSuperChance(0.03f);
-	zambie->SetHealthChance(0.01f);
+	zambie->SetAmmoChance(m_fSlowAmmoChance);
+	zambie->SetSuperChance(m_fSlowSuperChance);
+	zambie->SetHealthChance(m_fSlowHealthChance);
+	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
@@ -1720,6 +1736,8 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
+	SGD::Point playerCenter = m_pPlayer->GetPosition() + SGD::Vector(16, 16);
+
 	switch (_Weapon)
 	{
 	case 0://Assault Rifle
@@ -1727,11 +1745,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x - 8;
 			   pos.y += Camera::y - 8;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
@@ -1745,18 +1763,17 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x;
 			   pos.y += Camera::y;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= (float)(750 + rand() % 500);
 
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;
 			   vec.Rotate(degree);
-			   SGD::AudioManager::GetInstance()->PlayAudio(m_hShotgunShoot);
 
 			   tempProj->SetVelocity(vec);
 			   return tempProj;
@@ -1767,11 +1784,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   Rocket* tempProj = new Rocket;
 			   tempProj->SetDamage(150);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x;
 			   pos.y += Camera::y;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
@@ -2236,4 +2253,89 @@ void GameplayState::RenderLoss(void)
 		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 
+}
+
+
+void GameplayState::LoadEnemyRecipes(string fileName)
+{
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load from the file
+	doc.LoadFile(fileName.c_str());
+
+	// Access the 'root' TinyXML Element
+	TiXmlElement* pRoot = doc.RootElement();
+
+	// Temp variabes to store data
+	double healthScaling;
+	double slowHealth;
+	double slowSpeed;
+	double slowRegen;
+	double slowHealthChance;
+	double slowAmmoChance;
+	double slowSuperChance;
+	double fastHealth;
+	double fastSpeed;
+	double fastRegen;
+	double fastHealthChance;
+	double fastAmmoChance;
+	double fastSuperChance;
+	double beaverHealth;
+	double beaverSpeed;
+	double beaverRegen;
+	double beaverHealthChance;
+	double beaverAmmoChance;
+	double beaverSuperChance;
+
+	// Load health scaling value
+	pRoot->FirstChildElement("health_scaling")->Attribute("value", &healthScaling);
+
+	// Load slow zombie stats
+	TiXmlElement* slowZombie = pRoot->FirstChildElement("slow_zombie");
+	slowZombie->FirstChildElement("health")->Attribute("value", &slowHealth);
+	slowZombie->FirstChildElement("speed")->Attribute("value", &slowSpeed);
+	slowZombie->FirstChildElement("regeneration")->Attribute("value", &slowRegen);
+	slowZombie->FirstChildElement("health_chance")->Attribute("value", &slowHealthChance);
+	slowZombie->FirstChildElement("ammo_chance")->Attribute("value", &slowAmmoChance);
+	slowZombie->FirstChildElement("super_chance")->Attribute("value", &slowSuperChance);
+
+	// Load fast zombie stats
+	TiXmlElement* fastZombie = pRoot->FirstChildElement("fast_zombie");
+	fastZombie->FirstChildElement("health")->Attribute("value", &fastHealth);
+	fastZombie->FirstChildElement("speed")->Attribute("value", &fastSpeed);
+	fastZombie->FirstChildElement("regeneration")->Attribute("value", &fastRegen);
+	fastZombie->FirstChildElement("health_chance")->Attribute("value", &fastHealthChance);
+	fastZombie->FirstChildElement("ammo_chance")->Attribute("value", &fastAmmoChance);
+	fastZombie->FirstChildElement("super_chance")->Attribute("value", &fastSuperChance);
+
+	// Load beaver zombie stats
+	TiXmlElement* beaverZombie = pRoot->FirstChildElement("beaver_zombie");
+	beaverZombie->FirstChildElement("health")->Attribute("value", &beaverHealth);
+	beaverZombie->FirstChildElement("speed")->Attribute("value", &beaverSpeed);
+	beaverZombie->FirstChildElement("regeneration")->Attribute("value", &beaverRegen);
+	beaverZombie->FirstChildElement("health_chance")->Attribute("value", &beaverHealthChance);
+	beaverZombie->FirstChildElement("ammo_chance")->Attribute("value", &beaverAmmoChance);
+	beaverZombie->FirstChildElement("super_chance")->Attribute("value", &beaverSuperChance);
+
+	// Assign values
+	m_fHealthScaling = (float)healthScaling;
+	m_fSlowHealth = (float)slowHealth;
+	m_fSlowSpeed = (float)slowSpeed;
+	m_fSlowRegeneration = (float)slowRegen;
+	m_fSlowHealthChance = (float)slowHealthChance;
+	m_fSlowAmmoChance = (float)slowAmmoChance;
+	m_fSlowSuperChance = (float)slowSuperChance;
+	m_fFastHealth = (float)fastHealth;
+	m_fFastSpeed = (float)fastSpeed;
+	m_fFastRegeneration = (float)fastRegen;
+	m_fFastHealthChance = (float)fastHealthChance;
+	m_fFastAmmoChance = (float)fastAmmoChance;
+	m_fFastSuperChance = (float)fastSuperChance;
+	m_fBeaverHealth = (float)beaverHealth;
+	m_fBeaverSpeed = (float)beaverSpeed;
+	m_fBeaverRegeneration = (float)beaverRegen;
+	m_fBeaverHealthChance = (float)beaverHealthChance;
+	m_fBeaverAmmoChance = (float)beaverAmmoChance;
+	m_fBeaverSuperChance = (float)beaverSuperChance;
 }
