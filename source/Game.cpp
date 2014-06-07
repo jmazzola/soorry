@@ -209,7 +209,7 @@ int Game::Main(void)
 
 		// Set the cursor position based on input and inside the window
 		if(GetActiveWindow() == hWnd)
-		SetCursorPos(X, Y);
+			SetCursorPos(X, Y);
 	}
 
 	// Let the current state handle input

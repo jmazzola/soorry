@@ -61,6 +61,7 @@
     <ClCompile Include="source\IntroState.cpp" />
     <ClCompile Include="source\Inventory.cpp" />
     <ClCompile Include="source\LaserTower.cpp" />
+    <ClCompile Include="source\LavaTrap.cpp" />
     <ClCompile Include="source\Layer.cpp" />
     <ClCompile Include="source\LoadingState.cpp" />
     <ClCompile Include="source\LoadSaveState.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="source\IntroState.h" />
     <ClInclude Include="source\Inventory.h" />
     <ClInclude Include="source\LaserTower.h" />
+    <ClInclude Include="source\LavaTrap.h" />
     <ClInclude Include="source\Layer.h" />
     <ClInclude Include="source\LoadingState.h" />
     <ClInclude Include="source\LoadSaveState.h" />

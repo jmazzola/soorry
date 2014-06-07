@@ -132,7 +132,7 @@ void Emitter::load()
 			position.y -= Camera::y;
 		}
 
-		for (int i = 0; i < maxParticles; i++)
+		for (unsigned int i = 0; i < maxParticles; i++)
 		{
 			//Create a new particle
 			Particle* tempParticle = new Particle;
@@ -329,7 +329,7 @@ bool Emitter::Update(float dt)
 			i--;
 		}
 	}
-	if (deadParticles.size() == maxParticles)
+	if (deadParticles.size() >= maxParticles)
 	{
 		allParticlesCreated = false;
 		return false;

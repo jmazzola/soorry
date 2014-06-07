@@ -29,7 +29,7 @@ public:
 	SGD::Point position;
 	SGD::Point offset = { 0, 0};
 	SGD::Size size;
-	int maxParticles;
+	unsigned int maxParticles;
 	float spawnRate;
 	int shape;
 	std::vector<Particle*> aliveParticles;

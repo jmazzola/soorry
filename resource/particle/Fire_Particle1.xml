@@ -7,7 +7,7 @@
     <shape number="0" />
   </emitter>
   <flyweight>
-    <velocity startx="0.00" starty="-10.00" endx="0" endy="-10.00" />
+    <velocity startx="0.00" starty="-10.00" endx="0" endy="-10.00" spread = "0" />
     <rotate start="0" end="0" />
     <color startA="255" startR="255" startG="255" startB="255" endA="0" endR="255" endG="255" endB="255" />
     <scale startx="2" starty="1" endx="1" endy="1" />
