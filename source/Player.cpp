@@ -437,6 +437,8 @@ void Player::Update ( float dt )
 	// Make the empty click noise
 	else if ((pInput->IsKeyDown(SGD::Key::MouseLeft) == true || pInput->GetTrigger(0) > 0.1f) && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
 	{
+		// BUG - When the wave changes and you're out of ammo, the click is played
+		// instead of the minecraft put block sound.
 		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hGunClick) == false)
 		{
 			SGD::AudioManager::GetInstance()->PlayAudio(m_hGunClick);

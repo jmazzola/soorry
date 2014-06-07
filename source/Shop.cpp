@@ -20,6 +20,8 @@
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "BitmapFont.h"
 
+#define SELL_DISCOUNT 0.75f
+
 // Enter
 void Shop::Enter(Entity* player)
 {
@@ -32,14 +34,7 @@ void Shop::Enter(Entity* player)
 
 	m_hBackgroundMain = pGraphics->LoadTexture("resource/images/menus/ShopMainBG.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/ShopBG.png");
-	for (int i = 0; i < TOTAL_ITEMS; i++)
-		m_hItem[i] = pGraphics->LoadTexture("resource/images/menus/picturePlacehold.png");
-
-	for (int i = 0; i < TOTAL_UPGRADES; i++)
-		m_hUpgrade[i] = pGraphics->LoadTexture("resource/images/menus/picturePlacehold.png");
-
-	// Load the prices
-	//LoadPrices("resource/data/shop.xml");
+	m_hTowerMain = pGraphics->LoadTexture("resource/images/menus/ShopTowersBG.png");
 
 	// Load the audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
@@ -58,14 +53,11 @@ void Shop::Exit()
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+
+	// Unload background
 	pGraphics->UnloadTexture(m_hBackground);
 	pGraphics->UnloadTexture(m_hBackgroundMain);
-
-	for (int i = 0; i < TOTAL_ITEMS; i++)
-		pGraphics->UnloadTexture(m_hItem[i]);
-
-	for (int i = 0; i < TOTAL_UPGRADES; i++)
-		pGraphics->UnloadTexture(m_hUpgrade[i]);
+	pGraphics->UnloadTexture(m_hTowerMain);
 
 	m_nMenuTab = MAIN_TAB;
 
@@ -141,6 +133,11 @@ bool Shop::Input()
 			case MainOptions::OPTIONS_UPGRADES:
 				m_nCursor = 0;
 				m_nMenuTab = UPGRADES_TAB;
+				break;
+
+			case MainOptions::OPTIONS_TOWERS:
+				m_nCursor = 0;
+				m_nMenuTab = TOWERS_TAB;
 				break;
 
 			case MainOptions::OPTIONS_EXITSHOP:
@@ -248,6 +245,58 @@ bool Shop::Input()
 		}
 
 	}
+	// Towers Tab
+	else if (m_nMenuTab == TOWERS_TAB)
+	{
+		// --- Scrolling through options ---
+		// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) down
+		if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+		{
+			// TODO: Add sound fx for going up and down
+			++m_nCursor;
+
+			// Wrap around the options
+			if (m_nCursor > TowersOptions::TOWER_GOBACK)
+				m_nCursor = TowersOptions::TOWER_MG;
+		}
+		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) up
+		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+		{
+			--m_nCursor;
+
+			// Wrap around the options
+			if (m_nCursor < TowersOptions::TOWER_MG)
+				m_nCursor = TowersOptions::TOWER_GOBACK;
+		}
+
+		// --- Selecting an option ---
+		// If the enter key (PC) or A button (Xbox 360) are pressed
+		// Select the item
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		{
+			// If we're going back
+			if (m_nCursor == TowersOptions::TOWER_GOBACK)
+			{
+				// Set it on the Items option
+				m_nCursor = MainOptions::OPTIONS_TOWERS;
+				// Go back to the main tab
+				m_nMenuTab = MAIN_TAB;
+			}
+			else
+			{
+				// If we can buy the item
+				if (Buy(m_nCursor, 2))
+					// Give the item
+					GivePurchase(m_nCursor, 2);
+			}
+		}
+		// Sell a tower
+		if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::X))
+			Sell(m_nCursor, 2);
+
+	}
 
 	return true;
 }
@@ -268,19 +317,24 @@ void Shop::Render()
 
 			// Draw options
 			if (m_nCursor == MainOptions::OPTIONS_ITEMS)
-				m_pFont->Draw("Buy Items", 200, 200, 1, { 0, 255, 0 });
+				m_pFont->Draw("Items", 200, 150, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Buy Items", 200, 200, 1, { 0, 0, 0 });
+				m_pFont->Draw("Items", 200, 150, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_UPGRADES)
-				m_pFont->Draw("Buy Upgrades", 200, 290, 1, { 0, 255, 0 });
+				m_pFont->Draw("Upgrades", 200, 200, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Buy Upgrades", 200, 290, 1, { 0, 0, 0 });
+				m_pFont->Draw("Upgrades", 200, 200, 1, { 0, 0, 0 });
+
+			if (m_nCursor == MainOptions::OPTIONS_TOWERS)
+				m_pFont->Draw("Towers", 200, 250, 1, {0, 255, 0});
+			else
+				m_pFont->Draw("Towers", 200, 250, 1, {0, 0, 0});
 
 			if (m_nCursor == MainOptions::OPTIONS_EXITSHOP)
-				m_pFont->Draw("Exit Shop", 200, 380, 1, { 0, 255, 0 });
+				m_pFont->Draw("Exit Shop", 200, 300, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Exit Shop", 200, 380, 1, { 0, 0, 0 });
+				m_pFont->Draw("Exit Shop", 200, 300, 1, { 0, 0, 0 });
 		}
 		else if (m_nMenuTab == ITEMS_TAB)
 		{
@@ -289,77 +343,29 @@ void Shop::Render()
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
-			m_pFont->Draw(money.c_str(), 570, 60, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
-			// Draw the selected image
-			pGraphics->DrawTextureSection(m_hItem[m_nCursor], { 418, 57 }, { 0, 0, 111, 111 });
+			// -- Draw the item's descriptions --
+			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
 
-			// TODO: Make the descriptions, images, AND prices be in shop.xml
-			switch (m_nCursor)
+			// -- Draw the item's price --
+			string price = "Price: ";
+			price += std::to_string(itemPrices[m_nCursor]);
+			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
+
+			// -- Draw the item's Names and highlighting --
+			for (int i = 0; i < TOTAL_ITEMS; i++)
 			{
-			case ItemsOptions::ITEM_WALL:
-				m_pFont->Draw("Walls.", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case ItemsOptions::ITEM_WINDOW:
-				m_pFont->Draw("Windows", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case ItemsOptions::ITEM_BEARTRAP:
-				m_pFont->Draw("Beartrap.", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case ItemsOptions::ITEM_MINE:
-				m_pFont->Draw("Mine.", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case ItemsOptions::ITEM_GRENADE:
-				m_pFont->Draw("Shhh-Poom.", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case ItemsOptions::ITEM_AMMO:
-				m_pFont->Draw("*chamber sound*", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-			case ItemsOptions::ITEM_GOBACK:
-				m_pFont->Draw("Go Back", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
+				// If we're currently selected
+				if (m_nCursor == i)
+					// Draw it in green
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				else
+					// Draw it in black
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
 			}
 
-			// Draw the highlighted option
-			if (m_nCursor == ItemsOptions::ITEM_WALL)
-				m_pFont->Draw("50x Walls\t100", 55, 70, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("50x Walls\t100", 55, 70, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_WINDOW)
-				m_pFont->Draw("50x Windows\t200", 55, 110, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("50x Windows\t200", 55, 110, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_BEARTRAP)
-				m_pFont->Draw("1x Beartrap\t250", 55, 150, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("1x Beartrap\t250", 55, 150, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_MINE)
-				m_pFont->Draw("1x AT-Mine\t300", 55, 190, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("1x AT-Mine\t300", 55, 190, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_GRENADE)
-				m_pFont->Draw("3x Grenades\t350", 55, 230, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("3x Grenades\t350", 55, 230, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_AMMO)
-				m_pFont->Draw("Refill Ammo\t500", 55, 270, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Refill Ammo\t500", 55, 270, 0.7f, { 0, 0, 0 });
-
-			if (m_nCursor == ItemsOptions::ITEM_GOBACK)
-				m_pFont->Draw("Go Back", 55, 310, 0.7f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Go Back", 55, 310, 0.7f, { 0, 0, 0 });
+			
 		}
 		else if (m_nMenuTab == UPGRADES_TAB)
 		{
@@ -368,96 +374,76 @@ void Shop::Render()
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
-			m_pFont->Draw(money.c_str(), 570, 60, 0.5f, { 255, 255, 255 });
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
-			// Draw the selected image
-			//pGraphics->DrawTextureSection(m_hUpgrade[m_nCursor], { 418, 57 }, { 0, 0, 111, 111 });
+			// -- Draw the upgrade's descriptions --
+			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
 
-			// TODO: Make the descriptions, images, AND prices be in shop.xml
-			switch (m_nCursor)
+			// -- Draw the upgrade's price --
+			string price = "Price: ";
+			price += std::to_string(upgradePrices[m_nCursor]);
+			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
+
+			// -- Draw the upgrades names and highlighting --
+			for (int i = 0; i < TOTAL_UPGRADES; i++)
 			{
-			case UpgradesOptions::UG_SHOTGUN_ROF:
-				m_pFont->Draw("Shotty ROF +10", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_SHOTGUN_DAMAGE:
-				m_pFont->Draw("Shotty Dmg +10", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_AR_ROF:
-				m_pFont->Draw("AR ROF +10", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_AR_DAMAGE:
-				m_pFont->Draw("AR Dmg +10.", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_LAUNCHER_ROF:
-				m_pFont->Draw("RPG ROF +10", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_LAUNCHER_DAMAGE:
-				m_pFont->Draw("RPG Dmg +10", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_GRENADE:
-				m_pFont->Draw("Donuts", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_FIREAXE:
-				m_pFont->Draw("Fireaxe", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
-
-			case UpgradesOptions::UG_GOBACK:
-				m_pFont->Draw("Go Back", 416, 208, 0.8f, { 0, 0, 0 });
-				break;
+				// If we're currently selected
+				if (m_nCursor == i)
+					// Draw it in green
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				else
+					// Draw it in black
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
 			}
 
-			// Draw the highlighted option
-			if (m_nCursor == UpgradesOptions::UG_SHOTGUN_ROF)
-				m_pFont->Draw("Shotgun- Rate of Fire 200", 50, 70, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Shotgun- Rate of Fire 200", 50, 70, 0.5f, { 0, 0, 0 });
+		}
+		else if (m_nMenuTab == TOWERS_TAB)
+		{
+			// Draw the towers items background
+			pGraphics->DrawTexture(m_hTowerMain, { 0, 0 });
 
-			if (m_nCursor == UpgradesOptions::UG_SHOTGUN_DAMAGE)
-				m_pFont->Draw("Shotgun- Damage Increase 500", 50, 100, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Shotgun- Damage Increase 500", 50, 100, 0.5f, { 0, 0, 0 });
+			// Draw the number of towers had
+			Inventory* inv = dynamic_cast<Player*>(m_pPlayer)->GetInventory();
+			string stuff = "MG Towers: ";
+			stuff += std::to_string(inv->GetMachineGunTowers());
+			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Syrup Towers: ";
+			stuff += std::to_string(inv->GetMapleSyrupTowers());
+			m_pFont->Draw(stuff.c_str(), 414, 316, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Hockey Stick Towers: ";
+			stuff += std::to_string(inv->GetHockeyStickTowers());
+			m_pFont->Draw(stuff.c_str(), 414, 336, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Laser Towers: ";
+			stuff += std::to_string(inv->GetLaserTowers());
+			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
 
-			if (m_nCursor == UpgradesOptions::UG_AR_ROF)
-				m_pFont->Draw("AR- Rate of Fire 1000", 50, 130, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("AR- Rate of Fire 1000", 50, 130, 0.5f, { 0, 0, 0 });
+			// Draw the mun-knee
+			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
-			if (m_nCursor == UpgradesOptions::UG_AR_DAMAGE)
-				m_pFont->Draw("AR- Damage Increase 3000", 50, 160, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("AR- Damage Increase 3000", 50, 160, 0.5f, { 0, 0, 0 });
+			// -- Draw the item's descriptions --
+			m_pFont->Draw(towerDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
 
-			if (m_nCursor == UpgradesOptions::UG_LAUNCHER_ROF)
-				m_pFont->Draw("RPG- Rate of Fire 5000", 50, 190, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("RPG- Rate of Fire 5000", 50, 190, 0.5f, { 0, 0, 0 });
+			// -- Draw the item's price --
+			string price = "Price: ";
+			price += std::to_string(towerPrices[m_nCursor]);
+			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
-			if (m_nCursor == UpgradesOptions::UG_LAUNCHER_DAMAGE)
-				m_pFont->Draw("RPG - Damage Increase 6500", 50, 220, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("RPG - Damage Increase 6500", 50, 220, 0.5f, { 0, 0, 0 });
+			// -- Draw the item's Names and highlighting --
+			for (int i = 0; i < TOTAL_TOWERS; i++)
+			{
+				// If we're currently selected
+				if (m_nCursor == i)
+					// Draw it in green
+					m_pFont->Draw(towerNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				else
+					// Draw it in black
+					m_pFont->Draw(towerNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+			}
 
-			if (m_nCursor == UpgradesOptions::UG_GRENADE)
-				m_pFont->Draw("Maple Donut Grenade 4000", 50, 250, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Maple Donut Grenade 4000", 50, 250, 0.5f, { 0, 0, 0 });
-
-			if (m_nCursor == UpgradesOptions::UG_FIREAXE)
-				m_pFont->Draw("Beaver Cleaver 30000", 50, 280, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Beaver Cleaver 30000", 50, 280, 0.5f, { 0, 0, 0 });
-
-			if (m_nCursor == UpgradesOptions::UG_GOBACK)
-				m_pFont->Draw("Go Back", 50, 310, 0.5f, { 0, 255, 0 });
-			else
-				m_pFont->Draw("Go Back", 50, 310, 0.5f, { 0, 0, 0 });
 		}
 	}
 }
@@ -465,12 +451,13 @@ void Shop::Render()
 // Buy
 // - check if the player has enough money
 // [in] parcel - the number of the item
-// [in] shopSection - 0 (Items) 1 (Upgrades)
+// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
 // [out] return true - has sufficient funds
 // [out] return false - has insufficient funds
 bool Shop::Buy(int parcel, int shopSection)
 {
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
+	int curMoney = player->GetScore();
 
 	switch (shopSection)
 	{
@@ -480,35 +467,110 @@ bool Shop::Buy(int parcel, int shopSection)
 		if (player->GetScore() >= itemPrices[parcel])
 		{
 			// Subtract money
-			int curMoney = player->GetScore();
 			player->SetScore(curMoney -= itemPrices[parcel]);
 			return true;
 		}
 		else
 			return false;
 	}
+
 		break;
 	case 1:
 	{
 		// If the player has the money for the upgrade
 		if (player->GetScore() >= upgradePrices[parcel])
 		{
-			int curMoney = player->GetScore();
 			player->SetScore(curMoney -= upgradePrices[parcel]);
 			return true;
 		}
 		else
 			return false;
 	}
+		break;
+
+	case 2:
+	{
+		// If the player has the money for the upgrade
+		if (player->GetScore() >= towerPrices[parcel])
+		{
+			player->SetScore(curMoney -= towerPrices[parcel]);
+			return true;
+		}
+		else
+			return false;
+	}
+		break;
+
 	}
 
 	return true;
 }
 
+// Sell
+// - Remove the selected parcel
+// - Give back 75% of the original price
+// - Add money
+// [in] parcel - the number of the item
+// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
+void Shop::Sell(int parcel, int shopSection)
+{
+	Player* player = dynamic_cast<Player*>(m_pPlayer);
+	Inventory* inv = player->GetInventory();
+	int curMoney = player->GetScore();
+
+	switch (shopSection)
+	{
+	case 0:		// items
+	{
+		player->SetScore(curMoney += int(itemPrices[parcel] * SELL_DISCOUNT));
+	}
+		break;
+
+	case 1:		// upgrades
+	{
+		player->SetScore(curMoney += int(upgradePrices[parcel] * SELL_DISCOUNT));
+	}
+		break;
+
+	case 2:		// towers
+	{
+		
+		if (parcel == TOWER_MG && inv->GetMachineGunTowers() > 0)
+		{
+			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			inv->SetMachineGunTowers(inv->GetMachineGunTowers() - 1);
+		}
+
+		if (parcel == TOWER_MAPLESYRUP && inv->GetMapleSyrupTowers() > 0)
+		{
+			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			inv->SetMapleSyrupTowers(inv->GetMapleSyrupTowers() - 1);
+		}
+
+		if (parcel == TOWER_HOCKEYSTICK && inv->GetHockeyStickTowers() > 0)
+		{
+			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			inv->SetHockeyStickTowers(inv->GetHockeyStickTowers() - 1);
+		}
+
+		if (parcel == TOWER_LASER && inv->GetLaserTowers() > 0)
+		{
+			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			inv->SetLaserTowers(inv->GetLaserTowers() - 1);
+		}
+
+		if (parcel == TOWER_GOBACK)
+			break;
+
+	}
+		break;
+	}
+}
+
 // GivePurchase
 // - give the player the item they purchased
 // [in] parcel - the item they want
-// [in] shopSection - 0 (Items) 1 (Upgrades)
+// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
 void Shop::GivePurchase(int parcel, int shopSection)
 {
 	// Grab the player's inventory
@@ -522,15 +584,15 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	if (shopSection == 0)
 	{
 		if (parcel == WALL)
-			inventory->SetWalls(inventory->GetWalls() + 50);
+			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[WALL]);
 		if (parcel == WINDOW)
-			inventory->SetWindows(inventory->GetWindows() + 50);
+			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[WINDOW]);
 		if (parcel == BEARTRAP)
-			inventory->SetBearTraps(inventory->GetBearTraps() + 1);
+			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
 		if (parcel == MINE)
-			inventory->SetMines(inventory->GetMines() + 1);
+			inventory->SetMines(inventory->GetMines() + itemAmountToAdd[MINE]);
 		if (parcel == GRENADE)
-			inventory->SetGrenades(inventory->GetGrenades() + 3);
+			inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]);
 		if (parcel == AMMO)
 		{
 			// Refill the player's ammo
@@ -547,20 +609,28 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	if (shopSection == 1)
 	{
 		if (parcel == UG_SHOTGUN_ROF)
-			weapons[1].SetFireRate(weapons[1].GetFireRate() - 10);
+			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
 		if (parcel == UG_AR_ROF)
-			weapons[0].SetFireRate(weapons[0].GetFireRate() - 10);
+			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
 		if (parcel == UG_LAUNCHER_ROF)
-			weapons[2].SetFireRate(weapons[2].GetFireRate() - 10);
+			weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
 
 		player->SetWeapons(weapons);
 	}
-
+	if (shopSection == 2)
+	{
+		if (parcel == TOWER_MG)
+			inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1);
+		if (parcel == TOWER_MAPLESYRUP)
+			inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1);
+		if (parcel == TOWER_HOCKEYSTICK)
+			inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1);
+		if (parcel == TOWER_LASER)
+			inventory->SetLaserTowers(inventory->GetLaserTowers() + 1);
+	}
 
 	// Set the player's inventory
 	player->SetInventory(inventory);
-
-
 }
 
 // LoadPrices
@@ -582,27 +652,121 @@ void Shop::LoadPrices(string xmlFileName)
 	if (pRoot == nullptr)
 		return;
 
-	// Get the element for the item prices
+
+	// -- Read Items --
+
+	// Get the element for the items
 	TiXmlElement* pItems = pRoot->FirstChildElement("items");
 
-	// Set the item prices to the array
-	itemPrices[WALL] = atoi(pItems->Attribute("wall"));
-	itemPrices[WINDOW] = atoi(pItems->Attribute("window"));
-	itemPrices[BEARTRAP] = atoi(pItems->Attribute("beartrap"));
-	itemPrices[MINE] = atoi(pItems->Attribute("mine"));
-	itemPrices[GRENADE] = atoi(pItems->Attribute("grenade"));
-	itemPrices[AMMO] = atoi(pItems->Attribute("ammo"));
+	// Grab the number of items
+	int itemCount;
+	pItems->Attribute("count", &itemCount);
 
-	// Grab the element for the upgrade prices
-	TiXmlElement* pUpgrades = pItems->NextSiblingElement("upgrades");
+	// Grab the 'item' element
+	TiXmlElement* pItem = pItems->FirstChildElement("item");
 
-	// Set the upgrades prices to the array
-	upgradePrices[SHOTGUN_ROF] = atoi(pUpgrades->Attribute("shotgun_rof"));
-	upgradePrices[SHOTGUN_DMG] = atoi(pUpgrades->Attribute("shotgun_dmg"));
-	upgradePrices[AR_ROF] = atoi(pUpgrades->Attribute("ar_rof"));
-	upgradePrices[AR_DMG] = atoi(pUpgrades->Attribute("ar_dmg"));
-	upgradePrices[RL_ROF] = atoi(pUpgrades->Attribute("rl_rof"));
-	upgradePrices[RL_DMG] = atoi(pUpgrades->Attribute("rl_dmg"));
-	upgradePrices[GRENADEUPGRADE] = atoi(pUpgrades->Attribute("grenade"));
-	upgradePrices[FIREAXE] = atoi(pUpgrades->Attribute("fireaxe"));
+	// Loop through all those items
+	for (int i = 0; i < itemCount; i++)
+	{
+		// Store the name
+		itemNames[i] = pItem->Attribute("name");
+
+		// Store the price
+
+		// -- Note, if anyone on this team can do this easier. Please tell me. It's 12:08 AM on Red Bull.
+		// Since TinyXML is a cunt and can't do unsigned ints.
+		// Lets do this
+		int fuckTinyXML = 0;
+		pItem->Attribute("price", &fuckTinyXML);
+		itemPrices[i] = (unsigned int)fuckTinyXML;
+
+		// Store the description
+		itemDescs[i] = pItem->Attribute("description");
+
+		// Store the amount to add if it exists
+		if (pItem->Attribute("amountToAdd"))
+		{
+			fuckTinyXML = 0;
+			pItem->Attribute("amountToAdd", &fuckTinyXML);
+			itemAmountToAdd[i] = (unsigned int)fuckTinyXML;
+		}
+		else
+			// Make this the number to tell we don't have anything to add
+			// since unsigned can't be negative.
+			itemAmountToAdd[i] = 0xDEAD;
+
+		// Move down to the next element of 'item'
+		pItem = pItem->NextSiblingElement("item");
+	}
+
+	// -- Read Upgrades --
+	
+	// Get the element for upgrades
+	TiXmlElement* pUpgrades = pRoot->FirstChildElement("weaponUpgrades");
+
+	// Grab the upgrade count
+	int upgradeCount;
+	pUpgrades->Attribute("count", &upgradeCount);
+	
+	// Grab the 'upgrade' element
+	TiXmlElement* pUpgrade = pUpgrades->FirstChildElement("weaponUpgrade");
+
+	// Loop through all the upgrades
+	for (int i = 0; i < upgradeCount; i++)
+	{
+		// Store the name
+		upgradeNames[i] = pUpgrade->Attribute("name");
+
+		// Store the price
+		int fuckTinyXML = 0;
+		pUpgrade->Attribute("price", &fuckTinyXML);
+		upgradePrices[i] = (unsigned int)fuckTinyXML;
+
+		// Store the description
+		upgradeDescs[i] = pUpgrade->Attribute("description");
+
+		// If amount to add exists
+		if (pUpgrade->Attribute("amountToAdd"))
+		{
+			int fuckTinyXML = 0;
+			pUpgrade->Attribute("amountToAdd", &fuckTinyXML);
+			upgradeAmountToAdd[i] = (unsigned int)fuckTinyXML;
+		}
+		else
+			upgradeAmountToAdd[i] = 0xDEAD;
+
+		// Go to the next upgrade
+		pUpgrade = pUpgrade->NextSiblingElement("weaponUpgrade");
+	}
+
+	// -- Read Towers --
+
+	// Get the element for upgrades
+	TiXmlElement* pTowers = pRoot->FirstChildElement("towers");
+
+	// Grab the tower count
+	int towerCount;
+	pTowers->Attribute("count", &towerCount);
+
+	// Grab the 'tower' element
+	TiXmlElement* pTower = pTowers->FirstChildElement("tower");
+
+	// Loop through all the towers
+	for (int i = 0; i < towerCount; i++)
+	{
+		// Store the name
+		towerNames[i] = pTower->Attribute("name");
+
+		// Store the price
+		int fuckTinyXML = 0;
+		pTower->Attribute("price", &fuckTinyXML);
+		towerPrices[i] = (unsigned int)fuckTinyXML;
+
+		// Store the description
+		towerDescs[i] = pTower->Attribute("description");
+
+		// Go to the next tower
+		pTower = pTower->NextSiblingElement("tower");
+	}
+
 }

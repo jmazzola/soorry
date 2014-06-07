@@ -153,6 +153,8 @@ int Game::Main(void)
 		return false;
 	}
 
+	// Check for new controllers
+	m_pInput->CheckForNewControllers();
 
 	if(m_pInput->IsControllerConnected(0))
 	{
