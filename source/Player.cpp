@@ -529,7 +529,7 @@ void Player::Update ( float dt )
 		if ( tower )
 			SetSelectedTower(tower);
 
-#if 0
+#if 1
 		//Colliding with wall
 		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 		{

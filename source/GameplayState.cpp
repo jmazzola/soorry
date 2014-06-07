@@ -42,6 +42,7 @@
 #include "CreateMachineGunBulletMessage.h"
 #include "CreateDroneMessage.h"
 #include "CreateTrapMessage.h"
+#include "WaveCompleteMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -1611,6 +1612,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		drone->Release();
 	}
 		break;
+	case MessageID::MSG_WAVE_COMPLETE:
+	{
+										 GameplayState* g = GameplayState::GetInstance();
+										 g->m_fSlowHealth *= g->m_fHealthScaling;
+										 g->m_fFastHealth *= g->m_fHealthScaling;
+										 g->m_fBeaverHealth *= g->m_fHealthScaling;
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1730,6 +1739,8 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
+	SGD::Point playerCenter = m_pPlayer->GetPosition() + SGD::Vector(16, 16);
+
 	switch (_Weapon)
 	{
 	case 0://Assault Rifle
@@ -1737,11 +1748,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x - 8;
 			   pos.y += Camera::y - 8;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
@@ -1755,11 +1766,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x;
 			   pos.y += Camera::y;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= (float)(750 + rand() % 500);
 
@@ -1777,11 +1788,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   Rocket* tempProj = new Rocket;
 			   tempProj->SetDamage(150);
 			   tempProj->SetLifeTime(5);
-			   tempProj->SetPosition(m_pPlayer->GetPosition());
+			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 			   pos.x += Camera::x;
 			   pos.y += Camera::y;
-			   SGD::Vector vec = pos - m_pPlayer->GetPosition();
+			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);

@@ -89,6 +89,7 @@
     <ClCompile Include="source\Tile.cpp" />
     <ClCompile Include="source\Tower.cpp" />
     <ClCompile Include="source\WallPickup.cpp" />
+    <ClCompile Include="source\WaveCompleteMessage.cpp" />
     <ClCompile Include="source\ZombieFactory.cpp" />
     <ClCompile Include="source\Weapon.cpp" />
     <ClCompile Include="source\WindowPickup.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\Tower.h" />
     <ClInclude Include="source\WallPickup.h" />
+    <ClInclude Include="source\WaveCompleteMessage.h" />
     <ClInclude Include="source\WaveData.h" />
     <ClInclude Include="source\ZombieFactory.h" />
     <ClInclude Include="source\Weapon.h" />
