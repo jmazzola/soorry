@@ -13,7 +13,6 @@ class ParticleManager
 public:
 	void Update(float dt);
 	void Render();
-	void load();
 	void unload();
 	static ParticleManager* GetInstance();
 	void activate(std::string,int,int);
