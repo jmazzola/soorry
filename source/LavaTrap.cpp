@@ -7,6 +7,7 @@ LavaTrap::LavaTrap ()
 	m_bRenderTop = false;
 	m_fImageSwitchRate = 0.5f;
 	m_fImageSwitchTimer = 0.5f;
+	m_fDamage = 0.1f;
 }
 
 
@@ -29,22 +30,19 @@ void  LavaTrap::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
 
-	// Render base image
-	pGraphics->DrawTexture ( m_hBaseImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
+	// Render base image or the lava overflowing
+	if(m_bRenderTop == false)
+		pGraphics->DrawTexture ( m_hBaseImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
+	else
+		pGraphics->DrawTexture ( m_hGunImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
+
 
 	Tower::Render ();
 }
 
 void  LavaTrap::PostRender()
 {
-	if ( m_bRenderTop == true )
-	{
-		SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
-
-		// Render spikes
-		pGraphics->DrawTexture ( m_hGunImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
-
-	}
+	
 }
 
 int   LavaTrap::GetType() const

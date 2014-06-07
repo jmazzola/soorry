@@ -35,19 +35,20 @@ void SpikeTrap::Render ()
 	// Render base image
 	pGraphics->DrawTexture ( m_hBaseImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
 
-	Tower::Render ();
-}
-
-void SpikeTrap::PostRender ()
-{
 	if ( m_fHoldTimer > 0 )
 	{
-		SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
 
 		// Render spikes
 		pGraphics->DrawTexture ( m_hGunImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
 
 	}
+
+	Tower::Render ();
+}
+
+void SpikeTrap::PostRender ()
+{
+	
 }
 
 int   SpikeTrap::GetType () const

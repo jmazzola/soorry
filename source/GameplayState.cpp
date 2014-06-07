@@ -254,8 +254,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hRangeCirclesImage = pGraphics->LoadTexture("resource/images/towers/rangeCircles.png");
 	m_hSpikeTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapDown.png");
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
-	//m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
-	//m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
+	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
+	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -579,9 +579,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
 			if(m_bIsPaused == true && pGraphics->IsCursorShowing() == false)
+			{
 				pGraphics->TurnCursorOn();
-			else if(m_bIsPaused == false && pGraphics->IsCursorShowing() == true)
-				pGraphics->TurnCursorOff();
+			}
 		}
 	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
@@ -1266,9 +1266,6 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 				if (zombieFactory->IsBuildMode())
 				{
-					
-					if(pGraphics->IsCursorShowing() == false)
-						pGraphics->TurnCursorOn();
 
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
@@ -1281,9 +1278,6 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
-					// Turn the cursor on when not in build mode
-					if(pGraphics->IsCursorShowing() == false)
-						pGraphics->TurnCursorOn();
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
