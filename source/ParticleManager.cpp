@@ -61,7 +61,6 @@ void ParticleManager::unload()
 
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
-	//NOTE: should be creating new memory?
 	Emitter* tempEmitter = new Emitter;
 	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->position = SGD::Point( (float)_x, (float)_y );

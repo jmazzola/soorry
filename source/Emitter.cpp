@@ -168,7 +168,6 @@ void Emitter::load()
 			case 1://circle
 			{
 				//MAFF very powerful
-				//NOTE:width == radius height is not used
 				float radius = (float)(rand() % (int)size.width / 2);
 				float x = size.width / 2;
 				float y = size.width / 2;
@@ -255,7 +254,6 @@ bool Emitter::Update(float dt)
 					break;
 				case 1://circle
 				{
-					//NOTE:width == radius height is not used
 					float radius = (float)(rand() % (int)size.width / 2);
 					//Point for the center of the emitter
 					SGD::Point center = SGD::Point(position.x + size.width / 2, position.y + size.width / 2);

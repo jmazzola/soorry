@@ -273,7 +273,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
-	//m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -599,7 +599,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pShop->SetShopStatus(true);
 	}
 	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+	if(zombieFactory->IsBuildMode() == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
 		zombieFactory->SetBuildTImeRemaining(0.0f);
 
 	// Toggle the camera mode
@@ -822,7 +822,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// -- Debugging Mode Input always last --
 	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
 	{
-		#define DEBUG_MAX 4
+		#define DEBUG_MAX 3
 		#define DEBUG_MIN 0
 
 		if (pInput->IsKeyPressed(SGD::Key::Up))
@@ -857,11 +857,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (pGame->GetDebugCurs() == 2)
 				pGame->SetShowPaths(!pGame->IsShowingPaths());
 
-			if (pGame->GetDebugCurs() == 3)
-				pGame->SetShowRects(!pGame->IsShowingRects());
-
 			if (pGame->GetDebugCurs() == DEBUG_MAX)
-				dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
+				pGame->SetShowRects(!pGame->IsShowingRects());
 		}
 	}
 
@@ -976,8 +973,6 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
 		Player* player = dynamic_cast<Player*>(m_pPlayer);
 
-		//Render test particles
-		m_pParticleManager->Render();
 
 		// Render the entities
 		m_pEntities->RenderAll();
@@ -1260,6 +1255,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					}
 				}
+				// render particles
+				m_pParticleManager->Render();
+
 
 				// -- Draw the score --
 				string score = "Points";
@@ -1280,7 +1278,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					//m_pFont->Draw(timeRemaining.c_str(), 180, 30, 0.6f, { 255, 255, 255 });
 
 					if (m_bHasLost == false)
-						m_pFont->Draw("Time to Build! Press Enter to Start Wave", 220, 38, 0.4f, { 255, 255, 0 });
+						m_pFont->Draw("Time to Build!", 340, 38, 0.4f, { 255, 255, 0 });
 				}
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
@@ -1369,7 +1367,6 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 				//Draw the grid rectangle
 				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-				//NOTE: why did it take this much work? did i do something wrong?
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
 				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
 				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
@@ -1446,10 +1443,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		else
 			pGraphics->DrawString("Show Collision Rects", { 20, 171 }, { 255, 0, 0 });
 
-		pGraphics->DrawString("Add 1000000 Cash", { 20, 191 }, { 255, 255, 0 });
 
-		
 	}
+
 }
 
 
@@ -1952,7 +1948,9 @@ Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
 		lava->SetPosition(SGD::Point((float)_x, (float)_y));
 		lava->SetBaseImage(m_hLavaTrapBaseImage);
 		lava->SetGunImage(m_hLavaTrapFlameImage);
-
+		CreateParticleMessage* msg = new CreateParticleMessage("Fire_Particle1",lava,8,8);
+		msg->QueueMessage();
+		msg = nullptr;
 		return lava;
 
 	}
