@@ -109,6 +109,8 @@ private:
 	unsigned int m_unFrames = 0;
 	float m_fFPSTimer = 1.0f;
 
+	
+
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
