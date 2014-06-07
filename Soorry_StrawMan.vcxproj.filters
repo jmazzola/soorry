@@ -339,6 +339,12 @@
     <ClCompile Include="source\WaveCompleteMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\MapleSyrupBullet.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateMapleSyrupBulletMessage.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
     <ClCompile Include="source\CreateGrenadeMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
@@ -637,6 +643,12 @@
     </ClInclude>
     <ClInclude Include="source\WaveCompleteMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MapleSyrupBullet.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateMapleSyrupBulletMessage.h">
+      <Filter>Towers/Traps</Filter>
     </ClInclude>
     <ClInclude Include="source\CreateGrenadeMessage.h">
       <Filter>Messages</Filter>

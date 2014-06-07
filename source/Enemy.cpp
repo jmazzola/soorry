@@ -8,6 +8,7 @@
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
 #include "Camera.h"
 #include "Game.h"
 #include "SpikeTrap.h"
@@ -23,6 +24,7 @@ Enemy::Enemy() : Listener(this)
 	m_fTrapTimer = 0;
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
+	m_fSlowTime = 0.0f;
 	m_bIsInLava = false;
 	RegisterForEvent("GRENADE_EXPLOSION");
 }
@@ -39,7 +41,9 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
+	// Update timers
 	m_fTrapTimer -= dt;
+	m_fSlowTime -= dt;
 
 	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
 	{
@@ -163,6 +167,9 @@ int Enemy::GetType() const
 		case ENT_MACHINE_GUN_BULLET:
 			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
 			break;
+		case ENT_MAPLE_SYRUP_BULLET:
+			m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
+			break;
 			//NOTE: may have to delete
 		case ENT_TRAP_MINE:
 			m_nCurrHealth = 0;
@@ -235,10 +242,15 @@ float Enemy::GetAttackRange() const
 
 float Enemy::GetSpeed() const
 {
-	if(m_bIsInLava == true)
-		return m_fSpeed * .50f;
-	else
-		return m_fSpeed;
+	float speed = m_fSpeed;
+
+	if (m_bIsInLava)
+		speed *= 0.5f;
+
+	if (m_fSlowTime > 0.0f)
+		speed *= 0.2f;
+
+	return speed;
 }
 
 float Enemy::GetHealthChance() const

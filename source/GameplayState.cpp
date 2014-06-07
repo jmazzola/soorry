@@ -44,6 +44,7 @@
 #include "CreateDroneMessage.h"
 #include "CreateTrapMessage.h"
 #include "WaveCompleteMessage.h"
+#include "CreateMapleSyrupBulletMessage.h"
 #include "CreateGrenadeMessage.h"
 
 //Object Includes
@@ -80,6 +81,7 @@
 #include "LavaTrap.h"
 
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
 
 #include "../TinyXML/tinyxml.h"
 
@@ -252,6 +254,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hMachineGunGunImage = pGraphics->LoadTexture("resource/images/towers/machineGunGun.png");
 	m_hMachineGunBulletImage = pGraphics->LoadTexture("resource/images/towers/machineGunBullet.png");
 	m_hMapleSyrupBaseImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBase.png");
+	m_hMapleSyrupGunImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupGun.png");
+	m_hMapleSyrupBulletImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBullet.png");
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
@@ -456,6 +460,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hMachineGunGunImage);
 	pGraphics->UnloadTexture(m_hMachineGunBulletImage);
 	pGraphics->UnloadTexture(m_hMapleSyrupBaseImage);
+	pGraphics->UnloadTexture(m_hMapleSyrupGunImage);
+	pGraphics->UnloadTexture(m_hMapleSyrupBulletImage);
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
@@ -1610,6 +1616,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 													bullet->Release();
 	}
 		break;
+	case MessageID::MSG_CREATE_MAPLE_SYRUP_BULLET:
+	{
+													 const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
+													 GameplayState* g = GameplayState::GetInstance();
+													 Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
+													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													 bullet->Release();
+	}
+		break;
 	case MessageID::MSG_CREATE_DRONE:
 	{
 		const CreateDroneMessage* pCreateMessage = dynamic_cast<const CreateDroneMessage*>(pMsg);
@@ -1913,6 +1928,7 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												  tower->SetBaseImage(m_hMapleSyrupBaseImage);
+												  tower->SetGunImage(m_hMapleSyrupGunImage);
 
 												  return tower;
 	}
@@ -2009,6 +2025,18 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 	bullet->SetPosition(SGD::Point((float)_x, (float)_y));
 	bullet->SetDamage(_damage);
 	bullet->SetImage(m_hMachineGunBulletImage);
+	bullet->SetVelocity(_velocity);
+
+	return bullet;
+}
+
+Entity* GameplayState::CreateMapleSyrupBullet(int _x, int _y, SGD::Vector _velocity, float _slowTime) const
+{
+	MapleSyrupBullet* bullet = new MapleSyrupBullet;
+
+	bullet->SetPosition(SGD::Point((float)_x, (float)_y));
+	bullet->SetSlowTime(_slowTime);
+	bullet->SetImage(m_hMapleSyrupBulletImage);
 	bullet->SetVelocity(_velocity);
 
 	return bullet;

@@ -66,6 +66,7 @@ protected:
 	float m_fHealthChance;
 	float m_fAmmoChance;
 	float m_fSuperChance;
+	float m_fSlowTime;
 	bool m_bIsTrapped;
 	bool m_bIsInLava;
 	AIComponent m_AIComponent;
