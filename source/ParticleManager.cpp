@@ -11,12 +11,9 @@ ParticleManager::ParticleManager()
 {
 }
 
-
 ParticleManager::~ParticleManager()
 {
-
 }
-
 
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -28,7 +25,14 @@ void ParticleManager::Update(float dt)
 {
 	for (unsigned int i = 0; i < activeEmitters.size(); i++)
 	{
-		activeEmitters[i]->Update(dt);
+		if (activeEmitters[i]->Update(dt) == false)
+		{
+			Emitter* tempEmitter;
+			tempEmitter = activeEmitters[i];
+			activeEmitters.erase(activeEmitters.begin() + i);
+			delete tempEmitter;
+			tempEmitter = nullptr;
+		}
 	}
 }
 
@@ -39,16 +43,44 @@ void ParticleManager::Render()
 		activeEmitters[i]->Render();
 	}
 }
-void ParticleManager::load()
+
+void ParticleManager::unload()
 {
 	for (unsigned int i = 0; i < activeEmitters.size(); i++)
 	{
-		//NOTE for later: should switch to map so its not just the active emitters
-		activeEmitters[i]->load();
+		delete activeEmitters[i];
 	}
+	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
+	{
+		SGD::GraphicsManager::GetInstance()->UnloadTexture(loadedEmitters.at(iter->first)->particleFlyweight->image);
+		delete loadedEmitters.at(iter->first);
+	}
+	activeEmitters.clear();
+	loadedEmitters.clear();
 }
 
-bool ParticleManager::loadEmitters(std::string fileName)
+void ParticleManager::activate(std::string _emitterID,int _x, int _y)
+{
+	Emitter* tempEmitter = new Emitter;
+	*tempEmitter = *loadedEmitters[_emitterID];
+	tempEmitter->position = SGD::Point( (float)_x, (float)_y );
+	tempEmitter->load();
+	tempEmitter->emitterID = activeEmitters.size();
+	activeEmitters.push_back(tempEmitter);
+}
+
+void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
+{
+	Emitter* tempEmitter = new Emitter;
+ 	*tempEmitter = *loadedEmitters[_emitterID];
+	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
+	tempEmitter->followEnitiy = _entity;
+	tempEmitter->load();
+	tempEmitter->emitterID = activeEmitters.size();
+	activeEmitters.push_back(tempEmitter);
+}
+
+bool ParticleManager::loadEmitter(std::string fileName)
 {
 	TiXmlDocument doc(fileName.c_str());
 	if (doc.LoadFile())
@@ -57,7 +89,7 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		double width, height, tempDouble, x, y, a, r, g, b;
 		int tempInt;
 		bool tempBool;
-		std::string tempStr; 
+		std::string tempStr;
 		Emitter* tempEmitter = new Emitter;
 		ParticleFlyweight* tempFlyweight = new ParticleFlyweight;
 		TiXmlElement* root, *emitter, *flyweight, *data;
@@ -109,10 +141,10 @@ bool ParticleManager::loadEmitters(std::string fileName)
 		tempFlyweight->endRotation = (float)tempDouble;
 		//Read XML for Flyweight color
 		data = data->NextSiblingElement("color");
-		data->Attribute("startA",&a);
-		data->Attribute("startR",&r);
-		data->Attribute("startG",&g);
-		data->Attribute("startB",&b);
+		data->Attribute("startA", &a);
+		data->Attribute("startR", &r);
+		data->Attribute("startG", &g);
+		data->Attribute("startB", &b);
 		tempFlyweight->startColor = SGD::Color((unsigned char)a, (unsigned char)r, (unsigned char)g, (unsigned char)b);
 		data->Attribute("endA", &a);
 		data->Attribute("endR", &r);
@@ -163,43 +195,5 @@ bool ParticleManager::loadEmitters(std::string fileName)
 	}
 	else
 		return false;
-}
-
-Emitter* ParticleManager::createEmitter(std::string emitterID, std::string filename)
-{
-	if (loadEmitters(filename))
-	{
-		return loadedEmitters[emitterID];
-	}
-	return nullptr;
-}
-
-void ParticleManager::unload()
-{
-	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
-	{
-		delete loadedEmitters.at(iter->first);
-	}
-	activeEmitters.clear();
-	loadedEmitters.clear();
-}
-void ParticleManager::activate(std::string _emitterID,int _x, int _y)
-{
-	//NOTE: should be creating new memory?
-	Emitter* tempEmitter;
-	tempEmitter = loadedEmitters[_emitterID];
-	tempEmitter->position = SGD::Point( (float)_x, (float)_y );
-	tempEmitter->load();
-	activeEmitters.push_back(tempEmitter);
-}
-
-void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
-{
-	Emitter* tempEmitter;
-	tempEmitter = loadedEmitters[_emitterID];
-	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
-	tempEmitter->followEnitiy = _entity;
-	tempEmitter->load();
-	activeEmitters.push_back(tempEmitter);
 }
 

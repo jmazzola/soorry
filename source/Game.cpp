@@ -152,6 +152,10 @@ int Game::Main(void)
 		// Disable the 'Enter' input
 		return false;
 	}
+
+	// Check for new controllers
+	m_pInput->CheckForNewControllers();
+
 	if(m_pInput->IsControllerConnected(0))
 	{
 		// Grab the input from the right joystick
@@ -205,7 +209,7 @@ int Game::Main(void)
 
 		// Set the cursor position based on input and inside the window
 		if(GetActiveWindow() == hWnd)
-		SetCursorPos(X, Y);
+			SetCursorPos(X, Y);
 	}
 
 	// Let the current state handle input

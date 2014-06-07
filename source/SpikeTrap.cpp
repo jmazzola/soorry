@@ -4,10 +4,10 @@
 
 SpikeTrap::SpikeTrap ()
 {
-	m_fDamage = 0.02f;
-	m_fAttackCD = 2.0f;
+	m_fDamage = 5.5f;
+	m_fAttackCD = 1.0f;
 	m_fAttackTimer = 0.0f;
-	m_fHoldLength = 0.5f;
+	m_fHoldLength = 0.2f;
 	m_fHoldTimer = 0.0f;
 }
 
@@ -35,19 +35,20 @@ void SpikeTrap::Render ()
 	// Render base image
 	pGraphics->DrawTexture ( m_hBaseImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
 
-	Tower::Render ();
-}
-
-void SpikeTrap::PostRender ()
-{
 	if ( m_fHoldTimer > 0 )
 	{
-		SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance ();
 
 		// Render spikes
 		pGraphics->DrawTexture ( m_hGunImage , SGD::Point ( m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y ) );
 
 	}
+
+	Tower::Render ();
+}
+
+void SpikeTrap::PostRender ()
+{
+	
 }
 
 int   SpikeTrap::GetType () const

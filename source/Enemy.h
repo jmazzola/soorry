@@ -33,6 +33,7 @@ public:
 	float GetHealthChance() const;
 	float GetAmmoChance() const;
 	float GetSuperChance() const;
+	bool GetInLava() const;
 
 	/**********************************************************/
 	// Mutators
@@ -47,6 +48,7 @@ public:
 	void SetHealthChance(float chance);
 	void SetAmmoChance(float chance);
 	void SetSuperChance(float chance);
+	void SetInLava(bool slowed);
 
 protected:
 
@@ -65,6 +67,7 @@ protected:
 	float m_fSuperChance;
 	float m_fSlowTime;
 	bool m_bIsTrapped;
+	bool m_bIsInLava;
 	AIComponent m_AIComponent;
 };
 

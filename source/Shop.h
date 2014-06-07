@@ -41,15 +41,26 @@ public:
 	// Buy
 	bool Buy(int parcel, int shopSection);
 
+	// Sell
+	void Sell(int parcel, int shopSection);
+
 	// GivePurchase
 	void GivePurchase(int parcel, int shopSection);
 
 	// Load Prices
 	void LoadPrices(string xmlFileName);
 
-	// Price enumeration
-	enum ItemPrices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, TOTAL_ITEMS };
-	enum UpgradePrices{ SHOTGUN_ROF, SHOTGUN_DMG, AR_ROF, AR_DMG, RL_ROF, RL_DMG, GRENADEUPGRADE, FIREAXE, TOTAL_UPGRADES};
+	// -- Price enumeration --
+
+	// Item prices
+	enum ItemPrices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, ITEMGB, TOTAL_ITEMS };
+
+	// Upgrade prices
+	enum UpgradePrices{ SHOTGUN_ROF, SHOTGUN_DMG, AR_ROF, AR_DMG, RL_ROF, RL_DMG, GRENADEUPGRADE, UGGB, TOTAL_UPGRADES};
+
+	// Tower prices
+	enum TowerPrices { MG, MAPLE_SYRUP, HOCKEY_STICK, LASER, TOWERGB, TOTAL_TOWERS};
+
 
 	// Accessors
 	bool IsOpen();
@@ -65,20 +76,32 @@ private:
 	// Is the shop open?
 	bool m_bIsOpen;
 
-	// Prices of the items
+	// --- Items ---
+	string itemNames[TOTAL_ITEMS];
+	string itemDescs[TOTAL_ITEMS];
 	unsigned int itemPrices[TOTAL_ITEMS];
+	unsigned int itemAmountToAdd[TOTAL_ITEMS];
 
-	// Prices of the upgrades
+	// --- Weapon Upgrades ---
+	string upgradeNames[TOTAL_UPGRADES];
+	string upgradeDescs[TOTAL_UPGRADES];
 	unsigned int upgradePrices[TOTAL_UPGRADES];
+	unsigned int upgradeAmountToAdd[TOTAL_UPGRADES];
+
+
+	// --- Towers ---
+	string towerNames[TOTAL_TOWERS];
+	string towerDescs[TOTAL_TOWERS];
+	unsigned int towerPrices[TOTAL_TOWERS];
+	unsigned int towerAmountToAdd[TOTAL_TOWERS];
 
 	// Textures
 	// - Backgrounds
 	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBackgroundMain = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hTowerMain = SGD::INVALID_HANDLE;
 
-	// - Items
-	SGD::HTexture m_hItem[TOTAL_ITEMS];
-	SGD::HTexture m_hUpgrade[TOTAL_UPGRADES];
+	SGD::HTexture m_hShopItems;		// TODO: Make shop sheet
 
 	//Audio
 	SGD::HAudio m_hShopMusic;
@@ -94,14 +117,20 @@ private:
 	Entity* m_pPlayer;
 
 	// Shop tabs
-	enum ShopTabs { MAIN_TAB, ITEMS_TAB, UPGRADES_TAB };
+	enum ShopTabs { MAIN_TAB, ITEMS_TAB, UPGRADES_TAB, TOWERS_TAB };
 
 	// Shop's main tab options
-	enum MainOptions { OPTIONS_ITEMS, OPTIONS_UPGRADES, OPTIONS_EXITSHOP };
+	enum MainOptions { OPTIONS_ITEMS, OPTIONS_UPGRADES, OPTIONS_TOWERS, OPTIONS_EXITSHOP };
+
+	// Shop's items tab options
 	enum ItemsOptions { ITEM_WALL, ITEM_WINDOW, ITEM_BEARTRAP, ITEM_MINE, ITEM_GRENADE, ITEM_AMMO, ITEM_GOBACK };
 
+	// Shop's upgrade tab options
 	enum UpgradesOptions { UG_SHOTGUN_ROF, UG_SHOTGUN_DAMAGE, UG_AR_ROF, UG_AR_DAMAGE, UG_LAUNCHER_ROF, UG_LAUNCHER_DAMAGE,
-							UG_GRENADE, UG_FIREAXE, UG_GOBACK };
+							UG_GRENADE, UG_GOBACK };
+
+	// Shop's towers tab options
+	enum TowersOptions { TOWER_MG, TOWER_MAPLESYRUP, TOWER_HOCKEYSTICK, TOWER_LASER, TOWER_GOBACK};
 
 
 };

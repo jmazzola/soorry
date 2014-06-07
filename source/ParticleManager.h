@@ -13,14 +13,12 @@ class ParticleManager
 public:
 	void Update(float dt);
 	void Render();
-	void load();
 	void unload();
 	static ParticleManager* GetInstance();
 	void activate(std::string,int,int);
 	void activate(std::string _emitterID, Entity* _entity, int _x, int _y);
 	ParticleManager();
 	~ParticleManager();
-	bool loadEmitters(std::string fileName);
-	Emitter* createEmitter(std::string emitterID,std::string filename);
+	bool loadEmitter(std::string fileName);
 };
 

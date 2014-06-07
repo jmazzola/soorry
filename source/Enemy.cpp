@@ -8,9 +8,11 @@
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
 #include "Camera.h"
 #include "Game.h"
 #include "SpikeTrap.h"
+#include "LavaTrap.h"
 
 #define HEALTH_BAR 1
 
@@ -22,6 +24,7 @@ Enemy::Enemy() : Listener(this)
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
 	m_fSlowTime = 0.0f;
+	m_bIsInLava = false;
 }
 
 
@@ -90,6 +93,7 @@ void Enemy::Update(float dt)
 		m_fTrapTimer = 2;
 		m_bIsTrapped = false;
 	}
+	m_bIsInLava = false;
 }
 
 void Enemy::Render()
@@ -160,6 +164,9 @@ int Enemy::GetType() const
 		case ENT_MACHINE_GUN_BULLET:
 			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
 			break;
+		case ENT_MAPLE_SYRUP_BULLET:
+			m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
+			break;
 			//NOTE: may have to delete
 		case ENT_TRAP_MINE:
 			m_nCurrHealth = 0;
@@ -174,7 +181,9 @@ int Enemy::GetType() const
 			break;
 		case ENT_TRAP_LAVA:
 		{
-			// DO LAVA DAMAGE HERE
+			const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
+			m_nCurrHealth -= lava->GetDamage();
+			m_bIsInLava = true;
 		}
 			break;
 
@@ -216,7 +225,15 @@ float Enemy::GetAttackRange() const
 
 float Enemy::GetSpeed() const
 {
-	return m_fSpeed;
+	float speed = m_fSpeed;
+
+	if (m_bIsInLava)
+		speed *= 0.5f;
+
+	if (m_fSlowTime > 0.0f)
+		speed *= 0.2f;
+
+	return speed;
 }
 
 float Enemy::GetHealthChance() const
@@ -232,6 +249,11 @@ float Enemy::GetAmmoChance() const
 float Enemy::GetSuperChance() const
 {
 	return m_fSuperChance;
+}
+
+bool Enemy::GetInLava() const
+{
+	return m_bIsInLava;
 }
 
 /**********************************************************/
@@ -290,4 +312,9 @@ void Enemy::SetAmmoChance(float _chance)
 void Enemy::SetSuperChance(float _chance)
 {
 	m_fSuperChance = _chance;
+}
+
+void Enemy::SetInLava(bool yes)
+{
+	m_bIsInLava = yes;
 }

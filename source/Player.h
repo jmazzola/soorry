@@ -41,7 +41,7 @@ public:
 	virtual void HandleCollision(const IEntity* pOther) override;
 	bool Blockable(SGD::Point mouse);
 	virtual void HandleEvent(const SGD::Event* pEvent);
-	bool PlacementCheck(SGD::Point mouse);
+	bool PlacementCheck(SGD::Point mouse, bool isPassable = false);
 	/**********************************************************/
 	// Accessors
 	float GetMaxHealth() const;

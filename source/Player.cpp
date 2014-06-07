@@ -232,6 +232,14 @@ void Player::Update ( float dt )
 
 		pInput->SetMousePosition ( dir );
 	}
+	else if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode () == true )
+	{
+		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		pos.x += shoot.x * 2;
+		pos.y += shoot.y * 2;
+
+		pInput->SetMousePosition( pos );
+	}
 
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
 	// Grab the mouse movement to hide the cursor if necessary
@@ -429,6 +437,8 @@ void Player::Update ( float dt )
 	// Make the empty click noise
 	else if ((pInput->IsKeyDown(SGD::Key::MouseLeft) == true || pInput->GetTrigger(0) > 0.1f) && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
 	{
+		// BUG - When the wave changes and you're out of ammo, the click is played
+		// instead of the minecraft put block sound.
 		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hGunClick) == false)
 		{
 			SGD::AudioManager::GetInstance()->PlayAudio(m_hGunClick);
@@ -602,7 +612,8 @@ void Player::Update ( float dt )
 	else
 	{
 		// Place item
-		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && PlacementCheck ( pos )  )
+		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps () > 0 )
@@ -734,7 +745,17 @@ void Player::Update ( float dt )
 			}
 			else if ( m_nCurrPlaceable == 8 && m_pInventory->GetLavaTraps () > 0 )
 			{
-				// DO LAVA TRAP HERE
+				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTrapMessage::TRAP_LAVA);
+				msg->QueueMessage();
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
 
 			}
 			else if ( m_nCurrPlaceable == 9 && m_pInventory->GetSpikeTraps () > 0 )
@@ -780,8 +801,11 @@ void Player::PostRender()
 	if (m_pZombieWave->IsBuildMode())
 	{
 		// Check if legal placement
-		bool legalPlacement = PlacementCheck(tilePos);
-
+		bool legalPlacement;
+		if(m_nCurrPlaceable < 8)
+			legalPlacement = PlacementCheck(tilePos);
+		else
+			legalPlacement = PlacementCheck(tilePos, true);
 		// Walls
 		if (m_nCurrPlaceable == 0)
 		{
@@ -1292,7 +1316,7 @@ bool Player::CheckLegalPlacement(Node end, Node block)
 	return false;
 }
 
-bool Player::PlacementCheck ( SGD::Point mouse )
+bool Player::PlacementCheck ( SGD::Point mouse , bool isPassable)
 {
 	WorldManager* pWorld = WorldManager::GetInstance();
 
@@ -1302,7 +1326,11 @@ bool Player::PlacementCheck ( SGD::Point mouse )
 	bool a = Blockable(mouse);
 	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
 	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
-	bool d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+	bool d;
+	if(isPassable == false)
+		d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+	else
+		d = true;
 
 	if (a
 		&& b
