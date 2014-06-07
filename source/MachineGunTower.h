@@ -6,15 +6,15 @@ class MachineGunTower : public Tower
 {
 public:
 
+	MachineGunTower();
+	~MachineGunTower();
+
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render() override;
 	virtual void PostRender() override;
 	virtual int GetType() const override;
-
-	MachineGunTower();
-	~MachineGunTower();
 
 	/**********************************************************/
 	// Accessors

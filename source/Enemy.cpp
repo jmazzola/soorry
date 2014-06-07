@@ -21,6 +21,7 @@ Enemy::Enemy() : Listener(this)
 	m_fTrapTimer = 0;
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
+	m_fSlowTime = 0.0f;
 }
 
 
@@ -34,7 +35,9 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
+	// Update timers
 	m_fTrapTimer -= dt;
+	m_fSlowTime -= dt;
 
 	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
 	{

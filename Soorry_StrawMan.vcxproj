@@ -33,6 +33,7 @@
     <ClCompile Include="source\CreateDroneMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
+    <ClCompile Include="source\CreateMapleSyrupBulletMessage.cpp" />
     <ClCompile Include="source\CreateParticleMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
     <ClCompile Include="source\CreatePlaceableMessage.cpp" />
@@ -67,6 +68,7 @@
     <ClCompile Include="source\MachineGunBullet.cpp" />
     <ClCompile Include="source\MachineGunTower.cpp" />
     <ClCompile Include="source\MainMenuState.cpp" />
+    <ClCompile Include="source\MapleSyrupBullet.cpp" />
     <ClCompile Include="source\MapleSyrupTower.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
@@ -131,6 +133,7 @@
     <ClInclude Include="source\CreateDroneMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
+    <ClInclude Include="source\CreateMapleSyrupBulletMessage.h" />
     <ClInclude Include="source\CreateParticleMessage.h" />
     <ClInclude Include="source\CreatePickupMessage.h" />
     <ClInclude Include="source\CreatePlaceableMessage.h" />
@@ -167,6 +170,7 @@
     <ClInclude Include="source\MachineGunBullet.h" />
     <ClInclude Include="source\MachineGunTower.h" />
     <ClInclude Include="source\MainMenuState.h" />
+    <ClInclude Include="source\MapleSyrupBullet.h" />
     <ClInclude Include="source\MapleSyrupTower.h" />
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
