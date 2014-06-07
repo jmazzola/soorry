@@ -232,6 +232,14 @@ void Player::Update ( float dt )
 
 		pInput->SetMousePosition ( dir );
 	}
+	else if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode () == true )
+	{
+		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
+		pos.x += shoot.x * 2;
+		pos.y += shoot.y * 2;
+
+		pInput->SetMousePosition( pos );
+	}
 
 	SGD::GraphicsManager * pGraphics = SGD::GraphicsManager::GetInstance ();
 	// Grab the mouse movement to hide the cursor if necessary
@@ -731,7 +739,17 @@ void Player::Update ( float dt )
 			}
 			else if ( m_nCurrPlaceable == 8 && m_pInventory->GetLavaTraps () > 0 )
 			{
-				// DO LAVA TRAP HERE
+				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+						CreateTrapMessage::TRAP_LAVA);
+				msg->QueueMessage();
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
+				{
+					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
+				}
+				// Decreasing the amount of machine gun towers left for the player
+				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
 
 			}
 			else if ( m_nCurrPlaceable == 9 && m_pInventory->GetSpikeTraps () > 0 )

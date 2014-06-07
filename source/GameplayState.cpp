@@ -73,7 +73,7 @@
 #include "HockeyStickTower.h"
 #include "LaserTower.h"
 #include "SpikeTrap.h"
-//#include "FlameTrap.h"
+#include "LavaTrap.h"
 
 #include "MachineGunBullet.h"
 
@@ -1266,9 +1266,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 				if (zombieFactory->IsBuildMode())
 				{
-					// Turn the cursor off for build mode
-					/*if(pGraphics->IsCursorShowing() == true)
-						pGraphics->TurnCursorOff();*/
+					
+					if(pGraphics->IsCursorShowing() == false)
+						pGraphics->TurnCursorOn();
 
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
@@ -1282,6 +1282,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 				{
 					// Turn the cursor on when not in build mode
+					if(pGraphics->IsCursorShowing() == false)
+						pGraphics->TurnCursorOn();
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
@@ -1929,13 +1931,13 @@ Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
 		break;
 	case CreateTrapMessage::TRAP_LAVA:
 	{
-		//LavaTrap* lava = new LavaTrap;
+		LavaTrap* lava = new LavaTrap;
 
-		//lava->SetPosition(SGD::Point((float)_x, (float)_y));
-		//lava->SetBaseImage(m_hLavaTrapBaseImage);
-		//lava->SetGunImage(m_hLavaTrapFlameImage);
+		lava->SetPosition(SGD::Point((float)_x, (float)_y));
+		lava->SetBaseImage(m_hLavaTrapBaseImage);
+		lava->SetGunImage(m_hLavaTrapFlameImage);
 
-		//return lava;
+		return lava;
 
 	}
 		break;
