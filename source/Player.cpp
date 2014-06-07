@@ -403,6 +403,8 @@ void Player::Update ( float dt )
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
 		{
@@ -413,10 +415,6 @@ void Player::Update ( float dt )
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 			
-			// If we have infinite ammo, don't subtract
-			if (!pGame->HasInfAmmo())
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
-
 			// If you don't have the super buff
 			if ( m_fSuperTimer <= 0.0f )
 			{
