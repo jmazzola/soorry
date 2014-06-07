@@ -20,7 +20,6 @@ public:
 	void activate(std::string _emitterID, Entity* _entity, int _x, int _y);
 	ParticleManager();
 	~ParticleManager();
-	bool loadEmitters(std::string fileName);
-	Emitter* createEmitter(std::string emitterID,std::string filename);
+	bool loadEmitter(std::string fileName);
 };
 

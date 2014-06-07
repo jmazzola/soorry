@@ -121,6 +121,7 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 
 void Emitter::load()
 {
+	
 	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
@@ -208,11 +209,11 @@ void Emitter::load()
 			deadParticles.push_back(tempParticle);
 			spawnRate = deadParticles.size() / ((particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime) / 2);
 		}
-		allParticlesCreated = true;
+ 		allParticlesCreated = true;
 	}
 }
 
-void Emitter::Update(float dt)
+bool Emitter::Update(float dt)
 {
 	if (followEnitiy != nullptr)
 	{
@@ -220,10 +221,12 @@ void Emitter::Update(float dt)
 		position.x -= Camera::x;
 		position.y -= Camera::y;
 	}
+	
 	if (isLooping)
 	{
+		//NOTE: may cause bugs not sure
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)
-			return;
+			return false;
 		for (float i = 0; i < spawnRate*dt; i++)
 		{
 			//create Particle then add it to the alive particles
@@ -326,7 +329,14 @@ void Emitter::Update(float dt)
 			i--;
 		}
 	}
+	if (deadParticles.size() == maxParticles)
+	{
+		allParticlesCreated = false;
+		return false;
+	}
+	return true;
 }
+
 void Emitter::Render()
 {
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)

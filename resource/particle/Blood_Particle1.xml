@@ -12,7 +12,7 @@
     <color startA="255" startR="255" startG="255" startB="255" endA="0" endR="255" endG="255" endB="255" />
     <scale startx="2.00" starty="2.00" endx="0" endy="0" />
     <size width="16" height="8" />
-    <lifetime max="2" min="1" />
+    <lifetime max="1" min=".5" />
     <particleID>Blood_Particle1</particleID>
     <image name="blood_particle1.png" />
   </flyweight>

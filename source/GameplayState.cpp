@@ -271,7 +271,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitters("resource/particle/Blood_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
 	//m_pParticleManager->loadEmitters("resource/particle/smokeparticle.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -1505,6 +1505,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 											 GameplayState* self = GameplayState::GetInstance();
 											 if (pCreateMessage->GetWeaponNumber() == 1)
 											 {
+												 SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
 												 for (int i = 0; i < 9; i++)
 												 {
 													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
@@ -1766,7 +1767,6 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   // Rotate bullet at random direction
 			   float degree = (-50 + rand() % 100) / 100.0f;
 			   vec.Rotate(degree);
-			   SGD::AudioManager::GetInstance()->PlayAudio(m_hShotgunShoot);
 
 			   tempProj->SetVelocity(vec);
 			   return tempProj;

@@ -52,12 +52,12 @@ void Drone::Update(float dt)
 		//center point
 		SGD::Point center = SGD::Point(x, y);
 		//Angle that will incriment to spin it around the player
-		m_fAngle += 0.02f;
+		m_fAngle += 2*dt;
 
 		//If the angle is over 360 reset to 0
 		if (m_fAngle > 360)
 			m_fAngle = 0;
-		//set position to the center plus 
+		//set position to the center plus the angle spot 
 		m_ptPosition.x = center.x + (radius*cosf(m_fAngle));
 		m_ptPosition.y = center.y + (radius*sinf(m_fAngle));
 
