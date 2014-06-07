@@ -531,19 +531,22 @@ void Player::Update ( float dt )
 
 #if 1
 		//Colliding with wall
-		if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
+		else
 		{
-			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WALL, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
-			pmsg->QueueMessage();
-			pmsg = nullptr;
-		}
-		else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
-		{
-			pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
-			CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WINDOW, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
-			pmsg->QueueMessage();
-			pmsg = nullptr;
+			if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
+			{
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
+				CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WALL, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+				pmsg->QueueMessage();
+				pmsg = nullptr;
+			}
+			else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
+			{
+				pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
+				CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WINDOW, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
+				pmsg->QueueMessage();
+				pmsg = nullptr;
+			}
 		}
 #endif
 	}
