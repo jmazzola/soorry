@@ -40,7 +40,7 @@ using namespace std;
 
 #include <cfloat>
 
-#define SCROLL_SPEED 0.04f;
+#define SCROLL_SPEED 35.0f
 
 
 /**************************************************************/
@@ -156,7 +156,7 @@ using namespace std;
 	{
 		// Move the credits
 		textPosition.x = 220;
-		textPosition.y -= SCROLL_SPEED;
+		textPosition.y -= (SCROLL_SPEED * elapsedTime);
 
 		// Reset the transition time to allow for transitions again
 		m_fTransitionTime = TRANSITION_TIME;
@@ -202,7 +202,8 @@ using namespace std;
 					  Artists\n\
 					  Gregory Bey\n\
 					  Caris Frazier\n\
-					  Justin Mazzola\n\n\
+					  Justin Mazzola\n\
+					  Justin Patterson\n\n\
 					  Special Thanks\n\
 					  Jordan Butler for ideas.";
 
