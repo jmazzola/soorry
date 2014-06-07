@@ -1,6 +1,7 @@
 #include "Emitter.h"
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
+#include "WorldManager.h"
 #include "Particle.h"
 #include <ctime>
 #include <math.h>
@@ -129,8 +130,6 @@ void Emitter::load()
 		if (followEnitiy != nullptr)
 		{
 			position = followEnitiy->GetPosition();
-			position.x -= Camera::x;
-			position.y -= Camera::y;
 		}
 
 		for (unsigned int i = 0; i < maxParticles; i++)
@@ -218,10 +217,7 @@ bool Emitter::Update(float dt)
 	if (followEnitiy != nullptr)
 	{
 		position = followEnitiy->GetPosition();
-		position.x -= Camera::x;
-		position.y -= Camera::y;
 	}
-	
 	if (isLooping)
 	{
 		//NOTE: may cause bugs not sure

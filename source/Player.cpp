@@ -350,14 +350,6 @@ void Player::Update ( float dt )
 	{
 		pAudio->StopAudio(m_hWalking);
 	}
-	// For testing purposes BLOOOOOOD
-	if (pInput->IsKeyPressed(SGD::Key::Space))
-	{
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
-	}
-	
 	//GAH Weapons! - Arnold
 	//Switch to Slot One
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
@@ -1057,7 +1049,9 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		float damage = *((float*)pEvent->GetData ());
 		m_nCurrHealth -= damage;
-
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
 		// Make sure we don't underflow
 		if ( m_nCurrHealth < 0.0f )
 			m_nCurrHealth = 0.0f;

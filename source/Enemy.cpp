@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+#include "CreateParticleMessage.h"
 
 #define HEALTH_BAR 1
 
@@ -145,22 +146,46 @@ int Enemy::GetType() const
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
-		case ENT_BULLET_ASSAULT:
-			m_nCurrHealth -= 40;
+	case ENT_BULLET_ASSAULT:
+	{
+		m_nCurrHealth -= 40;
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 			break;
-		case ENT_BULLET_SHOTGUN:
-			m_nCurrHealth -= 8;
+	case ENT_BULLET_SHOTGUN:
+	{
+		m_nCurrHealth -= 8;
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 			break;
-		case ENT_BULLET_ROCKET:
-			m_nCurrHealth -= 100;
+	case ENT_BULLET_ROCKET:
+	{
+		m_nCurrHealth -= 100;
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 			break;
-		case ENT_TRAP_BEARTRAP:
-			m_bIsTrapped = true;
+	case ENT_TRAP_BEARTRAP:
+	{
+		m_bIsTrapped = true;
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 			break;
-		case ENT_MACHINE_GUN_BULLET:
-			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+	case ENT_MACHINE_GUN_BULLET:
+	{
+		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 			break;
-			//NOTE: may have to delete
 		case ENT_TRAP_MINE:
 			m_nCurrHealth = 0;
 			break;
@@ -168,8 +193,13 @@ int Enemy::GetType() const
 		{
 			const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);
 			// If the spikes are up do take damage
-			if(spike->GetActive() == true)
+			if (spike->GetActive() == true)
+			{
 				m_nCurrHealth -= spike->GetDamage();
+				CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
+			}
 		}
 			break;
 		case ENT_TRAP_LAVA:
@@ -177,6 +207,9 @@ int Enemy::GetType() const
 			const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
 			m_nCurrHealth -= lava->GetDamage();
 			m_bIsInLava = true;
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+			msg->QueueMessage();
+			msg = nullptr;
 		}
 			break;
 

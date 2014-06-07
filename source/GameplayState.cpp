@@ -88,7 +88,6 @@
 #include <fstream>
 using namespace std;
 
-
 // Buckets
 #define BUCKET_TRAPS 0
 #define BUCKET_PLAYER 1
@@ -104,7 +103,6 @@ using namespace std;
 
 // Selected Box
 #define DRAWSELECTED(TOP,LEFT,SIZEW,SIZEH) SGD::Rectangle({ TOP, LEFT }, SGD::Size(SIZEW, SIZEH)), {0,0,0,0}, { 255, 255, 255, 0 }, 2
-
 
 // Colors
 // Todo make Colors.h 

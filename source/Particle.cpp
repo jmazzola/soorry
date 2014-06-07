@@ -1,11 +1,11 @@
 #include "Particle.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Camera.h"
+#include "Player.h"
 Particle::Particle()
 {
 	
 }
-
 
 Particle::~Particle()
 {
@@ -42,7 +42,19 @@ bool Particle::Update(float dt)
 void Particle::Render()
 {
 	//Offset position based on scale
-	SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image, { position.x - (particleFlyweight->imageSize.width / 2)*scale.width, position.y - (particleFlyweight->imageSize.height / 2)*scale.height }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+	if (particleFlyweight->entity != nullptr)
+	{
+		SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
+		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
+		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y},
+		rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+	}
+	else
+	{
+		SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
+		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width),
+		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+	}
 }
 
 
