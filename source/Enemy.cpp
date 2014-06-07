@@ -219,7 +219,7 @@ float Enemy::GetAttackRange() const
 float Enemy::GetSpeed() const
 {
 	if(m_bIsInLava == true)
-		return m_fSpeed * .66f;
+		return m_fSpeed * .50f;
 	else
 		return m_fSpeed;
 }

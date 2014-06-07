@@ -610,7 +610,8 @@ void Player::Update ( float dt )
 	else
 	{
 		// Place item
-		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && PlacementCheck ( pos )  )
+		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps () > 0 )
@@ -798,8 +799,11 @@ void Player::PostRender()
 	if (m_pZombieWave->IsBuildMode())
 	{
 		// Check if legal placement
-		bool legalPlacement = PlacementCheck(tilePos);
-
+		bool legalPlacement;
+		if(m_nCurrPlaceable < 8)
+			legalPlacement = PlacementCheck(tilePos);
+		else
+			legalPlacement = PlacementCheck(tilePos, true);
 		// Walls
 		if (m_nCurrPlaceable == 0)
 		{
@@ -1310,7 +1314,7 @@ bool Player::CheckLegalPlacement(Node end, Node block)
 	return false;
 }
 
-bool Player::PlacementCheck ( SGD::Point mouse )
+bool Player::PlacementCheck ( SGD::Point mouse , bool isPassable)
 {
 	WorldManager* pWorld = WorldManager::GetInstance();
 
@@ -1320,7 +1324,11 @@ bool Player::PlacementCheck ( SGD::Point mouse )
 	bool a = Blockable(mouse);
 	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
 	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
-	bool d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+	bool d;
+	if(isPassable == false)
+		d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
+	else
+		d = true;
 
 	if (a
 		&& b

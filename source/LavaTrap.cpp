@@ -7,7 +7,7 @@ LavaTrap::LavaTrap ()
 	m_bRenderTop = false;
 	m_fImageSwitchRate = 0.5f;
 	m_fImageSwitchTimer = 0.5f;
-	m_fDamage = 0.1f;
+	m_fDamage = 1.0f;
 }
 
 
