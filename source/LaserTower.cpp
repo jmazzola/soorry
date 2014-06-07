@@ -35,7 +35,7 @@ void LaserTower::Render()
 
 void LaserTower::PostRender()
 {
-
+	Tower::PostRender();
 }
 
 int LaserTower::GetType() const
