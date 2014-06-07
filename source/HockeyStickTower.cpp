@@ -41,7 +41,7 @@ void HockeyStickTower::Update(float dt)
 	heading.Rotate(m_fRotation);
 
 	// Attack enemies
-	const vector<IEntity*> enemies = m_pEntityManager->GetBucket(1);
+	const vector<IEntity*> enemies = m_pEntityManager->GetBucket(2);
 
 	for (unsigned int i = 0; i < enemies.size(); i++)
 	{

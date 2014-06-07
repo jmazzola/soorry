@@ -333,6 +333,9 @@
     <ClCompile Include="source\CreateTrapMessage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\WaveCompleteMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -622,6 +625,9 @@
     </ClInclude>
     <ClInclude Include="source\CreateTrapMessage.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WaveCompleteMessage.h">
+      <Filter>Messages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

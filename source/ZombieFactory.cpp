@@ -3,6 +3,7 @@
 #include "CreateSlowZombieMessage.h"
 #include "CreateFastZombieMessage.h"
 #include "CreateBeaverZombieMessage.h"
+#include "WaveCompleteMessage.h"
 #include "Player.h"
 
 #include "../TinyXML/tinyxml.h"
@@ -140,6 +141,9 @@ void ZombieFactory::Update(float dt)
 		{
 			m_bBuildMode = true;
 			m_nWave++;
+
+			WaveCompleteMessage* msg = new WaveCompleteMessage();
+			msg->QueueMessage();
 
 			// Pause if last wave
 			if (m_nWave > (int)waveData.size())
