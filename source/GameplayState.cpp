@@ -1981,8 +1981,8 @@ Entity* GameplayState::CreateGrenade(float x, float y, SGD::Vector velocity) con
 	grenade->SetCurrFrame ( 0 );
 	grenade->SetTimeOfFrame ( 0 );
 	grenade->SetCurrAnimation ( "grenade" );
-	grenade->SetRadius(50.0f);
-	grenade->SetDamage(50.0f);
+	grenade->SetRadius(128.0f);
+	grenade->SetDamage(200.0f);
 	grenade->SetMass(1);
 	grenade->SetStaticFrictionCoefficient(0.7f);
 	grenade->SetDynamicFrictionCoefficient(100.0f);

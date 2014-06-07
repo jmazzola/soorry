@@ -195,7 +195,7 @@ void Enemy::HandleEvent(const SGD::Event* pEvent)
 		SGD::Point b = m_ptPosition;
 		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
 		if(distance <= grenade->GetRadius())
-			m_nCurrHealth -= grenade->GetDamage();
+			m_nCurrHealth -= grenade->GetDamage() * (distance/grenade->GetRadius());
 	}
 
 }
