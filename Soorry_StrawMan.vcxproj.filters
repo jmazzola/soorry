@@ -339,6 +339,9 @@
     <ClCompile Include="source\WaveCompleteMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\CreateGrenadeMessage.cpp">
+      <Filter>Messages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -633,6 +636,9 @@
       <Filter>Towers/Traps</Filter>
     </ClInclude>
     <ClInclude Include="source\WaveCompleteMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateGrenadeMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
   </ItemGroup>

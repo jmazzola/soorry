@@ -32,6 +32,7 @@
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateDroneMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
+    <ClCompile Include="source\CreateGrenadeMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
     <ClCompile Include="source\CreateParticleMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
     <ClInclude Include="source\CreateDroneMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
+    <ClInclude Include="source\CreateGrenadeMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
     <ClInclude Include="source\CreateParticleMessage.h" />
     <ClInclude Include="source\CreatePickupMessage.h" />

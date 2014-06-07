@@ -12,6 +12,7 @@
 #include "Game.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+#include "Grenade.h"
 
 #define HEALTH_BAR 1
 
@@ -23,11 +24,13 @@ Enemy::Enemy() : Listener(this)
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
 	m_bIsInLava = false;
+	RegisterForEvent("GRENADE_EXPLOSION");
 }
 
 
 Enemy::~Enemy()
 {
+	UnregisterFromEvent("GRENADE_EXPLOSION");
 }
 
 
@@ -181,6 +184,20 @@ int Enemy::GetType() const
 			break;
 
 	}
+}
+
+void Enemy::HandleEvent(const SGD::Event* pEvent)
+{
+	if(pEvent->GetEventID() == "GRENADE_EXPLOSION")
+	{
+		const Grenade* grenade = reinterpret_cast<const Grenade*>(pEvent->GetSender());
+		SGD::Point a = grenade->GetPosition();
+		SGD::Point b = m_ptPosition;
+		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
+		if(distance <= grenade->GetRadius())
+			m_nCurrHealth -= grenade->GetDamage();
+	}
+
 }
 
 /**********************************************************/

@@ -183,6 +183,7 @@ private:
 	Entity* CreateTrap(int x, int y, int type) const;
 	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
 	Entity* CreateDrone() const;
+	Entity* CreateGrenade(float x, float y, SGD::Vector velocity) const;
 
 	// Create a button
 	Button* CreateButton() const;

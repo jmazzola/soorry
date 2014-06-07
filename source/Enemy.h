@@ -20,6 +20,7 @@ public:
 	virtual void Render() override;
 	virtual void PostRender() override;
 	virtual void HandleCollision(const IEntity* pOther);
+	virtual void HandleEvent(const SGD::Event* pEvent) override;
 
 	/**********************************************************/
 	// Accessors

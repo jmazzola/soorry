@@ -28,6 +28,7 @@
 #include "../SGD Wrappers/SGD_MessageManager.h"
 #include "../SGD Wrappers/SGD_Message.h"
 #include "Sprite.h"
+
 //Message Includes
 #include "CreateBeaverZombieMessage.h"
 #include "CreateFastZombieMessage.h"
@@ -43,6 +44,7 @@
 #include "CreateDroneMessage.h"
 #include "CreateTrapMessage.h"
 #include "WaveCompleteMessage.h"
+#include "CreateGrenadeMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -52,6 +54,7 @@
 #include "Rocket.h"
 #include "AssaultRifleBullet.h"
 #include "Drone.h"
+#include "Grenade.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -98,6 +101,7 @@ using namespace std;
 #define BUCKET_PICKUP 5
 #define BUCKET_PROJECTILES 6
 #define BUCKET_DRONE 7
+#define BUCKET_GRENADES 8
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -1617,6 +1621,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										 g->m_fBeaverHealth *= g->m_fHealthScaling;
 	}
 		break;
+	case MessageID::MSG_CREATE_GRENADE:
+	{
+										const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
+										GameplayState* g = GameplayState::GetInstance();
+										Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
+										g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
+										grenade->Release();
+	}
+		break;
 	}
 
 	/* Restore previous warning levels */
@@ -1955,6 +1968,30 @@ Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
 	}
 
 	return nullptr;
+}
+
+Entity* GameplayState::CreateGrenade(float x, float y, SGD::Vector velocity) const
+{
+	Grenade* grenade = new Grenade;
+
+	grenade->SetPosition(SGD::Point(x, y));
+	grenade->SetVelocity({0.0f,0.0f});
+	grenade->SetForce(velocity);
+	grenade->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "grenade" ) );
+	grenade->SetCurrFrame ( 0 );
+	grenade->SetTimeOfFrame ( 0 );
+	grenade->SetCurrAnimation ( "grenade" );
+	grenade->SetRadius(50.0f);
+	grenade->SetDamage(50.0f);
+	grenade->SetMass(1);
+	grenade->SetStaticFrictionCoefficient(0.7f);
+	grenade->SetDynamicFrictionCoefficient(100.0f);
+	grenade->SetDetonationLength(1.25f);
+	grenade->SetDetonationTimer(grenade->GetDetonationLength());
+
+
+	return grenade;
+
 }
 
 Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _velocity, int _damage) const

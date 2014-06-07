@@ -28,6 +28,7 @@
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
 #include "CreateTrapMessage.h"
+#include "CreateGrenadeMessage.h"
 
 #include "Game.h"
 
@@ -334,7 +335,27 @@ void Player::Update ( float dt )
 	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
 		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
 	{
-		// THROW THE GRENADE HERE
+		SGD::Vector force;
+		SGD::Point self = GetPosition();
+		self.x -= (float)Camera::x;
+		self.y -= (float)Camera::y;
+		self.x += 16;
+		self.y += 16;
+
+		force.x = pInput->GetMousePosition().x - self.x;
+		force.y = pInput->GetMousePosition().y - self.y;
+		if(force.x > 100)
+			force.x = 100;
+		if(force.x < -100)
+			force.x = -100;
+		if(force.y > 100)
+			force.y = 100;
+		if(force.y < -100)
+			force.y = -100;
+
+		CreateGrenadeMessage* grenade = new CreateGrenadeMessage(m_ptPosition.x, m_ptPosition.y, force);
+		grenade->QueueMessage();
+
 		m_fGrenadeTimer = 0.75f;
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
 	}
