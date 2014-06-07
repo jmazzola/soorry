@@ -46,8 +46,13 @@ void ParticleManager::Render()
 
 void ParticleManager::unload()
 {
+	for (unsigned int i = 0; i < activeEmitters.size(); i++)
+	{
+		delete activeEmitters[i];
+	}
 	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
 	{
+		SGD::GraphicsManager::GetInstance()->UnloadTexture(loadedEmitters.at(iter->first)->particleFlyweight->image);
 		delete loadedEmitters.at(iter->first);
 	}
 	activeEmitters.clear();
@@ -57,8 +62,8 @@ void ParticleManager::unload()
 void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 {
 	//NOTE: should be creating new memory?
-	Emitter* tempEmitter;
-	tempEmitter = loadedEmitters[_emitterID];
+	Emitter* tempEmitter = new Emitter;
+	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->position = SGD::Point( (float)_x, (float)_y );
 	tempEmitter->load();
 	tempEmitter->emitterID = activeEmitters.size();

@@ -103,9 +103,10 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 			delete particleFlyweight;
 			particleFlyweight = nullptr;
 		}
-		particleFlyweight = new ParticleFlyweight;
+		ParticleFlyweight* tempParticle = new ParticleFlyweight;
 		followEnitiy = _assign.followEnitiy;
-		particleFlyweight = _assign.particleFlyweight;
+		*tempParticle = *_assign.particleFlyweight;
+		particleFlyweight = tempParticle;
 		isLooping = _assign.isLooping;
 		position = _assign.position;
 		offset = _assign.offset;
