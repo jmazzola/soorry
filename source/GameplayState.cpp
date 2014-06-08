@@ -56,6 +56,7 @@
 #include "AssaultRifleBullet.h"
 #include "Drone.h"
 #include "Grenade.h"
+#include "TrickShotBullet.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -1831,8 +1832,22 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   return tempProj;
 	}
 		break;
-	case 3://Fire axe?
+	case 3://TrickShot
 	{
+			TrickShotBullet* tsb = new TrickShotBullet;
+			tsb->SetDamage(75);
+			tsb->SetPosition(playerCenter);
+			tsb->SetVelocity({0.0f, 0.0f});
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			pos.x += Camera::x;
+			pos.y += Camera::y;
+			SGD::Vector vec = pos - playerCenter;
+			vec.Normalize();
+			vec *= 300;
+			tsb->SetForce(vec);
+
+			return tsb;
+			// ADD SOUND
 			   break;
 	}
 	}

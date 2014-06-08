@@ -349,6 +349,54 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 	return false;
 }
 
+SGD::Rectangle WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
+{
+	// Set the tiles to check
+	int top = (int)_rect.top / m_nTileHeight;
+	int left = (int)_rect.left / m_nTileWidth;
+	int bottom = (int)_rect.bottom / m_nTileHeight + 1;
+	int right = (int)_rect.right / m_nTileWidth + 1;
+
+#if !CLOSED
+
+	// Bound within the world
+	if (top < 0) top = 0;
+	if (left < 0) left = 0;
+	if (bottom < 0) bottom = 0;
+	if (right < 0) right = 0;
+	if (top > m_nWorldHeight - 1) top = m_nWorldHeight;
+	if (bottom > m_nWorldHeight - 1) bottom = m_nWorldHeight;
+	if (left > m_nWorldWidth - 1) left = m_nWorldWidth;
+	if (right > m_nWorldWidth - 1) right = m_nWorldWidth;
+
+#endif
+
+	// Loop through tiles to check
+	for (int x = left; x < right; x++)
+	{
+		for (int y = top; y < bottom; y++)
+		{
+			// Go through each layer (starting on top)
+			for (int i = m_vLayers.size() - 1; i >= 0; i--)
+			{
+				// Check if collision
+				if (m_vLayers[i][x][y].IsCollidable())
+				{
+					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
+						continue;
+					
+					float L = (float)(x * m_nTileWidth);
+					float T = (float)(y * m_nTileHeight);
+					float R = L + m_nTileWidth;
+					float B = T + m_nTileHeight;
+					return SGD::Rectangle { L , T , R , B };
+				}
+			}
+		}
+	}
+
+	return SGD::Rectangle { 0.0f , 0.0f , 0.0f , 0.0f };
+}
 int WorldManager::CheckCollisionID(IEntity* _object)
 {
 	// Get the object's collision rect

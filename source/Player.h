@@ -26,8 +26,8 @@ class Tower;
 class Player : public Entity, public SGD::Listener
 {
 public:
-	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, NUMPLACEABLES, };
-	enum Weapons{ SLOT_ONE, SLOT_TWO, SLOT_THREE, SLOT_FOUR, TOTAL_SLOTS, };
+	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, LTRAP, STRAP, NUMPLACEABLES, };
+	enum Weapons{ MACHINE_GUN, SHOT_GUN, ROCKET_LAUNCHER, TRICK_SHOT_GUN, TOTAL_GUNS, };
 
 	Player();
 	~Player();
