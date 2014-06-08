@@ -121,7 +121,7 @@ Player::Player () : Listener ( this )
 	tempWeapon;
 	tempWeapon.SetCurrAmmo ( 500 );
 	tempWeapon.SetMaxAmmo ( 500 );
-	tempWeapon.SetFireRate ( 1.0f );
+	tempWeapon.SetFireRate ( 0.75f );
 	tempWeapon.SetType ( Guns::TYPE_TRICKSHOT );
 	m_pWeapons[ 3 ] = tempWeapon;
 #pragma endregion

@@ -1846,8 +1846,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			vec *= 300;
 			tsb->SetForce(vec);
 
-			return tsb;
 			// ADD SOUND
+
+			return tsb;
+			
 			   break;
 	}
 	}

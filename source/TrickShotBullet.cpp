@@ -33,7 +33,7 @@ int TrickShotBullet::GetType ( void ) const
 
 void TrickShotBullet::Update ( float dt )
 {
-	m_fRotation += dt;
+	m_fRotation += dt * 3;
 
 	if(m_fRotation > 2 * SGD::PI)
 		m_fRotation = 0.0f;
