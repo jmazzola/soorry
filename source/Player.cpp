@@ -28,6 +28,7 @@
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
 #include "CreateTrapMessage.h"
+#include "CreateGrenadeMessage.h"
 
 #include "Game.h"
 
@@ -334,7 +335,27 @@ void Player::Update ( float dt )
 	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
 		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
 	{
-		// THROW THE GRENADE HERE
+		SGD::Vector force;
+		SGD::Point self = GetPosition();
+		self.x -= (float)Camera::x;
+		self.y -= (float)Camera::y;
+		self.x += 16;
+		self.y += 16;
+
+		force.x = pInput->GetMousePosition().x - self.x;
+		force.y = pInput->GetMousePosition().y - self.y;
+		if(force.x > 100)
+			force.x = 100;
+		if(force.x < -100)
+			force.x = -100;
+		if(force.y > 100)
+			force.y = 100;
+		if(force.y < -100)
+			force.y = -100;
+
+		CreateGrenadeMessage* grenade = new CreateGrenadeMessage(m_ptPosition.x, m_ptPosition.y, force);
+		grenade->QueueMessage();
+
 		m_fGrenadeTimer = 0.75f;
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
 	}
@@ -374,6 +395,8 @@ void Player::Update ( float dt )
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
 		{
@@ -384,10 +407,6 @@ void Player::Update ( float dt )
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 			
-			// If we have infinite ammo, don't subtract
-			if (!pGame->HasInfAmmo())
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
-
 			// If you don't have the super buff
 			if ( m_fSuperTimer <= 0.0f )
 			{
@@ -603,8 +622,22 @@ void Player::Update ( float dt )
 	}
 	else
 	{
+		// Only place if cursor not on tower menu
+		bool cursorInMenu = false;
+		if (m_pSelectedTower)
+		{
+			SGD::Rectangle backgroundRect;
+			backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
+			backgroundRect.top = m_pSelectedTower->GetPosition().y - 144 - Camera::y;
+			backgroundRect.right = backgroundRect.left + 224;
+			backgroundRect.bottom = backgroundRect.top + 128;
+
+			if (pInput->GetMousePosition().IsWithinRectangle(backgroundRect))
+				cursorInMenu = true;
+		}
+
 		// Place item
-		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+		if ( !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
 			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
@@ -777,21 +810,38 @@ void Player::PostRender()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	// Get the tile
-	SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
-	tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
-	tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+	// Draw selected tower's menu
+	if (m_pSelectedTower)
+	{
+		// Menu bacground
+		SGD::Rectangle backgroundRect;
+		backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
+		backgroundRect.top = m_pSelectedTower->GetPosition().y - 144 - Camera::y;
+		backgroundRect.right = backgroundRect.left + 224;
+		backgroundRect.bottom = backgroundRect.top + 128;
 
-	// Get tiles world position
-	SGD::Point worldPosition = tilePos;
-	worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
-	worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
-	worldPosition.x -= Camera::x;
-	worldPosition.y -= Camera::y;
+		pGraphics->DrawRectangle(backgroundRect, SGD::Color(100, 0, 0, 0), SGD::Color(255, 255, 0), 2);
+
+		// Ignore drawing item preview if cursor inside tower menu
+		if (SGD::InputManager::GetInstance()->GetMousePosition().IsWithinRectangle(backgroundRect))
+			return;
+	}
 
 	// Show the item in the location of the placement
 	if (m_pZombieWave->IsBuildMode())
 	{
+		// Get the tile
+		SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
+		tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
+		tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+
+		// Get tiles world position
+		SGD::Point worldPosition = tilePos;
+		worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
+		worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
+		worldPosition.x -= Camera::x;
+		worldPosition.y -= Camera::y;
+
 		// Check if legal placement
 		bool legalPlacement;
 		if(m_nCurrPlaceable < 8)

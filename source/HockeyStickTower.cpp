@@ -88,6 +88,8 @@ void HockeyStickTower::PostRender()
 
 	// Render gun
 	pGraphics->DrawTexture(m_hGunImage, SGD::Point(m_ptPosition.x - Camera::x - 16, m_ptPosition.y - Camera::y - 16), m_fRotation, SGD::Vector(32.0f, 32.0f));
+
+	Tower::PostRender();
 }
 
 int HockeyStickTower::GetType() const

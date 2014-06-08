@@ -109,6 +109,8 @@ private:
 	unsigned int m_unFrames = 0;
 	float m_fFPSTimer = 1.0f;
 
+	
+
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hPlayerImg = SGD::INVALID_HANDLE;
@@ -137,6 +139,7 @@ private:
 	SGD::HTexture m_hMachineGunBulletImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hMapleSyrupBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hMapleSyrupGunImage = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hMapleSyrupBulletImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hHockeyStickBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hHockeyStickGunImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLaserBaseImage = SGD::INVALID_HANDLE;
@@ -182,7 +185,9 @@ private:
 	Entity* CreateTower(int x, int y, int type) const;
 	Entity* CreateTrap(int x, int y, int type) const;
 	Entity* CreateMachineGunBullet(int x, int y, SGD::Vector velocity, int damage) const;
+	Entity* CreateMapleSyrupBullet(int x, int y, SGD::Vector velocity, float slowTime) const;
 	Entity* CreateDrone() const;
+	Entity* CreateGrenade(float x, float y, SGD::Vector velocity) const;
 
 	// Create a button
 	Button* CreateButton() const;

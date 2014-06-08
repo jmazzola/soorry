@@ -139,6 +139,9 @@ private:
 	unsigned int m_unFrames = 0;
 	float m_fFPSTimer = 1.0f;
 
+	/**********************************************************/
+	// Controller Check Timer
+	float m_fControllerCheck;
 
 	// Fullscreen
 	bool m_bFullscreen = true;

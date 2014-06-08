@@ -8,10 +8,12 @@
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
 #include "Camera.h"
 #include "Game.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+#include "Grenade.h"
 #include "CreateParticleMessage.h"
 
 #define HEALTH_BAR 1
@@ -23,12 +25,15 @@ Enemy::Enemy() : Listener(this)
 	m_fTrapTimer = 0;
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
+	m_fSlowTime = 0.0f;
 	m_bIsInLava = false;
+	RegisterForEvent("GRENADE_EXPLOSION");
 }
 
 
 Enemy::~Enemy()
 {
+	UnregisterFromEvent("GRENADE_EXPLOSION");
 }
 
 
@@ -37,7 +42,9 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
+	// Update timers
 	m_fTrapTimer -= dt;
+	m_fSlowTime -= dt;
 
 	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
 	{
@@ -186,6 +193,12 @@ int Enemy::GetType() const
 		msg = nullptr;
 	}
 			break;
+		case ENT_MAPLE_SYRUP_BULLET:
+			if (m_fSlowTime < 0.0f)
+				m_fSlowTime = 0.0f;
+			m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
+			break;
+			//NOTE: may have to delete
 		case ENT_TRAP_MINE:
 			m_nCurrHealth = 0;
 			break;
@@ -214,6 +227,20 @@ int Enemy::GetType() const
 			break;
 
 	}
+}
+
+void Enemy::HandleEvent(const SGD::Event* pEvent)
+{
+	if(pEvent->GetEventID() == "GRENADE_EXPLOSION")
+	{
+		const Grenade* grenade = reinterpret_cast<const Grenade*>(pEvent->GetSender());
+		SGD::Point a = grenade->GetPosition();
+		SGD::Point b = m_ptPosition;
+		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
+		if(distance <= grenade->GetRadius())
+			m_nCurrHealth -= grenade->GetDamage() * (distance/grenade->GetRadius());
+	}
+
 }
 
 /**********************************************************/
@@ -251,10 +278,15 @@ float Enemy::GetAttackRange() const
 
 float Enemy::GetSpeed() const
 {
-	if(m_bIsInLava == true)
-		return m_fSpeed * .50f;
-	else
-		return m_fSpeed;
+	float speed = m_fSpeed;
+
+	if (m_bIsInLava)
+		speed *= 0.5f;
+
+	if (m_fSlowTime > 0.0f)
+		speed *= 0.2f;
+
+	return speed;
 }
 
 float Enemy::GetHealthChance() const

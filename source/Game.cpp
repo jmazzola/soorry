@@ -86,6 +86,9 @@ bool Game::Initialize(int width, int height)
 	m_nScreenWidth = width;
 	m_nScreenHeight = height;
 
+	// Set the controller check timer
+	m_fControllerCheck = -1.0f;
+
 	// Store the SGD singletons
 	m_pAudio = SGD::AudioManager::GetInstance();
 	m_pGraphics = SGD::GraphicsManager::GetInstance();
@@ -139,6 +142,14 @@ int Game::Main(void)
 	if (elapsedTime > 0.125f)
 		elapsedTime = 0.125f;
 
+	// Controller Check
+	m_fControllerCheck -= elapsedTime;
+	if ( m_fControllerCheck < 0.0f )
+	{
+		m_pInput->CheckForNewControllers ();
+		m_fControllerCheck = 5.0f;
+	}
+
 	// Toggle debugging mode
 	if (m_pInput->IsKeyPressed(SGD::Key::F1))
 		SetDebugging(!m_bDebugMode);
@@ -152,9 +163,7 @@ int Game::Main(void)
 		// Disable the 'Enter' input
 		return false;
 	}
-
-	// Check for new controllers
-	m_pInput->CheckForNewControllers();
+	
 
 	if(m_pInput->IsControllerConnected(0))
 	{

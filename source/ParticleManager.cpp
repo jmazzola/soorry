@@ -6,7 +6,6 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Entity.h"
 #include <map>
-//TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
 }

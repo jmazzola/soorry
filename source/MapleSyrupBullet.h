@@ -1,41 +1,37 @@
 #pragma once
 
-#include "Tower.h"
+#include "Entity.h"
 
-class MapleSyrupTower : public Tower
+#include "../SGD Wrappers/SGD_Handle.h"
+
+class MapleSyrupBullet : public Entity
 {
 public:
 
-	MapleSyrupTower();
-	~MapleSyrupTower();
+	MapleSyrupBullet();
+	~MapleSyrupBullet();
 
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
 	virtual void Render() override;
-	virtual void PostRender() override;
+	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
+	virtual void HandleCollision(const IEntity* pOther) override;
 
 	/**********************************************************/
 	// Accessors
 	float GetSlowTime() const;
-	float GetFireRate() const;
 
 	/**********************************************************/
 	// Mutators
 	void SetSlowTime(float slowTime);
-	void SetFireRate(float fireRate);
+	void SetImage(SGD::HTexture image);
 
 protected:
 
-	/**********************************************************/
-	// Data members
 	float m_fSlowTime;
-	float m_fFireRate;
-	float m_fBulletSpeed;
-
-private:
-
-	float m_fNextShotTimer;
+	float m_fLifetime;
+	SGD::HTexture m_hImage = SGD::INVALID_HANDLE;
 };
 
