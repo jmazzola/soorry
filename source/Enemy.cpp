@@ -185,8 +185,14 @@ int Enemy::GetType() const
 		if(tsb->AmIOnTheHitList((IEntity *)this) == false)
 		{
 			SGD::Event* pEvent = new SGD::Event("IM_HIT", nullptr, this);
+			pEvent->QueueEvent();
 			m_nCurrHealth -= tsb->GetDamage();
+			
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
+			msg->QueueMessage();
+			msg = nullptr;
 		}
+		break;
 	}
 	case ENT_TRAP_BEARTRAP:
 	{

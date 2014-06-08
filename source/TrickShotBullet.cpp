@@ -17,6 +17,7 @@ TrickShotBullet::TrickShotBullet () : SGD::Listener(this)
 	SetMass(1);
 	SetStaticFrictionCoefficient(0.7f);
 	SetDynamicFrictionCoefficient(135.0f);
+	m_bResolving = false;
 }
 
 
@@ -34,7 +35,7 @@ int TrickShotBullet::GetType ( void ) const
 void TrickShotBullet::Update ( float dt )
 {
 	m_fRotation += dt * 3;
-
+	m_fLifeTime -= dt;
 	if(m_fRotation > 2 * SGD::PI)
 		m_fRotation = 0.0f;
 
@@ -51,20 +52,29 @@ void TrickShotBullet::Update ( float dt )
 
 	Entity::Update ( dt );
 
-	Bounce();
+	SGD::Rectangle hit = WorldManager::GetInstance()->CheckTrickShot(GetRect());
+	if ( hit == SGD::Rectangle { 0.0f , 0.0f , 0.0f , 0.0f } || hit != m_rLastHit )
+		m_bResolving = false;
+
+	if(m_bResolving == false)
+		Bounce(hit);
 
 	UpdateHitList();
 
-	if ( m_vForce == SGD::Vector { 0.0f , 0.0f } && m_vtVelocity == SGD::Vector { 0.0f , 0.0f } )
+	if ( m_vForce != SGD::Vector { 0.0f , 0.0f } )
+	{
+		m_fLifeTime = 1.5f;
+	}
+	if ( m_fLifeTime <= 0.0f)
 	{
 		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
 		pmsg->QueueMessage();
 	}
 }
 
-void TrickShotBullet::Bounce ()
+void TrickShotBullet::Bounce (SGD::Rectangle hit)
 {
-	SGD::Rectangle hit = WorldManager::GetInstance()->CheckTrickShot(GetRect());
+	
 	if ( hit != SGD::Rectangle { 0.0f , 0.0f , 0.0f , 0.0f } )
 	{
 		SGD::Rectangle me = GetRect ();
@@ -72,63 +82,53 @@ void TrickShotBullet::Bounce ()
 		// Hit on the left
 		if ( section.left == me.left && section.top == me.top && section.bottom == me.bottom )
 		{
-			m_vtVelocity.x = -m_vtVelocity.x;
-			m_vForce.x = -m_vForce.x * 0.8f;
-			m_ptPosition.x = hit.right + 1;
+			m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
+			m_vForce.x = -m_vForce.x * 0.9f;
 		}
 		// Hit on the right
 		else if ( section.right == me.right && section.top == me.top && section.bottom == me.bottom )
 		{
-			m_vtVelocity.x = -m_vtVelocity.x;
-			m_vForce.x = -m_vForce.x * 0.8f;
-			m_ptPosition.x = hit.left - (me.right - me.left + 1);
+			m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
+			m_vForce.x = -m_vForce.x * 0.9f;
 		}
 		// Hit on the top
 		else if ( section.top == me.top && section.right == me.right && section.left == me.left )
 		{
-			m_vtVelocity.y = -m_vtVelocity.y;
-			m_vForce.y = -m_vForce.y * 0.8f;
-			m_ptPosition.y = hit.bottom + 1;
+			m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
+			m_vForce.y = -m_vForce.y * 0.9f;
 		}
 		// Hit on the bottom
 		else if ( section.bottom == me.bottom && section.right == me.right && section.left == me.left )
 		{
-			m_vtVelocity.y = -m_vtVelocity.y;
-			m_vForce.y = -m_vForce.y * 0.8f;
-			m_ptPosition.y = hit.top - (me.bottom - me.top + 1);
+			m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
+			m_vForce.y = -m_vForce.y * 0.9f;
 		}
 		// Hit on top left
 		else if ( section.top == me.top && section.left == me.left )
 		{
-			m_vtVelocity = -m_vtVelocity;
-			m_vForce = -m_vForce * 0.8f;
-			m_ptPosition.x = hit.right + 1;
-			m_ptPosition.y = hit.bottom + 1;
+			m_vtVelocity = -m_vtVelocity * 0.9f;
+			m_vForce = -m_vForce * 0.9f;
 		}
 		// Hit on top right
 		else if ( section.top == me.top && section.right == me.right )
 		{
-			m_vtVelocity = -m_vtVelocity;
-			m_vForce = -m_vForce * 0.8f;
-			m_ptPosition.x = hit.left - (me.right - me.left + 1);
-			m_ptPosition.y = hit.bottom + 1;
+			m_vtVelocity = -m_vtVelocity * 0.9f;
+			m_vForce = -m_vForce * 0.9f;
 		}
 		// Hit on bottom left
 		else if ( section.bottom == me.bottom && section.left == me.left )
 		{
-			m_vtVelocity = -m_vtVelocity;
-			m_vForce = -m_vForce * 0.8f;
-			m_ptPosition.x = hit.right + 1;
-			m_ptPosition.y = hit.top - (me.bottom - me.top + 1);
+			m_vtVelocity = -m_vtVelocity * 0.9f;
+			m_vForce = -m_vForce * 0.9f;
 		}
 		// Hit on bottom right
 		else if ( section.bottom == me.bottom && section.right == me.right )
 		{
-			m_vtVelocity = -m_vtVelocity;
-			m_vForce = -m_vForce * 0.8f;
-			m_ptPosition.x = hit.left - (me.right - me.left + 1);
-			m_ptPosition.y = hit.top - (me.bottom - me.top + 1);
+			m_vtVelocity = -m_vtVelocity * 0.9f;
+			m_vForce = -m_vForce * 0.9f;
 		}
+		m_rLastHit = hit;
+		m_bResolving = true;
 	}
 }
 
@@ -154,6 +154,7 @@ void TrickShotBullet::HandleEvent(const SGD::Event * pEvent)
 	if(pEvent->GetEventID() == "IM_HIT")
 	{
 		IEntity* pEntity = reinterpret_cast<IEntity*>(pEvent->GetSender());
+		if(pEntity->GetRect().IsIntersecting(GetRect()))
 		AddMyselfToTheHitList(pEntity);
 	}
 }
@@ -211,10 +212,10 @@ void TrickShotBullet::ApplyFriction ( float dt )
 	// Clamp velocity by its components to zero
 
 	// If the X component of velocity is 0.1(close to 0), set it to 0
-	if ( abs ( m_vtVelocity.x ) <= 1.5f )
+	if ( abs ( m_vtVelocity.x ) <= 0.5f )
 		m_vtVelocity.x = 0.0f;
 	// If the Y component of velocity is 0.1(close to 0), set it to 0
-	if ( abs ( m_vtVelocity.y ) <= 1.5f )
+	if ( abs ( m_vtVelocity.y ) <= 0.5f )
 		m_vtVelocity.y = 0.0f;
 
 	// Decrease the force with a damping factor
@@ -227,6 +228,7 @@ void TrickShotBullet::ApplyFriction ( float dt )
 		m_vForce.y = m_vForce.y * 0.99f;
 	else
 		m_vForce.y = 0.0f;
+
 }
 
 void			TrickShotBullet::HandleCollision(const IEntity* pOther)
@@ -260,7 +262,7 @@ void TrickShotBullet::UpdateHitList(void)
 {
 	if ( m_vtHitList.size () > 0 )
 	{
-		for ( unsigned int i = m_vtHitList.size () - 1; i >= 0; i-- )
+		for ( int i = (int)m_vtHitList.size () - 1; i >= 0; i-- )
 		{
 			if ( m_vtHitList[ i ]->GetRect ().IsIntersecting ( GetRect () ) == false )
 			{
@@ -273,8 +275,9 @@ void TrickShotBullet::UpdateHitList(void)
 
 void TrickShotBullet::AddMyselfToTheHitList(IEntity* self)
 {
-	self->AddRef();
-	m_vtHitList.push_back(self);
+	
+		self->AddRef ();
+		m_vtHitList.push_back ( self );
 }
 
 void TrickShotBullet::ClearHitList( void )

@@ -16,7 +16,7 @@ public:
 	virtual void Update(float dt) override;
 	virtual void HandleCollision(const IEntity* pOther) override;
 	virtual void HandleEvent(const SGD::Event * pEvent);
-	void Bounce();
+	void Bounce(SGD::Rectangle correct);
 	void ApplyFriction(float dt);
 	void UpdateHitList();
 	void ClearHitList();
@@ -55,6 +55,7 @@ public:
 
 private:
 
+	bool			m_bResolving;
 	float			m_fRotation;
 	float			m_fMass;
 	float			m_fDynamicFrictionCoefficient;
@@ -69,6 +70,7 @@ private:
 	SGD::Vector		m_vTotalForces;
 	SGD::Vector		m_vFrictionForce;
 	SGD::Vector		m_vDragForce;
+	SGD::Rectangle	m_rLastHit;
 
 	std::vector<IEntity *> m_vtHitList;
 };
