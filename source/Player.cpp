@@ -408,7 +408,7 @@ void Player::Update ( float dt )
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
-		StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
+		
 
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
@@ -432,10 +432,11 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 		// With Xbox Right Trigger
-		if ( pInput->GetTrigger(0) > 0.1f)
+		else if ( pInput->GetTrigger(0) > 0.1f)
 		{
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
@@ -455,6 +456,7 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 	}

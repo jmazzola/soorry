@@ -47,20 +47,20 @@ void StatTracker::Load ( const char* path )
 
 	TiXmlElement* pTime = pRoot->FirstChildElement ( "Time" );
 
-	pTime->Attribute ( "Total" , (int *)&m_fTimePlayed);
-	pTime->Attribute ( "Build" , (int *)&m_fBuildPhaseTime);
-	pTime->Attribute ( "Survival" , (int *)&m_fSurvivalTime);
+	pTime->QueryFloatAttribute	( "Total" , &m_fTimePlayed);
+	pTime->QueryFloatAttribute	 ( "Build" , &m_fBuildPhaseTime);
+	pTime->QueryFloatAttribute	( "Survival" , &m_fSurvivalTime);
 
 	TiXmlElement* pDistance = pRoot->FirstChildElement ( "General" );
 
-	pDistance->Attribute ( "Walking" , (int *)&m_fDistanceWalked);
+	pDistance->QueryFloatAttribute	 ( "Walking" , &m_fDistanceWalked);
 	pDistance->Attribute ( "Rounds" , (int *)&m_uRoundsSurvived);
 	pDistance->Attribute ( "RoundSpree" , (int *)&m_uConsecutiveRoundsSurvived);
 
 	TiXmlElement* pViolence = pRoot->FirstChildElement ( "Violence" );
 
 	pViolence->Attribute ( "Kills" , (int *)&m_uTotalKills);
-	pViolence->Attribute ( "Blood" , (int *)&m_fBloodSpilled);
+	pViolence->QueryFloatAttribute	 ( "Blood" , &m_fBloodSpilled);
 	pViolence->Attribute ( "Grenades" , (int *)&m_uGrenadesThrown);
 	pViolence->Attribute ( "TotalShots" , (int *)&m_uTotalShotsFired);
 	pViolence->Attribute ( "MachineGun" , (int *)&m_uMachineGunBullets);

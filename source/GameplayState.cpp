@@ -231,6 +231,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
+	m_pStatTracker->Load("resource/data/stats.xml");
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
