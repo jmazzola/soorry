@@ -27,6 +27,7 @@ class Button;
 class BitmapFont;
 class Drone;
 class StatTracker;
+class TowerFlyweight;
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
 
@@ -239,6 +240,9 @@ private:
 	float m_fBeaverHealthChance;
 	float m_fBeaverAmmoChance;
 	float m_fBeaverSuperChance;
+
+	// Tower recipes
+	TowerFlyweight* m_pTowerFlyweight;
 };
 
 #endif //GAMEPLAYSTATE_H

@@ -94,6 +94,7 @@
     <ClCompile Include="source\Tile.cpp" />
     <ClCompile Include="source\Tower.cpp" />
     <ClCompile Include="source\TrickShotBullet.cpp" />
+    <ClCompile Include="source\TowerFlyweight.cpp" />
     <ClCompile Include="source\WallPickup.cpp" />
     <ClCompile Include="source\WaveCompleteMessage.cpp" />
     <ClCompile Include="source\ZombieFactory.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\Tower.h" />
     <ClInclude Include="source\TrickShotBullet.h" />
+    <ClInclude Include="source\TowerFlyweight.h" />
     <ClInclude Include="source\WallPickup.h" />
     <ClInclude Include="source\WaveCompleteMessage.h" />
     <ClInclude Include="source\WaveData.h" />
@@ -220,8 +222,11 @@
     <Xml Include="resource\data\game_modes\arcade_mode\playerStats.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml" />
+    <Xml Include="resource\data\game_modes\arcade_mode\towerStats.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml" />
-    <Xml Include="resource\data\shop.xml" />
     <Xml Include="resource\data\singleEnemy.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\testWorld.xml">

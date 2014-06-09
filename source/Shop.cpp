@@ -77,6 +77,11 @@ bool Shop::IsOpen()
 	return m_bIsOpen;
 }
 
+unsigned int Shop::GetTowerPrice(int _tower)
+{
+	return towerPrices[_tower];
+}
+
 // SetShopStatus
 // - Set if the shop is open or not
 void Shop::SetShopStatus(bool isOpen)
