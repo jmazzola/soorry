@@ -250,9 +250,7 @@ int Enemy::GetType() const
 		const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
 		m_nCurrHealth -= lava->GetDamage();
 		m_bIsInLava = true;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-		msg->QueueMessage();
-		msg = nullptr;
+		
 	}
 		break;
 

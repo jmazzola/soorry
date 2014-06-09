@@ -220,10 +220,6 @@ bool Emitter::Update(float dt)
 {
 	if (followEnitiy != nullptr)
 	{
-		if (followEnitiy == nullptr)
-		{
-			return false;
-		}
 		//BUG: trys to update the particle after the entity has died
 		position = followEnitiy->GetPosition();
 	}
