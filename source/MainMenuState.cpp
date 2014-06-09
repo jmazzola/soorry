@@ -36,6 +36,7 @@
 
 #include "Entity.h"
 #include "EntityManager.h"
+#include "StatTracker.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -71,7 +72,8 @@ using namespace std;
 {
 	// Game singleton
 	Game* pGame = Game::GetInstance();
-
+	StatTracker::GetInstance()->Load("resource/data/stats.xml");
+	
 	SetTransition(false);
 
 	// Load Textures

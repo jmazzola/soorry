@@ -70,6 +70,9 @@
     <Filter Include="Data\Arcade Mode">
       <UniqueIdentifier>{c04aa398-daab-456e-a4cb-cb92adb2e74d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StatTracker">
+      <UniqueIdentifier>{0a0216fb-581d-4e26-bb59-353f1ddb6030}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -350,6 +353,12 @@
     </ClCompile>
     <ClCompile Include="source\TrickShotBullet.cpp">
       <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StatTracker.cpp">
+      <Filter>StatTracker</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TowerFlyweight.cpp">
+      <Filter>Towers/Traps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -659,6 +668,12 @@
     <ClInclude Include="source\TrickShotBullet.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="source\StatTracker.h">
+      <Filter>StatTracker</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TowerFlyweight.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -685,7 +700,10 @@
     <Xml Include="resource\data\game_modes\arcade_mode\enemyStats.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
-    <Xml Include="resource\data\shop.xml">
+    <Xml Include="resource\data\game_modes\arcade_mode\towerStats.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
   </ItemGroup>

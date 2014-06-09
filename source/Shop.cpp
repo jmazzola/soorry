@@ -14,6 +14,7 @@
 #include "Inventory.h"
 #include "Weapon.h"
 #include "GameplayState.h"
+#include "StatTracker.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -74,6 +75,11 @@ void Shop::Exit()
 bool Shop::IsOpen()
 {
 	return m_bIsOpen;
+}
+
+unsigned int Shop::GetTowerPrice(int _tower)
+{
+	return towerPrices[_tower];
 }
 
 // SetShopStatus
@@ -457,6 +463,7 @@ void Shop::Render()
 bool Shop::Buy(int parcel, int shopSection)
 {
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
+	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
 	switch (shopSection)
@@ -468,6 +475,7 @@ bool Shop::Buy(int parcel, int shopSection)
 		{
 			// Subtract money
 			player->SetScore(curMoney -= itemPrices[parcel]);
+			tracker->SpendItUp(itemPrices[parcel]);
 			return true;
 		}
 		else
@@ -481,6 +489,7 @@ bool Shop::Buy(int parcel, int shopSection)
 		if (player->GetScore() >= upgradePrices[parcel])
 		{
 			player->SetScore(curMoney -= upgradePrices[parcel]);
+			tracker->SpendItUp(itemPrices[parcel]);
 			return true;
 		}
 		else
@@ -494,6 +503,8 @@ bool Shop::Buy(int parcel, int shopSection)
 		if (player->GetScore() >= towerPrices[parcel])
 		{
 			player->SetScore(curMoney -= towerPrices[parcel]);
+			tracker->SpendItUp(itemPrices[parcel]);
+			tracker->TowerExchange(true);
 			return true;
 		}
 		else
@@ -516,6 +527,7 @@ void Shop::Sell(int parcel, int shopSection)
 {
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	Inventory* inv = player->GetInventory();
+	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
 	switch (shopSection)
@@ -539,24 +551,28 @@ void Shop::Sell(int parcel, int shopSection)
 		{
 			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
 			inv->SetMachineGunTowers(inv->GetMachineGunTowers() - 1);
+			tracker->TowerExchange(false);
 		}
 
 		if (parcel == TOWER_MAPLESYRUP && inv->GetMapleSyrupTowers() > 0)
 		{
 			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
 			inv->SetMapleSyrupTowers(inv->GetMapleSyrupTowers() - 1);
+			tracker->TowerExchange(false);
 		}
 
 		if (parcel == TOWER_HOCKEYSTICK && inv->GetHockeyStickTowers() > 0)
 		{
 			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
 			inv->SetHockeyStickTowers(inv->GetHockeyStickTowers() - 1);
+			tracker->TowerExchange(false);
 		}
 
 		if (parcel == TOWER_LASER && inv->GetLaserTowers() > 0)
 		{
 			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
 			inv->SetLaserTowers(inv->GetLaserTowers() - 1);
+			tracker->TowerExchange(false);
 		}
 
 		if (parcel == TOWER_GOBACK)

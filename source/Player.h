@@ -86,6 +86,7 @@ protected:
 
 	/**********************************************************/
 	// Members
+	bool m_bCanLeftClick;
 	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;

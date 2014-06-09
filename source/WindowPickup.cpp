@@ -1,5 +1,6 @@
 #include "WindowPickup.h"
 #include "DestroyEntityMessage.h"
+#include "StatTracker.h"
 
 int WindowPickup::GetType() const
 {
@@ -13,5 +14,7 @@ int WindowPickup::GetType() const
 		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
 		pmsg->QueueMessage();
 		pmsg = nullptr;
+
+		StatTracker::GetInstance()->WindowExchange(false);
 	}
 }

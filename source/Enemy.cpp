@@ -16,7 +16,7 @@
 #include "Grenade.h"
 #include "CreateParticleMessage.h"
 #include "TrickShotBullet.h"
-#include "../SGD Wrappers/SGD_Event.h"
+#include "StatTracker.h"
 
 #define HEALTH_BAR 1
 
@@ -59,6 +59,19 @@ void Enemy::Update(float dt)
 
 	else if (m_nCurrHealth <= 0)
 	{
+		switch ( GetType() )
+		{
+		case ENT_ZOMBIE_BEAVER:
+			StatTracker::GetInstance()->SpillBlood(1.1f);
+			break;
+		case ENT_ZOMBIE_FAST:
+			StatTracker::GetInstance()->SpillBlood(5.5f);
+			break;
+		case ENT_ZOMBIE_SLOW:
+			StatTracker::GetInstance()->SpillBlood(7.3f);
+			break;
+		}
+
 		float chance = (float)((float)(rand() % 1000 + 1) / 1000.0f);
 
 		if(chance >= 0 && chance <= m_fHealthChance)

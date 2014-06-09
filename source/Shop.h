@@ -64,6 +64,7 @@ public:
 
 	// Accessors
 	bool IsOpen();
+	unsigned int GetTowerPrice(int tower);
 
 	// Mutators
 	void SetShopStatus(bool isOpen);

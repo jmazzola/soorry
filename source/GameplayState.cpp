@@ -74,6 +74,7 @@
 #include "HealthPackPickup.h"
 #include "SuperPack.h"
 
+#include "TowerFlyweight.h"
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
 #include "HockeyStickTower.h"
@@ -83,6 +84,8 @@
 
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
+
+#include "StatTracker.h"
 
 #include "../TinyXML/tinyxml.h"
 
@@ -228,6 +231,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 /*virtual*/ void GameplayState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
+	m_pStatTracker = StatTracker::GetInstance();
+	m_pStatTracker->Load("resource/data/stats.xml");
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
@@ -314,6 +319,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
 	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
 	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
+	string towerStatsFileName = pRoot->FirstChildElement("tower_stats")->GetText();
 	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
 
 #pragma endregion
@@ -342,6 +348,11 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Load enemy stats recipes
 	LoadEnemyRecipes(enemyStatsFileName);
+
+	// Load tower flyweight
+	m_pTowerFlyweight = new TowerFlyweight;
+	m_pTowerFlyweight->Load(towerStatsFileName);
+	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
 
 	// Load the gamesave
 
@@ -451,6 +462,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -491,6 +503,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Delete the zombie factory
 	delete zombieFactory;
+
+	// Delete tower flyweight
+	delete m_pTowerFlyweight;
 
 	// Save the file
 	SaveGame(false);
@@ -912,6 +927,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
+
+		// Update the stat tracker
+		if(zombieFactory->IsBuildMode() == false)
+			m_pStatTracker->IncreaseTime(elapsedTime, true);
+		else
+			m_pStatTracker->IncreaseTime(elapsedTime, false);
 	}
 
 	// If you have won the game
@@ -1932,6 +1953,11 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												  tower->SetBaseImage(m_hMachineGunBaseImage);
 												  tower->SetGunImage(m_hMachineGunGunImage);
+												  tower->SetTowerFlyweight(m_pTowerFlyweight);
+												  tower->SetSellValue((int)(m_pShop->GetTowerPrice(0) * 0.75f));
+												  tower->SetDamage(m_pTowerFlyweight->GetMachineGunDamage(0));
+												  tower->SetFireRate(m_pTowerFlyweight->GetMachineGunFireRate(0));
+												  tower->SetRange(m_pTowerFlyweight->GetMachineGunRange(0));
 
 												  return tower;
 
@@ -1944,6 +1970,11 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												  tower->SetBaseImage(m_hMapleSyrupBaseImage);
 												  tower->SetGunImage(m_hMapleSyrupGunImage);
+												  tower->SetTowerFlyweight(m_pTowerFlyweight);
+												  tower->SetSellValue((int)(m_pShop->GetTowerPrice(1) * 0.75f));
+												  tower->SetSlowTime(m_pTowerFlyweight->GetMapleSyrupEffectDuration(0));
+												  tower->SetFireRate(m_pTowerFlyweight->GetMapleSyrupFireRate(0));
+												  tower->SetRange(m_pTowerFlyweight->GetMapleSyrupRange(0));
 
 												  return tower;
 	}
@@ -1955,6 +1986,10 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 												   tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												   tower->SetBaseImage(m_hHockeyStickBaseImage);
 												   tower->SetGunImage(m_hHockeyStickGunImage);
+												   tower->SetTowerFlyweight(m_pTowerFlyweight);
+												   tower->SetSellValue((int)(m_pShop->GetTowerPrice(2) * 0.75f));
+												   tower->SetDamage(m_pTowerFlyweight->GetHockeyStickDamage(0));
+												   tower->SetRotationRate(m_pTowerFlyweight->GetHockeyStickSpinRate(0));
 
 												   return tower;
 	}
@@ -1965,6 +2000,8 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 											tower->SetPosition(SGD::Point((float)_x, (float)_y));
 											tower->SetBaseImage(m_hLaserBaseImage);
+											tower->SetTowerFlyweight(m_pTowerFlyweight);
+											tower->SetSellValue((int)(m_pShop->GetTowerPrice(3) * 0.75f));
 
 											return tower;
 	}

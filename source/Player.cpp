@@ -29,7 +29,10 @@
 #include "GameplayState.h"
 #include "CreateTrapMessage.h"
 #include "CreateGrenadeMessage.h"
-#include "Cursor.h"
+#include "StatTracker.h"
+#include "BitmapFont.h"
+#include "DestroyEntityMessage.h"
+
 #include "Game.h"
 
 #include <queue>
@@ -149,6 +152,8 @@ Player::Player () : Listener ( this )
 	m_hWalking = pAudio->LoadAudio("resource/audio/walking2.wav");
 	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
 
+	m_bCanLeftClick = true;
+
 }
 
 
@@ -198,6 +203,9 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
+
+	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
+		m_bCanLeftClick = true;
 	
 	if ( m_nCurrHealth <= 0.0f )
 	{
@@ -280,7 +288,11 @@ void Player::Update ( float dt )
 		m_ptPosition.x -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
+		{
 			m_ptPosition.x = oldpos;
+		}
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -295,6 +307,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
 			m_ptPosition.x = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -309,6 +323,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -323,6 +339,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -365,6 +383,7 @@ void Player::Update ( float dt )
 
 		m_fGrenadeTimer = 0.75f;
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
+		StatTracker::GetInstance()->GrenadeThrown();
 	}
 	// Open Shop
 	if((pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X)
@@ -403,6 +422,7 @@ void Player::Update ( float dt )
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
+		
 
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
@@ -426,10 +446,11 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 		// With Xbox Right Trigger
-		if ( pInput->GetTrigger(0) > 0.1f)
+		else if ( pInput->GetTrigger(0) > 0.1f)
 		{
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
@@ -449,6 +470,7 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 	}
@@ -635,16 +657,73 @@ void Player::Update ( float dt )
 		{
 			SGD::Rectangle backgroundRect;
 			backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
-			backgroundRect.top = m_pSelectedTower->GetPosition().y - 144 - Camera::y;
+			backgroundRect.top = m_pSelectedTower->GetPosition().y - 128 - Camera::y;
 			backgroundRect.right = backgroundRect.left + 224;
 			backgroundRect.bottom = backgroundRect.top + 128;
 
 			if (pInput->GetMousePosition().IsWithinRectangle(backgroundRect))
+			{
 				cursorInMenu = true;
+				m_bCanLeftClick = false;
+
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				{
+					SGD::Point topLeft = SGD::Point(backgroundRect.left, backgroundRect.top);
+
+					// Sell button
+					SGD::Rectangle sellButton;
+					sellButton.right = backgroundRect.right - 8;
+					sellButton.bottom = backgroundRect.bottom - 8;
+					sellButton.left = sellButton.right - 80;
+					sellButton.top = sellButton.bottom - 32;
+
+					// Upgrade one rect
+					SGD::Rectangle upgradeOneRect;
+					upgradeOneRect.left = topLeft.x + 8;
+					upgradeOneRect.top = topLeft.y + 8;
+					upgradeOneRect.right = topLeft.x + 108;
+					upgradeOneRect.bottom = topLeft.y + 72;
+
+					// Upgrade two rect
+					SGD::Rectangle upgradeTwoRect;
+					upgradeTwoRect.left = topLeft.x + 116;
+					upgradeTwoRect.top = topLeft.y + 8;
+					upgradeTwoRect.right = topLeft.x + 216;
+					upgradeTwoRect.bottom = topLeft.y + 72;
+
+					if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
+					{
+						m_unScore += m_pSelectedTower->GetSellValue();
+
+						DestroyEntityMessage* msg = new DestroyEntityMessage(m_pSelectedTower);
+						msg->QueueMessage();
+
+						// Empty world collider
+						int wx = (int)(m_pSelectedTower->GetPosition().x / GRIDWIDTH);
+						int wy = (int)(m_pSelectedTower->GetPosition().y / GRIDHEIGHT);
+
+						pWorld->SetColliderID(wx, wy, EMPTY);
+
+						m_pSelectedTower = nullptr;
+
+						return;
+					}
+
+					else if (pInput->GetMousePosition().IsWithinRectangle(upgradeOneRect))
+					{
+						m_pSelectedTower->Upgrade(0, &m_unScore);
+					}
+
+					else if (pInput->GetMousePosition().IsWithinRectangle(upgradeTwoRect))
+					{
+						m_pSelectedTower->Upgrade(1, &m_unScore);
+					}
+				}
+			}
 		}
 
 		// Place item
-		if ( !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
 			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
@@ -695,6 +774,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WallExchange(true);
 			}
 
 			// Windows
@@ -709,6 +789,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WindowExchange(true);
 			}
 
 			// Machine gun tower
@@ -824,6 +905,8 @@ void Player::Update ( float dt )
 void Player::PostRender()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
 
 	// Draw selected tower's menu
 	if (m_pSelectedTower)
@@ -831,14 +914,32 @@ void Player::PostRender()
 		// Menu bacground
 		SGD::Rectangle backgroundRect;
 		backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
-		backgroundRect.top = m_pSelectedTower->GetPosition().y - 144 - Camera::y;
+		backgroundRect.top = m_pSelectedTower->GetPosition().y - 128 - Camera::y;
 		backgroundRect.right = backgroundRect.left + 224;
 		backgroundRect.bottom = backgroundRect.top + 128;
 
-		pGraphics->DrawRectangle(backgroundRect, SGD::Color(100, 0, 0, 0), SGD::Color(255, 255, 0), 2);
+		pGraphics->DrawRectangle(backgroundRect, SGD::Color(150, 0, 0, 0), SGD::Color(255, 255, 0), 2);
+
+		m_pSelectedTower->DrawMenu();
+
+		// Sell button
+		SGD::Rectangle sellButton;
+		sellButton.right = backgroundRect.right - 8;
+		sellButton.bottom = backgroundRect.bottom - 8;
+		sellButton.left = sellButton.right - 80;
+		sellButton.top = sellButton.bottom - 32;
+
+		if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
+			pGraphics->DrawRectangle(sellButton, SGD::Color(100, 0, 255, 0), SGD::Color(255, 255, 255), 2);
+
+		else
+			pGraphics->DrawRectangle(sellButton, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 255), 2);
+
+		string sell = "Sell for " + std::to_string(m_pSelectedTower->GetSellValue());
+		pFont->Draw(sell, (int)sellButton.left + 2, (int)sellButton.top + 2, 0.3f, SGD::Color(255, 255, 255));
 
 		// Ignore drawing item preview if cursor inside tower menu
-		if (SGD::InputManager::GetInstance()->GetMousePosition().IsWithinRectangle(backgroundRect))
+		if (pInput->GetMousePosition().IsWithinRectangle(backgroundRect))
 			return;
 	}
 
@@ -1134,7 +1235,6 @@ bool Player::Blockable ( SGD::Point mouse )
 	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance ()->GetWorldWidth () - 1
 		&& mouse.y >= 1 && mouse.y < WorldManager::GetInstance ()->GetWorldHeight () - 1);
 }
-
 
 /**********************************************************/
 // Accessors

@@ -5,6 +5,7 @@
 #include "CreateBeaverZombieMessage.h"
 #include "WaveCompleteMessage.h"
 #include "Player.h"
+#include "StatTracker.h"
 
 #include "../TinyXML/tinyxml.h"
 
@@ -139,6 +140,8 @@ void ZombieFactory::Update(float dt)
 		int zombiesToSpawn = m_nBeaverZombiesToSpawn + m_nSlowZombiesToSpawn + m_nFastZombiesToSpawn;
 		if (m_nEnemiesRemaining <= 0 && zombiesToSpawn == 0)
 		{
+			
+			StatTracker::GetInstance()->SurvivedRound(m_nWave);
 			m_bBuildMode = true;
 			m_nWave++;
 
