@@ -171,7 +171,7 @@ int Enemy::GetType() const
 	case ENT_BULLET_ASSAULT:
 	{
 		m_nCurrHealth -= 40;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
 	}
@@ -179,7 +179,7 @@ int Enemy::GetType() const
 	case ENT_BULLET_SHOTGUN:
 	{
 		m_nCurrHealth -= 8;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
 	}
@@ -187,7 +187,7 @@ int Enemy::GetType() const
 	case ENT_BULLET_ROCKET:
 	{
 		m_nCurrHealth -= 100;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
 	}

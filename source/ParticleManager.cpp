@@ -103,6 +103,10 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		if (tempInt != 0) tempBool = true;
 		else tempBool = false;
 		tempEmitter->isLooping = tempBool;
+		//Read XML for spawnRate
+		data = data->NextSiblingElement("spawnRate");
+		data->Attribute("rate", &tempDouble);
+		tempEmitter->spawnRate = (float)tempDouble;
 		//Read XML for Emitter size
 		data = data->NextSiblingElement("size");
 		data->Attribute("width", &width);

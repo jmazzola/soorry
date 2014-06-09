@@ -123,5 +123,6 @@ private:
 
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);
+	bool m_bStaticCamera;
 };
 

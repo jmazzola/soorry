@@ -92,6 +92,9 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetLavaTraps(5);
 	m_pInventory->SetSpikeTraps(5);
 
+	//Camera Lock - starts static
+	m_bStaticCamera = 1;
+
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
 
@@ -229,6 +232,10 @@ void Player::Update ( float dt )
 		shoot.x = 0.0f;
 	if ( abs ( shoot.y ) < 0.2f )
 		shoot.y = 0.0f;
+	if (pInput->IsKeyPressed(SGD::Key::Space) == true)
+	{
+		m_bStaticCamera = !m_bStaticCamera;
+	}
 	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
@@ -881,10 +888,18 @@ void Player::Update ( float dt )
 		}
 
 	}
-	
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	//If the camera is static
+	if (m_bStaticCamera)
+	{
+		// Set camera
+		Camera::x = (int)m_ptPosition.x - 384;
+		Camera::y = (int)m_ptPosition.y - 284;
+	}
+	else
+	{
+		Camera::x = (pInput->GetMousePosition().x + m_ptPosition.x - (384*2));
+		Camera::y = (pInput->GetMousePosition().y + m_ptPosition.y - (284*2));
+	}
 }
 
 void Player::PostRender()

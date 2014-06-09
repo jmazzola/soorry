@@ -2002,6 +2002,11 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 											tower->SetBaseImage(m_hLaserBaseImage);
 											tower->SetTowerFlyweight(m_pTowerFlyweight);
 											tower->SetSellValue((int)(m_pShop->GetTowerPrice(3) * 0.75f));
+											tower->SetDamage(m_pTowerFlyweight->GetLaserDamage(0));
+											tower->SetRange(m_pTowerFlyweight->GetLaserRange(0));
+
+											SGD::Event* pEvent = new SGD::Event("ASSESS_LASERS");
+											pEvent->QueueEvent();
 
 											return tower;
 	}
