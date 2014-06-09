@@ -84,6 +84,8 @@
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
 
+#include "StatTracker.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -228,6 +230,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 /*virtual*/ void GameplayState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
+	m_pStatTracker = StatTracker::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
@@ -451,6 +454,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -912,6 +916,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
+
+		// Update the stat tracker
+		if(zombieFactory->IsBuildMode() == false)
+			m_pStatTracker->IncreaseTime(elapsedTime, true);
+		else
+			m_pStatTracker->IncreaseTime(elapsedTime, false);
 	}
 
 	// If you have won the game

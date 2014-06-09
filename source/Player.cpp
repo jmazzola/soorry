@@ -29,6 +29,7 @@
 #include "GameplayState.h"
 #include "CreateTrapMessage.h"
 #include "CreateGrenadeMessage.h"
+#include "StatTracker.h"
 
 #include "Game.h"
 
@@ -273,7 +274,11 @@ void Player::Update ( float dt )
 		m_ptPosition.x -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
+		{
 			m_ptPosition.x = oldpos;
+		}
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -288,6 +293,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
 			m_ptPosition.x = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -302,6 +309,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -316,6 +325,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -358,6 +369,7 @@ void Player::Update ( float dt )
 
 		m_fGrenadeTimer = 0.75f;
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
+		StatTracker::GetInstance()->GrenadeThrown();
 	}
 	// Open Shop
 	if((pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X)
@@ -396,6 +408,7 @@ void Player::Update ( float dt )
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
+		StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
@@ -688,6 +701,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WallExchange(true);
 			}
 
 			// Windows
@@ -702,6 +716,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WindowExchange(true);
 			}
 
 			// Machine gun tower

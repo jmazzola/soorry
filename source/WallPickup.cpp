@@ -1,5 +1,6 @@
 #include "WallPickup.h"
 #include "DestroyEntityMessage.h"
+#include "StatTracker.h"
 
 int WallPickup::GetType() const
 {
@@ -13,5 +14,7 @@ int WallPickup::GetType() const
 		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
 		pmsg->QueueMessage();
 		pmsg = nullptr;
+
+		StatTracker::GetInstance()->WallExchange(false);
 	}
 }

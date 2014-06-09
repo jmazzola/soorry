@@ -26,6 +26,7 @@ class ParticleManager;
 class Button;
 class BitmapFont;
 class Drone;
+class StatTracker;
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
 
@@ -99,7 +100,7 @@ private:
 	float m_fTimeUntilWave;
 	ZombieFactory* zombieFactory;
 	SGD::Point m_ptPlayerSpawnPoint;
-
+	StatTracker* m_pStatTracker;
 	char m_nCurrGameSlot;
 
 	/**********************************************************/
