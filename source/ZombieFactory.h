@@ -32,6 +32,7 @@ public:
 	bool IsPaused() const;
 	bool IsBuildMode() const;
 	bool IsInfiniteBuildTime() const;
+	bool IsInfiniteWaves() const;
 	int GetWave() const;
 	int GetEnemiesRemaining() const;
 	int GetSlowZombiesToSpawn() const;
@@ -50,6 +51,7 @@ public:
 	void SetPaused(bool isPaused);
 	void SetBuildMode(bool buildMode);
 	void SetInfiniteBuildTime(bool infiniteBuildTime);
+	void SetInfiniteWaves(bool infiniteWaves);
 	void SetWave(int wave);
 	void SetEnemiesRemaining(int enemiesRemaining);
 	void SetSlowZombiesToSpawn(int slowZombiesToSpawn);
@@ -71,6 +73,7 @@ protected:
 	bool m_bIsPaused;
 	bool m_bBuildMode;
 	bool m_bInfiniteBuildTime;
+	bool m_bInfiniteWaves;
 	int m_nWave;
 	int m_nEnemiesRemaining;
 	int m_nSlowZombiesToSpawn;
