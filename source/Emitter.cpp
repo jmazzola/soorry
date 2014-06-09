@@ -224,6 +224,7 @@ bool Emitter::Update(float dt)
 		{
 			return false;
 		}
+		//BUG: trys to update the particle after the entity has died
 		position = followEnitiy->GetPosition();
 	}
 	if (isLooping)
