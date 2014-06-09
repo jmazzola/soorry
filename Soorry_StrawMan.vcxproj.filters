@@ -348,6 +348,9 @@
     <ClCompile Include="source\CreateGrenadeMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\TowerFlyweight.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -653,6 +656,9 @@
     <ClInclude Include="source\CreateGrenadeMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\TowerFlyweight.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -679,7 +685,10 @@
     <Xml Include="resource\data\game_modes\arcade_mode\enemyStats.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
-    <Xml Include="resource\data\shop.xml">
+    <Xml Include="resource\data\game_modes\arcade_mode\towerStats.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
   </ItemGroup>

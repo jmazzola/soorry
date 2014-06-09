@@ -23,10 +23,10 @@
 	</weaponUpgrades>
 
 	<towers count="5">
-		<tower name="Machine Gun Tower"						price="20000"	description="Machine Gun Tower" />
-		<tower name="Maple Syrup Tower"						price="40000"	description="Maple Searup" />
-		<tower name="Hockey Stick Tower"					price="70000"	description="GOOOOOOALL wrong sport." />
-		<tower name="Laser Tower"							price="100000"	description="*laser noise*" />
+		<tower name="Machine Gun Tower"						price="100"	description="Machine Gun Tower" />
+		<tower name="Maple Syrup Tower"						price="150"	description="Maple Searup" />
+		<tower name="Hockey Stick Tower"					price="200"	description="GOOOOOOALL wrong sport." />
+		<tower name="Laser Tower"							price="300"	description="*laser noise*" />
     <tower name="Go Back"							price="0"	description="Go Back" />
 	</towers>
 </shop>
