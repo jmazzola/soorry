@@ -348,6 +348,9 @@
     <ClCompile Include="source\CreateGrenadeMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\TrickShotBullet.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -652,6 +655,9 @@
     </ClInclude>
     <ClInclude Include="source\CreateGrenadeMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TrickShotBullet.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -252,4 +252,5 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/healthpickup.xml");
 	LoadSprites("resource/animation/drone.xml");
 	LoadSprites("resource/animation/grenade.xml");
+	LoadSprites("resource/animation/trickshot.xml");
 }

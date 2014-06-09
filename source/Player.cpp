@@ -117,12 +117,12 @@ Player::Player () : Listener ( this )
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
 	m_pWeapons[ 2 ] = tempWeapon;
 
-	//Fire Axe
+	//Trick Shot
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 0 );
-	tempWeapon.SetMaxAmmo ( 0 );
-	tempWeapon.SetFireRate ( .5f );
-	tempWeapon.SetType ( Guns::TYPE_ASSAULT_RIFLE );
+	tempWeapon.SetCurrAmmo ( 500 );
+	tempWeapon.SetMaxAmmo ( 500 );
+	tempWeapon.SetFireRate ( 0.75f );
+	tempWeapon.SetType ( Guns::TYPE_TRICKSHOT );
 	m_pWeapons[ 3 ] = tempWeapon;
 #pragma endregion
 
@@ -372,25 +372,25 @@ void Player::Update ( float dt )
 		pAudio->StopAudio(m_hWalking);
 	}
 	//GAH Weapons! - Arnold
-	//Switch to Slot One
+	//Switch to Machine Gun
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_ONE;
+		m_nCurrWeapon = MACHINE_GUN;
 	}
-	//Switch to Slot Two
+	//Switch to Shotgun
 	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_TWO;
+		m_nCurrWeapon = SHOT_GUN;
 	}
-	//Switch to Slot Three
+	//Switch to Rocket Launcher
 	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_THREE;
+		m_nCurrWeapon = ROCKET_LAUNCHER;
 	}
-	//Switch to Slot Four
+	//Switch to Trick Shot Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_FOUR;
+		m_nCurrWeapon = TRICK_SHOT_GUN;
 	}
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
@@ -470,7 +470,7 @@ void Player::Update ( float dt )
 		{
 			m_nCurrWeapon--;
 			if ( m_nCurrWeapon <= -1 )
-				m_nCurrWeapon = TOTAL_SLOTS - 1;
+				m_nCurrWeapon = TOTAL_GUNS - 1;
 		}
 	}
 	// Cycle Right
@@ -485,8 +485,8 @@ void Player::Update ( float dt )
 		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon++;
-			if ( m_nCurrWeapon >= TOTAL_SLOTS )
-				m_nCurrWeapon = SLOT_ONE;
+			if ( m_nCurrWeapon >= TOTAL_GUNS )
+				m_nCurrWeapon = MACHINE_GUN;
 		}
 	}
 
@@ -528,11 +528,11 @@ void Player::Update ( float dt )
 
 	// Selecting lava trap
 	if (pInput->IsKeyPressed(SGD::Key::Nine) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 8;
+		m_nCurrPlaceable = LTRAP;
 
 	// Selecting spike trap
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 9;
+		m_nCurrPlaceable = STRAP;
 
 	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
@@ -641,7 +641,7 @@ void Player::Update ( float dt )
 			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
-			if ( m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps () > 0 )
+			if ( m_nCurrPlaceable == BEARTRAP && m_pInventory->GetBearTraps () > 0 )
 			{
 				// Cooldown for placing objects
 				m_fPlaceTimer = 1;
@@ -659,7 +659,7 @@ void Player::Update ( float dt )
 			}
 
 			// Mine
-			else if ( m_nCurrPlaceable == 3 && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
+			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
 			{
 				// Cooldown for placing objects
 				m_fPlaceTimer = 1;
@@ -677,7 +677,7 @@ void Player::Update ( float dt )
 			}
 
 			// Walls
-			else if ( m_nCurrPlaceable == 0 && m_pInventory->GetWalls () > 0 )
+			else if ( m_nCurrPlaceable == WALLS && m_pInventory->GetWalls () > 0 )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
 				// Decreasing the amount of mines left for the player
@@ -691,7 +691,7 @@ void Player::Update ( float dt )
 			}
 
 			// Windows
-			else if ( m_nCurrPlaceable == 1 && m_pInventory->GetWindows () > 0 )
+			else if ( m_nCurrPlaceable == WINDOWS && m_pInventory->GetWindows () > 0 )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
 				// Decreasing the amount of mines left for the player
@@ -705,7 +705,7 @@ void Player::Update ( float dt )
 			}
 
 			// Machine gun tower
-			else if ( m_nCurrPlaceable == 4 && m_pInventory->GetMachineGunTowers () > 0 )
+			else if ( m_nCurrPlaceable == MGTOWER && m_pInventory->GetMachineGunTowers () > 0 )
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MACHINE_GUN);
@@ -722,7 +722,7 @@ void Player::Update ( float dt )
 			}
 
 			// Maple Syrup tower
-			else if (m_nCurrPlaceable == 5 && m_pInventory->GetMapleSyrupTowers() > 0)
+			else if (m_nCurrPlaceable == MSTOWER && m_pInventory->GetMapleSyrupTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MAPLE_SYRUP);
@@ -738,7 +738,7 @@ void Player::Update ( float dt )
 			}
 
 			// Hockey Stick tower
-			else if (m_nCurrPlaceable == 6 && m_pInventory->GetHockeyStickTowers() > 0)
+			else if (m_nCurrPlaceable == HSTOWER && m_pInventory->GetHockeyStickTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_HOCKEY_STICK);
@@ -754,7 +754,7 @@ void Player::Update ( float dt )
 			}
 
 			// Laser tower
-			else if (m_nCurrPlaceable == 7 && m_pInventory->GetLaserTowers() > 0)
+			else if (m_nCurrPlaceable == LTOWER && m_pInventory->GetLaserTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_LASER);
@@ -768,7 +768,7 @@ void Player::Update ( float dt )
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 			}
-			else if ( m_nCurrPlaceable == 8 && m_pInventory->GetLavaTraps () > 0 )
+			else if ( m_nCurrPlaceable == LTRAP && m_pInventory->GetLavaTraps () > 0 )
 			{
 				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_LAVA);
@@ -783,7 +783,7 @@ void Player::Update ( float dt )
 				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
 
 			}
-			else if ( m_nCurrPlaceable == 9 && m_pInventory->GetSpikeTraps () > 0 )
+			else if ( m_nCurrPlaceable == STRAP && m_pInventory->GetSpikeTraps () > 0 )
 			{
 				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_SPIKE);
@@ -849,7 +849,7 @@ void Player::PostRender()
 		else
 			legalPlacement = PlacementCheck(tilePos, true);
 		// Walls
-		if (m_nCurrPlaceable == 0)
+		if (m_nCurrPlaceable == WALLS)
 		{
 			// Make sure we have walls
 			if (m_pInventory->GetWalls() == 0)
@@ -865,7 +865,7 @@ void Player::PostRender()
 		}
 
 		// Windows
-		else if (m_nCurrPlaceable == 1)
+		else if (m_nCurrPlaceable == WINDOWS)
 		{
 			// Make sure we have windows
 			if (m_pInventory->GetWindows() == 0)
@@ -881,7 +881,7 @@ void Player::PostRender()
 		}
 
 		// Bear traps
-		else if (m_nCurrPlaceable == 2)
+		else if (m_nCurrPlaceable == BEARTRAP)
 		{
 			// Make sure we have bear traps
 			if (m_pInventory->GetBearTraps() == 0)
@@ -897,7 +897,7 @@ void Player::PostRender()
 		}
 
 		// Mines
-		else if (m_nCurrPlaceable == 3)
+		else if (m_nCurrPlaceable == MINE)
 		{
 			// Make sure we have mines
 			if (m_pInventory->GetMines() == 0)
@@ -913,7 +913,7 @@ void Player::PostRender()
 		}
 
 		// Machine gun towers
-		else if (m_nCurrPlaceable == 4)
+		else if (m_nCurrPlaceable == MGTOWER)
 		{
 			// Make sure we have machine gun towers
 			if (m_pInventory->GetMachineGunTowers() == 0)
@@ -943,7 +943,7 @@ void Player::PostRender()
 		}
 
 		// Maple syrup towers
-		else if (m_nCurrPlaceable == 5)
+		else if (m_nCurrPlaceable == MSTOWER)
 		{
 			// Make sure we have maple syrup towers
 			if (m_pInventory->GetMapleSyrupTowers() == 0)
@@ -973,7 +973,7 @@ void Player::PostRender()
 		}
 
 		// Hockey stick towers
-		else if (m_nCurrPlaceable == 6)
+		else if (m_nCurrPlaceable == HSTOWER)
 		{
 			// Make sure we have hockey stick towers
 			if (m_pInventory->GetHockeyStickTowers() == 0)
@@ -1003,7 +1003,7 @@ void Player::PostRender()
 		}
 
 		// Laser tower
-		if (m_nCurrPlaceable == 7)
+		if (m_nCurrPlaceable == LTOWER)
 		{
 			// Make sure we have laser towers
 			if (m_pInventory->GetLaserTowers() == 0)
@@ -1019,7 +1019,7 @@ void Player::PostRender()
 		}
 
 		// Lava trap
-		if (m_nCurrPlaceable == 8)
+		if (m_nCurrPlaceable == LTRAP)
 		{
 			// Make sure we have lava traps
 			if (m_pInventory->GetLavaTraps() == 0)
@@ -1035,7 +1035,7 @@ void Player::PostRender()
 		}
 
 		// Spike trap
-		if (m_nCurrPlaceable == 9)
+		if (m_nCurrPlaceable == STRAP)
 		{
 			// Make sure we have spike traps
 			if (m_pInventory->GetSpikeTraps() == 0)
