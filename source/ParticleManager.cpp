@@ -6,7 +6,6 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Entity.h"
 #include <map>
-//TODO: emitter position will be set by message, with an overload accepting an entity*
 ParticleManager::ParticleManager()
 {
 }
@@ -76,6 +75,7 @@ void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, 
 	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
 	tempEmitter->followEnitiy = _entity;
 	tempEmitter->load();
+	tempEmitter->particleFlyweight->entity = _entity;
 	tempEmitter->emitterID = activeEmitters.size();
 	activeEmitters.push_back(tempEmitter);
 }
@@ -103,6 +103,10 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		if (tempInt != 0) tempBool = true;
 		else tempBool = false;
 		tempEmitter->isLooping = tempBool;
+		//Read XML for spawnRate
+		data = data->NextSiblingElement("spawnRate");
+		data->Attribute("rate", &tempDouble);
+		tempEmitter->spawnRate = (float)tempDouble;
 		//Read XML for Emitter size
 		data = data->NextSiblingElement("size");
 		data->Attribute("width", &width);

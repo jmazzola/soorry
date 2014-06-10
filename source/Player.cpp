@@ -4,6 +4,7 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -28,6 +29,10 @@
 #include "CreateTowerMessage.h"
 #include "GameplayState.h"
 #include "CreateTrapMessage.h"
+#include "CreateGrenadeMessage.h"
+#include "StatTracker.h"
+#include "BitmapFont.h"
+#include "DestroyEntityMessage.h"
 
 #include "Game.h"
 
@@ -88,6 +93,10 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetLavaTraps(5);
 	m_pInventory->SetSpikeTraps(5);
 
+	//Camera Lock - starts static
+	m_bStaticCamera = 1;
+	m_fCameraLerpTimer = 1;
+
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
 
@@ -116,12 +125,12 @@ Player::Player () : Listener ( this )
 	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
 	m_pWeapons[ 2 ] = tempWeapon;
 
-	//Fire Axe
+	//Trick Shot
 	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 0 );
-	tempWeapon.SetMaxAmmo ( 0 );
-	tempWeapon.SetFireRate ( .5f );
-	tempWeapon.SetType ( Guns::TYPE_ASSAULT_RIFLE );
+	tempWeapon.SetCurrAmmo ( 500 );
+	tempWeapon.SetMaxAmmo ( 500 );
+	tempWeapon.SetFireRate ( 0.75f );
+	tempWeapon.SetType ( Guns::TYPE_TRICKSHOT );
 	m_pWeapons[ 3 ] = tempWeapon;
 #pragma endregion
 
@@ -144,6 +153,8 @@ Player::Player () : Listener ( this )
 	m_hPickup = pAudio->LoadAudio("resource/audio/block_pickup.wav");
 	m_hWalking = pAudio->LoadAudio("resource/audio/walking2.wav");
 	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
+
+	m_bCanLeftClick = true;
 
 }
 
@@ -194,6 +205,9 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
+
+	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
+		m_bCanLeftClick = true;
 	
 	if ( m_nCurrHealth <= 0.0f )
 	{
@@ -220,6 +234,10 @@ void Player::Update ( float dt )
 		shoot.x = 0.0f;
 	if ( abs ( shoot.y ) < 0.2f )
 		shoot.y = 0.0f;
+	if (pInput->IsKeyPressed(SGD::Key::Space) == true)
+	{
+		m_bStaticCamera = !m_bStaticCamera;
+	}
 	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
@@ -272,7 +290,11 @@ void Player::Update ( float dt )
 		m_ptPosition.x -= m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
+		{
 			m_ptPosition.x = oldpos;
+		}
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -287,6 +309,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
 			m_ptPosition.x = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking );
@@ -301,6 +325,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -315,6 +341,8 @@ void Player::Update ( float dt )
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
 			m_ptPosition.y = oldpos;
+		else
+			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
 		{
 			pAudio->PlayAudio ( m_hWalking , true );
@@ -334,9 +362,30 @@ void Player::Update ( float dt )
 	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
 		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
 	{
-		// THROW THE GRENADE HERE
+		SGD::Vector force;
+		SGD::Point self = GetPosition();
+		self.x -= (float)Camera::x;
+		self.y -= (float)Camera::y;
+		self.x += 16;
+		self.y += 16;
+
+		force.x = pInput->GetMousePosition().x - self.x;
+		force.y = pInput->GetMousePosition().y - self.y;
+		if(force.x > 100)
+			force.x = 100;
+		if(force.x < -100)
+			force.x = -100;
+		if(force.y > 100)
+			force.y = 100;
+		if(force.y < -100)
+			force.y = -100;
+
+		CreateGrenadeMessage* grenade = new CreateGrenadeMessage(m_ptPosition.x, m_ptPosition.y, force);
+		grenade->QueueMessage();
+
 		m_fGrenadeTimer = 0.75f;
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
+		StatTracker::GetInstance()->GrenadeThrown();
 	}
 	// Open Shop
 	if((pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X)
@@ -350,38 +399,33 @@ void Player::Update ( float dt )
 	{
 		pAudio->StopAudio(m_hWalking);
 	}
-	// For testing purposes BLOOOOOOD
-	if (pInput->IsKeyPressed(SGD::Key::Space))
-	{
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
-	}
-	
 	//GAH Weapons! - Arnold
-	//Switch to Slot One
+	//Switch to Machine Gun
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_ONE;
+		m_nCurrWeapon = MACHINE_GUN;
 	}
-	//Switch to Slot Two
+	//Switch to Shotgun
 	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_TWO;
+		m_nCurrWeapon = SHOT_GUN;
 	}
-	//Switch to Slot Three
+	//Switch to Rocket Launcher
 	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_THREE;
+		m_nCurrWeapon = ROCKET_LAUNCHER;
 	}
-	//Switch to Slot Four
+	//Switch to Trick Shot Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
-		m_nCurrWeapon = SLOT_FOUR;
+		m_nCurrWeapon = TRICK_SHOT_GUN;
 	}
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
+		m_fCursorFadeTimer = m_fCursorFadeLength;
+		
+
 		// Left click
 		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
 		{
@@ -392,10 +436,6 @@ void Player::Update ( float dt )
 			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
 			m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[ m_nCurrWeapon ].GetFireRate ());
 			
-			// If we have infinite ammo, don't subtract
-			if (!pGame->HasInfAmmo())
-				m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
-
 			// If you don't have the super buff
 			if ( m_fSuperTimer <= 0.0f )
 			{
@@ -408,10 +448,11 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 		// With Xbox Right Trigger
-		if ( pInput->GetTrigger(0) > 0.1f)
+		else if ( pInput->GetTrigger(0) > 0.1f)
 		{
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
@@ -431,6 +472,7 @@ void Player::Update ( float dt )
 			{
 				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
 			}
+			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
 
 	}
@@ -459,7 +501,7 @@ void Player::Update ( float dt )
 		{
 			m_nCurrWeapon--;
 			if ( m_nCurrWeapon <= -1 )
-				m_nCurrWeapon = TOTAL_SLOTS - 1;
+				m_nCurrWeapon = TOTAL_GUNS - 1;
 		}
 	}
 	// Cycle Right
@@ -474,8 +516,8 @@ void Player::Update ( float dt )
 		else if(m_fSuperTimer <= 0.0f)
 		{
 			m_nCurrWeapon++;
-			if ( m_nCurrWeapon >= TOTAL_SLOTS )
-				m_nCurrWeapon = SLOT_ONE;
+			if ( m_nCurrWeapon >= TOTAL_GUNS )
+				m_nCurrWeapon = MACHINE_GUN;
 		}
 	}
 
@@ -517,11 +559,11 @@ void Player::Update ( float dt )
 
 	// Selecting lava trap
 	if (pInput->IsKeyPressed(SGD::Key::Nine) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 8;
+		m_nCurrPlaceable = LTRAP;
 
 	// Selecting spike trap
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true && m_pZombieWave->IsBuildMode() == true)
-		m_nCurrPlaceable = 9;
+		m_nCurrPlaceable = STRAP;
 
 	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
@@ -611,12 +653,83 @@ void Player::Update ( float dt )
 	}
 	else
 	{
+		// Only place if cursor not on tower menu
+		bool cursorInMenu = false;
+		if (m_pSelectedTower)
+		{
+			SGD::Rectangle backgroundRect;
+			backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
+			backgroundRect.top = m_pSelectedTower->GetPosition().y - 128 - Camera::y;
+			backgroundRect.right = backgroundRect.left + 224;
+			backgroundRect.bottom = backgroundRect.top + 128;
+
+			if (pInput->GetMousePosition().IsWithinRectangle(backgroundRect))
+			{
+				cursorInMenu = true;
+				m_bCanLeftClick = false;
+
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				{
+					SGD::Point topLeft = SGD::Point(backgroundRect.left, backgroundRect.top);
+
+					// Sell button
+					SGD::Rectangle sellButton;
+					sellButton.right = backgroundRect.right - 8;
+					sellButton.bottom = backgroundRect.bottom - 8;
+					sellButton.left = sellButton.right - 80;
+					sellButton.top = sellButton.bottom - 32;
+
+					// Upgrade one rect
+					SGD::Rectangle upgradeOneRect;
+					upgradeOneRect.left = topLeft.x + 8;
+					upgradeOneRect.top = topLeft.y + 8;
+					upgradeOneRect.right = topLeft.x + 108;
+					upgradeOneRect.bottom = topLeft.y + 72;
+
+					// Upgrade two rect
+					SGD::Rectangle upgradeTwoRect;
+					upgradeTwoRect.left = topLeft.x + 116;
+					upgradeTwoRect.top = topLeft.y + 8;
+					upgradeTwoRect.right = topLeft.x + 216;
+					upgradeTwoRect.bottom = topLeft.y + 72;
+
+					if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
+					{
+						m_unScore += m_pSelectedTower->GetSellValue();
+
+						DestroyEntityMessage* msg = new DestroyEntityMessage(m_pSelectedTower);
+						msg->QueueMessage();
+
+						// Empty world collider
+						int wx = (int)(m_pSelectedTower->GetPosition().x / GRIDWIDTH);
+						int wy = (int)(m_pSelectedTower->GetPosition().y / GRIDHEIGHT);
+
+						pWorld->SetColliderID(wx, wy, EMPTY);
+
+						m_pSelectedTower = nullptr;
+
+						return;
+					}
+
+					else if (pInput->GetMousePosition().IsWithinRectangle(upgradeOneRect))
+					{
+						m_pSelectedTower->Upgrade(0, &m_unScore);
+					}
+
+					else if (pInput->GetMousePosition().IsWithinRectangle(upgradeTwoRect))
+					{
+						m_pSelectedTower->Upgrade(1, &m_unScore);
+					}
+				}
+			}
+		}
+
 		// Place item
-		if ( m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
 			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
 		{
 			// Bear trap
-			if ( m_nCurrPlaceable == 2 && m_pInventory->GetBearTraps () > 0 )
+			if ( m_nCurrPlaceable == BEARTRAP && m_pInventory->GetBearTraps () > 0 )
 			{
 				// Cooldown for placing objects
 				m_fPlaceTimer = 1;
@@ -634,7 +747,7 @@ void Player::Update ( float dt )
 			}
 
 			// Mine
-			else if ( m_nCurrPlaceable == 3 && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
+			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
 			{
 				// Cooldown for placing objects
 				m_fPlaceTimer = 1;
@@ -652,7 +765,7 @@ void Player::Update ( float dt )
 			}
 
 			// Walls
-			else if ( m_nCurrPlaceable == 0 && m_pInventory->GetWalls () > 0 )
+			else if ( m_nCurrPlaceable == WALLS && m_pInventory->GetWalls () > 0 )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
 				// Decreasing the amount of mines left for the player
@@ -663,10 +776,11 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WallExchange(true);
 			}
 
 			// Windows
-			else if ( m_nCurrPlaceable == 1 && m_pInventory->GetWindows () > 0 )
+			else if ( m_nCurrPlaceable == WINDOWS && m_pInventory->GetWindows () > 0 )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
 				// Decreasing the amount of mines left for the player
@@ -677,10 +791,11 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				StatTracker::GetInstance()->WindowExchange(true);
 			}
 
 			// Machine gun tower
-			else if ( m_nCurrPlaceable == 4 && m_pInventory->GetMachineGunTowers () > 0 )
+			else if ( m_nCurrPlaceable == MGTOWER && m_pInventory->GetMachineGunTowers () > 0 )
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MACHINE_GUN);
@@ -697,7 +812,7 @@ void Player::Update ( float dt )
 			}
 
 			// Maple Syrup tower
-			else if (m_nCurrPlaceable == 5 && m_pInventory->GetMapleSyrupTowers() > 0)
+			else if (m_nCurrPlaceable == MSTOWER && m_pInventory->GetMapleSyrupTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MAPLE_SYRUP);
@@ -713,7 +828,7 @@ void Player::Update ( float dt )
 			}
 
 			// Hockey Stick tower
-			else if (m_nCurrPlaceable == 6 && m_pInventory->GetHockeyStickTowers() > 0)
+			else if (m_nCurrPlaceable == HSTOWER && m_pInventory->GetHockeyStickTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_HOCKEY_STICK);
@@ -729,7 +844,7 @@ void Player::Update ( float dt )
 			}
 
 			// Laser tower
-			else if (m_nCurrPlaceable == 7 && m_pInventory->GetLaserTowers() > 0)
+			else if (m_nCurrPlaceable == LTOWER && m_pInventory->GetLaserTowers() > 0)
 			{
 				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_LASER);
@@ -743,7 +858,7 @@ void Player::Update ( float dt )
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
 			}
-			else if ( m_nCurrPlaceable == 8 && m_pInventory->GetLavaTraps () > 0 )
+			else if ( m_nCurrPlaceable == LTRAP && m_pInventory->GetLavaTraps () > 0 )
 			{
 				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_LAVA);
@@ -758,7 +873,7 @@ void Player::Update ( float dt )
 				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
 
 			}
-			else if ( m_nCurrPlaceable == 9 && m_pInventory->GetSpikeTraps () > 0 )
+			else if ( m_nCurrPlaceable == STRAP && m_pInventory->GetSpikeTraps () > 0 )
 			{
 				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_SPIKE);
@@ -775,31 +890,92 @@ void Player::Update ( float dt )
 		}
 
 	}
-	
-	// Set camera
-	Camera::x = (int)m_ptPosition.x - 384;
-	Camera::y = (int)m_ptPosition.y - 284;
+	//If the camera is static
+	if (m_bStaticCamera)
+	{
+		// Set camera
+		Camera::x = (int)m_ptPosition.x - 384;
+		Camera::y = (int)m_ptPosition.y - 284;
+	}
+	else
+	{
+		//Update lerp timer
+		m_fCameraLerpTimer += (dt*10);
+		// lerp to position
+		//If it has fully lerped
+		if (m_fCameraLerpTimer >= 1)
+		{
+			//reset the lerp and set the next position
+			m_fCameraLerpTimer = 0;
+			m_vCameraStart = { (float)Camera::x, (float)Camera::y };
+			m_vCameraEnd = { (float)(pInput->GetMousePosition().x + m_ptPosition.x - (384 * 2)), (float)(pInput->GetMousePosition().y + m_ptPosition.y - (284 * 2)) };
+		}
+		if (m_fCameraLerpTimer < 1)
+		{
+			SGD::Vector tempVector;
+			tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, m_fCameraLerpTimer);
+			Camera::x = (int)tempVector.x;
+			Camera::y = (int)tempVector.y;
+		}
+	}
 }
 
 void Player::PostRender()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
 
-	// Get the tile
-	SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
-	tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
-	tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+	// Draw selected tower's menu
+	if (m_pSelectedTower)
+	{
+		// Menu bacground
+		SGD::Rectangle backgroundRect;
+		backgroundRect.left = m_pSelectedTower->GetPosition().x - 96 - Camera::x;
+		backgroundRect.top = m_pSelectedTower->GetPosition().y - 128 - Camera::y;
+		backgroundRect.right = backgroundRect.left + 224;
+		backgroundRect.bottom = backgroundRect.top + 128;
 
-	// Get tiles world position
-	SGD::Point worldPosition = tilePos;
-	worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
-	worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
-	worldPosition.x -= Camera::x;
-	worldPosition.y -= Camera::y;
+		pGraphics->DrawRectangle(backgroundRect, SGD::Color(150, 0, 0, 0), SGD::Color(255, 255, 0), 2);
+
+		m_pSelectedTower->DrawMenu();
+
+		// Sell button
+		SGD::Rectangle sellButton;
+		sellButton.right = backgroundRect.right - 8;
+		sellButton.bottom = backgroundRect.bottom - 8;
+		sellButton.left = sellButton.right - 80;
+		sellButton.top = sellButton.bottom - 32;
+
+		if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
+			pGraphics->DrawRectangle(sellButton, SGD::Color(100, 0, 255, 0), SGD::Color(255, 255, 255), 2);
+
+		else
+			pGraphics->DrawRectangle(sellButton, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 255), 2);
+
+		string sell = "Sell for " + std::to_string(m_pSelectedTower->GetSellValue());
+		pFont->Draw(sell, (int)sellButton.left + 2, (int)sellButton.top + 2, 0.3f, SGD::Color(255, 255, 255));
+
+		// Ignore drawing item preview if cursor inside tower menu
+		if (pInput->GetMousePosition().IsWithinRectangle(backgroundRect))
+			return;
+	}
 
 	// Show the item in the location of the placement
 	if (m_pZombieWave->IsBuildMode())
 	{
+		// Get the tile
+		SGD::Point tilePos = SGD::InputManager::GetInstance()->GetMousePosition();
+		tilePos.x = (float)((int)(tilePos.x + Camera::x) / GRIDWIDTH);
+		tilePos.y = (float)((int)(tilePos.y + Camera::y) / GRIDHEIGHT);
+
+		// Get tiles world position
+		SGD::Point worldPosition = tilePos;
+		worldPosition.x *= WorldManager::GetInstance()->GetTileWidth();
+		worldPosition.y *= WorldManager::GetInstance()->GetTileHeight();
+		worldPosition.x -= Camera::x;
+		worldPosition.y -= Camera::y;
+
 		// Check if legal placement
 		bool legalPlacement;
 		if(m_nCurrPlaceable < 8)
@@ -807,7 +983,7 @@ void Player::PostRender()
 		else
 			legalPlacement = PlacementCheck(tilePos, true);
 		// Walls
-		if (m_nCurrPlaceable == 0)
+		if (m_nCurrPlaceable == WALLS)
 		{
 			// Make sure we have walls
 			if (m_pInventory->GetWalls() == 0)
@@ -823,7 +999,7 @@ void Player::PostRender()
 		}
 
 		// Windows
-		else if (m_nCurrPlaceable == 1)
+		else if (m_nCurrPlaceable == WINDOWS)
 		{
 			// Make sure we have windows
 			if (m_pInventory->GetWindows() == 0)
@@ -839,7 +1015,7 @@ void Player::PostRender()
 		}
 
 		// Bear traps
-		else if (m_nCurrPlaceable == 2)
+		else if (m_nCurrPlaceable == BEARTRAP)
 		{
 			// Make sure we have bear traps
 			if (m_pInventory->GetBearTraps() == 0)
@@ -855,7 +1031,7 @@ void Player::PostRender()
 		}
 
 		// Mines
-		else if (m_nCurrPlaceable == 3)
+		else if (m_nCurrPlaceable == MINE)
 		{
 			// Make sure we have mines
 			if (m_pInventory->GetMines() == 0)
@@ -871,7 +1047,7 @@ void Player::PostRender()
 		}
 
 		// Machine gun towers
-		else if (m_nCurrPlaceable == 4)
+		else if (m_nCurrPlaceable == MGTOWER)
 		{
 			// Make sure we have machine gun towers
 			if (m_pInventory->GetMachineGunTowers() == 0)
@@ -901,7 +1077,7 @@ void Player::PostRender()
 		}
 
 		// Maple syrup towers
-		else if (m_nCurrPlaceable == 5)
+		else if (m_nCurrPlaceable == MSTOWER)
 		{
 			// Make sure we have maple syrup towers
 			if (m_pInventory->GetMapleSyrupTowers() == 0)
@@ -931,7 +1107,7 @@ void Player::PostRender()
 		}
 
 		// Hockey stick towers
-		else if (m_nCurrPlaceable == 6)
+		else if (m_nCurrPlaceable == HSTOWER)
 		{
 			// Make sure we have hockey stick towers
 			if (m_pInventory->GetHockeyStickTowers() == 0)
@@ -961,7 +1137,7 @@ void Player::PostRender()
 		}
 
 		// Laser tower
-		if (m_nCurrPlaceable == 7)
+		if (m_nCurrPlaceable == LTOWER)
 		{
 			// Make sure we have laser towers
 			if (m_pInventory->GetLaserTowers() == 0)
@@ -977,7 +1153,7 @@ void Player::PostRender()
 		}
 
 		// Lava trap
-		if (m_nCurrPlaceable == 8)
+		if (m_nCurrPlaceable == LTRAP)
 		{
 			// Make sure we have lava traps
 			if (m_pInventory->GetLavaTraps() == 0)
@@ -993,7 +1169,7 @@ void Player::PostRender()
 		}
 
 		// Spike trap
-		if (m_nCurrPlaceable == 9)
+		if (m_nCurrPlaceable == STRAP)
 		{
 			// Make sure we have spike traps
 			if (m_pInventory->GetSpikeTraps() == 0)
@@ -1057,7 +1233,9 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		float damage = *((float*)pEvent->GetData ());
 		m_nCurrHealth -= damage;
-
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		msg->QueueMessage();
+		msg = nullptr;
 		// Make sure we don't underflow
 		if ( m_nCurrHealth < 0.0f )
 			m_nCurrHealth = 0.0f;
@@ -1075,7 +1253,6 @@ bool Player::Blockable ( SGD::Point mouse )
 	return (mouse.x >= 1 && mouse.x < WorldManager::GetInstance ()->GetWorldWidth () - 1
 		&& mouse.y >= 1 && mouse.y < WorldManager::GetInstance ()->GetWorldHeight () - 1);
 }
-
 
 /**********************************************************/
 // Accessors

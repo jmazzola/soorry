@@ -4,6 +4,7 @@
 #include "../SGD Wrappers/SGD_Color.h"
 #include "../SGD Wrappers/SGD_Handle.h"
 #include "Emitter.h"
+#include "Player.h"
 class Particle
 {
 	

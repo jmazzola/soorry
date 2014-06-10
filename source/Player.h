@@ -26,8 +26,8 @@ class Tower;
 class Player : public Entity, public SGD::Listener
 {
 public:
-	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, NUMPLACEABLES, };
-	enum Weapons{ SLOT_ONE, SLOT_TWO, SLOT_THREE, SLOT_FOUR, TOTAL_SLOTS, };
+	enum Placeables{ WALLS , WINDOWS , BEARTRAP , MINE , MGTOWER , MSTOWER , HSTOWER , LTOWER, LTRAP, STRAP, NUMPLACEABLES, };
+	enum Weapons{ MACHINE_GUN, SHOT_GUN, ROCKET_LAUNCHER, TRICK_SHOT_GUN, TOTAL_GUNS, };
 
 	Player();
 	~Player();
@@ -86,6 +86,7 @@ protected:
 
 	/**********************************************************/
 	// Members
+	bool m_bCanLeftClick;
 	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
@@ -94,6 +95,7 @@ protected:
 	float m_fCursorFadeTimer;
 	float m_fSuperTimer;
 	float m_fSuperLength;
+	float m_fCameraLerpTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
@@ -107,6 +109,9 @@ protected:
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
+	SGD::Vector m_vCameraStart;
+	SGD::Vector m_vCameraEnd;
+	SGD::Vector m_vCamera;
 	SGD::HTexture m_hPlaceablesImage;
 	SGD::HTexture m_hRangeCirclesImage;
 	
@@ -122,5 +127,6 @@ private:
 
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);
+	bool m_bStaticCamera;
 };
 

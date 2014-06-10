@@ -8,10 +8,15 @@
 #include "DestroyEntityMessage.h"
 #include "GameplayState.h"
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
 #include "Camera.h"
 #include "Game.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+#include "Grenade.h"
+#include "CreateParticleMessage.h"
+#include "TrickShotBullet.h"
+#include "StatTracker.h"
 
 #define HEALTH_BAR 1
 
@@ -22,12 +27,15 @@ Enemy::Enemy() : Listener(this)
 	m_fTrapTimer = 0;
 	m_nCurrHealth = 100;
 	m_nMaxHeatlh = 100;
+	m_fSlowTime = 0.0f;
 	m_bIsInLava = false;
+	RegisterForEvent("GRENADE_EXPLOSION");
 }
 
 
 Enemy::~Enemy()
 {
+	UnregisterFromEvent("GRENADE_EXPLOSION");
 }
 
 
@@ -36,7 +44,9 @@ Enemy::~Enemy()
 
 void Enemy::Update(float dt)
 {
+	// Update timers
 	m_fTrapTimer -= dt;
+	m_fSlowTime -= dt;
 
 	if (m_nCurrHealth > 0 && m_fTrapTimer < 0)
 	{
@@ -49,6 +59,19 @@ void Enemy::Update(float dt)
 
 	else if (m_nCurrHealth <= 0)
 	{
+		switch ( GetType() )
+		{
+		case ENT_ZOMBIE_BEAVER:
+			StatTracker::GetInstance()->SpillBlood(1.1f);
+			break;
+		case ENT_ZOMBIE_FAST:
+			StatTracker::GetInstance()->SpillBlood(5.5f);
+			break;
+		case ENT_ZOMBIE_SLOW:
+			StatTracker::GetInstance()->SpillBlood(7.3f);
+			break;
+		}
+
 		float chance = (float)((float)(rand() % 1000 + 1) / 1000.0f);
 
 		if(chance >= 0 && chance <= m_fHealthChance)
@@ -142,45 +165,100 @@ int Enemy::GetType() const
 
 /*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
 {
+	int pastHealth = m_nCurrHealth;
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
-		case ENT_BULLET_ASSAULT:
-			m_nCurrHealth -= 40;
+	case ENT_BULLET_ASSAULT:
+	{
+		m_nCurrHealth -= 40;
+	}
 			break;
-		case ENT_BULLET_SHOTGUN:
-			m_nCurrHealth -= 8;
+	case ENT_BULLET_SHOTGUN:
+	{
+		m_nCurrHealth -= 8;
+	}
 			break;
-		case ENT_BULLET_ROCKET:
-			m_nCurrHealth -= 100;
+	case ENT_BULLET_ROCKET:
+	{
+		m_nCurrHealth -= 100;
+	}
 			break;
-		case ENT_TRAP_BEARTRAP:
-			m_bIsTrapped = true;
-			break;
-		case ENT_MACHINE_GUN_BULLET:
-			m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
-			break;
-			//NOTE: may have to delete
-		case ENT_TRAP_MINE:
-			m_nCurrHealth = 0;
-			break;
-		case ENT_TRAP_SPIKE:
+	case ENT_BULLET_TRICKSHOT:
+	{
+		const TrickShotBullet* tsb = reinterpret_cast<const TrickShotBullet*>(pOther);
+		if(tsb->AmIOnTheHitList((IEntity *)this) == false)
 		{
-			const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);
-			// If the spikes are up do take damage
-			if(spike->GetActive() == true)
-				m_nCurrHealth -= spike->GetDamage();
+			SGD::Event* pEvent = new SGD::Event("IM_HIT", nullptr, this);
+			pEvent->QueueEvent();
+			m_nCurrHealth -= tsb->GetDamage();
 		}
+		break;
+	}
+	case ENT_TRAP_BEARTRAP:
+	{
+		m_bIsTrapped = true;
+	}
 			break;
-		case ENT_TRAP_LAVA:
+	case ENT_MACHINE_GUN_BULLET:
+	{
+		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+	}
+			break;
+	case ENT_MAPLE_SYRUP_BULLET:
+		if (m_fSlowTime < 0.0f)
+			m_fSlowTime = 0.0f;
+		m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
+		break;
+		//NOTE: may have to delete
+	case ENT_TRAP_MINE:
+		m_nCurrHealth = 0;
+		break;
+	case ENT_TRAP_SPIKE:
+	{
+		const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);
+		// If the spikes are up do take damage
+		if (spike->GetActive() == true)
 		{
-			const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
-			m_nCurrHealth -= lava->GetDamage();
-			m_bIsInLava = true;
+			m_nCurrHealth -= spike->GetDamage();
+			
 		}
-			break;
+	}
+		break;
+	case ENT_TRAP_LAVA:
+	{
+		const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
+		m_nCurrHealth -= lava->GetDamage();
+		m_bIsInLava = true;
+		
+	}
+		break;
 
 	}
+	//check if health is too low to create blood
+	if (m_nCurrHealth > m_nMaxHeatlh * 0.05f)
+	{
+		if (pastHealth > m_nCurrHealth)
+		{
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+			msg->QueueMessage();
+			msg = nullptr;
+		}
+	}
+}
+
+void Enemy::HandleEvent(const SGD::Event* pEvent)
+{
+	if(pEvent->GetEventID() == "GRENADE_EXPLOSION")
+	{
+		const Grenade* grenade = reinterpret_cast<const Grenade*>(pEvent->GetSender());
+		SGD::Point a = grenade->GetPosition();
+		SGD::Point b = m_ptPosition;
+		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
+		if(distance <= grenade->GetRadius())
+			m_nCurrHealth -= grenade->GetDamage() * (distance/grenade->GetRadius());
+	}
+
 }
 
 /**********************************************************/
@@ -218,10 +296,15 @@ float Enemy::GetAttackRange() const
 
 float Enemy::GetSpeed() const
 {
-	if(m_bIsInLava == true)
-		return m_fSpeed * .50f;
-	else
-		return m_fSpeed;
+	float speed = m_fSpeed;
+
+	if (m_bIsInLava)
+		speed *= 0.5f;
+
+	if (m_fSlowTime > 0.0f)
+		speed *= 0.2f;
+
+	return speed;
 }
 
 float Enemy::GetHealthChance() const

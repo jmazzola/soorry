@@ -20,6 +20,7 @@ public:
 	virtual void Render() override;
 	virtual void PostRender() override;
 	virtual void HandleCollision(const IEntity* pOther);
+	virtual void HandleEvent(const SGD::Event* pEvent) override;
 
 	/**********************************************************/
 	// Accessors
@@ -65,6 +66,7 @@ protected:
 	float m_fHealthChance;
 	float m_fAmmoChance;
 	float m_fSuperChance;
+	float m_fSlowTime;
 	bool m_bIsTrapped;
 	bool m_bIsInLava;
 	AIComponent m_AIComponent;

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tower_stats>
+  
+  <!-- Machine Gun Tower -->
+  <machine_gun>
+    
+    <!-- Starting Values -->
+    <damage value="50"/>
+    <fire_rate value="2.2"/>
+    <range value="250"/>
+    
+    <!-- Power Upgrade Values -->
+    <power_upgrade>
+      
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="500"/>
+        <damage value="75"/>
+        <fire_rate value="1.6"/>
+      </tier_one>
+      
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="1000"/>
+        <damage value="100"/>
+        <fire_rate value="1.0"/>
+      </tier_two>
+      
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="1500"/>
+        <damage value="200"/>
+        <fire_rate value="0.25"/>
+      </tier_three>
+    </power_upgrade>
+    
+    <!-- Range Upgrade Values -->
+    <range_upgrade>
+      
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="300"/>
+        <range value="300"/>
+      </tier_one>
+      
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="600"/>
+        <range value="350"/>
+      </tier_two>
+      
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="900"/>
+        <range value="400"/>
+      </tier_three>
+    </range_upgrade>
+  </machine_gun>
+
+  <!-- Maple Syrup Tower -->
+  <maple_syrup>
+    
+    <!-- Staring Values -->
+    <effect_duration value="0.5"/>
+    <fire_rate value="2.0"/>
+    <range value="128"/>
+    
+    <!-- Power Upgrade Values -->
+    <power_upgrade>
+      
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="500"/>
+        <effect_duration value="1.0"/>
+        <fire_rate value="1.6"/>
+      </tier_one>
+      
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="1000"/>
+        <effect_duration value="2.0"/>
+        <fire_rate value="1.0"/>
+      </tier_two>
+      
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="1500"/>
+        <effect_duration value="3.0"/>
+        <fire_rate value="0.25"/>
+      </tier_three>
+    </power_upgrade>
+    
+    <!-- Range Upgrade Values -->
+    <range_upgrade>
+      
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="300"/>
+        <range value="200"/>
+      </tier_one>
+      
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="600"/>
+        <range value="300"/>
+      </tier_two>
+      
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="900"/>
+        <range value="350"/>
+      </tier_three>
+    </range_upgrade>
+  </maple_syrup>
+  
+  <!-- Hockey Stick Tower -->
+  <hockey_stick>
+    
+    <!-- Starting Values -->
+    <damage value="5.0"/>
+    <spin_rate value="8.0"/>
+    
+    <!-- Damage Upgrade Values -->
+    <damage_upgrade>
+      
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="400"/>
+        <damage value="10.0"/>
+      </tier_one>
+      
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="800"/>
+        <damage value="20.0"/>
+      </tier_two>
+      
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="1200"/>
+        <damage value="45.0"/>
+      </tier_three>
+    </damage_upgrade>
+    
+    <!-- Spin Rate Upgrade Values -->
+    <spin_rate_upgrade>
+
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="250"/>
+        <spin_rate value="12.0"/>
+      </tier_one>
+
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="500"/>
+        <spin_rate value="16.0"/>
+      </tier_two>
+
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="750"/>
+        <spin_rate value="24.0"/>
+      </tier_three>
+    </spin_rate_upgrade>
+  </hockey_stick>
+  
+  <!-- Laser Tower -->
+  <laser>
+
+    <!-- Starting Values -->
+    <damage value="50"/>
+    <range value="3"/>
+
+    <!-- Damage Upgrade Values -->
+    <damage_upgrade>
+
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="500"/>
+        <damage value="75"/>
+      </tier_one>
+
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="1000"/>
+        <damage value="100"/>
+      </tier_two>
+
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="1500"/>
+        <damage value="200"/>
+      </tier_three>
+    </damage_upgrade>
+
+    <!-- Range Upgrade Values -->
+    <range_upgrade>
+
+      <!-- Tier 1 -->
+      <tier_one>
+        <cost value="300"/>
+        <range value="4"/>
+      </tier_one>
+
+      <!-- Tier 2 -->
+      <tier_two>
+        <cost value="600"/>
+        <range value="5"/>
+      </tier_two>
+
+      <!-- Tier 3 -->
+      <tier_three>
+        <cost value="900"/>
+        <range value="6"/>
+      </tier_three>
+    </range_upgrade>
+  </laser>
+  
+</tower_stats>

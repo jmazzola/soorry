@@ -1,6 +1,6 @@
 #pragma once
 class Projectile;
-enum Guns {TYPE_ASSAULT_RIFLE,TYPE_SHOTGUN,TYPE_ROCKET_LAUNCHER};
+enum Guns {TYPE_ASSAULT_RIFLE,TYPE_SHOTGUN,TYPE_ROCKET_LAUNCHER, TYPE_TRICKSHOT};
 class Weapon
 {
 public:

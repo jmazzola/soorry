@@ -28,6 +28,7 @@
 #include "../SGD Wrappers/SGD_MessageManager.h"
 #include "../SGD Wrappers/SGD_Message.h"
 #include "Sprite.h"
+
 //Message Includes
 #include "CreateBeaverZombieMessage.h"
 #include "CreateFastZombieMessage.h"
@@ -43,6 +44,8 @@
 #include "CreateDroneMessage.h"
 #include "CreateTrapMessage.h"
 #include "WaveCompleteMessage.h"
+#include "CreateMapleSyrupBulletMessage.h"
+#include "CreateGrenadeMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -52,6 +55,8 @@
 #include "Rocket.h"
 #include "AssaultRifleBullet.h"
 #include "Drone.h"
+#include "Grenade.h"
+#include "TrickShotBullet.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -69,6 +74,7 @@
 #include "HealthPackPickup.h"
 #include "SuperPack.h"
 
+#include "TowerFlyweight.h"
 #include "MachineGunTower.h"
 #include "MapleSyrupTower.h"
 #include "HockeyStickTower.h"
@@ -77,6 +83,9 @@
 #include "LavaTrap.h"
 
 #include "MachineGunBullet.h"
+#include "MapleSyrupBullet.h"
+
+#include "StatTracker.h"
 
 #include "../TinyXML/tinyxml.h"
 
@@ -88,7 +97,6 @@
 #include <fstream>
 using namespace std;
 
-
 // Buckets
 #define BUCKET_TRAPS 0
 #define BUCKET_PLAYER 1
@@ -98,13 +106,13 @@ using namespace std;
 #define BUCKET_PICKUP 5
 #define BUCKET_PROJECTILES 6
 #define BUCKET_DRONE 7
+#define BUCKET_GRENADES 8
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
 
 // Selected Box
 #define DRAWSELECTED(TOP,LEFT,SIZEW,SIZEH) SGD::Rectangle({ TOP, LEFT }, SGD::Size(SIZEW, SIZEH)), {0,0,0,0}, { 255, 255, 255, 0 }, 2
-
 
 // Colors
 // Todo make Colors.h 
@@ -223,6 +231,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 /*virtual*/ void GameplayState::Enter(void)
 {
 	Game* pGame = Game::GetInstance();
+	m_pStatTracker = StatTracker::GetInstance();
+	m_pStatTracker->Load("resource/data/stats.xml");
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
 	// Initialize the Event Manager
@@ -248,6 +258,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hMachineGunGunImage = pGraphics->LoadTexture("resource/images/towers/machineGunGun.png");
 	m_hMachineGunBulletImage = pGraphics->LoadTexture("resource/images/towers/machineGunBullet.png");
 	m_hMapleSyrupBaseImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBase.png");
+	m_hMapleSyrupGunImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupGun.png");
+	m_hMapleSyrupBulletImage = pGraphics->LoadTexture("resource/images/towers/mapleSyrupBullet.png");
 	m_hHockeyStickBaseImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickBase.png");
 	m_hHockeyStickGunImage = pGraphics->LoadTexture("resource/images/towers/hockeyStickGun.png");
 	m_hLaserBaseImage = pGraphics->LoadTexture("resource/images/towers/laserBase.png");
@@ -307,6 +319,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
 	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
 	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
+	string towerStatsFileName = pRoot->FirstChildElement("tower_stats")->GetText();
 	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
 
 #pragma endregion
@@ -335,6 +348,11 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Load enemy stats recipes
 	LoadEnemyRecipes(enemyStatsFileName);
+
+	// Load tower flyweight
+	m_pTowerFlyweight = new TowerFlyweight;
+	m_pTowerFlyweight->Load(towerStatsFileName);
+	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
 
 	// Load the gamesave
 
@@ -444,6 +462,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
@@ -452,6 +471,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hMachineGunGunImage);
 	pGraphics->UnloadTexture(m_hMachineGunBulletImage);
 	pGraphics->UnloadTexture(m_hMapleSyrupBaseImage);
+	pGraphics->UnloadTexture(m_hMapleSyrupGunImage);
+	pGraphics->UnloadTexture(m_hMapleSyrupBulletImage);
 	pGraphics->UnloadTexture(m_hHockeyStickBaseImage);
 	pGraphics->UnloadTexture(m_hHockeyStickGunImage);
 	pGraphics->UnloadTexture(m_hLaserBaseImage);
@@ -482,6 +503,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Delete the zombie factory
 	delete zombieFactory;
+
+	// Delete tower flyweight
+	delete m_pTowerFlyweight;
 
 	// Save the file
 	SaveGame(false);
@@ -903,6 +927,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
 		//draw grid rectangle
+
+		// Update the stat tracker
+		if(zombieFactory->IsBuildMode() == false)
+			m_pStatTracker->IncreaseTime(elapsedTime, true);
+		else
+			m_pStatTracker->IncreaseTime(elapsedTime, false);
 	}
 
 	// If you have won the game
@@ -1606,6 +1636,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 													bullet->Release();
 	}
 		break;
+	case MessageID::MSG_CREATE_MAPLE_SYRUP_BULLET:
+	{
+													 const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
+													 GameplayState* g = GameplayState::GetInstance();
+													 Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
+													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+													 bullet->Release();
+	}
+		break;
 	case MessageID::MSG_CREATE_DRONE:
 	{
 		const CreateDroneMessage* pCreateMessage = dynamic_cast<const CreateDroneMessage*>(pMsg);
@@ -1621,6 +1660,15 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										 g->m_fSlowHealth *= g->m_fHealthScaling;
 										 g->m_fFastHealth *= g->m_fHealthScaling;
 										 g->m_fBeaverHealth *= g->m_fHealthScaling;
+	}
+		break;
+	case MessageID::MSG_CREATE_GRENADE:
+	{
+										const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
+										GameplayState* g = GameplayState::GetInstance();
+										Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
+										g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
+										grenade->Release();
 	}
 		break;
 	}
@@ -1805,8 +1853,24 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   return tempProj;
 	}
 		break;
-	case 3://Fire axe?
+	case 3://TrickShot
 	{
+			TrickShotBullet* tsb = new TrickShotBullet;
+			tsb->SetDamage(75);
+			tsb->SetPosition(playerCenter);
+			tsb->SetVelocity({0.0f, 0.0f});
+			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+			pos.x += Camera::x;
+			pos.y += Camera::y;
+			SGD::Vector vec = pos - playerCenter;
+			vec.Normalize();
+			vec *= 300;
+			tsb->SetForce(vec);
+
+			// ADD SOUND
+
+			return tsb;
+			
 			   break;
 	}
 	}
@@ -1889,6 +1953,11 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												  tower->SetBaseImage(m_hMachineGunBaseImage);
 												  tower->SetGunImage(m_hMachineGunGunImage);
+												  tower->SetTowerFlyweight(m_pTowerFlyweight);
+												  tower->SetSellValue((int)(m_pShop->GetTowerPrice(0) * 0.75f));
+												  tower->SetDamage(m_pTowerFlyweight->GetMachineGunDamage(0));
+												  tower->SetFireRate(m_pTowerFlyweight->GetMachineGunFireRate(0));
+												  tower->SetRange(m_pTowerFlyweight->GetMachineGunRange(0));
 
 												  return tower;
 
@@ -1900,6 +1969,12 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 												  tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												  tower->SetBaseImage(m_hMapleSyrupBaseImage);
+												  tower->SetGunImage(m_hMapleSyrupGunImage);
+												  tower->SetTowerFlyweight(m_pTowerFlyweight);
+												  tower->SetSellValue((int)(m_pShop->GetTowerPrice(1) * 0.75f));
+												  tower->SetSlowTime(m_pTowerFlyweight->GetMapleSyrupEffectDuration(0));
+												  tower->SetFireRate(m_pTowerFlyweight->GetMapleSyrupFireRate(0));
+												  tower->SetRange(m_pTowerFlyweight->GetMapleSyrupRange(0));
 
 												  return tower;
 	}
@@ -1911,6 +1986,10 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 												   tower->SetPosition(SGD::Point((float)_x, (float)_y));
 												   tower->SetBaseImage(m_hHockeyStickBaseImage);
 												   tower->SetGunImage(m_hHockeyStickGunImage);
+												   tower->SetTowerFlyweight(m_pTowerFlyweight);
+												   tower->SetSellValue((int)(m_pShop->GetTowerPrice(2) * 0.75f));
+												   tower->SetDamage(m_pTowerFlyweight->GetHockeyStickDamage(0));
+												   tower->SetRotationRate(m_pTowerFlyweight->GetHockeyStickSpinRate(0));
 
 												   return tower;
 	}
@@ -1921,6 +2000,13 @@ Entity* GameplayState::CreateTower(int _x, int _y, int _type) const
 
 											tower->SetPosition(SGD::Point((float)_x, (float)_y));
 											tower->SetBaseImage(m_hLaserBaseImage);
+											tower->SetTowerFlyweight(m_pTowerFlyweight);
+											tower->SetSellValue((int)(m_pShop->GetTowerPrice(3) * 0.75f));
+											tower->SetDamage(m_pTowerFlyweight->GetLaserDamage(0));
+											tower->SetRange(m_pTowerFlyweight->GetLaserRange(0));
+
+											SGD::Event* pEvent = new SGD::Event("ASSESS_LASERS");
+											pEvent->QueueEvent();
 
 											return tower;
 	}
@@ -1953,7 +2039,8 @@ Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
 		lava->SetPosition(SGD::Point((float)_x, (float)_y));
 		lava->SetBaseImage(m_hLavaTrapBaseImage);
 		lava->SetGunImage(m_hLavaTrapFlameImage);
-		CreateParticleMessage* msg = new CreateParticleMessage("Fire_Particle1",lava,8,8);
+		//BUG: occasionally a fire particle is not spawned on the lava trap
+		CreateParticleMessage* msg = new CreateParticleMessage("Fire_Particle1", lava, 8, 8);
 		msg->QueueMessage();
 		msg = nullptr;
 		return lava;
@@ -1965,6 +2052,30 @@ Entity * GameplayState::CreateTrap( int _x, int _y, int _trapType) const
 	return nullptr;
 }
 
+Entity* GameplayState::CreateGrenade(float x, float y, SGD::Vector velocity) const
+{
+	Grenade* grenade = new Grenade;
+
+	grenade->SetPosition(SGD::Point(x, y));
+	grenade->SetVelocity({0.0f,0.0f});
+	grenade->SetForce(velocity);
+	grenade->SetSprite ( AnimationManager::GetInstance ()->GetSprite ( "grenade" ) );
+	grenade->SetCurrFrame ( 0 );
+	grenade->SetTimeOfFrame ( 0 );
+	grenade->SetCurrAnimation ( "grenade" );
+	grenade->SetRadius(128.0f);
+	grenade->SetDamage(200.0f);
+	grenade->SetMass(1);
+	grenade->SetStaticFrictionCoefficient(0.7f);
+	grenade->SetDynamicFrictionCoefficient(100.0f);
+	grenade->SetDetonationLength(1.25f);
+	grenade->SetDetonationTimer(grenade->GetDetonationLength());
+
+
+	return grenade;
+
+}
+
 Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _velocity, int _damage) const
 {
 	MachineGunBullet* bullet = new MachineGunBullet;
@@ -1972,6 +2083,18 @@ Entity* GameplayState::CreateMachineGunBullet(int _x, int _y, SGD::Vector _veloc
 	bullet->SetPosition(SGD::Point((float)_x, (float)_y));
 	bullet->SetDamage(_damage);
 	bullet->SetImage(m_hMachineGunBulletImage);
+	bullet->SetVelocity(_velocity);
+
+	return bullet;
+}
+
+Entity* GameplayState::CreateMapleSyrupBullet(int _x, int _y, SGD::Vector _velocity, float _slowTime) const
+{
+	MapleSyrupBullet* bullet = new MapleSyrupBullet;
+
+	bullet->SetPosition(SGD::Point((float)_x, (float)_y));
+	bullet->SetSlowTime(_slowTime);
+	bullet->SetImage(m_hMapleSyrupBulletImage);
 	bullet->SetVelocity(_velocity);
 
 	return bullet;

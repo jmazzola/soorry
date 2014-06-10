@@ -4,6 +4,7 @@
 #include "EntityManager.h"
 #include "GameplayState.h"
 #include "Camera.h"
+#include "TowerFlyweight.h"
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 
@@ -11,6 +12,9 @@
 Tower::Tower()
 {
 	m_pEntityManager = GameplayState::GetInstance()->GetEntityManager();
+
+	m_nUpgradeOne = 0;
+	m_nUpgradeTwo = 0;
 }
 
 
@@ -36,7 +40,6 @@ void Tower::Render()
 	rect.top -= Camera::y;
 	rect.bottom -= Camera::y;
 
-	
 	Game* pGame = Game::GetInstance();
 
 	// -- Debugging --
@@ -48,6 +51,11 @@ void Tower::Render()
 }
 
 void Tower::PostRender()
+{
+	
+}
+
+void Tower::DrawMenu()
 {
 
 }
@@ -69,12 +77,32 @@ int Tower::GetType() const
 	return ENT_TOWER;
 }
 
+void Tower::Upgrade(int _slot, unsigned int* _points)
+{
+
+}
+
 /**********************************************************/
 // Accessors
 
 bool Tower::IsSelected() const
 {
 	return m_bSelected;
+}
+
+int Tower::GetUpgradeOne() const
+{
+	return m_nUpgradeOne;
+}
+
+int Tower::GetUpgradeTwo() const
+{
+	return m_nUpgradeTwo;
+}
+
+int Tower::GetSellValue() const
+{
+	return m_nSellValue;
 }
 
 /**********************************************************/
@@ -93,4 +121,24 @@ void Tower::SetBaseImage(SGD::HTexture _baseImage)
 void Tower::SetGunImage(SGD::HTexture _gunImage)
 {
 	m_hGunImage = _gunImage;
+}
+
+void Tower::SetTowerFlyweight(TowerFlyweight* _towerFlyweight)
+{
+	m_pTowerFlyweight = _towerFlyweight;
+}
+
+void Tower::SetUpgradeOne(int _tier)
+{
+	m_nUpgradeOne = _tier;
+}
+
+void Tower::SetUpgradeTwo(int _tier)
+{
+	m_nUpgradeTwo = _tier;
+}
+
+void Tower::SetSellValue(int _sellValue)
+{
+	m_nSellValue = _sellValue;
 }

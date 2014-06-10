@@ -32,7 +32,9 @@
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateDroneMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
+    <ClCompile Include="source\CreateGrenadeMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
+    <ClCompile Include="source\CreateMapleSyrupBulletMessage.cpp" />
     <ClCompile Include="source\CreateParticleMessage.cpp" />
     <ClCompile Include="source\CreatePickupMessage.cpp" />
     <ClCompile Include="source\CreatePlaceableMessage.cpp" />
@@ -68,6 +70,7 @@
     <ClCompile Include="source\MachineGunBullet.cpp" />
     <ClCompile Include="source\MachineGunTower.cpp" />
     <ClCompile Include="source\MainMenuState.cpp" />
+    <ClCompile Include="source\MapleSyrupBullet.cpp" />
     <ClCompile Include="source\MapleSyrupTower.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
@@ -87,9 +90,13 @@
     <ClCompile Include="source\SpeedPickup.cpp" />
     <ClCompile Include="source\SpikeTrap.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="source\StatsState.cpp" />
+    <ClCompile Include="source\StatTracker.cpp" />
     <ClCompile Include="source\SuperPack.cpp" />
     <ClCompile Include="source\Tile.cpp" />
     <ClCompile Include="source\Tower.cpp" />
+    <ClCompile Include="source\TrickShotBullet.cpp" />
+    <ClCompile Include="source\TowerFlyweight.cpp" />
     <ClCompile Include="source\WallPickup.cpp" />
     <ClCompile Include="source\WaveCompleteMessage.cpp" />
     <ClCompile Include="source\ZombieFactory.cpp" />
@@ -132,7 +139,9 @@
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
     <ClInclude Include="source\CreateDroneMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
+    <ClInclude Include="source\CreateGrenadeMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
+    <ClInclude Include="source\CreateMapleSyrupBulletMessage.h" />
     <ClInclude Include="source\CreateParticleMessage.h" />
     <ClInclude Include="source\CreatePickupMessage.h" />
     <ClInclude Include="source\CreatePlaceableMessage.h" />
@@ -170,6 +179,7 @@
     <ClInclude Include="source\MachineGunBullet.h" />
     <ClInclude Include="source\MachineGunTower.h" />
     <ClInclude Include="source\MainMenuState.h" />
+    <ClInclude Include="source\MapleSyrupBullet.h" />
     <ClInclude Include="source\MapleSyrupTower.h" />
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
@@ -190,9 +200,13 @@
     <ClInclude Include="source\SpeedPickup.h" />
     <ClInclude Include="source\SpikeTrap.h" />
     <ClInclude Include="source\Sprite.h" />
+    <ClInclude Include="source\StatsState.h" />
+    <ClInclude Include="source\StatTracker.h" />
     <ClInclude Include="source\SuperPack.h" />
     <ClInclude Include="source\Tile.h" />
     <ClInclude Include="source\Tower.h" />
+    <ClInclude Include="source\TrickShotBullet.h" />
+    <ClInclude Include="source\TowerFlyweight.h" />
     <ClInclude Include="source\WallPickup.h" />
     <ClInclude Include="source\WaveCompleteMessage.h" />
     <ClInclude Include="source\WaveData.h" />
@@ -212,8 +226,11 @@
     <Xml Include="resource\data\game_modes\arcade_mode\playerStats.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml" />
+    <Xml Include="resource\data\game_modes\arcade_mode\towerStats.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml" />
-    <Xml Include="resource\data\shop.xml" />
     <Xml Include="resource\data\singleEnemy.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\testWorld.xml">
