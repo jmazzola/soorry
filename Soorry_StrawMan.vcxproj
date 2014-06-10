@@ -237,6 +237,12 @@
       <SubType>Designer</SubType>
     </Xml>
     <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\enemyStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\playerStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\sandboxMode.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\shop.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\towerStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\waveData.xml" />
     <Xml Include="resource\data\singleEnemy.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\testWorld.xml">

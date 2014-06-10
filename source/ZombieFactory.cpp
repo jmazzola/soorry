@@ -15,6 +15,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <cmath>
 
 ZombieFactory::ZombieFactory() : Listener(this)
 {
@@ -45,6 +46,13 @@ bool ZombieFactory::LoadWaves(string _fileName)
 	// Make sure the root is there
 	if (pRoot == nullptr)
 		return false;
+
+	int infinite;
+	pRoot->Attribute("infinite", &infinite);
+	if (infinite == 0)
+		m_bInfiniteWaves = false;
+	else
+		m_bInfiniteWaves = true;
 
 	// Get the first wave
 	TiXmlElement* pWave = pRoot->FirstChildElement("wave");
@@ -86,15 +94,36 @@ void ZombieFactory::Start()
 
 	// Start at wave one
 	m_nWave = 1;
-	m_bInfiniteBuildTime = waveData[m_nWave - 1].infiniteBuildTime;
-	m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
-	m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
-	m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
+
+	if (m_bInfiniteWaves == false)
+	{
+		m_bInfiniteBuildTime = waveData[m_nWave - 1].infiniteBuildTime;
+		m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
+		m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
+		m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
+		m_fBuildTime = (float)waveData[m_nWave - 1].buildTime;
+		m_fBuildTimeRemaining = m_fBuildTime;
+		m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+	}
+
+	else
+	{
+		m_fBuildTime = 10.0f;
+		m_fBuildTimeRemaining = m_fBuildTime;
+		m_bInfiniteBuildTime = false;
+		m_nSlowZombiesToSpawn = 10;
+		m_nFastZombiesToSpawn = 10;
+		m_nBeaverZombiesToSpawn = 10;
+		m_fSpawnInterval = 1.0f;
+	}
+
 	m_nEnemiesRemaining = 0;
-	m_fBuildTime = (float)waveData[m_nWave - 1].buildTime;
-	m_fBuildTimeRemaining = m_fBuildTime;
-	m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
 	m_fNextSpawnTime = 0.0f;
+
+	// Null out alpha zombies
+	m_pSlowAlpha = nullptr;
+	m_pFastAlpha = nullptr;
+	m_pBeaverAlpha = nullptr;
 }
 
 void ZombieFactory::Stop()
@@ -121,10 +150,22 @@ void ZombieFactory::Update(float dt)
 		if (m_fBuildTimeRemaining <= 0.0f)
 		{
 			m_bBuildMode = false;
-			m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
-			m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
-			m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
-			m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+
+			if (m_bInfiniteWaves == false)
+			{
+				m_nSlowZombiesToSpawn = waveData[m_nWave - 1].slowZombies;
+				m_nFastZombiesToSpawn = waveData[m_nWave - 1].fastZombies;
+				m_nBeaverZombiesToSpawn = waveData[m_nWave - 1].beaverZombies;
+				m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
+			}
+
+			else
+			{
+				m_nSlowZombiesToSpawn = (int)(10 * pow(1.5f, m_nWave));
+				m_nFastZombiesToSpawn = (int)(10 * pow(1.6f, m_nWave));
+				m_nBeaverZombiesToSpawn = (int)(10 * pow(1.4f, m_nWave));
+				m_fSpawnInterval = 0.02f + 0.2f / m_nWave;
+			}
 
 			// Deselect all towers
 			m_pPlayer->SetSelectedTower(nullptr);
@@ -149,13 +190,18 @@ void ZombieFactory::Update(float dt)
 			msg->QueueMessage();
 
 			// Pause if last wave
-			if (m_nWave > (int)waveData.size())
+			if (m_nWave > (int)waveData.size() && !m_bInfiniteWaves)
 			{
 				m_bIsPaused = true;
 				return;
 			}
 
 			m_fBuildTimeRemaining = (float)waveData[m_nWave - 1].buildTime;
+
+			m_pSlowAlpha = nullptr;
+			m_pFastAlpha = nullptr;
+			m_pBeaverAlpha = nullptr;
+
 			return;
 		}
 
@@ -295,6 +341,11 @@ bool ZombieFactory::IsInfiniteBuildTime() const
 	return m_bInfiniteBuildTime;
 }
 
+bool ZombieFactory::IsInfiniteWaves() const
+{
+	return m_bInfiniteWaves;
+}
+
 int ZombieFactory::GetWave() const
 {
 	return m_nWave;
@@ -355,6 +406,21 @@ float ZombieFactory::GetNextSpawnTime() const
 	return m_fNextSpawnTime;
 }
 
+Enemy* ZombieFactory::GetSlowAlpha() const
+{
+	return m_pSlowAlpha;
+}
+
+Enemy* ZombieFactory::GetFastAlpha() const
+{
+	return m_pFastAlpha;
+}
+
+Enemy* ZombieFactory::GetBeaverAlpha() const
+{
+	return m_pBeaverAlpha;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -371,6 +437,11 @@ void ZombieFactory::SetBuildMode(bool _buildMode)
 void ZombieFactory::SetInfiniteBuildTime(bool _infiniteBuildTime)
 {
 	m_bInfiniteBuildTime = _infiniteBuildTime;
+}
+
+void ZombieFactory::SetInfiniteWaves(bool _infiniteWaves)
+{
+	m_bInfiniteWaves = _infiniteWaves;
 }
 
 void ZombieFactory::SetWave(int _wave)
@@ -436,4 +507,19 @@ void ZombieFactory::SetEntityManager(EntityManager* _entityManager)
 void ZombieFactory::SetPlayer(Player* _player)
 {
 	m_pPlayer = _player;
+}
+
+void ZombieFactory::SetSlowAlpha(Enemy* _slowAlpha)
+{
+	m_pSlowAlpha = _slowAlpha;
+}
+
+void ZombieFactory::SetFastAlpha(Enemy* _fastAlpha)
+{
+	m_pFastAlpha = _fastAlpha;
+}
+
+void ZombieFactory::SetBeaverAlpha(Enemy* _beaverAlpha)
+{
+	m_pBeaverAlpha = _beaverAlpha;
 }

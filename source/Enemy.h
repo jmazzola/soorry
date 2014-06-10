@@ -35,6 +35,7 @@ public:
 	float GetAmmoChance() const;
 	float GetSuperChance() const;
 	bool GetInLava() const;
+	AIComponent* GetAIComponent();
 
 	/**********************************************************/
 	// Mutators

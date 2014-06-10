@@ -18,6 +18,7 @@
 #include "Shop.h"
 #include "Weapon.h"
 #include "Inventory.h"
+#include "EntityManager.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -83,6 +84,8 @@
 #include "LaserTower.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+
+#include "AIComponent.h"
 
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
@@ -150,6 +153,16 @@ EntityManager* GameplayState::GetEntityManager() const
 ZombieFactory* GameplayState::GetZombieFactory() const
 {
 	return GetInstance()->zombieFactory;
+}
+
+int GameplayState::GetGameMode() const
+{
+	return m_nGamemode;
+}
+
+void GameplayState::SetGameMode(int _gameMode)
+{
+	m_nGamemode = _gameMode;
 }
 
 /*************************************************************/
@@ -306,7 +319,25 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #pragma region Load Game Mode
 
 	// Load game mode information
-	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	string gameModeFileName;
+	switch (m_nGamemode)
+	{
+	case 0:
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		break;
+	case 1:
+		gameModeFileName = "resource/data/game_modes/hardcore_mode/hardcore_Mode.xml";
+		break;
+	case 2:
+		gameModeFileName = "resource/data/game_modes/sandbox_mode/sandboxMode.xml";
+		break;
+	case 3:
+		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
+		break;
+	case 4:
+		// To be replaced with Ryan's file
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	}
 
 	// Create a TinyXML document
 	TiXmlDocument doc;
@@ -1448,10 +1479,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 					// Draw the number of walls
-					m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of windows
-					m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of beartraps
 					m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 191, 496, 0.4f, { 255, 255, 255 });
@@ -1701,6 +1734,49 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* ent = pCreateMessage->GetEntity();
 		g->m_pEntities->RemoveEntity(ent);
+
+										  /*Enemy* enemy = dynamic_cast<Enemy*>(ent);
+										  if (enemy && enemy->GetAIComponent()->GetAlpha() == nullptr)
+										  {
+											  if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+												  g->zombieFactory->SetSlowAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+												  g->zombieFactory->SetFastAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+												  g->zombieFactory->SetBeaverAlpha(nullptr);
+										  }
+
+										vector<IEntity*> vec = g->m_pEntities->GetBucket(BUCKET_ENEMIES);
+										bool alphaed = false;
+										for (unsigned int i = 0; i < vec.size(); i++)
+										{
+											if (ent->GetType() == vec[i]->GetType())
+											{
+												if (alphaed)
+												{
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetSlowAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetFastAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetBeaverAlpha());
+												}
+												else
+												{
+													dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(nullptr);
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+													{
+														g->zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(vec[i]));
+													}
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														g->zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(vec[i]));
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														g->zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(vec[i]));
+
+													alphaed = true;
+												}
+											}
+										}*/
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
@@ -1835,6 +1911,19 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = tempBeav->GetAIComponent();
+
+	if (zombieFactory->GetBeaverAlpha() == nullptr)
+	{
+		zombieFactory->SetBeaverAlpha(tempBeav);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetBeaverAlpha());
+	}*/
+
 	return tempBeav;
 }
 
@@ -1855,6 +1944,19 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetFastAlpha() == nullptr)
+	{
+		zombieFactory->SetFastAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetFastAlpha());
+	}*/
+
 	return zambie;
 }
 
@@ -1874,6 +1976,19 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
+
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetSlowAlpha() == nullptr)
+	{
+		zombieFactory->SetSlowAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetSlowAlpha());
+	}*/
 
 	return zambie;
 }

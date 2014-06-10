@@ -92,11 +92,14 @@ void Enemy::Update(float dt)
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
+
+
 		// Get rid of that bitch
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		// Queue the message
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+
 
 		// Increase player's score
 		int score = 20;
@@ -119,7 +122,7 @@ void Enemy::Render()
 {
 	Entity::Render();
 
-	//m_AIComponent.Render();
+	m_AIComponent.Render();
 }
 
 void Enemy::PostRender()
@@ -324,6 +327,11 @@ float Enemy::GetSuperChance() const
 bool Enemy::GetInLava() const
 {
 	return m_bIsInLava;
+}
+
+AIComponent* Enemy::GetAIComponent()
+{
+	return &m_AIComponent;
 }
 
 /**********************************************************/

@@ -62,6 +62,8 @@ public:
 	ZombieFactory* GetZombieFactory() const;
 	char GetCurrentGameSlot() const;
 	void SetCurrentGameSlot(char slot);
+	int GetGameMode() const;
+	void SetGameMode(int gameMode);
 
 	// Create and or save the game
 	void SaveGame(bool newFile);
@@ -105,6 +107,7 @@ private:
 	SGD::Point m_ptPlayerSpawnPoint;
 	StatTracker* m_pStatTracker;
 	char m_nCurrGameSlot;
+	int m_nGamemode;
 
 	/**********************************************************/
 	// FPS
