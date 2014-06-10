@@ -1,6 +1,7 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester
 |	Course:		SGP
 |	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
@@ -60,6 +61,7 @@ public:
 	ZombieFactory* GetZombieFactory() const;
 	char GetCurrentGameSlot() const;
 	void SetCurrentGameSlot(char slot);
+	void SetGameMode(int gameMode);
 
 	// Create and or save the game
 	void SaveGame(bool newFile);
@@ -103,6 +105,7 @@ private:
 	SGD::Point m_ptPlayerSpawnPoint;
 	StatTracker* m_pStatTracker;
 	char m_nCurrGameSlot;
+	int m_nGamemode;
 
 	/**********************************************************/
 	// FPS

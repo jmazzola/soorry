@@ -17,23 +17,29 @@ StatsState* StatsState::GetInstance(void)
 
  void StatsState::Enter(void)
 {
-	 m_fScrollY = 250.0f;
-	 SetTransition(false);
-	 m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/Blank.png");
-	 m_pStats = StatTracker::GetInstance();
-	 m_pStats->Load("resource/data/stats.xml");
+	m_fScrollY = 250.0f;
+	SetTransition(false);
+	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/Blank.png");
+	m_pStats = StatTracker::GetInstance();
+	m_pStats->Load("resource/data/stats.xml");
 
-	 m_pMainButton = CreateButton();
+	m_pFont = Game::GetInstance()->GetFont();
+
+	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 	m_pFont = Game::GetInstance()->GetFont();
+
+	m_nResetStatsStatus = AREYOUSURE;
+	m_nCursor = 1;
 	
 }
 
  void StatsState::Exit(void)
 {
 	 SGD::GraphicsManager::GetInstance()->UnloadTexture(m_hBackground);
-	 // Terminate & deallocate menu items
+
+	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
@@ -43,23 +49,45 @@ StatsState* StatsState::GetInstance(void)
 {
 	 SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 
-	 if ( pInput->IsKeyDown ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) )
+	 // Make this work with the scroll wheel, kthxbai :3
+	 if ( pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) )
 	 {
-		 m_fScrollY -= 0.5f;
-		
+		//m_fScrollY -= 0.5f;
+		 ++m_nCursor;
+
+		 // Wrap around the options
+		 if (m_nCursor > 1)
+			 m_nCursor = 0;
 	 }
-	 else if ( pInput->IsKeyDown ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) )
-	 {
-		 
-		m_fScrollY += 0.5f;
-		
+	 else if ( pInput->IsKeyPressed ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) )
+	 {		 
+		//m_fScrollY += 0.5f;
+		 --m_nCursor;
+
+		 // Wrap around the options
+		 if (m_nCursor < 0)
+			 m_nCursor = 1;
 	 }
 
 	 if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
-		// Since there's only one state..go back to main menu
-		Game::GetInstance()->Transition(MainMenuState::GetInstance());
-		return true;
+		 if (m_nCursor == 0 && m_nResetStatsStatus == AREYOUSURE)
+			 m_nResetStatsStatus = NOSRS;
+		 else if (m_nCursor == 0 && m_nResetStatsStatus == NOSRS)
+			 m_nResetStatsStatus = AIGHTITSGONE;
+		 else if (m_nCursor == 0 && m_nResetStatsStatus == AIGHTITSGONE)
+		 {
+			 m_nResetStatsStatus = AIGHTITSGONE; 
+			 m_pStats->Reset();
+		 }
+
+		 else if (m_nCursor == 1)
+		 {
+			 // Since there's only one state..go back to main menu
+			 Game::GetInstance()->Transition(MainMenuState::GetInstance());
+			 return true;
+		 }
+
 	}
 	 return true;
 		
@@ -67,7 +95,19 @@ StatsState* StatsState::GetInstance(void)
 
  void StatsState::Update(float elapsedTime)
 {
+	 // If we're changing menus, count down the timer
+	 if (IsTransitioning())
+	 {
+		 m_fTransitionTime -= elapsedTime;
 
+		 if (m_fTransitionTime <= 0)
+			 SetTransition(false);
+	 }
+	 else
+	 {
+		 // Reset the transition time to allow for transitions again
+		 m_fTransitionTime = TRANSITION_TIME;
+	 }
 }
 
  void StatsState::Render ( void )
@@ -83,21 +123,35 @@ StatsState* StatsState::GetInstance(void)
 	 else
 	 {
 		 // Draw the background
-		 pGraphics->DrawTexture ( m_hBackground , { 0 , 0 } );
+		 pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
 
-		 m_pStats->Render ( m_fScrollY );
+		 m_pStats->Render(m_fScrollY);
 
 
 		 // Draw rectangles to cut off the words to give an illusion of margins
-		 pGraphics->DrawTextureSection ( m_hBackground , { 0 , 0 } ,
-			 SGD::Rectangle ( 0 , 0 , 800 , 228 ) , {} , {} );
+		 pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
+			 SGD::Rectangle(0, 0, 800, 228), {}, {});
 
-		 pGraphics->DrawTextureSection ( m_hBackground , { 0 , 475 } ,
-			 SGD::Rectangle ( 0 , 475 , 800 , 600 ) , {} , {} );
+		 pGraphics->DrawTextureSection(m_hBackground, { 0, 475 },
+			 SGD::Rectangle(0, 475, 800, 600), {}, {});
 
 		 // Render button
-		// m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 1 , 1 } , 0 );
+		 
+			 SGD::Color color = (m_nCursor == 0) ? SGD::Color(255, 0, 0) : SGD::Color(0, 0, 0);
+			 if (m_nResetStatsStatus == AREYOUSURE)
+				 m_pMainButton->Draw("Reset Stats?", { 200, 420 }, color, { 0.9f, 0.9f }, 0);
+			 else if (m_nResetStatsStatus == NOSRS)
+				 m_pMainButton->Draw("Reset Stats?!", { 200, 420 }, color, { 1, 1 }, 0);
+			 else if (m_nResetStatsStatus == AIGHTITSGONE)
+				 m_pMainButton->Draw("Stats Reset!", { 200, 420 }, color, { 1, 1 }, 0);
+
+			 if (m_nCursor == 1)
+				m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+			 else
+				 m_pMainButton->Draw("Go Back", { 200, 500 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
 
 		 pFont->Draw ( "Stats" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)((m_pFont->GetTextWidth ( "Stats" ) / 2) * 1.2f) - 20 , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
 	 }

@@ -11,6 +11,7 @@
 #include "MainMenuState.h"
 #include "LoadingState.h"
 #include "GameplayState.h"
+#include "ModePickerState.h"
 
 #include "Button.h"
 
@@ -180,13 +181,8 @@ using namespace std;
 	// Select the item
 	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
-		// Switch table for the item selected
-		switch (m_nCursor)
-		{
-			// TODO: Make Slots 1-3 open and load the game with their loaded data
-			// (thats why they're cascading)
-			// until then, they're placeholders.
-		case MENU_SLOT1:
+		// If we're on the first slot and the file exists (not a new game)
+		if (m_nCursor == MENU_SLOT1 && m_bFileExists[0])
 		{
 			// Set the gameplay to slot 1
 			GameplayState::GetInstance()->SetCurrentGameSlot(1);
@@ -195,32 +191,46 @@ using namespace std;
 			// Exit immediately
 			return true;
 		}
-
-		case MENU_SLOT2:
+		else if (m_nCursor == MENU_SLOT1 && !m_bFileExists[0])
+		{
+			// Go to the game mode picker
+			GameplayState::GetInstance()->SetCurrentGameSlot(1);
+			// Go choose a gamemode
+			pGame->Transition(ModePickerState::GetInstance());
+			// Exit immediately
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT2 && m_bFileExists[1])
 		{
 			// Set the gameplay to slot 2
 			GameplayState::GetInstance()->SetCurrentGameSlot(2);
 			pGame->ChangeState(GameplayState::GetInstance());
-
 			return true;
 		}
-
-		case MENU_SLOT3:
+		else if (m_nCursor == MENU_SLOT2 && !m_bFileExists[1])
+		{
+			GameplayState::GetInstance()->SetCurrentGameSlot(2);
+			pGame->Transition(ModePickerState::GetInstance());
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT3 && m_bFileExists[2])
 		{
 			// Set the gameplay to slot 3
 			GameplayState::GetInstance()->SetCurrentGameSlot(3);
 			pGame->ChangeState(GameplayState::GetInstance());
-
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT3 && !m_bFileExists[2])
+		{
+			GameplayState::GetInstance()->SetCurrentGameSlot(3);
+			pGame->Transition(ModePickerState::GetInstance());
 			return true;
 		}
 
-		case MENU_GOBACK:
+		else if(m_nCursor == MENU_GOBACK)
 		{
 			pGame->Transition(MainMenuState::GetInstance());
 			return true;
-
-		}
-			break;
 
 		}
 	}

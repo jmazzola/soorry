@@ -11,8 +11,7 @@
 #include "Game.h"
 #include "MainMenuState.h"
 #include "GameplayState.h"
-
-#include "Button.h"
+#include "StatsState.h"
 
 #include "../TinyXML/tinyxml.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
@@ -20,13 +19,8 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
 
-#include "../SGD Wrappers/SGD_EventManager.h"
-#include "../SGD Wrappers/SGD_Event.h"
-#include "../SGD Wrappers/SGD_MessageManager.h"
-#include "../SGD Wrappers/SGD_Message.h"
-#include "MessageID.h"
-
 #include "BitmapFont.h"
+#include "Button.h"
 
 #include "Entity.h"
 #include "EntityManager.h"
@@ -126,7 +120,6 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// --- Scrolling through options ---
@@ -163,6 +156,15 @@ using namespace std;
 			{
 				// Toggle fullscreen
 				pGame->ToggleFullscreen();
+			}
+				break;
+
+			case MENU_STATS:
+			{
+				// Go to the stats screen
+				pGame->Transition(StatsState::GetInstance());
+				// Exit immediately
+				return true;
 			}
 				break;
 
@@ -300,31 +302,38 @@ using namespace std;
 			m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		if (m_nCursor == MENU_SFXVOL)
-			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		// If the game is in fullscreen
 		if (Game::GetInstance()->GetFullscreen())
 		{
 			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
-				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: No", { 160, 340 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: No", { 160, 340 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 		// If the game is windowed
 		else
 		{
 			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
-				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 340 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 340 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
-		if (m_nCursor == MENU_GOBACK)
-			m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		// Draw Stats option
+		if (m_nCursor == MENU_STATS)
+			m_pMainButton->Draw("View Stats", { 170, 410 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("View Stats", { 170, 410 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
+		if (m_nCursor == MENU_GOBACK)
+			m_pMainButton->Draw("Go Back", { 150, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Go Back", { 150, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 	}
 
 

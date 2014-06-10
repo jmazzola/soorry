@@ -70,6 +70,9 @@
     <Filter Include="Data\Arcade Mode">
       <UniqueIdentifier>{c04aa398-daab-456e-a4cb-cb92adb2e74d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File Format">
+      <UniqueIdentifier>{7a4228a6-8170-4ee2-85e1-eba961f3e6e1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="StatTracker">
       <UniqueIdentifier>{0a0216fb-581d-4e26-bb59-353f1ddb6030}</UniqueIdentifier>
     </Filter>
@@ -342,6 +345,9 @@
     <ClCompile Include="source\WaveCompleteMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\RZBN.cpp">
+      <Filter>File Format</Filter>
+    </ClCompile>
     <ClCompile Include="source\MapleSyrupBullet.cpp">
       <Filter>Towers/Traps</Filter>
     </ClCompile>
@@ -361,6 +367,9 @@
       <Filter>Towers/Traps</Filter>
     </ClCompile>
     <ClCompile Include="source\StatsState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModePickerState.cpp">
       <Filter>Game States</Filter>
     </ClCompile>
   </ItemGroup>
@@ -659,6 +668,9 @@
     <ClInclude Include="source\WaveCompleteMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\RZBN.h">
+      <Filter>File Format</Filter>
+    </ClInclude>
     <ClInclude Include="source\MapleSyrupBullet.h">
       <Filter>Towers/Traps</Filter>
     </ClInclude>
@@ -678,6 +690,9 @@
       <Filter>Towers/Traps</Filter>
     </ClInclude>
     <ClInclude Include="source\StatsState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ModePickerState.h">
       <Filter>Game States</Filter>
     </ClInclude>
   </ItemGroup>

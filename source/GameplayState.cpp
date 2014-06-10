@@ -152,6 +152,11 @@ ZombieFactory* GameplayState::GetZombieFactory() const
 	return GetInstance()->zombieFactory;
 }
 
+void GameplayState::SetGameMode(int _gameMode)
+{
+	m_nGamemode = _gameMode;
+}
+
 /*************************************************************/
 // CreatePlayer
 //	- allocate a new player

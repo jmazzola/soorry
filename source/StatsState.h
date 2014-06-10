@@ -42,11 +42,18 @@ private:
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
 
+	// Cursor Index
+	int	m_nCursor;
+
 	// StatTracker pointer
 	StatTracker* m_pStats;
 
 	// Scrolling text location
 	float m_fScrollY;
+
+	// Enum to check if they pressed Stats
+	enum ResetStatsStatus { AREYOUSURE, NOSRS, AIGHTITSGONE };
+	int m_nResetStatsStatus;
 
 	// Textures
 	SGD::HTexture m_hBackground;

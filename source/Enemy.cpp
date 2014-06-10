@@ -168,7 +168,7 @@ int Enemy::GetType() const
 
 /*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
 {
-	int pastHealth = m_nCurrHealth;
+	int pastHealth = (int)m_nCurrHealth;
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
