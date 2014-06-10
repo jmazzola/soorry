@@ -46,6 +46,7 @@
 #include "WaveCompleteMessage.h"
 #include "CreateMapleSyrupBulletMessage.h"
 #include "CreateGrenadeMessage.h"
+#include "CreateShopMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -57,6 +58,7 @@
 #include "Drone.h"
 #include "Grenade.h"
 #include "TrickShotBullet.h"
+#include "ShopEntity.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -1501,32 +1503,32 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 	case MessageID::MSG_CREATE_BEAVER_ZOMBIE:
 	{
-												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
-												GameplayState* self = GameplayState::GetInstance();
-												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
-												beaver->Release();
-												beaver = nullptr;
+		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
+		beaver->Release();
+		beaver = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_FAST_ZOMBIE:
 	{
-											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
-											  GameplayState* self = GameplayState::GetInstance();
-											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
-											  zambie->Release();
-											  zambie = nullptr;
+		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		zambie->Release();
+		zambie = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_SLOW_ZOMBIE:
 	{
-											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
-											  GameplayState* self = GameplayState::GetInstance();
-											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
-											  zambie->Release();
-											  zambie = nullptr;
+		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		zambie->Release();
+		zambie = nullptr;
 	}
 		break;
 
@@ -1534,79 +1536,79 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	{
 
-											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
-											 GameplayState* self = GameplayState::GetInstance();
-											 if (pCreateMessage->GetWeaponNumber() == 1)
-											 {
-												 SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
-												 for (int i = 0; i < 9; i++)
-												 {
-													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
-													 bullet = nullptr;
-												 }
-											 }
-											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-											 bullet->Release();
-											 bullet = nullptr;
+		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		if (pCreateMessage->GetWeaponNumber() == 1)
+		{
+			SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
+			for (int i = 0; i < 9; i++)
+			{
+				Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+				self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+				bullet->Release();
+				bullet = nullptr;
+			}
+		}
+		Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+		self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
+		bullet = nullptr;
 
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
 	{
-											const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-											GameplayState* g = GameplayState::GetInstance();
-											Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-											g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
-											place->Release();
-											place = nullptr;
+		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		place->Release();
+		place = nullptr;
 
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-										 GameplayState* g = GameplayState::GetInstance();
-										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
-										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
-										 place->Release();
-										 place = nullptr;
+		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+		place->Release();
+		place = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_PLAYER_SPAWN:
 	{
-											   const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
-											   GameplayState* g = GameplayState::GetInstance();
-											   g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
-											   g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
+		const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+		g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
 	case MessageID::MSG_DESTROY_ENTITY:
 	{
 
-										  const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
-										  GameplayState* g = GameplayState::GetInstance();
-										  Entity* ent = pCreateMessage->GetEntity();
-										  g->m_pEntities->RemoveEntity(ent);
+		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* ent = pCreateMessage->GetEntity();
+		g->m_pEntities->RemoveEntity(ent);
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
 	{
-												  const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-												  GameplayState* g = GameplayState::GetInstance();
-												  ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
 	}
 		break;
 	case MessageID::MSG_CREATE_DYNAMIC_PARTICLE:
 	{
-												   const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-												   GameplayState* g = GameplayState::GetInstance();
-												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
@@ -1619,38 +1621,38 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		break;
 	case MessageID::MSG_CREATE_TOWER:
 	{
-										const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
-										GameplayState* g = GameplayState::GetInstance();
-										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
-										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
-										tower->Release();
+		const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
+		g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
+		tower->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_TRAP:
 	{
-									const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
-									GameplayState* g = GameplayState::GetInstance();
-									Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
-									g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
-									trap->Release();
+		const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
+		g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
+		trap->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
 	{
-													const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
-													GameplayState* g = GameplayState::GetInstance();
-													Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
-													g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													bullet->Release();
+		const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
+		g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MAPLE_SYRUP_BULLET:
 	{
-													 const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
-													 GameplayState* g = GameplayState::GetInstance();
-													 Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
-													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
+		const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
+		g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_DRONE:
@@ -1664,23 +1666,29 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		break;
 	case MessageID::MSG_WAVE_COMPLETE:
 	{
-										 GameplayState* g = GameplayState::GetInstance();
-										 g->m_fSlowHealth *= g->m_fHealthScaling;
-										 g->m_fFastHealth *= g->m_fHealthScaling;
-										 g->m_fBeaverHealth *= g->m_fHealthScaling;
+		GameplayState* g = GameplayState::GetInstance();
+		g->m_fSlowHealth *= g->m_fHealthScaling;
+		g->m_fFastHealth *= g->m_fHealthScaling;
+		g->m_fBeaverHealth *= g->m_fHealthScaling;
 	}
 		break;
 	case MessageID::MSG_CREATE_GRENADE:
 	{
-										const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
-										GameplayState* g = GameplayState::GetInstance();
-										Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
-										g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
-										grenade->Release();
+		const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
+		g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
+		grenade->Release();
+	}
+		break;
+
+	case MessageID::MSG_CREATE_SHOP:
+	{
+		const CreateShopMessage* pShop = dynamic_cast<const CreateShopMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
 	}
 		break;
 	}
-
 	/* Restore previous warning levels */
 #pragma warning( pop )
 

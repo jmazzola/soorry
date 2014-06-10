@@ -135,6 +135,8 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 
 	Weapon* weaps = m_pPlayer->GetWeapons();
 
+	return false;
+
 }
 
 

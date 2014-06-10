@@ -7,6 +7,7 @@
 #include "../SGD Wrappers/SGD_Event.h"
 
 #include "CreatePlayerSpawnMessage.h"
+#include "CreateShopMessage.h"
 
 #include "IEntity.h"
 
@@ -581,6 +582,13 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	if (_tile.GetTriggerInit() == "WINDOW")
 	{
 		m_vInitWindows.push_back(_tile);
+	}
+
+	// SHOP
+	if (_tile.GetTriggerInit() == "SHOP_SPAWN")
+	{
+		CreateShopMessage shop(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
+		shop.SendMessageNow();
 	}
 }
 

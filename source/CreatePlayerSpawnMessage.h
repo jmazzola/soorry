@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../SGD Wrappers/SGD_Message.h"
-#include "../SGD Wrappers/SGD_Geometry.h"
 
 class CreatePlayerSpawnMessage : public SGD::Message
 {
