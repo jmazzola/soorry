@@ -4,6 +4,7 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -94,6 +95,7 @@ Player::Player () : Listener ( this )
 
 	//Camera Lock - starts static
 	m_bStaticCamera = 1;
+	m_fCameraLerpTimer = 1;
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
@@ -897,8 +899,24 @@ void Player::Update ( float dt )
 	}
 	else
 	{
-		Camera::x = (pInput->GetMousePosition().x + m_ptPosition.x - (384*2));
-		Camera::y = (pInput->GetMousePosition().y + m_ptPosition.y - (284*2));
+		//Update lerp timer
+		m_fCameraLerpTimer += (dt*10);
+		// lerp to position
+		//If it has fully lerped
+		if (m_fCameraLerpTimer >= 1)
+		{
+			//reset the lerp and set the next position
+			m_fCameraLerpTimer = 0;
+			m_vCameraStart = { (float)Camera::x, (float)Camera::y };
+			m_vCameraEnd = { (float)(pInput->GetMousePosition().x + m_ptPosition.x - (384 * 2)), (float)(pInput->GetMousePosition().y + m_ptPosition.y - (284 * 2)) };
+		}
+		if (m_fCameraLerpTimer < 1)
+		{
+			SGD::Vector tempVector;
+			tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, m_fCameraLerpTimer);
+			Camera::x = (int)tempVector.x;
+			Camera::y = (int)tempVector.y;
+		}
 	}
 }
 
