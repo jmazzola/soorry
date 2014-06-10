@@ -64,7 +64,7 @@ private:
 				 RPG = 3610, HT = 3890, WALLS = 4170, WINDOWS = 4450, TOWERS = 4730, TRAPS = 5100,
 				 MONEY = 5290, END};
 
-
+	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
 };
