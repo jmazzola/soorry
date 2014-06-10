@@ -146,6 +146,9 @@ using namespace std;
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
 
+	m_bAccept = true;
+	m_bTHEBOOL = false;
+	m_vtStick = SGD::Vector { 0.0f , 0.0f };
 }
 
 

@@ -252,8 +252,14 @@ using namespace std;
 	}
 	// --- Decreasing an option ---
 	// If the left key (PC) or left dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
+#endif
 	// Decrease the value
-	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+	if (m_bTHEBOOL)
 	{
 		switch (m_nCursor)
 		{
@@ -271,6 +277,9 @@ using namespace std;
 		}
 			break;
 		}
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 #if !ARCADE_MODE
 	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
