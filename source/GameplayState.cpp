@@ -82,6 +82,8 @@
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
 
+#include "AIComponent.h"
+
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
 
@@ -1593,6 +1595,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										  GameplayState* g = GameplayState::GetInstance();
 										  Entity* ent = pCreateMessage->GetEntity();
 										  g->m_pEntities->RemoveEntity(ent);
+
+										  SGD::Event pEvent("ASSESS_ALPHA", (void*)ent);
+										  pEvent.SendEventNow();
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
@@ -1713,6 +1718,19 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
+	AIComponent* aiComponent = tempBeav->GetAIComponent();
+
+	if (zombieFactory->GetBeaverAlpha() == nullptr)
+	{
+		zombieFactory->SetBeaverAlpha(tempBeav);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetBeaverAlpha());
+	}
+
 	return tempBeav;
 }
 
@@ -1733,6 +1751,19 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
+	AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetFastAlpha() == nullptr)
+	{
+		zombieFactory->SetFastAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetFastAlpha());
+	}
+
 	return zambie;
 }
 
@@ -1752,6 +1783,19 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
+
+	AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetSlowAlpha() == nullptr)
+	{
+		zombieFactory->SetSlowAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetSlowAlpha());
+	}
 
 	return zambie;
 }

@@ -11,6 +11,7 @@
 using namespace std;
 
 class Player;
+class Enemy;
 
 class ZombieFactory : public SGD::Listener
 {
@@ -45,6 +46,9 @@ public:
 	float GetBuildTimeRemaining() const;
 	float GetSpawnInterval() const;
 	float GetNextSpawnTime() const;
+	Enemy* GetSlowAlpha() const;
+	Enemy* GetFastAlpha() const;
+	Enemy* GetBeaverAlpha() const;
 
 	/**********************************************************/
 	// Mutators
@@ -65,6 +69,9 @@ public:
 	void SetNextSpawnTime(float nextSpawnTime);
 	void SetEntityManager(EntityManager* entityManager);
 	void SetPlayer(Player* player);
+	void SetSlowAlpha(Enemy* slowAlpha);
+	void SetFastAlpha(Enemy* fastAlpha);
+	void SetBeaverAlpha(Enemy* beaverAlpha);
 
 protected:
 
@@ -85,6 +92,9 @@ protected:
 	float m_fBuildTimeRemaining;
 	float m_fSpawnInterval;
 	float m_fNextSpawnTime;
+	Enemy* m_pSlowAlpha;
+	Enemy* m_pFastAlpha;
+	Enemy* m_pBeaverAlpha;
 	vector<WaveData> waveData;
 	EntityManager* m_pEntityManager;
 	Player* m_pPlayer;

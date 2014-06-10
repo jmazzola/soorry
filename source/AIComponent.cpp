@@ -15,7 +15,7 @@ using namespace std;
 #define BOXCAST_INTERVAL 16.0f
 #define BOXCAST_ITERATIONS 100
 
-AIComponent::AIComponent()
+AIComponent::AIComponent() : SGD::Listener(this)
 {
 	m_fTimeToPathfind = 0.0f;
 
@@ -31,6 +31,12 @@ AIComponent::AIComponent()
 
 	// Get the entity manager
 	m_pEntityManager = GameplayState::GetInstance()->GetEntityManager();
+
+	m_pAlpha = nullptr;
+
+	RegisterForEvent("ASSESS_ALPHA");
+
+	m_bFinished = false;
 }
 
 
@@ -62,6 +68,13 @@ void AIComponent::Update(float dt)
 	if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
 		m_pAgent->SetPosition({ 0, 0 });
 
+
+	// Get target to find
+	if (m_pAlpha == nullptr)
+		m_ptFindTarget = m_pPlayer->GetPosition();
+	else
+		m_ptFindTarget = m_pAlpha->GetPosition();
+
 	// Check for direct route (TEMPORARILY DISABLED!)
 	SGD::Vector toPlayer = m_pPlayer->GetPosition() - m_pAgent->GetPosition();
 	toPlayer.Normalize();
@@ -77,7 +90,7 @@ void AIComponent::Update(float dt)
 		if (m_fTimeToPathfind <= 0.0f)
 		{
 			// Pathfind to player
-			m_ptFindTarget = m_pPlayer->GetPosition();
+			//m_ptFindTarget = m_pPlayer->GetPosition();
 
 			// Start node
 			Node start;
@@ -90,6 +103,7 @@ void AIComponent::Update(float dt)
 			end.y = (int)(m_ptFindTarget.y + 16) / tileHeight;
 
 			Pathfind(start, end);
+			m_bFinished = false;
 
 			// Reset pathing timer
 			m_fTimeToPathfind = 2.0f + (rand() % 300) / 100.0f;
@@ -137,7 +151,7 @@ void AIComponent::Update(float dt)
 		if (smallestValue == m_nNodeChart[snapX][snapY])
 		{
 			// Pathfind to player
-			m_ptFindTarget = m_pPlayer->GetPosition();
+			//m_ptFindTarget = m_pPlayer->GetPosition();
 
 			// Start node
 			Node start;
@@ -151,12 +165,20 @@ void AIComponent::Update(float dt)
 
 			Pathfind(start, end);
 
+			if (start.x == end.x && start.y == end.y)
+			{
+				m_bFinished = true;
+				m_ptMoveTarget = m_pPlayer->GetPosition();
+			}
+
 			// Reset pathing timer
-			m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
+			else
+				m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
 		}
 
 		// Determine where to go
-		m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
+		else if (m_bFinished == false)
+			m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
 	}
 
 	// FOR DEBUG PURPOSES ONLY!
@@ -241,6 +263,64 @@ void AIComponent::Render()
 	}
 }
 
+void AIComponent::HandleEvent(const SGD::Event* pEvent)
+{
+	if (pEvent->GetEventID() == "ASSESS_ALPHA")
+	{
+		if (pEvent->GetData() == (void*)m_pAlpha)
+		{
+			m_pAlpha = nullptr;
+
+			ZombieFactory* zombieFactory = GameplayState::GetInstance()->GetZombieFactory();
+
+			switch (m_pAgent->GetType())
+			{
+			case Entity::ENT_ZOMBIE_SLOW:
+
+				if (zombieFactory->GetSlowAlpha() == nullptr)
+				{
+					zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(m_pAgent));
+				}
+
+				else
+				{
+					m_pAlpha = zombieFactory->GetSlowAlpha();
+				}
+
+				break;
+
+			case Entity::ENT_ZOMBIE_FAST:
+
+				if (zombieFactory->GetFastAlpha() == nullptr)
+				{
+					zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(m_pAgent));
+				}
+
+				else
+				{
+					m_pAlpha = zombieFactory->GetFastAlpha();
+				}
+
+				break;
+
+			case Entity::ENT_ZOMBIE_BEAVER:
+
+				if (zombieFactory->GetBeaverAlpha() == nullptr)
+				{
+					zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(m_pAgent));
+				}
+
+				else
+				{
+					m_pAlpha = zombieFactory->GetBeaverAlpha();
+				}
+
+				break;
+			}
+		}
+	}
+}
+
 /**********************************************************/
 // Accessors
 
@@ -254,6 +334,11 @@ Entity* AIComponent::GetPlayer() const
 	return m_pPlayer;
 }
 
+Enemy* AIComponent::GetAlpha() const
+{
+	return m_pAlpha;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -265,6 +350,11 @@ void AIComponent::SetAgent(Entity* _agent)
 void AIComponent::SetPlayer(Entity* _player)
 {
 	m_pPlayer = _player;
+}
+
+void AIComponent::SetAlpha(Enemy* _alpha)
+{
+	m_pAlpha = _alpha;
 }
 
 /**********************************************************/

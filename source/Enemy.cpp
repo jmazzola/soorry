@@ -63,12 +63,15 @@ void Enemy::Update(float dt)
 		{
 		case ENT_ZOMBIE_BEAVER:
 			StatTracker::GetInstance()->SpillBlood(1.1f);
+			GameplayState::GetInstance()->GetZombieFactory()->SetBeaverAlpha(nullptr);
 			break;
 		case ENT_ZOMBIE_FAST:
 			StatTracker::GetInstance()->SpillBlood(5.5f);
+			GameplayState::GetInstance()->GetZombieFactory()->SetFastAlpha(nullptr);
 			break;
 		case ENT_ZOMBIE_SLOW:
 			StatTracker::GetInstance()->SpillBlood(7.3f);
+			GameplayState::GetInstance()->GetZombieFactory()->SetSlowAlpha(nullptr);
 			break;
 		}
 
@@ -92,6 +95,9 @@ void Enemy::Update(float dt)
 			pmsg->QueueMessage();
 			pmsg = nullptr;
 		}
+
+
+
 		// Get rid of that bitch
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		// Queue the message
@@ -337,6 +343,11 @@ float Enemy::GetSuperChance() const
 bool Enemy::GetInLava() const
 {
 	return m_bIsInLava;
+}
+
+AIComponent* Enemy::GetAIComponent()
+{
+	return &m_AIComponent;
 }
 
 /**********************************************************/

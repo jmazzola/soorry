@@ -119,6 +119,11 @@ void ZombieFactory::Start()
 
 	m_nEnemiesRemaining = 0;
 	m_fNextSpawnTime = 0.0f;
+
+	// Null out alpha zombies
+	m_pSlowAlpha = nullptr;
+	m_pFastAlpha = nullptr;
+	m_pBeaverAlpha = nullptr;
 }
 
 void ZombieFactory::Stop()
@@ -185,13 +190,18 @@ void ZombieFactory::Update(float dt)
 			msg->QueueMessage();
 
 			// Pause if last wave
-			if (m_nWave > (int)waveData.size())
+			if (m_nWave > (int)waveData.size() && !m_bInfiniteWaves)
 			{
 				m_bIsPaused = true;
 				return;
 			}
 
 			m_fBuildTimeRemaining = (float)waveData[m_nWave - 1].buildTime;
+
+			m_pSlowAlpha = nullptr;
+			m_pFastAlpha = nullptr;
+			m_pBeaverAlpha = nullptr;
+
 			return;
 		}
 
@@ -396,6 +406,21 @@ float ZombieFactory::GetNextSpawnTime() const
 	return m_fNextSpawnTime;
 }
 
+Enemy* ZombieFactory::GetSlowAlpha() const
+{
+	return m_pSlowAlpha;
+}
+
+Enemy* ZombieFactory::GetFastAlpha() const
+{
+	return m_pFastAlpha;
+}
+
+Enemy* ZombieFactory::GetBeaverAlpha() const
+{
+	return m_pBeaverAlpha;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -482,4 +507,19 @@ void ZombieFactory::SetEntityManager(EntityManager* _entityManager)
 void ZombieFactory::SetPlayer(Player* _player)
 {
 	m_pPlayer = _player;
+}
+
+void ZombieFactory::SetSlowAlpha(Enemy* _slowAlpha)
+{
+	m_pSlowAlpha = _slowAlpha;
+}
+
+void ZombieFactory::SetFastAlpha(Enemy* _fastAlpha)
+{
+	m_pFastAlpha = _fastAlpha;
+}
+
+void ZombieFactory::SetBeaverAlpha(Enemy* _beaverAlpha)
+{
+	m_pBeaverAlpha = _beaverAlpha;
 }
