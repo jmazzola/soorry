@@ -206,7 +206,11 @@ void Emitter::load()
 			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
-			spawnRate = deadParticles.size() / ((particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime) / 2);
+			//Check if its zero, if it is then spawn the particles smoothly
+			if (spawnRate == 0)
+			{
+				spawnRate = deadParticles.size() / ((particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime) / 2.0f);
+			}
 		}
  		allParticlesCreated = true;
 	}
@@ -216,6 +220,7 @@ bool Emitter::Update(float dt)
 {
 	if (followEnitiy != nullptr)
 	{
+		//BUG: trys to update the particle after the entity has died
 		position = followEnitiy->GetPosition();
 	}
 	if (isLooping)

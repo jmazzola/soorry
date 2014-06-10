@@ -86,6 +86,7 @@ protected:
 
 	/**********************************************************/
 	// Members
+	bool m_bCanLeftClick;
 	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
@@ -94,6 +95,7 @@ protected:
 	float m_fCursorFadeTimer;
 	float m_fSuperTimer;
 	float m_fSuperLength;
+	float m_fCameraLerpTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
@@ -107,6 +109,9 @@ protected:
 	ZombieFactory* m_pZombieWave;
 	EntityManager* m_pEntityManager;
 	Tower* m_pSelectedTower;
+	SGD::Vector m_vCameraStart;
+	SGD::Vector m_vCameraEnd;
+	SGD::Vector m_vCamera;
 	SGD::HTexture m_hPlaceablesImage;
 	SGD::HTexture m_hRangeCirclesImage;
 	
@@ -122,5 +127,6 @@ private:
 
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);
+	bool m_bStaticCamera;
 };
 

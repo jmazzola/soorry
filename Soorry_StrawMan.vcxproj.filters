@@ -357,6 +357,9 @@
     <ClCompile Include="source\StatTracker.cpp">
       <Filter>StatTracker</Filter>
     </ClCompile>
+    <ClCompile Include="source\TowerFlyweight.cpp">
+      <Filter>Towers/Traps</Filter>
+    </ClCompile>
     <ClCompile Include="source\StatsState.cpp">
       <Filter>Game States</Filter>
     </ClCompile>
@@ -671,6 +674,9 @@
     <ClInclude Include="source\StatTracker.h">
       <Filter>StatTracker</Filter>
     </ClInclude>
+    <ClInclude Include="source\TowerFlyweight.h">
+      <Filter>Towers/Traps</Filter>
+    </ClInclude>
     <ClInclude Include="source\StatsState.h">
       <Filter>Game States</Filter>
     </ClInclude>
@@ -700,7 +706,10 @@
     <Xml Include="resource\data\game_modes\arcade_mode\enemyStats.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
-    <Xml Include="resource\data\shop.xml">
+    <Xml Include="resource\data\game_modes\arcade_mode\towerStats.xml">
+      <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
       <Filter>Data\Arcade Mode</Filter>
     </Xml>
   </ItemGroup>
