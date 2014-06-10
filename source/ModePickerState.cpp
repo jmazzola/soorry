@@ -123,30 +123,47 @@
 	// Select the item
 	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
+		GameplayState* pGameplay = GameplayState::GetInstance();
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
 		case ARCADE:
 		{
-			return true;
+					   pGameplay->SetGameMode(0);
+					   pGame->ChangeState(pGameplay);
+					   return true;
+		}
+			break;
+
+		case HARDCORE:
+		{
+						 pGameplay->SetGameMode(1);
+						 pGame->ChangeState(pGameplay);
+						 return true;
 		}
 			break;
 
 		case SANDBOX:
 		{
-			return true;
+						pGameplay->SetGameMode(2);
+						pGame->ChangeState(pGameplay);
+						return true;
 		}
 			break;
 
 		case BEAVERFEVER:
 		{
-			return true;
+							pGameplay->SetGameMode(3);
+							pGame->ChangeState(pGameplay);
+							return true;
 		}
 			break;
 
 		case RUNNINGMAN:
 		{
-			return true;
+						   pGameplay->SetGameMode(4);
+						   pGame->ChangeState(pGameplay);
+						   return true;
 		}
 			break;
 
@@ -203,29 +220,34 @@
 
 
 		if (m_nCursor == ARCADE)
-			m_pMainButton->Draw("ARCADE", { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("ARCADE", { 120, 180 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("ARCADE", { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("ARCADE", { 140, 180 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+
+		if (m_nCursor == HARDCORE)
+			m_pMainButton->Draw("HARDCORE", { 130, 240 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+		else
+			m_pMainButton->Draw("HARDCORE", { 150, 240 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == SANDBOX)
-			m_pMainButton->Draw("SANDBOX", { 140, 280 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("SANDBOX", { 160, 300 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("SANDBOX", { 140, 280 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("SANDBOX", { 130, 300 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == BEAVERFEVER)
-			m_pMainButton->Draw("BEAVER FEVER", { 140, 360 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("BEAVER FEVER", { 130, 360 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("BEAVER FEVER", { 140, 360 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("BEAVER FEVER", { 150, 360 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == RUNNINGMAN)
-			m_pMainButton->Draw("RUNNING MAN", { 140, 420 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("RUNNING MAN", { 150, 420 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("RUNNING MAN", { 140, 420 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("RUNNING MAN", { 140, 420 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == GOBACK)
-			m_pMainButton->Draw("Go Back", { 140, 480 }, { 255, 0, 0 }, { 1, 1 }, 0);
+			m_pMainButton->Draw("Go Back", { 140, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw("Go Back", { 140, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);
+			m_pMainButton->Draw("Go Back", { 130, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 	}
 }

@@ -35,8 +35,6 @@ AIComponent::AIComponent() : SGD::Listener(this)
 
 	m_pAlpha = nullptr;
 
-	RegisterForEvent("ASSESS_ALPHA");
-
 	m_bFinished = false;
 }
 
@@ -263,67 +261,12 @@ void AIComponent::Render()
 	//	}
 	//}
 
-	ostringstream address;
+	/*ostringstream address;
 	address << (void*)m_pAlpha;
 
 	SGD::Color color = (m_pAlpha == nullptr) ? SGD::Color(255, 0, 0) : SGD::Color(255, 255, 255);
 
-	SGD::GraphicsManager::GetInstance()->DrawString(address.str().c_str(), m_pAgent->GetPosition() - SGD::Vector(Camera::x, Camera::y), color);
-}
-
-void AIComponent::HandleEvent(const SGD::Event* pEvent)
-{
-	if (pEvent->GetEventID() == "ASSESS_ALPHA")
-	{
-		m_pAlpha = nullptr;
-
-		ZombieFactory* zombieFactory = GameplayState::GetInstance()->GetZombieFactory();
-
-		switch (m_pAgent->GetType())
-		{
-		case Entity::ENT_ZOMBIE_SLOW:
-
-			if (zombieFactory->GetSlowAlpha() == nullptr)
-			{
-				zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(m_pAgent));
-			}
-
-			else
-			{
-				m_pAlpha = zombieFactory->GetSlowAlpha();
-			}
-
-			break;
-
-		case Entity::ENT_ZOMBIE_FAST:
-
-			if (zombieFactory->GetFastAlpha() == nullptr)
-			{
-				zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(m_pAgent));
-			}
-
-			else
-			{
-				m_pAlpha = zombieFactory->GetFastAlpha();
-			}
-
-			break;
-
-		case Entity::ENT_ZOMBIE_BEAVER:
-
-			if (zombieFactory->GetBeaverAlpha() == nullptr)
-			{
-				zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(m_pAgent));
-			}
-
-			else
-			{
-				m_pAlpha = zombieFactory->GetBeaverAlpha();
-			}
-
-			break;
-		}
-	}
+	SGD::GraphicsManager::GetInstance()->DrawString(address.str().c_str(), m_pAgent->GetPosition() - SGD::Vector(Camera::x, Camera::y), color);*/
 }
 
 /**********************************************************/

@@ -61,6 +61,7 @@ public:
 	ZombieFactory* GetZombieFactory() const;
 	char GetCurrentGameSlot() const;
 	void SetCurrentGameSlot(char slot);
+	int GetGameMode() const;
 	void SetGameMode(int gameMode);
 
 	// Create and or save the game

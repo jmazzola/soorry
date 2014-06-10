@@ -205,7 +205,8 @@ using namespace std;
 					  Justin Mazzola\n\
 					  Justin Patterson\n\n\
 					  Special Thanks\n\
-					  Jordan Butler for ideas.";
+					  Jordan Butler for ideas.\n\
+					  Ryan Simmons' Bookbag";
 
 	// If we're transitioning
 	if (IsTransitioning())

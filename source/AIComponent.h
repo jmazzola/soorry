@@ -27,7 +27,6 @@ public:
 	// Interface
 	void Update(float dt);
 	void Render();
-	virtual void HandleEvent(const SGD::Event* pEvent) override;
 
 	/**********************************************************/
 	// Accessors
@@ -45,7 +44,6 @@ protected:
 
 	/**********************************************************/
 	// Data Members
-	bool m_bIsAlpha;
 	bool m_bFinished;
 	int m_nWorldWidth;
 	int m_nWorldHeight;

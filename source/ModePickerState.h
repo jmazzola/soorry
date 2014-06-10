@@ -56,6 +56,6 @@ private:
 	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
 
 	// Enumeration
-	enum Modes { ARCADE, SANDBOX, BEAVERFEVER, RUNNINGMAN, GOBACK };
+	enum Modes { ARCADE, HARDCORE, SANDBOX, BEAVERFEVER, RUNNINGMAN, GOBACK };
 };
 

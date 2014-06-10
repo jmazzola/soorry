@@ -778,9 +778,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWalls ();
-				--newset;
-				m_pInventory->SetWalls ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
@@ -793,9 +796,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWindows ();
-				--newset;
-				m_pInventory->SetWindows ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWindows();
+					--newset;
+					m_pInventory->SetWindows(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);

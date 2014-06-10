@@ -76,6 +76,9 @@
     <Filter Include="StatTracker">
       <UniqueIdentifier>{0a0216fb-581d-4e26-bb59-353f1ddb6030}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data\Sandbox Mode">
+      <UniqueIdentifier>{ff40948a-1404-4ddd-a711-ea5ef7e1d29d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -371,6 +374,12 @@
     </ClCompile>
     <ClCompile Include="source\ModePickerState.cpp">
       <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ShopEntity.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CreateShopMessage.cpp">
+      <Filter>Messages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -695,6 +704,12 @@
     <ClInclude Include="source\ModePickerState.h">
       <Filter>Game States</Filter>
     </ClInclude>
+    <ClInclude Include="source\ShopEntity.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CreateShopMessage.h">
+      <Filter>Messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">
@@ -726,6 +741,24 @@
     </Xml>
     <Xml Include="resource\data\game_modes\arcade_mode\shop.xml">
       <Filter>Data\Arcade Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\enemyStats.xml">
+      <Filter>Data\Sandbox Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\playerStats.xml">
+      <Filter>Data\Sandbox Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\sandboxMode.xml">
+      <Filter>Data\Sandbox Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\shop.xml">
+      <Filter>Data\Sandbox Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\towerStats.xml">
+      <Filter>Data\Sandbox Mode</Filter>
+    </Xml>
+    <Xml Include="resource\data\game_modes\sandbox_mode\waveData.xml">
+      <Filter>Data\Sandbox Mode</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>
