@@ -51,7 +51,7 @@ StatsState* StatsState::GetInstance(void)
 	 else if ( pInput->IsKeyDown ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) )
 	 {
 		 
-			 m_fScrollY += 0.5f;
+		m_fScrollY += 0.5f;
 		
 	 }
 
