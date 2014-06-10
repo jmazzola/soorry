@@ -1596,8 +1596,19 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 										  Entity* ent = pCreateMessage->GetEntity();
 										  g->m_pEntities->RemoveEntity(ent);
 
-										  SGD::Event pEvent("ASSESS_ALPHA", (void*)ent);
-										  pEvent.SendEventNow();
+										  Enemy* enemy = dynamic_cast<Enemy*>(ent);
+										  if (enemy && enemy->GetAIComponent()->GetAlpha() == nullptr)
+										  {
+											  if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+												  g->zombieFactory->SetSlowAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+												  g->zombieFactory->SetFastAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+												  g->zombieFactory->SetBeaverAlpha(nullptr);
+
+												SGD::Event pEvent("ASSESS_ALPHA", (void*)ent);
+												pEvent.SendEventNow();
+										  }
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
@@ -1612,6 +1623,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 												   const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 												   GameplayState* g = GameplayState::GetInstance();
 												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+	}
+		break;
+	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
+	{
+		//Here you go Ryan
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_TOWER:

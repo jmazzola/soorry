@@ -10,6 +10,7 @@
 #include "../SGD Wrappers/SGD_Event.h"
 
 #include <queue>
+#include <sstream>
 using namespace std;
 
 #define BOXCAST_INTERVAL 16.0f
@@ -241,82 +242,86 @@ void AIComponent::Render()
 {
 	// NOTE: This function is only called for certain debug practices
 
-	// Get camera position in terms of tiles
-	int camTileX = Camera::x / 32;
-	int camTileY = Camera::y / 32;
+	//// Get camera position in terms of tiles
+	//int camTileX = Camera::x / 32;
+	//int camTileY = Camera::y / 32;
 
-	// Get stop point for rendering
-	int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
-	int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
+	//// Get stop point for rendering
+	//int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
+	//int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
 
-	// Loop through the viewport
-	for (int x = camTileX; x < stopX; x++)
-	{
-		for (int y = camTileY; y < stopY; y++)
-		{
-			// Don't render out-of-bounds index
-			if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
-				continue;
+	//// Loop through the viewport
+	//for (int x = camTileX; x < stopX; x++)
+	//{
+	//	for (int y = camTileY; y < stopY; y++)
+	//	{
+	//		// Don't render out-of-bounds index
+	//		if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
+	//			continue;
 
-			SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
-		}
-	}
+	//		SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
+	//	}
+	//}
+
+	ostringstream address;
+	address << (void*)m_pAlpha;
+
+	SGD::Color color = (m_pAlpha == nullptr) ? SGD::Color(255, 0, 0) : SGD::Color(255, 255, 255);
+
+	SGD::GraphicsManager::GetInstance()->DrawString(address.str().c_str(), m_pAgent->GetPosition() - SGD::Vector(Camera::x, Camera::y), color);
 }
 
 void AIComponent::HandleEvent(const SGD::Event* pEvent)
 {
 	if (pEvent->GetEventID() == "ASSESS_ALPHA")
 	{
-		if (pEvent->GetData() == (void*)m_pAlpha)
+		m_pAlpha = nullptr;
+
+		ZombieFactory* zombieFactory = GameplayState::GetInstance()->GetZombieFactory();
+
+		switch (m_pAgent->GetType())
 		{
-			m_pAlpha = nullptr;
+		case Entity::ENT_ZOMBIE_SLOW:
 
-			ZombieFactory* zombieFactory = GameplayState::GetInstance()->GetZombieFactory();
-
-			switch (m_pAgent->GetType())
+			if (zombieFactory->GetSlowAlpha() == nullptr)
 			{
-			case Entity::ENT_ZOMBIE_SLOW:
-
-				if (zombieFactory->GetSlowAlpha() == nullptr)
-				{
-					zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(m_pAgent));
-				}
-
-				else
-				{
-					m_pAlpha = zombieFactory->GetSlowAlpha();
-				}
-
-				break;
-
-			case Entity::ENT_ZOMBIE_FAST:
-
-				if (zombieFactory->GetFastAlpha() == nullptr)
-				{
-					zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(m_pAgent));
-				}
-
-				else
-				{
-					m_pAlpha = zombieFactory->GetFastAlpha();
-				}
-
-				break;
-
-			case Entity::ENT_ZOMBIE_BEAVER:
-
-				if (zombieFactory->GetBeaverAlpha() == nullptr)
-				{
-					zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(m_pAgent));
-				}
-
-				else
-				{
-					m_pAlpha = zombieFactory->GetBeaverAlpha();
-				}
-
-				break;
+				zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(m_pAgent));
 			}
+
+			else
+			{
+				m_pAlpha = zombieFactory->GetSlowAlpha();
+			}
+
+			break;
+
+		case Entity::ENT_ZOMBIE_FAST:
+
+			if (zombieFactory->GetFastAlpha() == nullptr)
+			{
+				zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(m_pAgent));
+			}
+
+			else
+			{
+				m_pAlpha = zombieFactory->GetFastAlpha();
+			}
+
+			break;
+
+		case Entity::ENT_ZOMBIE_BEAVER:
+
+			if (zombieFactory->GetBeaverAlpha() == nullptr)
+			{
+				zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(m_pAgent));
+			}
+
+			else
+			{
+				m_pAlpha = zombieFactory->GetBeaverAlpha();
+			}
+
+			break;
 		}
 	}
 }

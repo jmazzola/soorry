@@ -1,11 +1,427 @@
 #include "StatTracker.h"
+#include "BitmapFont.h"
+#include "Game.h"
+#include <sstream>
 #include "../TinyXML/tinyxml.h"
 
+// Helper Function because lazy
+void Increment(SGD::Point& pos, std::stringstream& display, int multi = 1)
+{
+		pos.y += 35.0f * multi;
+		display.str(std::string());
+}
 
 StatTracker* StatTracker::GetInstance ( void )
 {
 	static StatTracker m_pStatTracker;
 	return &m_pStatTracker;
+}
+
+void StatTracker::Reset( void )
+{
+	m_fTimePlayed						= 0;
+	m_fBuildPhaseTime					= 0;
+	m_fSurvivalTime						= 0;
+	m_fDistanceWalked					= 0;
+	m_fBloodSpilled						= 0;
+	m_uGrenadesThrown					= 0;
+	m_uTotalShotsFired					= 0;
+	m_uMachineGunBullets				= 0;
+	m_uShotgunShells					= 0;
+	m_uRPGRounds						= 0;
+	m_uHatTrickShots					= 0;
+	m_uWallsPlaced						= 0;
+	m_uWallsPickedUp					= 0;
+	m_uWindowsPlaced					= 0;
+	m_uWindowsPickedUp					= 0;
+	m_uTowersBought						= 0;
+	m_uTowersSold						= 0;
+	m_uTrapsBought						= 0;
+	m_uTrapsSold						= 0;
+	m_uMoneySpent						= 0;
+	m_uTotalKills						= 0;
+	m_uRoundsSurvived					= 0;
+	m_uConsecutiveRoundsSurvived		= 0;
+}
+
+void StatTracker::Render(float y)
+{
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+
+	SGD::Point pos;
+	pos.x = 200;
+	pos.y = y;
+
+	
+
+	std::stringstream display;
+
+	// Total Time Played
+	int timePlayed = (int)m_fTimePlayed;
+	display << "Total Time Played:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	int days = timePlayed / 86400;
+	timePlayed -= days * 86400;
+	display << "\t\t";
+	display <<  days;
+	display << " Days";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	int hours = timePlayed / 3600;
+	timePlayed -= hours * 3600;
+	display << "\t\t";
+	display << hours;
+	display << " Hours";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	int minutes = timePlayed / 60;
+	timePlayed -= minutes * 60;
+	display << "\t\t";
+	display << minutes;
+	display << " Minutes";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	display << "\t\t";
+	display << timePlayed;
+	display << " Seconds";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display, 3);
+
+	// Build Phase Time
+	Increment(pos, display);
+	display << "Build Phase Time:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	timePlayed = (int)m_fBuildPhaseTime;
+
+	Increment(pos, display);
+	days = timePlayed / 86400;
+	timePlayed -= days * 86400;
+	display << "\t\t";
+	display <<  days;
+	display << " Days";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	hours = timePlayed / 3600;
+	timePlayed -= hours * 3600;
+	display << "\t\t";
+	display << hours;
+	display << " Hours";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	minutes = timePlayed / 60;
+	timePlayed -= minutes * 60;
+	display << "\t\t";
+	display << minutes;
+	display << " Minutes";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	display << "\t\t";
+	display << timePlayed;
+	display << " Seconds";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display, 3);
+
+	// Survival Phase Time
+	Increment(pos, display);
+	display << "Survival Phase Time:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	timePlayed = (int)m_fSurvivalTime;
+
+	Increment(pos, display);
+	days = timePlayed / 86400;
+	timePlayed -= days * 86400;
+	display << "\t\t";
+	display <<  days;
+	display << " Days";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	hours = timePlayed / 3600;
+	timePlayed -= hours * 3600;
+	display << "\t\t";
+	display << hours;
+	display << " Hours";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	minutes = timePlayed / 60;
+	timePlayed -= minutes * 60;
+	display << "\t\t";
+	display << minutes;
+	display << " Minutes";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display);
+	display << "\t\t";
+	display << timePlayed;
+	display << " Seconds";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display, 3);
+
+	// Distance Walked
+	Increment(pos, display);
+	display << "Distance Walked:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	int distance = (int)m_fDistanceWalked;
+
+	Increment(pos, display);
+	int kilo = distance/1000;
+	distance -= kilo * 1000;
+	display << "\t\t";
+	display << kilo;
+	display << ".";
+	display << distance;
+	display << "Kilometers";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// Total Rounds Survived
+	Increment(pos, display);
+	display << "Total Rounds Survived: ";
+	display << m_uRoundsSurvived;
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 7);
+
+	// Survival Streak
+	Increment(pos, display);
+	display << "Highest Round Reached: ";
+	display << m_uConsecutiveRoundsSurvived;
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 7);
+
+	// Total Kills
+	Increment(pos, display);
+	display << "Total Kills: ";
+	display << m_uTotalKills;
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 7);
+
+	// Blood Spilled
+	Increment(pos, display);
+	display << "Blood Spilled:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	float blood = m_fBloodSpilled;
+	float gallon = blood / 4.54f;
+	display << "\t\t";
+	display << gallon;
+	display << " Imperial Gallons";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	Increment(pos, display, 6);
+
+	// Grenades Thrown
+	Increment(pos, display);
+	display << "Weight of Grenades Thrown:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	float weight = (float)((m_uGrenadesThrown * 400.0f)/1000.0f);
+	
+	Increment(pos, display);
+	if ( weight > 1.0f )
+	{
+		display << weight;
+		display << " Kilograms";
+	}
+	else
+	{
+		display << weight * 1000.0f;
+		display << " Grams";
+	}
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// Shots Fired
+	Increment(pos, display);
+	display << "Total Shots Fired: ";
+	display << m_uTotalShotsFired;
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 7);
+
+	// Machine Gun
+	Increment(pos, display);
+	display << "Weight in Machine Gun Shells Fired:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	weight = (float)((m_uMachineGunBullets * 11.8f)/1000.0f);
+	
+	Increment(pos, display);
+	if ( weight > 1.0f )
+	{
+		display << weight;
+		display << " Kilograms";
+	}
+	else
+	{
+		display << weight * 1000.0f;
+		display << " Grams";
+	}
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// Shotgun
+	Increment(pos, display);
+	display << "Weight in Shotgun Shells Fired:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	weight = (float)((m_uShotgunShells *  7.795f)/1000.0f);
+	
+	Increment(pos, display);
+	if ( weight > 1.0f )
+	{
+		display << weight;
+		display << " Kilograms";
+	}
+	else
+	{
+		display << weight * 1000.0f;
+		display << " Grams";
+	}
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// RPG
+	Increment(pos, display);
+	display << "Weight in RPG's Fired:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	weight = (float)((m_uRPGRounds *  2200.0f)/1000.0f);
+	
+	Increment(pos, display);
+	if ( weight > 1.0f )
+	{
+		display << weight;
+		display << " Kilograms";
+	}
+	else
+	{
+		display << weight * 1000.0f;
+		display << " Grams";
+	}
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// HatTrick
+	Increment(pos, display);
+	display << "Weight in Hat Trick Pucks Fired:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+	
+	weight = (float)((m_uHatTrickShots *  185.0f)/1000.0f);
+	
+	Increment(pos, display);
+	if ( weight > 1.0f )
+	{
+		display << weight;
+		display << " Kilograms";
+	}
+	else
+	{
+		display << weight * 1000.0f;
+		display << " Grams";
+	}
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 6);
+
+	// Walls
+	Increment(pos, display);
+	display << "Walls:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uWallsPlaced;
+	display << " Placed";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uWallsPickedUp;
+	display << " Picked Up";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 5);
+
+	// Windows
+	Increment(pos, display);
+	display << "Windows:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uWindowsPlaced;
+	display << " Placed";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uWindowsPickedUp;
+	display << " Picked Up";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 5);
+
+	// Towers
+	Increment(pos, display);
+	display << "Towers:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uTowersBought;
+	display << " Bought";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uTowersSold;
+	display << " Sold";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 5);
+
+	// Traps
+	Increment(pos, display);
+	display << "Traps:";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uTrapsBought;
+	display << " Bought";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display);
+	display << m_uTrapsSold;
+	display << " Sold";
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+	Increment(pos, display, 5);
+
+	// Money
+	Increment(pos, display);
+	display << "Loonies Spent: ";
+	display << m_uMoneySpent;
+	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
+
+
 }
 
 void StatTracker::Load ( const char* path )
@@ -14,29 +430,7 @@ void StatTracker::Load ( const char* path )
 
 	if ( doc.LoadFile ( path ) == false )
 	{
-		m_fTimePlayed						= 0;
-		m_fBuildPhaseTime					= 0;
-		m_fSurvivalTime						= 0;
-		m_fDistanceWalked					= 0;
-		m_fBloodSpilled						= 0;
-		m_uGrenadesThrown					= 0;
-		m_uTotalShotsFired					= 0;
-		m_uMachineGunBullets				= 0;
-		m_uShotgunShells					= 0;
-		m_uRPGRounds						= 0;
-		m_uHatTrickShots					= 0;
-		m_uWallsPlaced						= 0;
-		m_uWallsPickedUp					= 0;
-		m_uWindowsPlaced					= 0;
-		m_uWindowsPickedUp					= 0;
-		m_uTowersBought						= 0;
-		m_uTowersSold						= 0;
-		m_uTrapsBought						= 0;
-		m_uTrapsSold						= 0;
-		m_uMoneySpent						= 0;
-		m_uTotalKills						= 0;
-		m_uRoundsSurvived					= 0;
-		m_uConsecutiveRoundsSurvived		= 0;
+		Reset();
 		return;
 	}
 

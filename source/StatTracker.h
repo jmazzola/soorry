@@ -7,6 +7,7 @@ public:
 
 	void Load(const char* path);
 	void Save(const char* path);
+	void Render(float y);
 
 	void IncreaseTime(float time, bool survival);
 	void Walk(float distance);
@@ -19,9 +20,10 @@ public:
 	void TowerExchange(bool bought);
 	void TrapExchange(bool bought);
 	void SpendItUp(unsigned int money);
-
+	void Reset(void);
 
 private:
+
 
 	StatTracker () = default;
 	~StatTracker () = default;

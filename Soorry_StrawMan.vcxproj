@@ -89,6 +89,7 @@
     <ClCompile Include="source\SpeedPickup.cpp" />
     <ClCompile Include="source\SpikeTrap.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="source\StatsState.cpp" />
     <ClCompile Include="source\StatTracker.cpp" />
     <ClCompile Include="source\SuperPack.cpp" />
     <ClCompile Include="source\Tile.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="source\SpeedPickup.h" />
     <ClInclude Include="source\SpikeTrap.h" />
     <ClInclude Include="source\Sprite.h" />
+    <ClInclude Include="source\StatsState.h" />
     <ClInclude Include="source\StatTracker.h" />
     <ClInclude Include="source\SuperPack.h" />
     <ClInclude Include="source\Tile.h" />

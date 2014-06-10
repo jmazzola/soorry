@@ -17,6 +17,16 @@ CreateParticleMessage::CreateParticleMessage(std::string emitterID, Entity* enti
 	m_nYOffset = YOffset;
 }
 
+CreateParticleMessage::CreateParticleMessage(std::string emitterID, Entity* entity,SGD::Vector vector, int XOffset, int YOffset) : Message(MessageID::MSG_CREATE_VECTOR_PARTICLE)
+{
+	//Here you go Ryan
+	m_vVector = vector;
+	m_sEmitterID = emitterID;
+	m_pEntity = entity;
+	m_nXOffset = XOffset;
+	m_nYOffset = YOffset;
+}
+
 
 CreateParticleMessage::~CreateParticleMessage()
 {
@@ -44,6 +54,10 @@ int CreateParticleMessage::GetYOffset()const
 {
 	return m_nYOffset;
 }
+SGD::Vector CreateParticleMessage::GetVector() const
+{
+	return m_vVector;
+}
 Entity* CreateParticleMessage::GetParticleEntity()const
 {
 	return m_pEntity;
@@ -64,6 +78,10 @@ void CreateParticleMessage::SetXOffset(int _XOffset)
 void CreateParticleMessage::SetYOffset(int _YOffset)
 {
 	m_nXOffset = _YOffset;
+}
+void CreateParticleMessage::SetVector(SGD::Vector _Vector)
+{
+	m_vVector = _Vector;
 }
 void CreateParticleMessage::SetEmitterID(std::string _EmitterID)
 {

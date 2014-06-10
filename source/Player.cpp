@@ -4,6 +4,7 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
 #include "Frame.h"
 #include "Sprite.h"
@@ -94,6 +95,7 @@ Player::Player () : Listener ( this )
 
 	//Camera Lock - starts static
 	m_bStaticCamera = 1;
+	m_fCameraLerpTimer = 1;
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
@@ -234,7 +236,16 @@ void Player::Update ( float dt )
 		shoot.y = 0.0f;
 	if (pInput->IsKeyPressed(SGD::Key::Space) == true)
 	{
-		m_bStaticCamera = !m_bStaticCamera;
+		if (m_bStaticCamera == true)
+		{
+			m_bStaticCamera = false;
+			m_fCameraLerpTimer = 1;
+		}
+		else
+		{
+			m_bStaticCamera = true;
+			m_fCameraLerpTimer = 0;
+		}
 	}
 	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
@@ -891,14 +902,25 @@ void Player::Update ( float dt )
 	//If the camera is static
 	if (m_bStaticCamera)
 	{
+		m_fCameraLerpTimer += (dt*0.25f);
+		m_vCameraStart = { (float)Camera::x, (float)Camera::y };
+		m_vCameraEnd = { m_ptPosition.x - 384, m_ptPosition.y - 284 };
 		// Set camera
-		Camera::x = (int)m_ptPosition.x - 384;
-		Camera::y = (int)m_ptPosition.y - 284;
+		SGD::Vector tempVector;
+		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, 0.025f);
+		Camera::x = (int)tempVector.x;
+		Camera::y = (int)tempVector.y;
 	}
 	else
 	{
-		Camera::x = (pInput->GetMousePosition().x + m_ptPosition.x - (384*2));
-		Camera::y = (pInput->GetMousePosition().y + m_ptPosition.y - (284*2));
+		//reset the lerp and set the next position
+		m_fCameraLerpTimer = 0;
+		m_vCameraStart = { (float)Camera::x, (float)Camera::y };
+		m_vCameraEnd = { (float)(pInput->GetMousePosition().x + m_ptPosition.x - (384 * 2)), (float)(pInput->GetMousePosition().y + m_ptPosition.y - (284 * 2)) };
+		SGD::Vector tempVector;
+		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, 0.025f);
+		Camera::x = (int)tempVector.x;
+		Camera::y = (int)tempVector.y;
 	}
 }
 

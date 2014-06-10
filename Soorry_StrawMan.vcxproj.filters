@@ -360,6 +360,9 @@
     <ClCompile Include="source\TowerFlyweight.cpp">
       <Filter>Towers/Traps</Filter>
     </ClCompile>
+    <ClCompile Include="source\StatsState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -673,6 +676,9 @@
     </ClInclude>
     <ClInclude Include="source\TowerFlyweight.h">
       <Filter>Towers/Traps</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StatsState.h">
+      <Filter>Game States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

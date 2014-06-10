@@ -63,15 +63,12 @@ void Enemy::Update(float dt)
 		{
 		case ENT_ZOMBIE_BEAVER:
 			StatTracker::GetInstance()->SpillBlood(1.1f);
-			GameplayState::GetInstance()->GetZombieFactory()->SetBeaverAlpha(nullptr);
 			break;
 		case ENT_ZOMBIE_FAST:
 			StatTracker::GetInstance()->SpillBlood(5.5f);
-			GameplayState::GetInstance()->GetZombieFactory()->SetFastAlpha(nullptr);
 			break;
 		case ENT_ZOMBIE_SLOW:
 			StatTracker::GetInstance()->SpillBlood(7.3f);
-			GameplayState::GetInstance()->GetZombieFactory()->SetSlowAlpha(nullptr);
 			break;
 		}
 
@@ -97,12 +94,12 @@ void Enemy::Update(float dt)
 		}
 
 
-
 		// Get rid of that bitch
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		// Queue the message
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+
 
 		// Increase player's score
 		int score = 20;
@@ -125,7 +122,7 @@ void Enemy::Render()
 {
 	Entity::Render();
 
-	//m_AIComponent.Render();
+	m_AIComponent.Render();
 }
 
 void Enemy::PostRender()
@@ -171,31 +168,23 @@ int Enemy::GetType() const
 
 /*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
 {
+	int pastHealth = m_nCurrHealth;
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
 	case ENT_BULLET_ASSAULT:
 	{
 		m_nCurrHealth -= 40;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_SHOTGUN:
 	{
 		m_nCurrHealth -= 8;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_ROCKET:
 	{
 		m_nCurrHealth -= 100;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_TRICKSHOT:
@@ -206,27 +195,17 @@ int Enemy::GetType() const
 			SGD::Event* pEvent = new SGD::Event("IM_HIT", nullptr, this);
 			pEvent->QueueEvent();
 			m_nCurrHealth -= tsb->GetDamage();
-			
-			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-			msg->QueueMessage();
-			msg = nullptr;
 		}
 		break;
 	}
 	case ENT_TRAP_BEARTRAP:
 	{
 		m_bIsTrapped = true;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_MACHINE_GUN_BULLET:
 	{
 		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_MAPLE_SYRUP_BULLET:
@@ -245,9 +224,7 @@ int Enemy::GetType() const
 		if (spike->GetActive() == true)
 		{
 			m_nCurrHealth -= spike->GetDamage();
-			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-			msg->QueueMessage();
-			msg = nullptr;
+			
 		}
 	}
 		break;
@@ -256,12 +233,19 @@ int Enemy::GetType() const
 		const LavaTrap* lava = dynamic_cast<const LavaTrap*>(pOther);
 		m_nCurrHealth -= lava->GetDamage();
 		m_bIsInLava = true;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-		msg->QueueMessage();
-		msg = nullptr;
+		
 	}
 		break;
-
+	}
+	//check if health is too low to create blood
+	if (m_nCurrHealth > m_nMaxHeatlh * 0.10f)
+	{
+		if (pastHealth > m_nCurrHealth)
+		{
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+			msg->QueueMessage();
+			msg = nullptr;
+		}
 	}
 }
 
