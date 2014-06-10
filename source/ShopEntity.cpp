@@ -14,7 +14,17 @@ int ShopEntity::GetType() const
 	return ENT_SHOP;
 }
 
+void ShopEntity::Update(float dt)
+{
+
+}
+
 void ShopEntity::Render()
 {
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();	
+}
+
+void ShopEntity::HandleCollision(const IEntity* pOther)
+{
+
 }

@@ -191,6 +191,7 @@ private:
 	Entity* CreateMapleSyrupBullet(int x, int y, SGD::Vector velocity, float slowTime) const;
 	Entity* CreateDrone() const;
 	Entity* CreateGrenade(float x, float y, SGD::Vector velocity) const;
+	Entity* CreateShop(float x, float y) const;
 
 	// Create a button
 	Button* CreateButton() const;

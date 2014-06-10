@@ -1112,7 +1112,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// Render the FPS
 		string fps = "FPS: ";
 		fps += std::to_string(m_unFPS);
-		pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
+		pGraphics->DrawString(fps.c_str(), { 0, 560 }, { 255, 0, 0 });
 
 		// -- Render HUD --
 		if (!m_bIsPaused)
@@ -2125,6 +2125,13 @@ Entity* GameplayState::CreateDrone() const
 	drone->SetEntityManager(GetEntityManager());
 	drone->SetNumberID(0);
 	return drone;
+}
+
+Entity* GameplayState::CreateShop(float x, float y) const
+{
+	ShopEntity* shop = new ShopEntity();
+	return shop;
+
 }
 
 // LoadGameFromSlot

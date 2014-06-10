@@ -19,7 +19,7 @@ StatsState* StatsState::GetInstance(void)
 {
 	m_fScrollY = 250.0f;
 	SetTransition(false);
-	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/Blank.png");
+	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/StatsScreen.png");
 	m_pStats = StatTracker::GetInstance();
 	m_pStats->Load("resource/data/stats.xml");
 
@@ -153,7 +153,7 @@ StatsState* StatsState::GetInstance(void)
 
 
 
-		 pFont->Draw ( "Stats" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)((m_pFont->GetTextWidth ( "Stats" ) / 2) * 1.2f) - 20 , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
+		 //pFont->Draw ( "Stats" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)((m_pFont->GetTextWidth ( "Stats" ) / 2) * 1.2f) - 20 , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
 	 }
  }
 
