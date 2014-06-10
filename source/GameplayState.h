@@ -1,6 +1,7 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester
 |	Course:		SGP
 |	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/

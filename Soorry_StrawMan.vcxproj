@@ -74,6 +74,7 @@
     <ClCompile Include="source\MapleSyrupTower.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
+    <ClCompile Include="source\ModePickerState.cpp" />
     <ClCompile Include="source\OptionsState.cpp" />
     <ClCompile Include="source\Particle.cpp" />
     <ClCompile Include="source\ParticleFlyweight.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
     <ClInclude Include="source\Mine.h" />
+    <ClInclude Include="source\ModePickerState.h" />
     <ClInclude Include="source\OptionsState.h" />
     <ClInclude Include="source\Particle.h" />
     <ClInclude Include="source\ParticleFlyweight.h" />

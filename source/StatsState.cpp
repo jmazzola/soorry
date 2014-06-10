@@ -31,6 +31,7 @@ StatsState* StatsState::GetInstance(void)
 	m_pFont = Game::GetInstance()->GetFont();
 
 	m_nResetStatsStatus = AREYOUSURE;
+	m_nCursor = 1;
 	
 }
 
@@ -64,15 +65,29 @@ StatsState* StatsState::GetInstance(void)
 		 --m_nCursor;
 
 		 // Wrap around the options
-		 if (m_nCursor > 0)
+		 if (m_nCursor < 0)
 			 m_nCursor = 1;
 	 }
 
 	 if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
-		// Since there's only one state..go back to main menu
-		Game::GetInstance()->Transition(MainMenuState::GetInstance());
-		return true;
+		 if (m_nCursor == 0 && m_nResetStatsStatus == AREYOUSURE)
+			 m_nResetStatsStatus = NOSRS;
+		 else if (m_nCursor == 0 && m_nResetStatsStatus == NOSRS)
+			 m_nResetStatsStatus = AIGHTITSGONE;
+		 else if (m_nCursor == 0 && m_nResetStatsStatus == AIGHTITSGONE)
+		 {
+			 m_nResetStatsStatus = AIGHTITSGONE; 
+			 m_pStats->Reset();
+		 }
+
+		 else if (m_nCursor == 1)
+		 {
+			 // Since there's only one state..go back to main menu
+			 Game::GetInstance()->Transition(MainMenuState::GetInstance());
+			 return true;
+		 }
+
 	}
 	 return true;
 		
@@ -127,9 +142,9 @@ StatsState* StatsState::GetInstance(void)
 			 if (m_nResetStatsStatus == AREYOUSURE)
 				 m_pMainButton->Draw("Reset Stats?", { 200, 420 }, color, { 0.9f, 0.9f }, 0);
 			 else if (m_nResetStatsStatus == NOSRS)
-				 m_pMainButton->Draw("Reset Stats?!", { 200, 420 }, color, { 1.0f, 1.0f }, 0);
+				 m_pMainButton->Draw("Reset Stats?!", { 200, 420 }, color, { 1, 1 }, 0);
 			 else if (m_nResetStatsStatus == AIGHTITSGONE)
-				 m_pMainButton->Draw("Stats Reset", { 200, 420 }, color, { 0.9f, 0.9f }, 0);
+				 m_pMainButton->Draw("Stats Reset!", { 200, 420 }, color, { 1, 1 }, 0);
 
 			 if (m_nCursor == 1)
 				m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );

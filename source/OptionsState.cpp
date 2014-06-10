@@ -13,21 +13,14 @@
 #include "GameplayState.h"
 #include "StatsState.h"
 
-#include "Button.h"
-
 #include "../TinyXML/tinyxml.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
 
-#include "../SGD Wrappers/SGD_EventManager.h"
-#include "../SGD Wrappers/SGD_Event.h"
-#include "../SGD Wrappers/SGD_MessageManager.h"
-#include "../SGD Wrappers/SGD_Message.h"
-#include "MessageID.h"
-
 #include "BitmapFont.h"
+#include "Button.h"
 
 #include "Entity.h"
 #include "EntityManager.h"
@@ -127,7 +120,6 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// --- Scrolling through options ---
