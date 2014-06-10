@@ -20,7 +20,7 @@ public:
 	void TowerExchange(bool bought);
 	void TrapExchange(bool bought);
 	void SpendItUp(unsigned int money);
-
+	void Reset(void);
 
 private:
 

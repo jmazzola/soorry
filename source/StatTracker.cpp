@@ -5,9 +5,9 @@
 #include "../TinyXML/tinyxml.h"
 
 // Helper Function because lazy
-void Increment(SGD::Point& pos, std::stringstream& display)
+void Increment(SGD::Point& pos, std::stringstream& display, int multi = 1)
 {
-		pos.y += 35.0f;
+		pos.y += 35.0f * multi;
 		display.str(std::string());
 }
 
@@ -15,6 +15,33 @@ StatTracker* StatTracker::GetInstance ( void )
 {
 	static StatTracker m_pStatTracker;
 	return &m_pStatTracker;
+}
+
+void StatTracker::Reset( void )
+{
+	m_fTimePlayed						= 0;
+	m_fBuildPhaseTime					= 0;
+	m_fSurvivalTime						= 0;
+	m_fDistanceWalked					= 0;
+	m_fBloodSpilled						= 0;
+	m_uGrenadesThrown					= 0;
+	m_uTotalShotsFired					= 0;
+	m_uMachineGunBullets				= 0;
+	m_uShotgunShells					= 0;
+	m_uRPGRounds						= 0;
+	m_uHatTrickShots					= 0;
+	m_uWallsPlaced						= 0;
+	m_uWallsPickedUp					= 0;
+	m_uWindowsPlaced					= 0;
+	m_uWindowsPickedUp					= 0;
+	m_uTowersBought						= 0;
+	m_uTowersSold						= 0;
+	m_uTrapsBought						= 0;
+	m_uTrapsSold						= 0;
+	m_uMoneySpent						= 0;
+	m_uTotalKills						= 0;
+	m_uRoundsSurvived					= 0;
+	m_uConsecutiveRoundsSurvived		= 0;
 }
 
 void StatTracker::Render(float y)
@@ -64,9 +91,7 @@ void StatTracker::Render(float y)
 	display << " Seconds";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 	
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 3);
 
 	// Build Phase Time
 	Increment(pos, display);
@@ -105,9 +130,7 @@ void StatTracker::Render(float y)
 	display << " Seconds";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 	
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 3);
 
 	// Survival Phase Time
 	Increment(pos, display);
@@ -146,9 +169,7 @@ void StatTracker::Render(float y)
 	display << " Seconds";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 	
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 3);
 
 	// Distance Walked
 	Increment(pos, display);
@@ -167,12 +188,7 @@ void StatTracker::Render(float y)
 	display << "Kilometers";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// Total Rounds Survived
 	Increment(pos, display);
@@ -180,13 +196,7 @@ void StatTracker::Render(float y)
 	display << m_uRoundsSurvived;
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 7);
 
 	// Survival Streak
 	Increment(pos, display);
@@ -194,13 +204,7 @@ void StatTracker::Render(float y)
 	display << m_uConsecutiveRoundsSurvived;
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 7);
 
 	// Total Kills
 	Increment(pos, display);
@@ -208,13 +212,7 @@ void StatTracker::Render(float y)
 	display << m_uTotalKills;
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 7);
 
 	// Blood Spilled
 	Increment(pos, display);
@@ -223,24 +221,13 @@ void StatTracker::Render(float y)
 
 	Increment(pos, display);
 	float blood = m_fBloodSpilled;
-	float gallon = blood / 3.785f;
-	blood -= (int)(gallon * 3.785f);
+	float gallon = blood / 4.54f;
 	display << "\t\t";
-	display << (int)gallon;
-	display << " Gallons";
+	display << gallon;
+	display << " Imperial Gallons";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 	
-	Increment(pos, display);
-	display << "\t\t";
-	display << blood;
-	display << " Liters";
-	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
-
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// Grenades Thrown
 	Increment(pos, display);
@@ -262,12 +249,7 @@ void StatTracker::Render(float y)
 	}
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// Shots Fired
 	Increment(pos, display);
@@ -275,13 +257,7 @@ void StatTracker::Render(float y)
 	display << m_uTotalShotsFired;
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 7);
 
 	// Machine Gun
 	Increment(pos, display);
@@ -303,12 +279,7 @@ void StatTracker::Render(float y)
 	}
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// Shotgun
 	Increment(pos, display);
@@ -330,12 +301,7 @@ void StatTracker::Render(float y)
 	}
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// RPG
 	Increment(pos, display);
@@ -357,12 +323,7 @@ void StatTracker::Render(float y)
 	}
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// HatTrick
 	Increment(pos, display);
@@ -384,12 +345,7 @@ void StatTracker::Render(float y)
 	}
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 6);
 
 	// Walls
 	Increment(pos, display);
@@ -406,11 +362,7 @@ void StatTracker::Render(float y)
 	display << " Picked Up";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 5);
 
 	// Windows
 	Increment(pos, display);
@@ -427,11 +379,7 @@ void StatTracker::Render(float y)
 	display << " Picked Up";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 5);
 
 	// Towers
 	Increment(pos, display);
@@ -448,11 +396,7 @@ void StatTracker::Render(float y)
 	display << " Sold";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 5);
 
 	// Traps
 	Increment(pos, display);
@@ -469,11 +413,7 @@ void StatTracker::Render(float y)
 	display << " Sold";
 	pFont->Draw ( display.str ().c_str () , (int)pos.x , (int)pos.y , 0.5f , { 0 , 0 , 0 } );
 
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
-	Increment(pos, display);
+	Increment(pos, display, 5);
 
 	// Money
 	Increment(pos, display);
@@ -490,29 +430,7 @@ void StatTracker::Load ( const char* path )
 
 	if ( doc.LoadFile ( path ) == false )
 	{
-		m_fTimePlayed						= 0;
-		m_fBuildPhaseTime					= 0;
-		m_fSurvivalTime						= 0;
-		m_fDistanceWalked					= 0;
-		m_fBloodSpilled						= 0;
-		m_uGrenadesThrown					= 0;
-		m_uTotalShotsFired					= 0;
-		m_uMachineGunBullets				= 0;
-		m_uShotgunShells					= 0;
-		m_uRPGRounds						= 0;
-		m_uHatTrickShots					= 0;
-		m_uWallsPlaced						= 0;
-		m_uWallsPickedUp					= 0;
-		m_uWindowsPlaced					= 0;
-		m_uWindowsPickedUp					= 0;
-		m_uTowersBought						= 0;
-		m_uTowersSold						= 0;
-		m_uTrapsBought						= 0;
-		m_uTrapsSold						= 0;
-		m_uMoneySpent						= 0;
-		m_uTotalKills						= 0;
-		m_uRoundsSurvived					= 0;
-		m_uConsecutiveRoundsSurvived		= 0;
+		Reset();
 		return;
 	}
 
