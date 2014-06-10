@@ -7,6 +7,7 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 StatsState* StatsState::GetInstance(void)
 {
@@ -29,9 +30,15 @@ StatsState* StatsState::GetInstance(void)
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 	m_pFont = Game::GetInstance()->GetFont();
+#if ARCADE_MODE
+	m_vtStick = {0.0f, 0.0f};
+	m_bAccept = true;
+#endif
 
 	m_nResetStatsStatus = AREYOUSURE;
 	m_nCursor = 1;
+
+	m_bTHEBOOL = false;
 	
 }
 
@@ -49,48 +56,68 @@ StatsState* StatsState::GetInstance(void)
 {
 	 SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 
+#if ARCADE_MODE
+	  m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if ( m_vtStick == SGD::Vector { 0.0f , 0.0f } )
+		 m_bAccept = true;
+#endif
+
 	 // Make this work with the scroll wheel, kthxbai :3
-	 if ( pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) )
+#if !ARCADE_MODE
+	 m_bTHEBOOL =  pInput->IsKeyDown ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) ;
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
+#endif
+
+	 if (m_bTHEBOOL)
 	 {
-		//m_fScrollY -= 0.5f;
-		 ++m_nCursor;
-
-		 // Wrap around the options
-		 if (m_nCursor > 1)
-			 m_nCursor = 0;
+		m_fScrollY -= 0.5f;
 	 }
-	 else if ( pInput->IsKeyPressed ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) )
+#if !ARCADE_MODE
+	 m_bTHEBOOL =  pInput->IsKeyDown ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) ;
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
+#endif 
+	 if (m_bTHEBOOL  )
 	 {		 
-		//m_fScrollY += 0.5f;
-		 --m_nCursor;
-
-		 // Wrap around the options
-		 if (m_nCursor < 0)
-			 m_nCursor = 1;
+		m_fScrollY += 0.5f;
 	 }
 
-	 if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+	 m_bTHEBOOL =  pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) ||
+				   pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 6) || pInput->IsButtonPressed(0, 0);
+#endif 
+	 if (m_bTHEBOOL)
 	{
-		 if (m_nCursor == 0 && m_nResetStatsStatus == AREYOUSURE)
-			 m_nResetStatsStatus = NOSRS;
-		 else if (m_nCursor == 0 && m_nResetStatsStatus == NOSRS)
-			 m_nResetStatsStatus = AIGHTITSGONE;
-		 else if (m_nCursor == 0 && m_nResetStatsStatus == AIGHTITSGONE)
-		 {
-			 m_nResetStatsStatus = AIGHTITSGONE; 
-			 m_pStats->Reset();
-		 }
-
-		 else if (m_nCursor == 1)
-		 {
-			 // Since there's only one state..go back to main menu
-			 Game::GetInstance()->Transition(MainMenuState::GetInstance());
-			 return true;
-		 }
-
+		// Since there's only one state..go back to main menu
+		Game::GetInstance()->Transition(MainMenuState::GetInstance());
+		return true;
 	}
+#if !ARCADE_MODE
+	 m_bTHEBOOL =  pInput->IsKeyPressed ( SGD::Key::Backspace ) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = false;
+#endif 
+	 if ( m_bTHEBOOL )
+	 {
+		 m_nResetStatsStatus++;
+		 if(m_nResetStatsStatus == AIGHTITSGONE)
+			 m_pStats->Reset();
+	 }
+	
 	 return true;
-		
 }
 
  void StatsState::Update(float elapsedTime)

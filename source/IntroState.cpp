@@ -131,7 +131,9 @@ using namespace std;
 
 
 	// Press Space to skip to the Main Menu at any time
-	if (pInput->IsAnyKeyPressed())
+	if (pInput->IsAnyKeyPressed() || pInput->IsButtonPressed(0, 0) || pInput->IsButtonPressed(0, 1) ||
+		 pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(0, 3) || pInput->IsButtonPressed(0, 4) ||
+		  pInput->IsButtonPressed(0, 5) || pInput->IsButtonPressed(0, 6) || pInput->IsButtonPressed(0, 7))
 	{
 		pGame->ChangeState(MainMenuState::GetInstance());
 	}

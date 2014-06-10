@@ -13,6 +13,7 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
 
 /**************************************************************/
@@ -245,6 +246,11 @@ private:
 
 	// Tower recipes
 	TowerFlyweight* m_pTowerFlyweight;
+
+	// ARCADEMODE STUFF
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 };
 
 #endif //GAMEPLAYSTATE_H
