@@ -347,7 +347,7 @@ using namespace std;
 
 		// TODO: Add Strings to STRING TABLE for easy localization
 		// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
-
+#if !ARCADE_MODE
 		// Create the string for the button
 		string musicVol = "Music Vol: ";
 		// Grab the volume
@@ -398,6 +398,30 @@ using namespace std;
 			m_pMainButton->Draw("Go Back", { 150, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
 			m_pMainButton->Draw("Go Back", { 150, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+#else
+		if (m_nCursor == MENU_MUSICVOL)
+			m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		if (m_nCursor == MENU_SFXVOL)
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		// Draw Stats option
+		if (m_nCursor == MENU_STATS)
+			m_pMainButton->Draw("View Stats", { 170, 340 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("View Stats", { 170, 340 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
+		if (m_nCursor == MENU_GOBACK)
+			m_pMainButton->Draw("Go Back", { 150, 410 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Go Back", { 150, 410 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+#endif
 	}
 
 
