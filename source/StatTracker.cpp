@@ -42,6 +42,7 @@ void StatTracker::Reset( void )
 	m_uTotalKills						= 0;
 	m_uRoundsSurvived					= 0;
 	m_uConsecutiveRoundsSurvived		= 0;
+	Save("resource/data/stats.xml");
 }
 
 void StatTracker::Render(float y)

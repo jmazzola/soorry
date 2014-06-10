@@ -7,6 +7,7 @@
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 StatsState* StatsState::GetInstance(void)
 {
@@ -29,6 +30,10 @@ StatsState* StatsState::GetInstance(void)
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
 	m_pFont = Game::GetInstance()->GetFont();
+#if ARCADE_MODE
+	m_vtStick = {0.0f, 0.0f};
+	m_bAccept = true;
+#endif
 
 	m_nResetStatsStatus = AREYOUSURE;
 	m_nCursor = 1;
@@ -50,7 +55,8 @@ StatsState* StatsState::GetInstance(void)
 	 SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 
 	 // Make this work with the scroll wheel, kthxbai :3
-	 if ( pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) )
+#if !ARCADE_MODE
+	 if ( pInput->IsKeyDown ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) )
 	 {
 		//m_fScrollY -= 0.5f;
 		 ++m_nCursor;
@@ -89,8 +95,35 @@ StatsState* StatsState::GetInstance(void)
 		 }
 
 	}
-	 return true;
 		
+#endif
+	
+#if ARCADE_MODE
+		 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 // CHANGE ACCEPT TO FALSE IF HARD SWITCHING IS IMPLEMENTED
+	 if(m_bAccept == true)
+	 {
+		if(m_vtStick.y < 0)
+			m_fScrollY += 0.5f;
+
+		if(m_vtStick.y > 0)
+			m_fScrollY -= 0.5f;
+	 }
+
+	 if(pInput->IsButtonPressed(0, 0))
+	 {
+	 // Since there's only one state..go back to main menu
+		Game::GetInstance()->Transition(MainMenuState::GetInstance());
+		return true;
+	 }
+#endif
+	 return true;
 }
 
  void StatsState::Update(float elapsedTime)

@@ -455,6 +455,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Turn the cursor on
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
+
+#if ARCADE_MODE
+	m_vtStick = {0.0f, 0.0f};
+	m_bAccept = true;
+#endif
+
 }
 
 
@@ -589,6 +595,18 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+#if ARCADE_MODE
+		 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if(m_vtStick == SGD::Vector{0.0f, 0.0f})
+		 m_bAccept = true;
+#endif
+
 	// Manipulate the mouse here
 	SGD::Point mousePt = {0.0f, 0.0f};
 	mousePt = pInput->GetMousePosition();
@@ -604,7 +622,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start))
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+#endif
+		if (m_bTHEBOOL)
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
@@ -613,6 +637,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				pGraphics->TurnCursorOn();
 			}
 		}
+
 	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
@@ -625,14 +650,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pShop->SetShopStatus(true);
 	}
 	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
+		pInput->IsButtonPressed(1, 6)))
 		zombieFactory->SetBuildTImeRemaining(0.0f);
 
+#if !ARCADE_MODE
 	// Toggle the camera mode
 	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
 	{
 		//TOGGLE THE CAMERA
 	}
+#endif
 
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
@@ -642,37 +670,60 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			//-----------------------------------------------------------------------
 			// --- Handling what tab we're in ---
 			// If we're in the Main menu OF the pause menu. 
-			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+			if ( m_nPauseMenuTab == PauseMenuTab::TAB_MAIN )
 			{
 
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down );
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+#endif
+				if ( m_bTHEBOOL )
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+					if ( m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT )
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
-				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
 				// Move the cursor (selected item) up
-				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 
 
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
+				if (m_bTHEBOOL)
 				{
 					// Switch table for the item selected
 					switch (m_nPauseMenuCursor)
@@ -715,7 +766,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
@@ -723,23 +780,42 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					// Wrap around the options
 					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) up
-				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
-				}
 
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
+				}
 
 				// --- Increasing an option ---
 				// If the right key (PC) or right dpad (Xbox 360) are pressed
 				// Increase the value
-				if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -757,11 +833,20 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 						break;
 					}
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 				// --- Decreasing an option ---
 				// If the left key (PC) or left dpad (Xbox 360) are pressed
 				// Decrease the value
-				if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.x < 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -779,12 +864,21 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 						break;
 					}
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -813,7 +907,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 #pragma endregion
 
-	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
+#if !ARCADE_MODE
+	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A));
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+#endif
+	if (m_bCreditsStarted == true && m_bTHEBOOL)
 	{
 		// Since there's only one state..go back to main menu
 		pGame->ChangeState(MainMenuState::GetInstance());
@@ -821,7 +921,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	if (m_bHasLost == true && m_fLossTimer <= 0.0f)
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = m_vtStick != SGD::Vector{0.0f, 0.0f};
+#endif
+		if (m_bTHEBOOL)
 			m_bReplay = !m_bReplay;
 
 		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))

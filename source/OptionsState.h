@@ -13,7 +13,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
-
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include <string>
 using namespace std;
 
@@ -114,7 +114,10 @@ private:
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
 
+	bool m_bTHEBOOL;
 
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 
 	// Message Callback Function:
 	/*static void MessageProc( const SGD::Message* pMsg );*/

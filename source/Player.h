@@ -128,5 +128,9 @@ private:
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);
 	bool m_bStaticCamera;
+
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 };
 
