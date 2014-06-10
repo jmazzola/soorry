@@ -80,6 +80,7 @@
     <ClCompile Include="source\Projectile.cpp" />
     <ClCompile Include="source\PurchaseMessage.cpp" />
     <ClCompile Include="source\Rocket.cpp" />
+    <ClCompile Include="source\RZBN.cpp" />
     <ClCompile Include="source\Shop.cpp" />
     <ClCompile Include="source\ShotgunPellet.cpp" />
     <ClCompile Include="source\SlowZombie.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="source\Projectile.h" />
     <ClInclude Include="source\PurchaseMessage.h" />
     <ClInclude Include="source\Rocket.h" />
+    <ClInclude Include="source\RZBN.h" />
     <ClInclude Include="source\Shop.h" />
     <ClInclude Include="source\ShotgunPellet.h" />
     <ClInclude Include="source\SlowZombie.h" />

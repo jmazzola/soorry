@@ -70,6 +70,9 @@
     <Filter Include="Data\Arcade Mode">
       <UniqueIdentifier>{c04aa398-daab-456e-a4cb-cb92adb2e74d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File Format">
+      <UniqueIdentifier>{7a4228a6-8170-4ee2-85e1-eba961f3e6e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SGD Wrappers\SGD_AudioManager.cpp">
@@ -338,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="source\WaveCompleteMessage.cpp">
       <Filter>Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RZBN.cpp">
+      <Filter>File Format</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -634,6 +640,9 @@
     </ClInclude>
     <ClInclude Include="source\WaveCompleteMessage.h">
       <Filter>Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RZBN.h">
+      <Filter>File Format</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
