@@ -16,26 +16,26 @@ public:
 	virtual void Update(float dt) override;
 	virtual void HandleCollision(const IEntity* pOther) override;
 	virtual void HandleEvent(const SGD::Event * pEvent);
-	void Bounce(SGD::Rectangle correct);
+	void Bounce(std::vector<SGD::Rectangle> correct);
 	void ApplyFriction(float dt);
 	void UpdateHitList();
 	void ClearHitList();
 
 	//Accessors
-	float			GetRotation(void) const;
-	float			GetMass ( void ) const;
-	float			GetDynamicFrictionCoefficient ( void ) const;
-	float			GetStaticFrictionCoefficient ( void ) const;
-	float			GetNormalForce ( void ) const;
-	float			GetDragForceCoefficient ( void ) const;
-	float			GetWeight ( void ) const;
-	SGD::Vector		GetDragForce ( void ) const;
-	SGD::Vector		GetAcceleration ( void ) const;
-	SGD::Vector		GetForce ( void ) const;
-	SGD::Vector		GetTotalForces ( void ) const;
-	SGD::Vector		GetFrictionForce ( void ) const;
-	std::vector<IEntity *> GetHitList(void) const;
-	bool			AmIOnTheHitList(const IEntity* self) const;
+	float					GetRotation(void) const;
+	float					GetMass ( void ) const;
+	float					GetDynamicFrictionCoefficient ( void ) const;
+	float					GetStaticFrictionCoefficient ( void ) const;
+	float					GetNormalForce ( void ) const;
+	float					GetDragForceCoefficient ( void ) const;
+	float					GetWeight ( void ) const;
+	SGD::Vector				GetDragForce ( void ) const;
+	SGD::Vector				GetAcceleration ( void ) const;
+	SGD::Vector				GetForce ( void ) const;
+	SGD::Vector				GetTotalForces ( void ) const;
+	SGD::Vector				GetFrictionForce ( void ) const;
+	std::vector<IEntity *>	GetHitList(void) const;
+	bool					AmIOnTheHitList(const IEntity* self) const;
 
 	//Mutators
 	void	SetRotation							(float rotation);
@@ -55,23 +55,24 @@ public:
 
 private:
 
-	bool			m_bResolving;
-	float			m_fRotation;
-	float			m_fMass;
-	float			m_fDynamicFrictionCoefficient;
-	float			m_fStaticFrictionCoefficient;
-	float			m_fWeight;
-	float			m_fNormalForce;
-	float			m_fSpeed;
-	float			m_fRho;
-	float			m_fDragCoefficient;
-	SGD::Vector		m_vAcceleration;
-	SGD::Vector		m_vForce;
-	SGD::Vector		m_vTotalForces;
-	SGD::Vector		m_vFrictionForce;
-	SGD::Vector		m_vDragForce;
-	SGD::Rectangle	m_rLastHit;
+	bool						m_bResolvingX;
+	bool						m_bResolvingY;
+	float						m_fRotation;
+	float						m_fMass;
+	float						m_fDynamicFrictionCoefficient;
+	float						m_fStaticFrictionCoefficient;
+	float						m_fWeight;
+	float						m_fNormalForce;
+	float						m_fSpeed;
+	float						m_fRho;
+	float						m_fDragCoefficient;
+	SGD::Vector					m_vAcceleration;
+	SGD::Vector					m_vForce;
+	SGD::Vector					m_vTotalForces;
+	SGD::Vector					m_vFrictionForce;
+	SGD::Vector					m_vDragForce;
+	std::vector<SGD::Rectangle>	m_rLastHit;				// Tiles collided with
 
-	std::vector<IEntity *> m_vtHitList;
+	std::vector<IEntity *>		m_vtHitList;			// Enemies collided with
 };
 

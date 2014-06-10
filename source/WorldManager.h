@@ -29,7 +29,7 @@ public:
 	void Render(SGD::Point cameraPosition);
 	bool CheckCollision(IEntity* object, bool ignoreWindows = false);
 	bool CheckCollision(SGD::Rectangle rect, bool ignoreWindows = false);
-	SGD::Rectangle CheckTrickShot(SGD::Rectangle rect, bool ignoreWindows = true);
+	std::vector<SGD::Rectangle> CheckTrickShot(SGD::Rectangle rect, bool ignoreWindows = true);
 	int CheckCollisionID(IEntity* object);
 	bool IsSolidAtPosition(int x, int y) const;
 	void SetColliderID(int x, int y, int id);
