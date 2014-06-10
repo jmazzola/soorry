@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<waves>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="20"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="22"/>
+    <spawn_interval value="0.2"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="50"/>
+    <spawn_interval value="0.15"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="75"/>
+    <spawn_interval value="0.14"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="125"/>
+    <spawn_interval value="0.11"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="250"/>
+    <spawn_interval value="0.1"/>
+  </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="475"/>
+    <spawn_interval value="0.1"/>
+  </wave>  
+<wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="600"/>
+    <spawn_interval value="0.1"/>
+  </wave>  
+<wave>
+    <infinite_build_time value="false"/>
+    <build_time value="30"/>
+    <slow_zombies amount="0"/>
+    <fast_zombies amount="0"/>
+    <beaver_zombies amount="1000"/>
+    <spawn_interval value="0.1"/>
+  </wave>
+</waves>

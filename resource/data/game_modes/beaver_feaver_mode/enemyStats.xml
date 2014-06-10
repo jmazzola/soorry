@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<enemy_stats>
+  <health_scaling value="1.1"/>
+  <slow_zombie>
+    <health value="0"/>
+    <speed value="0"/>
+    <regeneration value="0"/>
+    <health_chance value="0"/>
+    <ammo_chance value="0"/>
+    <super_chance value="0"/>
+  </slow_zombie>
+  <fast_zombie>
+    <health value="0"/>
+    <speed value="0"/>
+    <regeneration value="0"/>
+    <health_chance value="0"/>
+    <ammo_chance value="0"/>
+    <super_chance value="0"/>
+  </fast_zombie>
+  <beaver_zombie>
+    <health value="80"/>
+    <speed value="300"/>
+    <regeneration value="0"/>
+    <health_chance value="0.01"/>
+    <ammo_chance value="0.1"/>
+    <super_chance value="0.05"/>
+  </beaver_zombie>
+</enemy_stats>
