@@ -350,8 +350,9 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 	return false;
 }
 
-SGD::Rectangle WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
+std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
 {
+	std::vector<SGD::Rectangle> hits;
 	// Set the tiles to check
 	int top = (int)_rect.top / m_nTileHeight;
 	int left = (int)_rect.left / m_nTileWidth;
@@ -390,13 +391,13 @@ SGD::Rectangle WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWi
 					float T = (float)(y * m_nTileHeight);
 					float R = L + m_nTileWidth;
 					float B = T + m_nTileHeight;
-					return SGD::Rectangle { L , T , R , B };
+					hits.push_back(SGD::Rectangle { L , T , R , B });
 				}
 			}
 		}
 	}
 
-	return SGD::Rectangle { 0.0f , 0.0f , 0.0f , 0.0f };
+	return hits;
 }
 int WorldManager::CheckCollisionID(IEntity* _object)
 {
