@@ -18,6 +18,7 @@
 #include "LoadingState.h"
 #include "LoadSaveState.h"
 #include "OptionsState.h"
+#include "StatsState.h"
 
 #include "Button.h"
 
@@ -154,7 +155,11 @@ using namespace std;
 	if (IsTransitioning())
 		return false;
 
-	
+	if(pInput->IsKeyPressed(SGD::Key::P))
+	{
+		pGame->ChangeState(StatsState::GetInstance());
+		return true;
+	}
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed

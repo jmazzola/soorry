@@ -7,6 +7,7 @@ public:
 
 	void Load(const char* path);
 	void Save(const char* path);
+	void Render(float y);
 
 	void IncreaseTime(float time, bool survival);
 	void Walk(float distance);
@@ -22,6 +23,7 @@ public:
 
 
 private:
+
 
 	StatTracker () = default;
 	~StatTracker () = default;

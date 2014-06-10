@@ -357,6 +357,9 @@
     <ClCompile Include="source\StatTracker.cpp">
       <Filter>StatTracker</Filter>
     </ClCompile>
+    <ClCompile Include="source\StatsState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -667,6 +670,9 @@
     </ClInclude>
     <ClInclude Include="source\StatTracker.h">
       <Filter>StatTracker</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StatsState.h">
+      <Filter>Game States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
