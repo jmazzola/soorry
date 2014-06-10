@@ -1609,6 +1609,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
+	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
+	{
+		//Here you go Ryan
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+	}
+		break;
 	case MessageID::MSG_CREATE_TOWER:
 	{
 										const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
