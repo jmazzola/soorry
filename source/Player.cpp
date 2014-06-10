@@ -907,7 +907,7 @@ void Player::Update ( float dt )
 		m_vCameraEnd = { m_ptPosition.x - 384, m_ptPosition.y - 284 };
 		// Set camera
 		SGD::Vector tempVector;
-		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, 0.025f);
+		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, m_fCameraLerpTimer);
 		Camera::x = (int)tempVector.x;
 		Camera::y = (int)tempVector.y;
 	}
