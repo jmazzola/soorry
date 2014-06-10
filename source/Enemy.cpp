@@ -165,31 +165,23 @@ int Enemy::GetType() const
 
 /*virtual*/ void Enemy::HandleCollision(const IEntity* pOther)
 {
+	int pastHealth = m_nCurrHealth;
 	int type = pOther->GetType();
 	switch (pOther->GetType())
 	{
 	case ENT_BULLET_ASSAULT:
 	{
 		m_nCurrHealth -= 40;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_SHOTGUN:
 	{
 		m_nCurrHealth -= 8;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_ROCKET:
 	{
 		m_nCurrHealth -= 100;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_BULLET_TRICKSHOT:
@@ -200,27 +192,17 @@ int Enemy::GetType() const
 			SGD::Event* pEvent = new SGD::Event("IM_HIT", nullptr, this);
 			pEvent->QueueEvent();
 			m_nCurrHealth -= tsb->GetDamage();
-			
-			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-			msg->QueueMessage();
-			msg = nullptr;
 		}
 		break;
 	}
 	case ENT_TRAP_BEARTRAP:
 	{
 		m_bIsTrapped = true;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_MACHINE_GUN_BULLET:
 	{
 		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 0, 0);
-		msg->QueueMessage();
-		msg = nullptr;
 	}
 			break;
 	case ENT_MAPLE_SYRUP_BULLET:
@@ -239,9 +221,7 @@ int Enemy::GetType() const
 		if (spike->GetActive() == true)
 		{
 			m_nCurrHealth -= spike->GetDamage();
-			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-			msg->QueueMessage();
-			msg = nullptr;
+			
 		}
 	}
 		break;
@@ -254,6 +234,16 @@ int Enemy::GetType() const
 	}
 		break;
 
+	}
+	//check if health is too low to create blood
+	if (m_nCurrHealth > m_nMaxHeatlh * 0.05f)
+	{
+		if (pastHealth > m_nCurrHealth)
+		{
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+			msg->QueueMessage();
+			msg = nullptr;
+		}
 	}
 }
 
