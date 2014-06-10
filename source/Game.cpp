@@ -35,6 +35,7 @@
 #include <Windows.h>
 
 
+
 /**************************************************************/
 // Singleton
 //	- instantiate the static member
@@ -103,6 +104,11 @@ bool Game::Initialize(int width, int height)
 		return false;
 	}
 
+#if ARCADE_MODE
+	if(GetFullscreen() == false)
+		ToggleFullscreen();
+#endif
+
 	// Allocate & initialize the font
 	m_pFont = new BitmapFont;
 	m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png", "resource/data/BitmapFont_Roboto.fnt");
@@ -154,8 +160,9 @@ int Game::Main(void)
 	if (m_pInput->IsKeyPressed(SGD::Key::F1))
 		SetDebugging(!m_bDebugMode);
 
+	
+#if !ARCADE_MODE
 	// Toggle fullscreen
-
 	if (m_pInput->IsKeyDown(SGD::Key::Alt) &&
 		m_pInput->IsKeyPressed(SGD::Key::Enter))
 	{
@@ -220,6 +227,8 @@ int Game::Main(void)
 		if(GetActiveWindow() == hWnd)
 			SetCursorPos(X, Y);
 	}
+#endif
+
 
 	// Let the current state handle input
 	if (m_pCurrState->Input() == false)

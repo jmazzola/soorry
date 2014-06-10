@@ -148,18 +148,14 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
-	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
-		m_nCursor = MENU_EXIT;
-
 	// If we're transitioning, disable input
 	if (IsTransitioning())
 		return false;
 
-	if(pInput->IsKeyPressed(SGD::Key::P))
-	{
-		pGame->ChangeState(StatsState::GetInstance());
-		return true;
-	}
+#if !ARCADE_MODE
+	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+		m_nCursor = MENU_EXIT;
+
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -238,6 +234,90 @@ using namespace std;
 
 			break;
 		}
+		
+#endif
+		
+#if ARCADE_MODE
+		if (pInput->IsButtonPressed(0, 5))
+		m_nCursor = MENU_EXIT;
+
+	// --- Scrolling through options ---
+	// Move the cursor (selected item) down
+	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+	{
+		// TODO: Add sound fx for going up and down
+		++m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor > MENU_EXIT)
+			m_nCursor = MENU_START;
+	}
+	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+	// Move the cursor (selected item) up
+	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+	{
+		--m_nCursor;
+
+		// Wrap around the options
+		if (m_nCursor < MENU_START)
+			m_nCursor = MENU_EXIT;
+	}
+
+	// --- Selecting an option ---
+	// If the enter key (PC) or A button (Xbox 360) are pressed
+	// Select the item
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+	{
+		// Switch table for the item selected
+		switch (m_nCursor)
+		{
+		case MENU_START:
+		{
+			// Play Game
+			pGame->Transition(LoadSaveState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_HOWTOPLAY:
+		{
+			// How to Play (Gameplay loading tutorial level)
+			// This doesn't transition since it'll load a tutorial level, no screen.
+			pGame->ChangeState(GameplayState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_OPTIONS:
+		{
+
+			// Options
+			pGame->Transition(OptionsState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_CREDITS:
+		{
+			// Credits
+			pGame->Transition(CreditsState::GetInstance());
+			// Leave immediately
+			return true;
+		}
+			break;
+
+		case MENU_EXIT:
+		{
+			// Exit the game
+			return false;
+		}
+
+			break;
+		}
+#endif
 
 #if _DEBUG	// if statement that says 'if we're running in debug mode' (Visual Studio goody :P)
 		// this won't work in release ;3
