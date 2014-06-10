@@ -155,11 +155,11 @@ using namespace std;
 	if (IsTransitioning())
 		return false;
 
-	if(pInput->IsKeyPressed(SGD::Key::P))
-	{
-		pGame->ChangeState(StatsState::GetInstance());
-		return true;
-	}
+	//if(pInput->IsKeyPressed(SGD::Key::P))
+	//{
+	//	pGame->ChangeState(StatsState::GetInstance());
+	//	return true;
+	//}
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -295,8 +295,6 @@ using namespace std;
 		// Reset the transition time to allow for transitions again
 		m_fTransitionTime = TRANSITION_TIME;
 	}
-
-	// Check collisions
 }
 
 
