@@ -233,10 +233,9 @@ int Enemy::GetType() const
 		
 	}
 		break;
-
 	}
 	//check if health is too low to create blood
-	if (m_nCurrHealth > m_nMaxHeatlh * 0.05f)
+	if (m_nCurrHealth > m_nMaxHeatlh * 0.10f)
 	{
 		if (pastHealth > m_nCurrHealth)
 		{

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<player_stats>
+  <health value="50"/>
+  <speed value="200"/>
+  <walls amount="15"/>
+  <windows amount="0"/>
+  <bear_traps amount="10"/>
+  <mines amount="0"/>
+  <machine_guns amount="0"/>
+  <maple_syrups amount="0"/>
+  <hockey_sticks amount="0"/>
+  <lasers amount="0"/>
+  <lava_traps amount="0"/>
+  <spike_traps amount="0"/>
+</player_stats>
