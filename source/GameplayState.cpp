@@ -1148,7 +1148,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 		// Render the entities
 		m_pEntities->RenderAll();
-
+		// render particles
+		m_pParticleManager->Render();
 		// Draw health overlay
 		float currHealth = player->GetCurrHealth();
 		float maxHealth = player->GetMaxHealth();
@@ -1326,7 +1327,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
 						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
-
+					
 					// Draw the selected box based on the player's selected placeable
 					switch (player->GetCurrPlaceable())
 					{
@@ -1427,8 +1428,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					}
 				}
-				// render particles
-				m_pParticleManager->Render();
+				
 
 
 				// -- Draw the score --
