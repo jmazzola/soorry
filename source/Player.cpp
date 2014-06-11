@@ -1295,7 +1295,7 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		float damage = *((float*)pEvent->GetData ());
 		m_nCurrHealth -= damage;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Spurt1", this, 8, 8);
 		msg->QueueMessage();
 		msg = nullptr;
 		// Make sure we don't underflow
