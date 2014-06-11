@@ -73,8 +73,7 @@ void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, 
 	Emitter* tempEmitter = new Emitter;
  	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
-	tempEmitter->followEnitiy = _entity;
-	tempEmitter->load();
+	tempEmitter->load(_entity->GetPosition());
 	tempEmitter->particleFlyweight->entity = _entity;
 	tempEmitter->emitterID = activeEmitters.size();
 	activeEmitters.push_back(tempEmitter);
@@ -139,18 +138,22 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		tempFlyweight->isSpread = tempBool;
 		//Read XML for flyweight rotation
 		data = data->NextSiblingElement("rotate");
-		data->Attribute("start", &tempDouble);
-		tempFlyweight->startRotation = (float)tempDouble;
-		data->Attribute("end", &tempDouble);
-		tempFlyweight->endRotation = (float)tempDouble;
+		data->Attribute("startMax", &tempDouble);
+		tempFlyweight->startMaxRotation = (float)tempDouble;
+		data->Attribute("startMin", &tempDouble);
+		tempFlyweight->startMinRotation = (float)tempDouble;
+		data->Attribute("endMax", &tempDouble);
+		tempFlyweight->endMaxRotation = (float)tempDouble;
+		data->Attribute("endMin", &tempDouble);
+		tempFlyweight->endMinRotation = (float)tempDouble;
 		//Read XML for Flyweight color
 		data = data->NextSiblingElement("color");
-		data->Attribute("startA", &a);
+		data->Attribute("startMaxA", &a);
 		data->Attribute("startR", &r);
 		data->Attribute("startG", &g);
 		data->Attribute("startB", &b);
 		tempFlyweight->startColor = SGD::Color((unsigned char)a, (unsigned char)r, (unsigned char)g, (unsigned char)b);
-		data->Attribute("endA", &a);
+		data->Attribute("endMaxA", &a);
 		data->Attribute("endR", &r);
 		data->Attribute("endG", &g);
 		data->Attribute("endB", &b);

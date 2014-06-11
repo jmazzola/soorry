@@ -902,7 +902,10 @@ void Player::Update ( float dt )
 	//If the camera is static
 	if (m_bStaticCamera)
 	{
-		m_fCameraLerpTimer += (dt*0.25f);
+		if (m_fCameraLerpTimer < 1)
+		{
+			m_fCameraLerpTimer += (dt*0.25f);
+		}
 		m_vCameraStart = { (float)Camera::x, (float)Camera::y };
 		m_vCameraEnd = { m_ptPosition.x - 384, m_ptPosition.y - 284 };
 		// Set camera

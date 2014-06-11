@@ -24,6 +24,7 @@ public:
 	bool Update(float dt);
 	void Render();
 	void load();
+	void load(SGD::Point);
 	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
@@ -36,6 +37,6 @@ public:
 	std::vector<Particle*> deadParticles;
 	int emitterID;
 	SGD::Rectangle square;
-	Entity* followEnitiy = nullptr;
+	SGD::Point followEnitiy;
 };
 

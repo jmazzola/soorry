@@ -234,16 +234,12 @@ int Enemy::GetType() const
 	}
 		break;
 	}
-	//check if health is too low to create blood
-	if (m_nCurrHealth > m_nMaxHeatlh * 0.10f)
-	{
 		if (pastHealth > m_nCurrHealth)
 		{
 			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
 			msg->QueueMessage();
 			msg = nullptr;
 		}
-	}
 }
 
 void Enemy::HandleEvent(const SGD::Event* pEvent)

@@ -19,8 +19,10 @@ public:
 	SGD::Color		endColor;
 	SGD::Size		startScale;
 	SGD::Size		endScale;
-	float			startRotation;
-	float			endRotation;
+	float			startMaxRotation;
+	float			startMinRotation;
+	float			endMaxRotation;
+	float			endMinRotation;
 	float			minLifeTime;
 	float			maxLifeTime;
 	std::string		particleID;

@@ -124,14 +124,8 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 void Emitter::load()
 {
 	
-	srand((unsigned int)time(nullptr));
 	if (allParticlesCreated != true)
 	{
-		if (followEnitiy != nullptr)
-		{
-			position = followEnitiy->GetPosition();
-		}
-
 		for (unsigned int i = 0; i < maxParticles; i++)
 		{
 			//Create a new particle
@@ -150,12 +144,26 @@ void Emitter::load()
 			}
 			else
 			{
-				tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
-				tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
+				tempParticle->velocity.x = ((particleFlyweight->endVelocity.x - particleFlyweight->startVelocity.x)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.x;
+				tempParticle->velocity.y = ((particleFlyweight->endVelocity.y - particleFlyweight->startVelocity.y)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.y;
 			}
-			tempParticle->rotation = particleFlyweight->startRotation;
-			tempParticle->rotationRate = ((particleFlyweight->startRotation - particleFlyweight->endRotation) / tempParticle->maxLifeTime);
-			//Randomize the position within the emitter NOTE: maybe need to add world offset
+			
+			if (particleFlyweight->startMaxRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMaxRotation)) + particleFlyweight->startMinRotation;
+			else if (particleFlyweight->startMinRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMinRotation)) + particleFlyweight->startMaxRotation;
+			else if (particleFlyweight->startMaxRotation == 0 && particleFlyweight->startMinRotation == 0)
+				tempParticle->rotation = 0;
+			float tempRotation = 0;
+			if (particleFlyweight->endMaxRotation != 0)
+				tempRotation = (rand() % (int)(particleFlyweight->endMaxRotation)) + particleFlyweight->endMinRotation;
+			else if (particleFlyweight->endMinRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->endMinRotation)) + particleFlyweight->endMaxRotation;
+			else if (particleFlyweight->endMaxRotation == 0 && particleFlyweight->endMinRotation == 0)
+				tempParticle->rotation = 0;
+
+			tempParticle->rotationRate = ((tempParticle->rotation - tempRotation) / tempParticle->maxLifeTime);
+			//Randomize the position within the emitter
 			switch (shape)
 			{
 			case 0://square
@@ -201,7 +209,6 @@ void Emitter::load()
 			}
 				break;
 			}
-
 			tempParticle->particleFlyweight = particleFlyweight;
 			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			//add it to dead particles
@@ -216,13 +223,111 @@ void Emitter::load()
 	}
 }
 
+void Emitter::load(SGD::Point _Pos)
+{
+	position = _Pos;
+	if (allParticlesCreated != true)
+	{
+		for (unsigned int i = 0; i < maxParticles; i++)
+		{
+			//Create a new particle
+			Particle* tempParticle = new Particle;
+			//set values
+			float maxLife = particleFlyweight->maxLifeTime;
+			//Take data from particle flyweight and send it to the particle
+			tempParticle->Color = particleFlyweight->startColor;
+			//Create rates to update particles
+			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
+			tempParticle->currLifeTime = tempParticle->maxLifeTime;
+			tempParticle->scale = particleFlyweight->startScale;
+			if (!particleFlyweight->isSpread)
+			{
+				tempParticle->velocity = particleFlyweight->startVelocity;
+			}
+			else
+			{
+				tempParticle->velocity.x = ((particleFlyweight->endVelocity.x - particleFlyweight->startVelocity.x)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.x;
+				tempParticle->velocity.y = ((particleFlyweight->endVelocity.y - particleFlyweight->startVelocity.y)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.y;
+			}
+
+			if (particleFlyweight->startMaxRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMaxRotation)) + particleFlyweight->startMinRotation;
+			else if (particleFlyweight->startMinRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMinRotation)) + particleFlyweight->startMaxRotation;
+			else if (particleFlyweight->startMaxRotation == 0 && particleFlyweight->startMinRotation == 0)
+				tempParticle->rotation = 0;
+			float tempRotation = 0;
+			if (particleFlyweight->endMaxRotation != 0)
+				tempRotation = (rand() % (int)(particleFlyweight->endMaxRotation)) + particleFlyweight->endMinRotation;
+			else if (particleFlyweight->endMinRotation != 0)
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->endMinRotation)) + particleFlyweight->endMaxRotation;
+			else if (particleFlyweight->endMaxRotation == 0 && particleFlyweight->endMinRotation == 0)
+				tempParticle->rotation = 0;
+
+			tempParticle->rotationRate = ((tempParticle->rotation - tempRotation) / tempParticle->maxLifeTime);
+			//Randomize the position within the emitter
+			switch (shape)
+			{
+			case 0://square
+			{
+				tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
+				tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
+			}
+				break;
+			case 1://circle
+			{
+				//MAFF very powerful
+				float radius = (float)(rand() % (int)size.width / 2);
+				float x = size.width / 2;
+				float y = size.width / 2;
+				//Point for the center of the emitter
+				SGD::Point center = SGD::Point(x, y);
+				//randomize the angle for the circle
+				float randAngle = (float)(rand() % 360);
+				randAngle = (randAngle / 180)*SGD::PI;
+				//put in the angle
+				tempParticle->position.x = center.x + (radius*cosf(randAngle) + position.x);
+				tempParticle->position.y = center.y + (radius*sinf(randAngle) + position.y);
+			}
+				break;
+			case 2://line
+			{
+				//draw line from position to width and height
+				SGD::Point start = position;
+				SGD::Point end = { size.width, size.height };
+				float slope = (start.y - end.y) / (start.x - end.x);
+				float x, y;
+				if (start.x != 0)
+					x = rand() % (int)start.x + end.x;
+				if (end.x != 0)
+					x = rand() % (int)end.x + start.x;
+				y = end.y + (slope*(x - end.x));
+				tempParticle->position = { x, y };
+			}
+				break;
+			case 3://point
+			{
+				tempParticle->position = position;
+			}
+				break;
+			}
+			tempParticle->particleFlyweight = particleFlyweight;
+			tempParticle->currLifeTime = tempParticle->maxLifeTime;
+			//add it to dead particles
+			deadParticles.push_back(tempParticle);
+			//Check if its zero, if it is then spawn the particles smoothly
+			if (spawnRate == 0)
+			{
+				spawnRate = deadParticles.size() / ((particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime) / 2.0f);
+			}
+		}
+		allParticlesCreated = true;
+	}
+}
+
+
 bool Emitter::Update(float dt)
 {
-	if (followEnitiy != nullptr)
-	{
-		//BUG: trys to update the particle after the entity has died
-		position = followEnitiy->GetPosition();
-	}
 	if (isLooping)
 	{
 		//NOTE: may cause bugs not sure
@@ -242,8 +347,8 @@ bool Emitter::Update(float dt)
 				}
 				else
 				{
-					tempParticle->velocity.x = rand() % (int)(particleFlyweight->startVelocity.x * 2) + particleFlyweight->endVelocity.x;
-					tempParticle->velocity.y = rand() % (int)(particleFlyweight->startVelocity.y * 2) + particleFlyweight->endVelocity.y;
+					tempParticle->velocity.x = ((particleFlyweight->endVelocity.x - particleFlyweight->startVelocity.x)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.x;
+					tempParticle->velocity.y = ((particleFlyweight->endVelocity.y - particleFlyweight->startVelocity.y)*((float)rand() / RAND_MAX)) + particleFlyweight->startVelocity.y;
 				}
 				switch (shape)
 				{
@@ -291,7 +396,7 @@ bool Emitter::Update(float dt)
 
 				tempParticle->Color = particleFlyweight->startColor;
 				tempParticle->scale = particleFlyweight->startScale;
-				tempParticle->rotation = particleFlyweight->startRotation;
+				tempParticle->rotation = 0;
 				aliveParticles.push_back(tempParticle);
 				deadParticles.erase(deadParticles.begin());
 			}
