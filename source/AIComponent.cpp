@@ -10,12 +10,13 @@
 #include "../SGD Wrappers/SGD_Event.h"
 
 #include <queue>
+#include <sstream>
 using namespace std;
 
 #define BOXCAST_INTERVAL 16.0f
 #define BOXCAST_ITERATIONS 100
 
-AIComponent::AIComponent()
+AIComponent::AIComponent() : SGD::Listener(this)
 {
 	m_fTimeToPathfind = 0.0f;
 
@@ -31,6 +32,10 @@ AIComponent::AIComponent()
 
 	// Get the entity manager
 	m_pEntityManager = GameplayState::GetInstance()->GetEntityManager();
+
+	m_pAlpha = nullptr;
+
+	m_bFinished = false;
 }
 
 
@@ -62,6 +67,13 @@ void AIComponent::Update(float dt)
 	if ((int)m_pAgent->GetPosition().x < -1000 || (int)m_pAgent->GetPosition().y < -1000)
 		m_pAgent->SetPosition({ 0, 0 });
 
+
+	// Get target to find
+	if (m_pAlpha == nullptr)
+		m_ptFindTarget = m_pPlayer->GetPosition();
+	else
+		m_ptFindTarget = m_pAlpha->GetPosition();
+
 	// Check for direct route (TEMPORARILY DISABLED!)
 	SGD::Vector toPlayer = m_pPlayer->GetPosition() - m_pAgent->GetPosition();
 	toPlayer.Normalize();
@@ -77,7 +89,7 @@ void AIComponent::Update(float dt)
 		if (m_fTimeToPathfind <= 0.0f)
 		{
 			// Pathfind to player
-			m_ptFindTarget = m_pPlayer->GetPosition();
+			//m_ptFindTarget = m_pPlayer->GetPosition();
 
 			// Start node
 			Node start;
@@ -90,6 +102,7 @@ void AIComponent::Update(float dt)
 			end.y = (int)(m_ptFindTarget.y + 16) / tileHeight;
 
 			Pathfind(start, end);
+			m_bFinished = false;
 
 			// Reset pathing timer
 			m_fTimeToPathfind = 2.0f + (rand() % 300) / 100.0f;
@@ -137,7 +150,7 @@ void AIComponent::Update(float dt)
 		if (smallestValue == m_nNodeChart[snapX][snapY])
 		{
 			// Pathfind to player
-			m_ptFindTarget = m_pPlayer->GetPosition();
+			//m_ptFindTarget = m_pPlayer->GetPosition();
 
 			// Start node
 			Node start;
@@ -151,12 +164,20 @@ void AIComponent::Update(float dt)
 
 			Pathfind(start, end);
 
+			if (start.x == end.x && start.y == end.y)
+			{
+				m_bFinished = true;
+				m_ptMoveTarget = m_pPlayer->GetPosition();
+			}
+
 			// Reset pathing timer
-			m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
+			else
+				m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
 		}
 
 		// Determine where to go
-		m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
+		else if (m_bFinished == false)
+			m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
 	}
 
 	// FOR DEBUG PURPOSES ONLY!
@@ -219,26 +240,33 @@ void AIComponent::Render()
 {
 	// NOTE: This function is only called for certain debug practices
 
-	// Get camera position in terms of tiles
-	int camTileX = Camera::x / 32;
-	int camTileY = Camera::y / 32;
+	//// Get camera position in terms of tiles
+	//int camTileX = Camera::x / 32;
+	//int camTileY = Camera::y / 32;
 
-	// Get stop point for rendering
-	int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
-	int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
+	//// Get stop point for rendering
+	//int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
+	//int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
 
-	// Loop through the viewport
-	for (int x = camTileX; x < stopX; x++)
-	{
-		for (int y = camTileY; y < stopY; y++)
-		{
-			// Don't render out-of-bounds index
-			if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
-				continue;
+	//// Loop through the viewport
+	//for (int x = camTileX; x < stopX; x++)
+	//{
+	//	for (int y = camTileY; y < stopY; y++)
+	//	{
+	//		// Don't render out-of-bounds index
+	//		if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
+	//			continue;
 
-			SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
-		}
-	}
+	//		SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
+	//	}
+	//}
+
+	/*ostringstream address;
+	address << (void*)m_pAlpha;
+
+	SGD::Color color = (m_pAlpha == nullptr) ? SGD::Color(255, 0, 0) : SGD::Color(255, 255, 255);
+
+	SGD::GraphicsManager::GetInstance()->DrawString(address.str().c_str(), m_pAgent->GetPosition() - SGD::Vector(Camera::x, Camera::y), color);*/
 }
 
 /**********************************************************/
@@ -254,6 +282,11 @@ Entity* AIComponent::GetPlayer() const
 	return m_pPlayer;
 }
 
+Enemy* AIComponent::GetAlpha() const
+{
+	return m_pAlpha;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -265,6 +298,11 @@ void AIComponent::SetAgent(Entity* _agent)
 void AIComponent::SetPlayer(Entity* _player)
 {
 	m_pPlayer = _player;
+}
+
+void AIComponent::SetAlpha(Enemy* _alpha)
+{
+	m_pAlpha = _alpha;
 }
 
 /**********************************************************/

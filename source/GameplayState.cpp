@@ -18,6 +18,7 @@
 #include "Shop.h"
 #include "Weapon.h"
 #include "Inventory.h"
+#include "EntityManager.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -84,6 +85,8 @@
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
 
+#include "AIComponent.h"
+
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
 
@@ -109,6 +112,7 @@ using namespace std;
 #define BUCKET_PROJECTILES 6
 #define BUCKET_DRONE 7
 #define BUCKET_GRENADES 8
+#define BUCKET_SHOP 9
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -150,6 +154,16 @@ EntityManager* GameplayState::GetEntityManager() const
 ZombieFactory* GameplayState::GetZombieFactory() const
 {
 	return GetInstance()->zombieFactory;
+}
+
+int GameplayState::GetGameMode() const
+{
+	return m_nGamemode;
+}
+
+void GameplayState::SetGameMode(int _gameMode)
+{
+	m_nGamemode = _gameMode;
 }
 
 /*************************************************************/
@@ -306,7 +320,25 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #pragma region Load Game Mode
 
 	// Load game mode information
-	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	string gameModeFileName;
+	switch (m_nGamemode)
+	{
+	case 0:
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		break;
+	case 1:
+		gameModeFileName = "resource/data/game_modes/hardcore_mode/hardcore_Mode.xml";
+		break;
+	case 2:
+		gameModeFileName = "resource/data/game_modes/sandbox_mode/sandboxMode.xml";
+		break;
+	case 3:
+		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
+		break;
+	case 4:
+		// To be replaced with Ryan's file
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	}
 
 	// Create a TinyXML document
 	TiXmlDocument doc;
@@ -954,7 +986,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// -- Debugging Mode Input always last --
 	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
 	{
-		#define DEBUG_MAX 4
+		#define DEBUG_MAX 5
 		#define DEBUG_MIN 0
 
 		if (pInput->IsKeyPressed(SGD::Key::Up))
@@ -992,8 +1024,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (pGame->GetDebugCurs() == 3)
 				pGame->SetShowRects(!pGame->IsShowingRects());
 
-			if (pGame->GetDebugCurs() == DEBUG_MAX)
+			if (pGame->GetDebugCurs() == 4)
 				dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
+
+			if (pGame->GetDebugCurs() == 5)
+				pGame->SetShowPos(!pGame->IsShowingPos());
+
 		}
 	}
 
@@ -1034,6 +1070,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_SHOP);
 		//draw grid rectangle
 
 		// Update the stat tracker
@@ -1218,7 +1255,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// Render the FPS
 		string fps = "FPS: ";
 		fps += std::to_string(m_unFPS);
-		pGraphics->DrawString(fps.c_str(), { 0, 560 }, { 255, 0, 0 });
+		pGraphics->DrawString(fps.c_str(), { 20, 560 }, { 255, 0, 0 });
 
 		// -- Render HUD --
 		if (!m_bIsPaused)
@@ -1448,10 +1485,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 					// Draw the number of walls
-					m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of windows
-					m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of beartraps
 					m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 191, 496, 0.4f, { 255, 255, 255 });
@@ -1586,6 +1625,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 		pGraphics->DrawString("Give 1000000 Cash", { 20, 191 }, { 255, 255, 0 });
 
+		if (pGame->IsShowingPos())
+			pGraphics->DrawString("Show Player Position", { 20, 211 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Player Position", { 20, 211 }, { 255, 0, 0 });
+
+
 
 	}
 
@@ -1701,6 +1746,49 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* ent = pCreateMessage->GetEntity();
 		g->m_pEntities->RemoveEntity(ent);
+
+										  /*Enemy* enemy = dynamic_cast<Enemy*>(ent);
+										  if (enemy && enemy->GetAIComponent()->GetAlpha() == nullptr)
+										  {
+											  if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+												  g->zombieFactory->SetSlowAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+												  g->zombieFactory->SetFastAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+												  g->zombieFactory->SetBeaverAlpha(nullptr);
+										  }
+
+										vector<IEntity*> vec = g->m_pEntities->GetBucket(BUCKET_ENEMIES);
+										bool alphaed = false;
+										for (unsigned int i = 0; i < vec.size(); i++)
+										{
+											if (ent->GetType() == vec[i]->GetType())
+											{
+												if (alphaed)
+												{
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetSlowAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetFastAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetBeaverAlpha());
+												}
+												else
+												{
+													dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(nullptr);
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+													{
+														g->zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(vec[i]));
+													}
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														g->zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(vec[i]));
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														g->zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(vec[i]));
+
+													alphaed = true;
+												}
+											}
+										}*/
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
@@ -1792,6 +1880,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreateShopMessage* pShop = dynamic_cast<const CreateShopMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
+		Entity* shop = g->CreateShop(pShop->GetX(), pShop->GetY());
+		g->m_pEntities->AddEntity(shop, BUCKET_SHOP);
+		shop->Release();
 	}
 		break;
 	}
@@ -1835,6 +1926,19 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = tempBeav->GetAIComponent();
+
+	if (zombieFactory->GetBeaverAlpha() == nullptr)
+	{
+		zombieFactory->SetBeaverAlpha(tempBeav);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetBeaverAlpha());
+	}*/
+
 	return tempBeav;
 }
 
@@ -1855,6 +1959,19 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetFastAlpha() == nullptr)
+	{
+		zombieFactory->SetFastAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetFastAlpha());
+	}*/
+
 	return zambie;
 }
 
@@ -1874,6 +1991,19 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
+
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetSlowAlpha() == nullptr)
+	{
+		zombieFactory->SetSlowAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetSlowAlpha());
+	}*/
 
 	return zambie;
 }
@@ -1912,19 +2042,21 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
-	SGD::Point playerCenter = m_pPlayer->GetPosition() + SGD::Vector(16, 16);
-
+	SGD::Point playerCenter = m_pPlayer->GetPosition();
 	switch (_Weapon)
 	{
 	case 0://Assault Rifle
 	{
+				// Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 8;
-			   pos.y += Camera::y - 8;
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1935,7 +2067,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		break;
 	case 1://Shotgun
 	{
-
+			  // Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
@@ -1975,8 +2109,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   return tempProj;
 	}
 		break;
-	case 3://TrickShot
+	case 3://HatTrick
 	{
+			// Adjust for projectile to come from center
+			playerCenter.x += 8;
+			playerCenter.y += 8;
 			TrickShotBullet* tsb = new TrickShotBullet;
 			tsb->SetDamage(75);
 			tsb->SetPosition(playerCenter);
@@ -2236,6 +2373,8 @@ Entity* GameplayState::CreateDrone() const
 Entity* GameplayState::CreateShop(float x, float y) const
 {
 	ShopEntity* shop = new ShopEntity();
+	shop->SetX(x);
+	shop->SetY(y);
 	return shop;
 
 }

@@ -33,6 +33,7 @@
 #include "StatTracker.h"
 #include "BitmapFont.h"
 #include "DestroyEntityMessage.h"
+#include "Shop.h"
 
 #include "Game.h"
 
@@ -158,6 +159,8 @@ Player::Player () : Listener ( this )
 	m_bAccept = true;
 	m_bTHEBOOL = false;
 	m_vtStick = SGD::Vector{0.0f, 0.0f};
+
+	m_bIsNearShop = false;
 }
 
 
@@ -207,6 +210,8 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
+
+	m_bIsNearShop = false;
 
 	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
 		m_bCanLeftClick = true;
@@ -400,8 +405,8 @@ void Player::Update ( float dt )
 		SGD::Point self = GetPosition();
 		self.x -= (float)Camera::x;
 		self.y -= (float)Camera::y;
-		self.x += 16;
-		self.y += 16;
+		self.x += 8;
+		self.y += 8;
 
 		force.x = pInput->GetMousePosition().x - self.x;
 		force.y = pInput->GetMousePosition().y - self.y;
@@ -806,9 +811,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWalls ();
-				--newset;
-				m_pInventory->SetWalls ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
@@ -821,9 +829,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWindows ();
-				--newset;
-				m_pInventory->SetWindows ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWindows();
+					--newset;
+					m_pInventory->SetWindows(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
@@ -930,12 +941,15 @@ void Player::Update ( float dt )
 	//If the camera is static
 	if (m_bStaticCamera)
 	{
-		m_fCameraLerpTimer += (dt*0.25f);
+		if (m_fCameraLerpTimer < 1)
+		{
+			m_fCameraLerpTimer += (dt*0.25f);
+		}
 		m_vCameraStart = { (float)Camera::x, (float)Camera::y };
 		m_vCameraEnd = { m_ptPosition.x - 384, m_ptPosition.y - 284 };
 		// Set camera
 		SGD::Vector tempVector;
-		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, 0.025f);
+		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, m_fCameraLerpTimer);
 		Camera::x = (int)tempVector.x;
 		Camera::y = (int)tempVector.y;
 	}
@@ -949,6 +963,13 @@ void Player::Update ( float dt )
 		tempVector = m_vCamera.Lerp(m_vCameraStart, m_vCameraEnd, 0.025f);
 		Camera::x = (int)tempVector.x;
 		Camera::y = (int)tempVector.y;
+	}
+
+	// Check if we're at the shop
+	if (pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode())
+	{
+		Shop* shop = GameplayState::GetInstance()->GetShop();
+		shop->SetShopStatus(true);
 	}
 }
 
@@ -1216,6 +1237,23 @@ void Player::PostRender()
 				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 384, 64, 416));
 		}
 	}
+
+	// If we're next to the shop, show the popup
+	if (m_bIsNearShop && m_pZombieWave->IsBuildMode())
+		pFont->Draw("Press E to enter the shop", 180, 60, 0.8f, { 255, 255, 255 });
+
+
+	// Debugging
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingPos())
+	{
+		string position = "Player Pos [";
+		position += std::to_string(m_ptPosition.x);
+		position += " , ";
+		position += std::to_string(m_ptPosition.y);
+		position += " ]";
+		pGraphics->DrawString(position.c_str(), { 200, 60 }, { 255, 255, 255 });
+	}
 }
 
 int Player::GetType () const
@@ -1257,6 +1295,10 @@ void Player::HandleCollision ( const IEntity* pOther )
 	{
 		m_fSuperTimer = m_fSuperLength;
 	}
+
+	// If we are touching the shop
+	if (pOther->GetType() == ENT_SHOP)
+		m_bIsNearShop = true;
 }
 
 void Player::HandleEvent ( const SGD::Event* pEvent )
@@ -1598,4 +1640,6 @@ void Player::Render ( void )
 	Game* pGame = Game::GetInstance();
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
+
+	
 }

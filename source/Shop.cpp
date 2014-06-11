@@ -599,10 +599,10 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	// If we're in the items
 	if (shopSection == 0)
 	{
-		if (parcel == WALL)
-			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[WALL]);
-		if (parcel == WINDOW)
-			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[WINDOW]);
+		if (parcel == ITEM_PRICE_WALL)
+			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
+		if (parcel == ITEM_PRICE_WINDOW)
+			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]);
 		if (parcel == BEARTRAP)
 			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
 		if (parcel == MINE)

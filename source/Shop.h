@@ -53,7 +53,7 @@ public:
 	// -- Price enumeration --
 
 	// Item prices
-	enum ItemPrices { WALL, WINDOW, BEARTRAP, MINE, GRENADE, AMMO, ITEMGB, TOTAL_ITEMS };
+	enum ItemPrices { ITEM_PRICE_WALL, ITEM_PRICE_WINDOW, BEARTRAP, MINE, GRENADE, AMMO, ITEMGB, TOTAL_ITEMS };
 
 	// Upgrade prices
 	enum UpgradePrices{ SHOTGUN_ROF, SHOTGUN_DMG, AR_ROF, AR_DMG, RL_ROF, RL_DMG, GRENADEUPGRADE, UGGB, TOTAL_UPGRADES};

@@ -123,36 +123,47 @@
 	// Select the item
 	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 	{
+		GameplayState* pGameplay = GameplayState::GetInstance();
 		// Switch table for the item selected
 		switch (m_nCursor)
 		{
 		case ARCADE:
 		{
-			return true;
+					   pGameplay->SetGameMode(0);
+					   pGame->ChangeState(pGameplay);
+					   return true;
 		}
 			break;
 
 		case HARDCORE:
 		{
-			return true;
+						 pGameplay->SetGameMode(1);
+						 pGame->ChangeState(pGameplay);
+						 return true;
 		}
 			break;
 
 		case SANDBOX:
 		{
-			return true;
+						pGameplay->SetGameMode(2);
+						pGame->ChangeState(pGameplay);
+						return true;
 		}
 			break;
 
 		case BEAVERFEVER:
 		{
-			return true;
+							pGameplay->SetGameMode(3);
+							pGame->ChangeState(pGameplay);
+							return true;
 		}
 			break;
 
 		case RUNNINGMAN:
 		{
-			return true;
+						   pGameplay->SetGameMode(4);
+						   pGame->ChangeState(pGameplay);
+						   return true;
 		}
 			break;
 
