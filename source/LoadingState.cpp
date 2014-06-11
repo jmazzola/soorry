@@ -132,7 +132,7 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// Press Escape to quit
-	if (pInput->IsKeyPressed(SGD::Key::Escape) == true)
+	if (pInput->IsKeyPressed(SGD::Key::Escape) == true || pInput->IsButtonPressed(0, 6))
 	{
 		pGame->ChangeState(GameplayState::GetInstance());
 	}

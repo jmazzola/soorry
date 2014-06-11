@@ -13,7 +13,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
-
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include <string>
 using namespace std;
 
@@ -93,8 +93,6 @@ private:
 	// Cursor Index
 	int	m_nCursor;
 	
-
-
 	/**********************************************************/
 	// Textures
 	SGD::HTexture m_hBackground;
@@ -109,14 +107,17 @@ private:
 
 	/**********************************************************/
 	// Enumerations
-	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_TOGGLEFULLSCREEN, MENU_GOBACK };
+	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_TOGGLEFULLSCREEN, MENU_STATS, MENU_GOBACK };
 
 	/**********************************************************/
 	// Menu Items
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
 
+	bool m_bTHEBOOL;
 
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 
 	// Message Callback Function:
 	/*static void MessageProc( const SGD::Message* pMsg );*/

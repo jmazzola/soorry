@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mode>
+  <world>resource/world/world.xml</world>
+  <wave_data>resource/data/game_modes/sandbox_mode/waveData.xml</wave_data>
+  <player_stats>resource/data/game_modes/sandbox_mode/playerStats.xml</player_stats>
+  <enemy_stats>resource/data/game_modes/sandbox_mode/enemyStats.xml</enemy_stats>
+  <tower_stats>resource/data/game_modes/sandbox_mode/towerStats.xml</tower_stats>
+  <shop>resource/data/game_modes/sandbox_mode/shop.xml</shop>
+</mode>

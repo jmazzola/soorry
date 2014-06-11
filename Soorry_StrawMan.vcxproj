@@ -40,6 +40,7 @@
     <ClCompile Include="source\CreatePlaceableMessage.cpp" />
     <ClCompile Include="source\CreatePlayerSpawnMessage.cpp" />
     <ClCompile Include="source\CreateProjectileMessage.cpp" />
+    <ClCompile Include="source\CreateShopMessage.cpp" />
     <ClCompile Include="source\CreateSlowZombieMessage.cpp" />
     <ClCompile Include="source\CreateTowerMessage.cpp" />
     <ClCompile Include="source\CreateTrapMessage.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="source\MapleSyrupTower.cpp" />
     <ClCompile Include="source\MenuFlyweight.cpp" />
     <ClCompile Include="source\Mine.cpp" />
+    <ClCompile Include="source\ModePickerState.cpp" />
     <ClCompile Include="source\OptionsState.cpp" />
     <ClCompile Include="source\Particle.cpp" />
     <ClCompile Include="source\ParticleFlyweight.cpp" />
@@ -83,7 +85,9 @@
     <ClCompile Include="source\Projectile.cpp" />
     <ClCompile Include="source\PurchaseMessage.cpp" />
     <ClCompile Include="source\Rocket.cpp" />
+    <ClCompile Include="source\RZBN.cpp" />
     <ClCompile Include="source\Shop.cpp" />
+    <ClCompile Include="source\ShopEntity.cpp" />
     <ClCompile Include="source\ShotgunPellet.cpp" />
     <ClCompile Include="source\SlowZombie.cpp" />
     <ClCompile Include="source\SpeedPickup.cpp" />
@@ -146,6 +150,7 @@
     <ClInclude Include="source\CreatePlaceableMessage.h" />
     <ClInclude Include="source\CreatePlayerSpawnMessage.h" />
     <ClInclude Include="source\CreateProjectileMessage.h" />
+    <ClInclude Include="source\CreateShopMessage.h" />
     <ClInclude Include="source\CreateSlowZombieMessage.h" />
     <ClInclude Include="source\CreateTowerMessage.h" />
     <ClInclude Include="source\CreateTrapMessage.h" />
@@ -183,6 +188,7 @@
     <ClInclude Include="source\MenuFlyweight.h" />
     <ClInclude Include="source\MessageID.h" />
     <ClInclude Include="source\Mine.h" />
+    <ClInclude Include="source\ModePickerState.h" />
     <ClInclude Include="source\OptionsState.h" />
     <ClInclude Include="source\Particle.h" />
     <ClInclude Include="source\ParticleFlyweight.h" />
@@ -192,7 +198,9 @@
     <ClInclude Include="source\Projectile.h" />
     <ClInclude Include="source\PurchaseMessage.h" />
     <ClInclude Include="source\Rocket.h" />
+    <ClInclude Include="source\RZBN.h" />
     <ClInclude Include="source\Shop.h" />
+    <ClInclude Include="source\ShopEntity.h" />
     <ClInclude Include="source\ShotgunPellet.h" />
     <ClInclude Include="source\SlowZombie.h" />
     <ClInclude Include="source\SpeedPickup.h" />
@@ -229,6 +237,12 @@
       <SubType>Designer</SubType>
     </Xml>
     <Xml Include="resource\data\game_modes\arcade_mode\waveData.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\enemyStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\playerStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\sandboxMode.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\shop.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\towerStats.xml" />
+    <Xml Include="resource\data\game_modes\sandbox_mode\waveData.xml" />
     <Xml Include="resource\data\singleEnemy.xml" />
     <Xml Include="resource\data\wave.xml" />
     <Xml Include="resource\world\testWorld.xml">

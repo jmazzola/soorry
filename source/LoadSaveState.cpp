@@ -11,6 +11,7 @@
 #include "MainMenuState.h"
 #include "LoadingState.h"
 #include "GameplayState.h"
+#include "ModePickerState.h"
 
 #include "Button.h"
 
@@ -117,6 +118,13 @@ using namespace std;
 	// Show the cursor
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
+
+	m_bTHEBOOL = false;
+
+#if ARCADE_MODE
+	bool m_bAccept = true;
+	m_vtStick = SGD::Vector{0.0f, 0.0f};
+#endif
 }
 
 
@@ -139,6 +147,9 @@ using namespace std;
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
 
+	m_bAccept = true;
+	m_bTHEBOOL = false;
+	m_vtStick = SGD::Vector { 0.0f , 0.0f };
 }
 
 
@@ -152,11 +163,28 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+#if ARCADE_MODE
+	m_vtStick = pInput->GetLeftJoystick(0);
+
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if(m_vtStick == SGD::Vector{0.0f, 0.0f})
+		 m_bAccept = true;
+#endif
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) down
-	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
@@ -164,29 +192,42 @@ using namespace std;
 		// Wrap around the options
 		if (m_nCursor > MENU_GOBACK)
 			m_nCursor = MENU_SLOT1;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) up
-	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_SLOT1)
 			m_nCursor = MENU_GOBACK;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
+	if (m_bTHEBOOL)
 	{
-		// Switch table for the item selected
-		switch (m_nCursor)
-		{
-			// TODO: Make Slots 1-3 open and load the game with their loaded data
-			// (thats why they're cascading)
-			// until then, they're placeholders.
-		case MENU_SLOT1:
+		// If we're on the first slot and the file exists (not a new game)
+		if (m_nCursor == MENU_SLOT1 && m_bFileExists[0])
 		{
 			// Set the gameplay to slot 1
 			GameplayState::GetInstance()->SetCurrentGameSlot(1);
@@ -195,38 +236,58 @@ using namespace std;
 			// Exit immediately
 			return true;
 		}
-
-		case MENU_SLOT2:
+		else if (m_nCursor == MENU_SLOT1 && !m_bFileExists[0])
+		{
+			// Go to the game mode picker
+			GameplayState::GetInstance()->SetCurrentGameSlot(1);
+			// Go choose a gamemode
+			pGame->Transition(ModePickerState::GetInstance());
+			// Exit immediately
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT2 && m_bFileExists[1])
 		{
 			// Set the gameplay to slot 2
 			GameplayState::GetInstance()->SetCurrentGameSlot(2);
 			pGame->ChangeState(GameplayState::GetInstance());
-
 			return true;
 		}
-
-		case MENU_SLOT3:
+		else if (m_nCursor == MENU_SLOT2 && !m_bFileExists[1])
+		{
+			GameplayState::GetInstance()->SetCurrentGameSlot(2);
+			pGame->Transition(ModePickerState::GetInstance());
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT3 && m_bFileExists[2])
 		{
 			// Set the gameplay to slot 3
 			GameplayState::GetInstance()->SetCurrentGameSlot(3);
 			pGame->ChangeState(GameplayState::GetInstance());
-
+			return true;
+		}
+		else if (m_nCursor == MENU_SLOT3 && !m_bFileExists[2])
+		{
+			GameplayState::GetInstance()->SetCurrentGameSlot(3);
+			pGame->Transition(ModePickerState::GetInstance());
 			return true;
 		}
 
-		case MENU_GOBACK:
+		else if(m_nCursor == MENU_GOBACK)
 		{
 			pGame->Transition(MainMenuState::GetInstance());
 			return true;
 
 		}
-			break;
-
-		}
 	}
 
 	// If we press Backspace
-	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X))
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 5);
+#endif
+	if (m_bTHEBOOL)
 	{
 		// Delete the file
 		remove(m_szSaveFiles[m_nCursor].c_str());
@@ -237,7 +298,13 @@ using namespace std;
 	}
 	// If we hit escape or B exit and go to main menu
 	// Quick Exit Options
-	if(pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+#endif
+	if(m_bTHEBOOL)
 	{
 		//Go to Main Menu
 		pGame->Transition(MainMenuState::GetInstance());

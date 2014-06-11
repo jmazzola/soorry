@@ -2,6 +2,7 @@
 #include "IGameState.h"
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 class StatTracker;
 class Button;
@@ -42,11 +43,18 @@ private:
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
 
+	// Cursor Index
+	int	m_nCursor;
+
 	// StatTracker pointer
 	StatTracker* m_pStats;
 
 	// Scrolling text location
 	float m_fScrollY;
+
+	// Enum to check if they pressed Stats
+	enum ResetStatsStatus { AREYOUSURE, NOSRS, AIGHTITSGONE };
+	int m_nResetStatsStatus;
 
 	// Textures
 	SGD::HTexture m_hBackground;
@@ -55,5 +63,9 @@ private:
 				 KILLS = 1930, BLOOD = 2210, GRENADE = 2490, SHOTS = 2770, MG = 3050, SG = 3330,
 				 RPG = 3610, HT = 3890, WALLS = 4170, WINDOWS = 4450, TOWERS = 4730, TRAPS = 5100,
 				 MONEY = 5290, END};
+
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 };
 

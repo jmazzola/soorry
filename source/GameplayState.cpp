@@ -18,6 +18,7 @@
 #include "Shop.h"
 #include "Weapon.h"
 #include "Inventory.h"
+#include "EntityManager.h"
 
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -46,6 +47,7 @@
 #include "WaveCompleteMessage.h"
 #include "CreateMapleSyrupBulletMessage.h"
 #include "CreateGrenadeMessage.h"
+#include "CreateShopMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -57,6 +59,7 @@
 #include "Drone.h"
 #include "Grenade.h"
 #include "TrickShotBullet.h"
+#include "ShopEntity.h"
 
 #include "MessageID.h"
 #include "BitmapFont.h"
@@ -81,6 +84,8 @@
 #include "LaserTower.h"
 #include "SpikeTrap.h"
 #include "LavaTrap.h"
+
+#include "AIComponent.h"
 
 #include "MachineGunBullet.h"
 #include "MapleSyrupBullet.h"
@@ -148,6 +153,16 @@ EntityManager* GameplayState::GetEntityManager() const
 ZombieFactory* GameplayState::GetZombieFactory() const
 {
 	return GetInstance()->zombieFactory;
+}
+
+int GameplayState::GetGameMode() const
+{
+	return m_nGamemode;
+}
+
+void GameplayState::SetGameMode(int _gameMode)
+{
+	m_nGamemode = _gameMode;
 }
 
 /*************************************************************/
@@ -304,7 +319,25 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #pragma region Load Game Mode
 
 	// Load game mode information
-	string gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	string gameModeFileName;
+	switch (m_nGamemode)
+	{
+	case 0:
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		break;
+	case 1:
+		gameModeFileName = "resource/data/game_modes/hardcore_mode/hardcore_Mode.xml";
+		break;
+	case 2:
+		gameModeFileName = "resource/data/game_modes/sandbox_mode/sandboxMode.xml";
+		break;
+	case 3:
+		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
+		break;
+	case 4:
+		// To be replaced with Ryan's file
+		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+	}
 
 	// Create a TinyXML document
 	TiXmlDocument doc;
@@ -453,6 +486,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Turn the cursor on
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
+
+#if ARCADE_MODE
+	m_vtStick = {0.0f, 0.0f};
+	m_bAccept = true;
+#endif
+
 }
 
 
@@ -587,6 +626,18 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+#if ARCADE_MODE
+		 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if(m_vtStick == SGD::Vector{0.0f, 0.0f})
+		 m_bAccept = true;
+#endif
+
 	// Manipulate the mouse here
 	SGD::Point mousePt = {0.0f, 0.0f};
 	mousePt = pInput->GetMousePosition();
@@ -602,7 +653,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (m_bCreditsStarted == false && m_fWinTimer == 5.0f && m_bHasLost == false)
 		// Press Escape (PC) or Start (Xbox 360) to toggle pausing
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start))
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Start);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+#endif
+		if (m_bTHEBOOL)
 		{
 			if (m_pShop->IsOpen() == false)
 				m_bIsPaused = !m_bIsPaused;
@@ -611,6 +668,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				pGraphics->TurnCursorOn();
 			}
 		}
+
 	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 	if (pInput->IsKeyPressed(SGD::Key::Backspace))
 	{
@@ -623,14 +681,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pShop->SetShopStatus(true);
 	}
 	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ))
+	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
+		pInput->IsButtonPressed(1, 6)))
 		zombieFactory->SetBuildTImeRemaining(0.0f);
 
+#if !ARCADE_MODE
 	// Toggle the camera mode
 	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
 	{
 		//TOGGLE THE CAMERA
 	}
+#endif
 
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
@@ -640,37 +701,60 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			//-----------------------------------------------------------------------
 			// --- Handling what tab we're in ---
 			// If we're in the Main menu OF the pause menu. 
-			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+			if ( m_nPauseMenuTab == PauseMenuTab::TAB_MAIN )
 			{
 
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down );
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+#endif
+				if ( m_bTHEBOOL )
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
 
 					// Wrap around the options
-					if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+					if ( m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT )
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
-				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
 				// Move the cursor (selected item) up
-				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
 						m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 
 
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
+				if (m_bTHEBOOL)
 				{
 					// Switch table for the item selected
 					switch (m_nPauseMenuCursor)
@@ -713,7 +797,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// --- Scrolling through options ---
 				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) down
-				if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
@@ -721,23 +811,42 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					// Wrap around the options
 					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 				// Move the cursor (selected item) up
-				else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
 						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
-				}
 
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
+				}
 
 				// --- Increasing an option ---
 				// If the right key (PC) or right dpad (Xbox 360) are pressed
 				// Increase the value
-				if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -755,11 +864,20 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 						break;
 					}
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 				// --- Decreasing an option ---
 				// If the left key (PC) or left dpad (Xbox 360) are pressed
 				// Decrease the value
-				if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = m_bAccept && m_vtStick.x < 0;
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -777,12 +895,21 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 						break;
 					}
+#if ARCADE_MODE
+					m_bAccept = false;
+#endif
 				}
 
 				// --- Selecting an option ---
 				// If the enter key (PC) or A button (Xbox 360) are pressed
 				// Select the item
-				if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+				m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+#endif
+				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
 					{
@@ -811,7 +938,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 #pragma endregion
 
-	if (m_bCreditsStarted == true && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)))
+#if !ARCADE_MODE
+	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A));
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+#endif
+	if (m_bCreditsStarted == true && m_bTHEBOOL)
 	{
 		// Since there's only one state..go back to main menu
 		pGame->ChangeState(MainMenuState::GetInstance());
@@ -819,7 +952,13 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	if (m_bHasLost == true && m_fLossTimer <= 0.0f)
 	{
-		if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = m_vtStick != SGD::Vector{0.0f, 0.0f};
+#endif
+		if (m_bTHEBOOL)
 			m_bReplay = !m_bReplay;
 
 		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
@@ -1340,10 +1479,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 					// Draw the number of walls
-					m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWalls()).c_str(), 54, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of windows
-					m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
+					if (m_nGamemode != 2)
+						m_pFont->Draw(std::to_string(inv->GetWindows()).c_str(), 123, 496, 0.4f, { 255, 255, 255 });
 
 					// Draw the number of beartraps
 					m_pFont->Draw(std::to_string(inv->GetBearTraps()).c_str(), 191, 496, 0.4f, { 255, 255, 255 });
@@ -1501,32 +1642,32 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 	case MessageID::MSG_CREATE_BEAVER_ZOMBIE:
 	{
-												const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
-												GameplayState* self = GameplayState::GetInstance();
-												Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-												self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
-												beaver->Release();
-												beaver = nullptr;
+		const CreateBeaverZombieMessage* pCreateMessage = dynamic_cast<const CreateBeaverZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*beaver = self->CreateBeaverZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(beaver, BUCKET_ENEMIES);
+		beaver->Release();
+		beaver = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_FAST_ZOMBIE:
 	{
-											  const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
-											  GameplayState* self = GameplayState::GetInstance();
-											  Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
-											  zambie->Release();
-											  zambie = nullptr;
+		const CreateFastZombieMessage* pCreateMessage = dynamic_cast<const CreateFastZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*zambie = self->CreateFastZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		zambie->Release();
+		zambie = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_SLOW_ZOMBIE:
 	{
-											  const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
-											  GameplayState* self = GameplayState::GetInstance();
-											  Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
-											  self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
-											  zambie->Release();
-											  zambie = nullptr;
+		const CreateSlowZombieMessage* pCreateMessage = dynamic_cast<const CreateSlowZombieMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		Entity*zambie = self->CreateSlowZombie(pCreateMessage->GetX(), pCreateMessage->GetY());
+		self->m_pEntities->AddEntity(zambie, BUCKET_ENEMIES);
+		zambie->Release();
+		zambie = nullptr;
 	}
 		break;
 
@@ -1534,79 +1675,122 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	{
 
-											 const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
-											 GameplayState* self = GameplayState::GetInstance();
-											 if (pCreateMessage->GetWeaponNumber() == 1)
-											 {
-												 SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
-												 for (int i = 0; i < 9; i++)
-												 {
-													 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-													 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
-													 bullet = nullptr;
-												 }
-											 }
-											 Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
-											 self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-											 bullet->Release();
-											 bullet = nullptr;
+		const CreateProjectileMessage* pCreateMessage = dynamic_cast<const CreateProjectileMessage*>(pMsg);
+		GameplayState* self = GameplayState::GetInstance();
+		if (pCreateMessage->GetWeaponNumber() == 1)
+		{
+			SGD::AudioManager::GetInstance()->PlayAudio(self->m_hShotgunShoot);
+			for (int i = 0; i < 9; i++)
+			{
+				Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+				self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+				bullet->Release();
+				bullet = nullptr;
+			}
+		}
+		Entity*bullet = self->CreateProjectile(pCreateMessage->GetWeaponNumber());
+		self->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
+		bullet = nullptr;
 
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PLACEABLE:
 	{
-											const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
-											GameplayState* g = GameplayState::GetInstance();
-											Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-											g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
-											place->Release();
-											place = nullptr;
+		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		place->Release();
+		place = nullptr;
 
 	}
 		break;
 
 	case MessageID::MSG_CREATE_PICKUP:
 	{
-										 const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
-										 GameplayState* g = GameplayState::GetInstance();
-										 Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
-										 g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
-										 place->Release();
-										 place = nullptr;
+		const CreatePickupMessage* pCreateMessage = dynamic_cast<const CreatePickupMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* place = g->CreatePickUp(pCreateMessage->GetPickUpID(), pCreateMessage->GetPosition());
+		g->m_pEntities->AddEntity(place, BUCKET_PICKUP);
+		place->Release();
+		place = nullptr;
 	}
 		break;
 	case MessageID::MSG_CREATE_PLAYER_SPAWN:
 	{
-											   const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
-											   GameplayState* g = GameplayState::GetInstance();
-											   g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
-											   g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
+		const CreatePlayerSpawnMessage* pCreateMessage = dynamic_cast<const CreatePlayerSpawnMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		g->m_ptPlayerSpawnPoint.x = (float)pCreateMessage->GetX();
+		g->m_ptPlayerSpawnPoint.y = (float)pCreateMessage->GetY();
 
 	}
 		break;
 	case MessageID::MSG_DESTROY_ENTITY:
 	{
 
-										  const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
-										  GameplayState* g = GameplayState::GetInstance();
-										  Entity* ent = pCreateMessage->GetEntity();
-										  g->m_pEntities->RemoveEntity(ent);
+		const DestroyEntityMessage* pCreateMessage = dynamic_cast<const DestroyEntityMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* ent = pCreateMessage->GetEntity();
+		g->m_pEntities->RemoveEntity(ent);
+
+										  /*Enemy* enemy = dynamic_cast<Enemy*>(ent);
+										  if (enemy && enemy->GetAIComponent()->GetAlpha() == nullptr)
+										  {
+											  if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+												  g->zombieFactory->SetSlowAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+												  g->zombieFactory->SetFastAlpha(nullptr);
+											  else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+												  g->zombieFactory->SetBeaverAlpha(nullptr);
+										  }
+
+										vector<IEntity*> vec = g->m_pEntities->GetBucket(BUCKET_ENEMIES);
+										bool alphaed = false;
+										for (unsigned int i = 0; i < vec.size(); i++)
+										{
+											if (ent->GetType() == vec[i]->GetType())
+											{
+												if (alphaed)
+												{
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetSlowAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetFastAlpha());
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(g->zombieFactory->GetBeaverAlpha());
+												}
+												else
+												{
+													dynamic_cast<Enemy*>(vec[i])->GetAIComponent()->SetAlpha(nullptr);
+													if (ent->GetType() == Entity::ENT_ZOMBIE_SLOW)
+													{
+														g->zombieFactory->SetSlowAlpha(dynamic_cast<Enemy*>(vec[i]));
+													}
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_FAST)
+														g->zombieFactory->SetFastAlpha(dynamic_cast<Enemy*>(vec[i]));
+													else if (ent->GetType() == Entity::ENT_ZOMBIE_BEAVER)
+														g->zombieFactory->SetBeaverAlpha(dynamic_cast<Enemy*>(vec[i]));
+
+													alphaed = true;
+												}
+											}
+										}*/
 	}
 		break;
 	case MessageID::MSG_CREATE_STATIC_PARTICLE:
 	{
-												  const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-												  GameplayState* g = GameplayState::GetInstance();
-												  ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetX(), pCreateMessage->GetY());
 	}
 		break;
 	case MessageID::MSG_CREATE_DYNAMIC_PARTICLE:
 	{
-												   const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
-												   GameplayState* g = GameplayState::GetInstance();
-												   ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
@@ -1619,38 +1803,38 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		break;
 	case MessageID::MSG_CREATE_TOWER:
 	{
-										const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
-										GameplayState* g = GameplayState::GetInstance();
-										Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
-										g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
-										tower->Release();
+		const CreateTowerMessage* pCreateMessage = dynamic_cast<const CreateTowerMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* tower = g->CreateTower(pCreateMessage->x, pCreateMessage->y, pCreateMessage->towerType);
+		g->m_pEntities->AddEntity(tower, BUCKET_TOWERS);
+		tower->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_TRAP:
 	{
-									const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
-									GameplayState* g = GameplayState::GetInstance();
-									Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
-									g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
-									trap->Release();
+		const CreateTrapMessage* pCreateMessage = dynamic_cast<const CreateTrapMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* trap = g->CreateTrap(pCreateMessage->x, pCreateMessage->y, pCreateMessage->trapType);
+		g->m_pEntities->AddEntity(trap, BUCKET_TRAPS);
+		trap->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MACHINE_GUN_BULLET:
 	{
-													const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
-													GameplayState* g = GameplayState::GetInstance();
-													Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
-													g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													bullet->Release();
+		const CreateMachineGunBulletMessage* pCreateMessage = dynamic_cast<const CreateMachineGunBulletMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* bullet = g->CreateMachineGunBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->damage);
+		g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_MAPLE_SYRUP_BULLET:
 	{
-													 const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
-													 GameplayState* g = GameplayState::GetInstance();
-													 Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
-													 g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
-													 bullet->Release();
+		const CreateMapleSyrupBulletMessage* pCreateMessage = dynamic_cast<const CreateMapleSyrupBulletMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* bullet = g->CreateMapleSyrupBullet(pCreateMessage->x, pCreateMessage->y, pCreateMessage->velocity, pCreateMessage->slowTime);
+		g->m_pEntities->AddEntity(bullet, BUCKET_PROJECTILES);
+		bullet->Release();
 	}
 		break;
 	case MessageID::MSG_CREATE_DRONE:
@@ -1664,23 +1848,29 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		break;
 	case MessageID::MSG_WAVE_COMPLETE:
 	{
-										 GameplayState* g = GameplayState::GetInstance();
-										 g->m_fSlowHealth *= g->m_fHealthScaling;
-										 g->m_fFastHealth *= g->m_fHealthScaling;
-										 g->m_fBeaverHealth *= g->m_fHealthScaling;
+		GameplayState* g = GameplayState::GetInstance();
+		g->m_fSlowHealth *= g->m_fHealthScaling;
+		g->m_fFastHealth *= g->m_fHealthScaling;
+		g->m_fBeaverHealth *= g->m_fHealthScaling;
 	}
 		break;
 	case MessageID::MSG_CREATE_GRENADE:
 	{
-										const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
-										GameplayState* g = GameplayState::GetInstance();
-										Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
-										g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
-										grenade->Release();
+		const CreateGrenadeMessage* pCreateMessage = dynamic_cast<const CreateGrenadeMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		Entity* grenade = g->CreateGrenade(pCreateMessage->x, pCreateMessage->y, pCreateMessage->force);
+		g->m_pEntities->AddEntity(grenade, BUCKET_GRENADES);
+		grenade->Release();
+	}
+		break;
+
+	case MessageID::MSG_CREATE_SHOP:
+	{
+		const CreateShopMessage* pShop = dynamic_cast<const CreateShopMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
 	}
 		break;
 	}
-
 	/* Restore previous warning levels */
 #pragma warning( pop )
 
@@ -1721,6 +1911,19 @@ Entity* GameplayState::CreateBeaverZombie(int _x, int _y) const
 	// AIComponent
 	tempBeav->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = tempBeav->GetAIComponent();
+
+	if (zombieFactory->GetBeaverAlpha() == nullptr)
+	{
+		zombieFactory->SetBeaverAlpha(tempBeav);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetBeaverAlpha());
+	}*/
+
 	return tempBeav;
 }
 
@@ -1741,6 +1944,19 @@ Entity* GameplayState::CreateFastZombie(int _x, int _y) const
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
 
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetFastAlpha() == nullptr)
+	{
+		zombieFactory->SetFastAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetFastAlpha());
+	}*/
+
 	return zambie;
 }
 
@@ -1760,6 +1976,19 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	zambie->SetRegeneration(m_fSlowRegeneration);
 	// AIComponent
 	zambie->SetPlayer(m_pPlayer);
+
+	/*AIComponent* aiComponent = zambie->GetAIComponent();
+
+	if (zombieFactory->GetSlowAlpha() == nullptr)
+	{
+		zombieFactory->SetSlowAlpha(zambie);
+		aiComponent->SetAlpha(nullptr);
+	}
+
+	else
+	{
+		aiComponent->SetAlpha(zombieFactory->GetSlowAlpha());
+	}*/
 
 	return zambie;
 }
@@ -1798,19 +2027,21 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
-	SGD::Point playerCenter = m_pPlayer->GetPosition() + SGD::Vector(16, 16);
-
+	SGD::Point playerCenter = m_pPlayer->GetPosition();
 	switch (_Weapon)
 	{
 	case 0://Assault Rifle
 	{
+				// Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 8;
-			   pos.y += Camera::y - 8;
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
@@ -1821,7 +2052,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		break;
 	case 1://Shotgun
 	{
-
+			  // Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
@@ -1861,8 +2094,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   return tempProj;
 	}
 		break;
-	case 3://TrickShot
+	case 3://HatTrick
 	{
+			// Adjust for projectile to come from center
+			playerCenter.x += 8;
+			playerCenter.y += 8;
 			TrickShotBullet* tsb = new TrickShotBullet;
 			tsb->SetDamage(75);
 			tsb->SetPosition(playerCenter);

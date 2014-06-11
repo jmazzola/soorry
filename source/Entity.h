@@ -67,6 +67,7 @@ public:
 			ENT_MACHINE_GUN_BULLET,
 			ENT_MAPLE_SYRUP_BULLET,
 			ENT_DRONE,
+			ENT_SHOP,
 	};
 
 	

@@ -155,7 +155,9 @@ Player::Player () : Listener ( this )
 	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
 
 	m_bCanLeftClick = true;
-
+	m_bAccept = true;
+	m_bTHEBOOL = false;
+	m_vtStick = SGD::Vector{0.0f, 0.0f};
 }
 
 
@@ -208,7 +210,8 @@ void Player::Update ( float dt )
 
 	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
 		m_bCanLeftClick = true;
-	
+
+
 	if ( m_nCurrHealth <= 0.0f )
 	{
 		GameplayState::GetInstance ()->HasLost();
@@ -229,11 +232,20 @@ void Player::Update ( float dt )
 		move.y = 0.0f;
 
 	// Grab the right stick for shooting/placing
+#if !ARCADE_MODE
 	SGD::Vector shoot = pInput->GetRightJoystick ( 0 );
 	if ( abs ( shoot.x ) < 0.2f )
 		shoot.x = 0.0f;
 	if ( abs ( shoot.y ) < 0.2f )
 		shoot.y = 0.0f;
+#endif
+#if ARCADE_MODE
+	SGD::Vector shoot = pInput->GetLeftJoystick ( 1 );
+	if ( abs ( shoot.x ) < 0.2f )
+		shoot.x = 0.0f;
+	if ( abs ( shoot.y ) < 0.2f )
+		shoot.y = 0.0f;
+#endif
 	if (pInput->IsKeyPressed(SGD::Key::Space) == true)
 	{
 		if (m_bStaticCamera == true)
@@ -249,6 +261,7 @@ void Player::Update ( float dt )
 	}
 	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
+
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 		SGD::Point playerPos = GetPosition ();
 		playerPos.x -= Camera::x;
@@ -359,8 +372,14 @@ void Player::Update ( float dt )
 		AnimationManager::GetInstance ()->Update ( m_antsAnimation , dt );
 	}
 	// Use Healthpack
-	if ( (pInput->IsKeyDown ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A )) &&
-		m_pInventory->GetHealthPacks () > 0 && m_nCurrHealth < m_nMaxHealth )
+#if !ARCADE_MODE
+		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A ));
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonDown(1, 3);
+#endif
+		
+	if ( m_bTHEBOOL && m_pInventory->GetHealthPacks () > 0 && m_nCurrHealth < m_nMaxHealth )
 	{
 		m_nCurrHealth = m_nMaxHealth;
 		unsigned int newset = m_pInventory->GetHealthPacks ();
@@ -368,15 +387,21 @@ void Player::Update ( float dt )
 		m_pInventory->SetHealthPacks ( newset );
 	}
 	// Throw Grenade
-	if ( (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f) &&
-		m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
+#if !ARCADE_MODE
+		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonReleased(1, 0);
+#endif
+
+	if ( m_bTHEBOOL && m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
 	{
 		SGD::Vector force;
 		SGD::Point self = GetPosition();
 		self.x -= (float)Camera::x;
 		self.y -= (float)Camera::y;
-		self.x += 16;
-		self.y += 16;
+		self.x += 8;
+		self.y += 8;
 
 		force.x = pInput->GetMousePosition().x - self.x;
 		force.y = pInput->GetMousePosition().y - self.y;
@@ -396,9 +421,15 @@ void Player::Update ( float dt )
 		m_pInventory->SetGrenades(m_pInventory->GetGrenades() - 1);
 		StatTracker::GetInstance()->GrenadeThrown();
 	}
+#if !ARCADE_MODE
+		m_bTHEBOOL = (pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(0, 5) ||
+			         pInput->IsButtonPressed(1, 2) || pInput->IsButtonPressed(1, 5);
+#endif
 	// Open Shop
-	if((pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X)
-		&& m_pZombieWave->IsBuildMode() == true)
+	if(m_bTHEBOOL && m_pZombieWave->IsBuildMode() == true)
 	{
 		// IMPLEMENT ENTER SHOP HERE
 	}
@@ -409,6 +440,7 @@ void Player::Update ( float dt )
 		pAudio->StopAudio(m_hWalking);
 	}
 	//GAH Weapons! - Arnold
+#if !ARCADE_MODE
 	//Switch to Machine Gun
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
@@ -429,15 +461,20 @@ void Player::Update ( float dt )
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
 	}
+#endif
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
-		m_fCursorFadeTimer = m_fCursorFadeLength;
-		
-
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyDown ( SGD::Key::MouseLeft ) || pInput->GetTrigger(0) > 0.1f;
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = !(pInput->IsButtonDown ( 0 , 0 ) || pInput->IsButtonDown ( 1 , 0 )) && shoot != SGD::Vector { 0.0f , 0.0f };
+#endif
 		// Left click
-		if ( pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true)
+		if (m_bTHEBOOL)
 		{
+			m_fCursorFadeTimer = m_fCursorFadeLength;
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
 			msg = nullptr;
@@ -459,34 +496,9 @@ void Player::Update ( float dt )
 			}
 			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
 		}
-
-		// With Xbox Right Trigger
-		else if ( pInput->GetTrigger(0) > 0.1f)
-		{
-			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
-			msg->QueueMessage ();
-			msg = nullptr;
-			//set the shot timer to the rate of fire
-			int tempInt = m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo ();
-
-			// If you don't have the super buff
-			if ( m_fSuperTimer <= 0.0f )
-			{
-				// If we have infinite ammo, don't subtract
-				if(!pGame->HasInfAmmo())
-					m_pWeapons[ m_nCurrWeapon ].SetCurrAmmo ( (m_pWeapons[ m_nCurrWeapon ].GetCurrAmmo () - 1) );
-				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () );
-			}
-			else
-			{
-				m_pWeapons[ m_nCurrWeapon ].SetFireTimer ( m_pWeapons[ m_nCurrWeapon ].GetFireRate () / 2 );
-			}
-			StatTracker::GetInstance()->ShotsFired(m_nCurrWeapon);
-		}
-
 	}
 	// Make the empty click noise
-	else if ((pInput->IsKeyDown(SGD::Key::MouseLeft) == true || pInput->GetTrigger(0) > 0.1f) && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
+	else if (m_bTHEBOOL && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() <= 0)
 	{
 		// BUG - When the wave changes and you're out of ammo, the click is played
 		// instead of the minecraft put block sound.
@@ -497,8 +509,15 @@ void Player::Update ( float dt )
 	}
 	
 	// Cycle Selected Items
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::LB );
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0,0) || pInput->IsButtonPressed(0,3) ||
+				 pInput->IsButtonPressed(1,0) || pInput->IsButtonPressed(1,3);
+#endif
 	// Cycle Left
-	if ( pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::LB ) )
+	if ( m_bTHEBOOL )
 	{
 		if ( m_pZombieWave->IsBuildMode () == true )
 		{
@@ -513,8 +532,16 @@ void Player::Update ( float dt )
 				m_nCurrWeapon = TOTAL_GUNS - 1;
 		}
 	}
+#if !ARCADE_MODE
+	m_bTHEBOOL =  pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::RB );
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0,1) || pInput->IsButtonPressed(0,4) ||
+				 pInput->IsButtonPressed(1,1) || pInput->IsButtonPressed(1,4);
+#endif
+
 	// Cycle Right
-	if ( pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::RB ) )
+	if ( m_bTHEBOOL)
 	{
 		if ( m_pZombieWave->IsBuildMode () == true )
 		{
@@ -532,7 +559,7 @@ void Player::Update ( float dt )
 
 
 
-	
+#if !ARCADE_MODE
 
 	// Selecting Walls
 	if ( pInput->IsKeyPressed ( SGD::Key::One ) == true && m_pZombieWave->IsBuildMode () == true )
@@ -573,6 +600,7 @@ void Player::Update ( float dt )
 	// Selecting spike trap
 	if (pInput->IsKeyPressed(SGD::Key::Zero) == true && m_pZombieWave->IsBuildMode() == true)
 		m_nCurrPlaceable = STRAP;
+#endif
 
 	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
@@ -778,9 +806,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WALL );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWalls ();
-				--newset;
-				m_pInventory->SetWalls ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWalls();
+					--newset;
+					m_pInventory->SetWalls(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
@@ -793,9 +824,12 @@ void Player::Update ( float dt )
 			{
 				pWorld->SetColliderID ( (int)pos.x , (int)pos.y , WINDOW );
 				// Decreasing the amount of mines left for the player
-				unsigned int newset = m_pInventory->GetWindows ();
-				--newset;
-				m_pInventory->SetWindows ( newset );
+				if (GameplayState::GetInstance()->GetGameMode() != 2)
+				{
+					unsigned int newset = m_pInventory->GetWindows();
+					--newset;
+					m_pInventory->SetWindows(newset);
+				}
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);

@@ -11,8 +11,7 @@
 #include "Game.h"
 #include "MainMenuState.h"
 #include "GameplayState.h"
-
-#include "Button.h"
+#include "StatsState.h"
 
 #include "../TinyXML/tinyxml.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
@@ -20,13 +19,8 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_String.h"
 
-#include "../SGD Wrappers/SGD_EventManager.h"
-#include "../SGD Wrappers/SGD_Event.h"
-#include "../SGD Wrappers/SGD_MessageManager.h"
-#include "../SGD Wrappers/SGD_Message.h"
-#include "MessageID.h"
-
 #include "BitmapFont.h"
+#include "Button.h"
 
 #include "Entity.h"
 #include "EntityManager.h"
@@ -95,6 +89,10 @@ using namespace std;
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+#if ARCADE_MODE
+	m_bAccept = true;
+	m_vtStick = SGD::Vector { 0.0f , 0.0f };
+#endif
 }
 
 
@@ -126,13 +124,30 @@ using namespace std;
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) down
-	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if ARCADE_MODE
+	 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if ( m_vtStick == SGD::Vector { 0.0f , 0.0f } )
+		 m_bAccept = true;
+#endif
+
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
@@ -140,21 +155,39 @@ using namespace std;
 		// Wrap around the options
 		if (m_nCursor > MENU_GOBACK)
 			m_nCursor = MENU_MUSICVOL;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) up
-	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_MUSICVOL)
 			m_nCursor = MENU_GOBACK;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+	if (m_bTHEBOOL)
 	{
 		// Switch table for the item selected
 		switch (m_nCursor)
@@ -163,6 +196,15 @@ using namespace std;
 			{
 				// Toggle fullscreen
 				pGame->ToggleFullscreen();
+			}
+				break;
+
+			case MENU_STATS:
+			{
+				// Go to the stats screen
+				pGame->Transition(StatsState::GetInstance());
+				// Exit immediately
+				return true;
 			}
 				break;
 
@@ -181,8 +223,14 @@ using namespace std;
 	}
 	// --- Increasing an option ---
 	// If the right key (PC) or right dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.x > 0 && m_bAccept;
+#endif
 	// Increase the value
-	if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
+	if (m_bTHEBOOL)
 	{
 		switch (m_nCursor)
 		{
@@ -200,11 +248,20 @@ using namespace std;
 		}
 			break;
 		}
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// --- Decreasing an option ---
 	// If the left key (PC) or left dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
+#endif
 	// Decrease the value
-	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
+	if (m_bTHEBOOL)
 	{
 		switch (m_nCursor)
 		{
@@ -222,9 +279,18 @@ using namespace std;
 		}
 			break;
 		}
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+#endif
 	// Quick Exit Options
-	if(pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
+	if(m_bTHEBOOL)
 	{
 		// Save the options to a config file
 		SaveOptions(STRING_CONFIGPATH);
@@ -300,31 +366,38 @@ using namespace std;
 			m_pMainButton->Draw(musicVol, { 140, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		if (m_nCursor == MENU_SFXVOL)
-			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw(sfxVol, { 120, 270 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		// If the game is in fullscreen
 		if (Game::GetInstance()->GetFullscreen())
 		{
 			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
-				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: No", { 160, 340 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Fullscreen: No", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: No", { 160, 340 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 		// If the game is windowed
 		else
 		{
 			if (m_nCursor == MENU_TOGGLEFULLSCREEN)
-				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 340 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Fullscreen: Yes", { 160, 340 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
-		if (m_nCursor == MENU_GOBACK)
-			m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		// Draw Stats option
+		if (m_nCursor == MENU_STATS)
+			m_pMainButton->Draw("View Stats", { 170, 410 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("View Stats", { 170, 410 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
+		if (m_nCursor == MENU_GOBACK)
+			m_pMainButton->Draw("Go Back", { 150, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+		else
+			m_pMainButton->Draw("Go Back", { 150, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 	}
 
 

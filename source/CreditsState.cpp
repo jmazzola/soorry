@@ -90,6 +90,11 @@ using namespace std;
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+
+#if ARCADE_MODE
+	m_vtStick = {0.0f, 0.0f};
+	m_bAccept = true;
+#endif
 }
 
 
@@ -125,6 +130,7 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+#if !ARCADE_MODE
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
@@ -134,7 +140,16 @@ using namespace std;
 		pGame->Transition(MainMenuState::GetInstance());
 		return true;
 	}
+#endif
 
+#if ARCADE_MODE
+	if(pInput->IsButtonPressed(0, 0))
+	 {
+	 // Since there's only one state..go back to main menu
+		Game::GetInstance()->Transition(MainMenuState::GetInstance());
+		return true;
+	 }
+#endif
 	return true;	// keep playing
 }
 
@@ -205,7 +220,8 @@ using namespace std;
 					  Justin Mazzola\n\
 					  Justin Patterson\n\n\
 					  Special Thanks\n\
-					  Jordan Butler for ideas.";
+					  Jordan Butler for ideas.\n\
+					  Ryan Simmons' Bookbag";
 
 	// If we're transitioning
 	if (IsTransitioning())

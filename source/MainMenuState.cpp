@@ -110,6 +110,9 @@ using namespace std;
 	//Play Audio
 	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
 	pAudio->PlayAudio(m_hMenuMusic, true);
+	m_bAccept = true;
+	m_bTHEBOOL = false;
+	m_vtStick = SGD::Vector { 0.0f , 0.0f };
 }
 
 
@@ -148,23 +151,47 @@ using namespace std;
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	
-	if (pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B))
-		m_nCursor = MENU_EXIT;
-
 	// If we're transitioning, disable input
 	if (IsTransitioning())
 		return false;
 
-	if(pInput->IsKeyPressed(SGD::Key::P))
-	{
-		pGame->ChangeState(StatsState::GetInstance());
-		return true;
-	}
+#if ARCADE_MODE
+	 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+	//if(pInput->IsKeyPressed(SGD::Key::P))
+	//{
+	//	pGame->ChangeState(StatsState::GetInstance());
+	//	return true;
+	//}
+
+	 if ( m_vtStick == SGD::Vector { 0.0f , 0.0f } )
+		 m_bAccept = true;
+#endif
+
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+#endif
+	if (m_bTHEBOOL)
+		m_nCursor = MENU_EXIT;
+
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = m_vtStick.x > 0 && m_bAccept;
+#endif
 	// Move the cursor (selected item) down
-	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+	if (m_bTHEBOOL)
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
@@ -172,22 +199,40 @@ using namespace std;
 		// Wrap around the options
 		if (m_nCursor > MENU_EXIT)
 			m_nCursor = MENU_START;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
+#endif
 	// Move the cursor (selected item) up
-	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+	if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 	{
 		--m_nCursor;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_START)
 			m_nCursor = MENU_EXIT;
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+	if (m_bTHEBOOL)
 	{
 		// Switch table for the item selected
 		switch (m_nCursor)
@@ -238,6 +283,10 @@ using namespace std;
 
 			break;
 		}
+		
+
+		
+
 
 #if _DEBUG	// if statement that says 'if we're running in debug mode' (Visual Studio goody :P)
 		// this won't work in release ;3
@@ -271,6 +320,7 @@ using namespace std;
 		}
 
 #endif
+
 	}
 
 	return true;	// keep playing
@@ -295,8 +345,6 @@ using namespace std;
 		// Reset the transition time to allow for transitions again
 		m_fTransitionTime = TRANSITION_TIME;
 	}
-
-	// Check collisions
 }
 
 

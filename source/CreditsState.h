@@ -86,6 +86,9 @@ private:
 	int topMargin;
 	int bottomMargin;
 
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
+
 	// Message Callback Function:
 	//static void MessageProc( const SGD::Message* pMsg );
 };

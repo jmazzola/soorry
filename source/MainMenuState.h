@@ -14,7 +14,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
-
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 /**************************************************************/
 // Forward class declaration
@@ -103,7 +103,9 @@ private:
 	// Enumerations
 	enum MenuOption { MENU_START, MENU_HOWTOPLAY, MENU_OPTIONS, MENU_CREDITS, MENU_EXIT };
 
-
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 	// Message Callback Function:
 	//static void MessageProc( const SGD::Message* pMsg );
 };

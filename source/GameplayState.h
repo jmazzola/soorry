@@ -1,6 +1,7 @@
 /***************************************************************
 |	File:		GameplayState.h
-|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow & James Sylvester
+|	Author:		Justin Mazzola & Justin Patterson & Matthew Salow &
+|				Ryan Simmons & James Sylvester
 |	Course:		SGP
 |	Purpose:	This state is the game. Like the whole game.
 ***************************************************************/
@@ -12,6 +13,7 @@
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 #include "../SGD Wrappers/SGD_Listener.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
 
 /**************************************************************/
@@ -60,6 +62,8 @@ public:
 	ZombieFactory* GetZombieFactory() const;
 	char GetCurrentGameSlot() const;
 	void SetCurrentGameSlot(char slot);
+	int GetGameMode() const;
+	void SetGameMode(int gameMode);
 
 	// Create and or save the game
 	void SaveGame(bool newFile);
@@ -103,6 +107,7 @@ private:
 	SGD::Point m_ptPlayerSpawnPoint;
 	StatTracker* m_pStatTracker;
 	char m_nCurrGameSlot;
+	int m_nGamemode;
 
 	/**********************************************************/
 	// FPS
@@ -243,6 +248,11 @@ private:
 
 	// Tower recipes
 	TowerFlyweight* m_pTowerFlyweight;
+
+	// ARCADEMODE STUFF
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 };
 
 #endif //GAMEPLAYSTATE_H
