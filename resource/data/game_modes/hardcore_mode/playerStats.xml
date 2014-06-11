@@ -2,9 +2,9 @@
 <player_stats>
   <health value="50"/>
   <speed value="200"/>
-  <walls amount="15"/>
+  <walls amount="20"/>
   <windows amount="0"/>
-  <bear_traps amount="10"/>
+  <bear_traps amount="0"/>
   <mines amount="0"/>
   <machine_guns amount="0"/>
   <maple_syrups amount="0"/>

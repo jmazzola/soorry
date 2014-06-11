@@ -218,7 +218,6 @@
 		// Render the background
 		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
-
 		if (m_nCursor == ARCADE)
 			m_pMainButton->Draw("ARCADE", { 120, 180 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else

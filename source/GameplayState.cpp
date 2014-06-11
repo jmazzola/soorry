@@ -299,7 +299,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -2629,7 +2629,6 @@ void GameplayState::RenderLoss(void)
 
 
 }
-
 
 void GameplayState::LoadEnemyRecipes(string fileName)
 {
