@@ -75,7 +75,7 @@ void TrickShotBullet::Update ( float dt )
 
 void TrickShotBullet::Bounce (std::vector<SGD::Rectangle> hit)
 {
-	
+	// Multiple collisions
 	if ( hit.size() > 1)
 	{
 		int LxHits = 0;
@@ -83,6 +83,8 @@ void TrickShotBullet::Bounce (std::vector<SGD::Rectangle> hit)
 		int TyHits = 0;
 		int ByHits = 0;
 		SGD::Rectangle me = GetRect ();
+		// Find out how many intersecting rectangles of which your sides are the closest to
+		// the center of
 		for ( unsigned int i = 0; i < hit.size(); i++ )
 		{
 			SGD::Rectangle section = GetRect ().ComputeIntersection ( hit[i] );
@@ -97,6 +99,7 @@ void TrickShotBullet::Bounce (std::vector<SGD::Rectangle> hit)
 				ByHits++;
 		}
 		
+		
 		if(LxHits != RxHits && !m_bResolvingX)
 		{
 			m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
@@ -105,6 +108,7 @@ void TrickShotBullet::Bounce (std::vector<SGD::Rectangle> hit)
 		}
 		else if(LxHits == RxHits)
 			m_bResolvingX = false;
+
 		if(TyHits != ByHits && !m_bResolvingY)
 		{
 			m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
@@ -149,54 +153,75 @@ void TrickShotBullet::Bounce (std::vector<SGD::Rectangle> hit)
 			m_bResolvingY = true;
 		}
 		// Hit on corner
-		else
+		else if( !m_bResolvingX && !m_bResolvingY)
 		{
-			float xDiff = section.right - section.left;
-			float yDiff = section.bottom - section.top;
-			if ( xDiff < yDiff && !m_bResolvingY)
+			// Going Up
+			if(m_vtVelocity.y < 0 )
 			{
-				m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
-				m_vForce.y = -m_vForce.y * 0.9f;
-				m_bResolvingY = true;
+				if ( section.top == me.top )
+				{
+					m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
+					m_vForce.y = -m_vForce.y * 0.9f;
+					m_bResolvingY = true;
+				}
 			}
-			else if(yDiff < xDiff && !m_bResolvingX)
+			// Going Down
+			else if(m_vtVelocity.y > 0)
 			{
-				m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
-				m_vForce.x = -m_vForce.x * 0.9f;
-				m_bResolvingX = true;
+				if(section.bottom == me.bottom)
+				{
+					m_vtVelocity.y = -m_vtVelocity.y * 0.9f;
+					m_vForce.y = -m_vForce.y * 0.9f;
+					m_bResolvingY = true;
+				}
 			}
-			
-			
+
+			// Going Left
+			if(m_vtVelocity.x < 0)
+			{
+				if ( section.left == me.left )
+				{
+					m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
+					m_vForce.x = -m_vForce.x * 0.9f;
+					m_bResolvingY = true;
+				}
+			}
+			// Going Right
+			else if(m_vtVelocity.x > 0)
+			{
+				if ( section.right == me.right )
+				{
+					m_vtVelocity.x = -m_vtVelocity.x * 0.9f;
+					m_vForce.x = -m_vForce.x * 0.9f;
+					m_bResolvingY = true;
+				}			
+			}			
 		}
 		
 		m_rLastHit = hit;
 	}
-	else
+	else if (hit.size() == 0)
 	{
 		m_bResolvingX = false;
 		m_bResolvingY = false;
 	}
 }
 
-void TrickShotBullet::Render()
+void TrickShotBullet::Render ()
 {
-	
+
 	// Get the current frame
-	int frame = GetSprite()->GetCurrFrame();
+	int frame = GetSprite ()->GetCurrFrame ();
 
 	// Find the center of the image
 	SGD::Vector center;
-	center.x = GetSprite()->GetFrame(frame).GetFrameRect().right - GetSprite()->GetFrame(frame).GetFrameRect().left;
-	center.y = GetSprite()->GetFrame(frame).GetFrameRect().bottom - GetSprite()->GetFrame(frame).GetFrameRect().top;
+	center.x = GetSprite ()->GetFrame ( frame ).GetFrameRect ().right - GetSprite ()->GetFrame ( frame ).GetFrameRect ().left;
+	center.y = GetSprite ()->GetFrame ( frame ).GetFrameRect ().bottom - GetSprite ()->GetFrame ( frame ).GetFrameRect ().top;
 	center.x /= 2;
 	center.y /= 2;
 
 	// Render
-	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y, m_fRotation, center);
-
-	SGD::Rectangle me = SGD::Rectangle(SGD::Point(GetRect().left - Camera::x, GetRect().top - Camera::y), SGD::Size(16.0f, 16.0f));
-	
-	SGD::GraphicsManager::GetInstance()->DrawRectangle(me, SGD::Color(255,0,0));
+	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , m_fRotation , center );
 }
 
 void TrickShotBullet::HandleEvent(const SGD::Event * pEvent)

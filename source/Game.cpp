@@ -213,8 +213,8 @@ int Game::Main(void)
 		else if(X > window.right && m_bFullscreen == true)
 			X = window.right;
 
-		if ( Y < window.top + 28 && m_bFullscreen == false)
-			Y = window.top + 28;
+		if ( Y < window.top + 40 && m_bFullscreen == false)
+			Y = window.top + 40;
 		else if(Y < window.top && m_bFullscreen == true)
 			Y = window.top;
 

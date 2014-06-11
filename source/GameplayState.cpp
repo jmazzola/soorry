@@ -2027,7 +2027,7 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
-	SGD::Point playerCenter = m_pPlayer->GetPosition() + SGD::Vector(16, 16);
+	SGD::Point playerCenter = m_pPlayer->GetPosition();
 
 	switch (_Weapon)
 	{
