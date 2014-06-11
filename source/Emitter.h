@@ -24,7 +24,7 @@ public:
 	bool Update(float dt);
 	void Render();
 	void load();
-	void load(SGD::Point);
+	void load ( SGD::Point , bool vector = false , SGD::Vector direction = SGD::Vector { 0.0f , 0.0f } );
 	ParticleFlyweight* particleFlyweight;
 	bool isLooping;
 	SGD::Point position;
