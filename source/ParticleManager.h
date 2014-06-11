@@ -16,7 +16,7 @@ public:
 	void unload();
 	static ParticleManager* GetInstance();
 	void activate(std::string,int,int);
-	void activate(std::string _emitterID, Entity* _entity, int _x, int _y);
+	void activate ( std::string _emitterID , Entity* _entity , int _x , int _y , bool vector = false , SGD::Vector direction = SGD::Vector { 0.0f , 0.0f } );
 	ParticleManager();
 	~ParticleManager();
 	bool loadEmitter(std::string fileName);

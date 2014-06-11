@@ -68,12 +68,12 @@ void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 	activeEmitters.push_back(tempEmitter);
 }
 
-void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y)
+void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y, bool vector, SGD::Vector _direction)
 {
 	Emitter* tempEmitter = new Emitter;
  	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
-	tempEmitter->load(_entity->GetPosition());
+	tempEmitter->load(_entity->GetPosition(), vector, _direction);
 	tempEmitter->particleFlyweight->entity = _entity;
 	tempEmitter->emitterID = activeEmitters.size();
 	activeEmitters.push_back(tempEmitter);

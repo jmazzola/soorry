@@ -24,5 +24,8 @@ public:
 	float				maxLifeTime;
 	float				rotation;
 	float				rotationRate;
+	bool				velOverride;
+	SGD::Vector			velocityOS;
+	SGD::Vector			velocityOE;
 };
 
