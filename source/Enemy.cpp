@@ -170,21 +170,28 @@ int Enemy::GetType() const
 {
 	int pastHealth = (int)m_nCurrHealth;
 	int type = pOther->GetType();
+	bool shot = false;
 	switch (pOther->GetType())
 	{
 	case ENT_BULLET_ASSAULT:
 	{
-		m_nCurrHealth -= 40;
+		const Projectile* proj = reinterpret_cast<const Projectile*>(pOther);
+		m_nCurrHealth -= proj->GetDamage();
+		shot = true;
 	}
 			break;
 	case ENT_BULLET_SHOTGUN:
 	{
-		m_nCurrHealth -= 8;
+		const Projectile* proj = reinterpret_cast<const Projectile*>(pOther);
+		m_nCurrHealth -= proj->GetDamage();
+		shot = true;
 	}
 			break;
 	case ENT_BULLET_ROCKET:
 	{
-		m_nCurrHealth -= 100;
+		const Projectile* proj = reinterpret_cast<const Projectile*>(pOther);
+		m_nCurrHealth -= proj->GetDamage();
+		shot = true;
 	}
 			break;
 	case ENT_BULLET_TRICKSHOT:
@@ -195,8 +202,10 @@ int Enemy::GetType() const
 			SGD::Event* pEvent = new SGD::Event("IM_HIT", nullptr, this);
 			pEvent->QueueEvent();
 			m_nCurrHealth -= tsb->GetDamage();
+			shot = true;
 		}
 		break;
+		
 	}
 	case ENT_TRAP_BEARTRAP:
 	{
@@ -206,6 +215,7 @@ int Enemy::GetType() const
 	case ENT_MACHINE_GUN_BULLET:
 	{
 		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+		shot = true;
 	}
 			break;
 	case ENT_MAPLE_SYRUP_BULLET:
@@ -237,12 +247,15 @@ int Enemy::GetType() const
 	}
 		break;
 	}
-		if (pastHealth > m_nCurrHealth)
-		{
-			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-			msg->QueueMessage();
-			msg = nullptr;
-		}
+		
+			const Entity* ent = dynamic_cast<const Entity*>(pOther);
+			if ( shot )
+			{
+				CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , 8 , 8 );
+				msg->QueueMessage ();
+				msg = nullptr;
+			}
+		
 }
 
 void Enemy::HandleEvent(const SGD::Event* pEvent)

@@ -300,7 +300,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
-	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -1154,7 +1154,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 		// Render the entities
 		m_pEntities->RenderAll();
-
+		// render particles
+		m_pParticleManager->Render();
 		// Draw health overlay
 		float currHealth = player->GetCurrHealth();
 		float maxHealth = player->GetMaxHealth();
@@ -1332,7 +1333,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
 						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 667, 496 }, SGD::Rectangle({ 0, 384 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
-
+					
 					// Draw the selected box based on the player's selected placeable
 					switch (player->GetCurrPlaceable())
 					{
@@ -1433,8 +1434,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					}
 				}
-				// render particles
-				m_pParticleManager->Render();
+				
 
 
 				// -- Draw the score --
@@ -1810,7 +1810,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		//Here you go Ryan
 		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset(), true, pCreateMessage->GetVector().ComputeNormalized());
 	}
 		break;
 	case MessageID::MSG_CREATE_TOWER:
@@ -2653,7 +2653,6 @@ void GameplayState::RenderLoss(void)
 
 
 }
-
 
 void GameplayState::LoadEnemyRecipes(string fileName)
 {

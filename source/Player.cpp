@@ -100,39 +100,60 @@ Player::Player () : Listener ( this )
 
 	m_pWeapons = new Weapon[ 4 ];
 #pragma region Load Weapons
-
-
-	//Assault rifle
 	Weapon tempWeapon;
-	tempWeapon.SetCurrAmmo ( 100 );
-	tempWeapon.SetMaxAmmo ( 500 );
-	tempWeapon.SetFireRate ( .2f );
-	tempWeapon.SetType ( Guns::TYPE_ASSAULT_RIFLE );
-	m_pWeapons[ 0 ] = tempWeapon;
 
-	//Shotgun
-	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 100 );
-	tempWeapon.SetMaxAmmo ( 500 );
-	tempWeapon.SetFireRate ( .5f );
-	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
-	m_pWeapons[ 1 ] = tempWeapon;
+	if (GameplayState::GetInstance()->GetGameMode() != 3)
+	{
+		//Assault rifle
+		tempWeapon.SetCurrAmmo(100);
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetFireRate(.2f);
+		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+		m_pWeapons[0] = tempWeapon;
+	}
+	else
+	{
+		//Assault rifle in beaver mode!
+		tempWeapon.SetCurrAmmo(1000);
+		tempWeapon.SetMaxAmmo(1000);
+		tempWeapon.SetFireRate(.02f);
+		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+		m_pWeapons[0] = tempWeapon;
+	}
 
-	//rocket launcher
-	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 50 );
-	tempWeapon.SetMaxAmmo ( 50 );
-	tempWeapon.SetFireRate ( 2 );
-	tempWeapon.SetType ( Guns::TYPE_SHOTGUN );
-	m_pWeapons[ 2 ] = tempWeapon;
+	if (GameplayState::GetInstance()->GetGameMode() != 3)
+	{
+		//Shotgun
+		tempWeapon;
+		tempWeapon.SetCurrAmmo(100);
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetFireRate(.5f);
+		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+		m_pWeapons[1] = tempWeapon;
+	}
 
-	//Trick Shot
-	tempWeapon;
-	tempWeapon.SetCurrAmmo ( 500 );
-	tempWeapon.SetMaxAmmo ( 500 );
-	tempWeapon.SetFireRate ( 0.75f );
-	tempWeapon.SetType ( Guns::TYPE_TRICKSHOT );
-	m_pWeapons[ 3 ] = tempWeapon;
+	if (GameplayState::GetInstance()->GetGameMode() != 3)
+	{
+		//rocket launcher
+		tempWeapon;
+		tempWeapon.SetCurrAmmo(50);
+		tempWeapon.SetMaxAmmo(50);
+		tempWeapon.SetFireRate(2);
+		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+		m_pWeapons[2] = tempWeapon;
+	}
+
+	if (GameplayState::GetInstance()->GetGameMode() != 3)
+	{
+		//Trick Shot
+		tempWeapon;
+		tempWeapon.SetCurrAmmo(500);
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetFireRate(0.75f);
+		tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+		m_pWeapons[3] = tempWeapon;
+	}
+
 #pragma endregion
 
 
@@ -1307,7 +1328,7 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		float damage = *((float*)pEvent->GetData ());
 		m_nCurrHealth -= damage;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Spurt1", this, 8, 8);
 		msg->QueueMessage();
 		msg = nullptr;
 		// Make sure we don't underflow
