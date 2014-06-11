@@ -2028,18 +2028,20 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 Entity* GameplayState::CreateProjectile(int _Weapon) const
 {
 	SGD::Point playerCenter = m_pPlayer->GetPosition();
-
 	switch (_Weapon)
 	{
 	case 0://Assault Rifle
 	{
+				// Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-			   pos.x += Camera::x - 8;
-			   pos.y += Camera::y - 8;
+			   pos.x += Camera::x;
+			   pos.y += Camera::y;
 			   SGD::Vector vec = pos - playerCenter;
 			   vec.Normalize();
 			   vec *= 1000;
@@ -2050,7 +2052,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		break;
 	case 1://Shotgun
 	{
-
+			  // Adjust for projectile to come from center
+			   playerCenter.x += 12;
+			   playerCenter.y += 12;
 			   ShotgunPellet* tempProj = new ShotgunPellet;
 			   tempProj->SetDamage(20);
 			   tempProj->SetLifeTime(5);
@@ -2090,8 +2094,11 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   return tempProj;
 	}
 		break;
-	case 3://TrickShot
+	case 3://HatTrick
 	{
+			// Adjust for projectile to come from center
+			playerCenter.x += 8;
+			playerCenter.y += 8;
 			TrickShotBullet* tsb = new TrickShotBullet;
 			tsb->SetDamage(75);
 			tsb->SetPosition(playerCenter);

@@ -400,8 +400,8 @@ void Player::Update ( float dt )
 		SGD::Point self = GetPosition();
 		self.x -= (float)Camera::x;
 		self.y -= (float)Camera::y;
-		self.x += 16;
-		self.y += 16;
+		self.x += 8;
+		self.y += 8;
 
 		force.x = pInput->GetMousePosition().x - self.x;
 		force.y = pInput->GetMousePosition().y - self.y;
