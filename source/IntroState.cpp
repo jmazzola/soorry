@@ -217,17 +217,17 @@ using namespace std;
 		else
 		{
 			// Fade in text
-			m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 0, 0));
+			m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char((m_fTimeRemaining - 2.1f) * 255.0f), 255, 0, 0));
 			// Fade in the studio logo
-			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(m_fTimeRemaining * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
+			pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char((m_fTimeRemaining - 2.1f) * 255.0f), 255, 255, 255), { 0.6f, 0.6f });
 		}
 	}
 	else if (m_fTimeRemaining >= 3.0f && m_fTimeRemaining <= 4.0f)
 	{
 		// Fade out text
-		m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 0, 0));
+		m_pFont->Draw("Produced by", 320, 80, 0.6f, SGD::Color(char(255.0f - char((m_fTimeRemaining - 3.0f) * 255.0f)), 255, 0, 0));
 		// Fade out the logo
-		pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char(m_fTimeRemaining * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
+		pGraphics->DrawTexture(m_hStudioLogo, { 300, 128 }, 0, {}, SGD::Color(char(255.0f - char((m_fTimeRemaining - 3.0f) * 255.0f)), 255, 255, 255), { 0.6f, 0.6f });
 	}
 	else if (m_fTimeRemaining >= 4.5f)
 	{

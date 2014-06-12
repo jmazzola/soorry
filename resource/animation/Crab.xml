@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <animation Sprites="1">
-  <sprite>crab.png</sprite>
+  <sprite>bearTrap.png</sprite>
   <spriteID>crab</spriteID>
   <isLooping isIt="0" />
   <Frames numbers="1" />
