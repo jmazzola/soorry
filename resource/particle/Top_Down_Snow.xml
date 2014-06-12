@@ -2,9 +2,9 @@
 <ParticleManager>
   <emitter>
     <isLooping bool="1" />
-    <spawnRate rate="1" />
-    <size width="800" height="600" />
-    <particles max="500" />
+    <spawnRate rate="1000" />
+    <size width="8000" height="6000" />
+    <particles max="5000" />
     <shape number="0" />
   </emitter>
   <flyweight>
