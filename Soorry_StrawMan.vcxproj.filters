@@ -722,6 +722,12 @@
     <ClInclude Include="source\CreateExplosionMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\CreateEventAreaMessage.h">
+      <Filter>Game Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EventArea.h">
+      <Filter>Game Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resource\world\testWorld.xml">

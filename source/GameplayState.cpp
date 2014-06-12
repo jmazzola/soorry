@@ -184,6 +184,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
 	player->SetSuperLength(4.0f);
+	if(m_nGamemode == 4)
+		player->SetRunningMan(true);
+	else
+		player->SetRunningMan(false);
 
 	// Load player stats
 	TiXmlDocument doc;
@@ -321,7 +325,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle1.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -356,8 +363,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
 		break;
 	case 4:
-		// To be replaced with Ryan's file
-		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		gameModeFileName = "resource/data/game_modes/running_man_mode/runningMan.xml";
 	}
 
 	// Create a TinyXML document
@@ -508,6 +514,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
+	msg->QueueMessage();
+	msg = nullptr;
+	
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
 	m_bAccept = true;
@@ -1843,7 +1853,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity()->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
@@ -1851,7 +1861,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		//Here you go Ryan
 		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset(), true, pCreateMessage->GetVector().ComputeNormalized());
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity()->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset(), true, pCreateMessage->GetVector().ComputeNormalized());
+	}
+		break;
+	case MessageID::MSG_CREATE_POSITIONED_PARTICLE:
+	{
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_TOWER:

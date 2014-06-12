@@ -27,6 +27,13 @@ CreateParticleMessage::CreateParticleMessage(std::string emitterID, Entity* enti
 	m_nYOffset = YOffset;
 }
 
+CreateParticleMessage::CreateParticleMessage(std::string emitterID, SGD::Point position, int XOffset, int YOffset) : Message(MessageID::MSG_CREATE_POSITIONED_PARTICLE)
+{
+	m_sEmitterID = emitterID;
+	m_pPosition = position;
+	m_nXOffset = XOffset;
+	m_nYOffset = YOffset;
+}
 
 CreateParticleMessage::~CreateParticleMessage()
 {
@@ -54,6 +61,10 @@ int CreateParticleMessage::GetYOffset()const
 {
 	return m_nYOffset;
 }
+SGD::Point CreateParticleMessage::GetPosition() const
+{
+	return m_pPosition;
+}
 SGD::Vector CreateParticleMessage::GetVector() const
 {
 	return m_vVector;
@@ -78,6 +89,10 @@ void CreateParticleMessage::SetXOffset(int _XOffset)
 void CreateParticleMessage::SetYOffset(int _YOffset)
 {
 	m_nXOffset = _YOffset;
+}
+void CreateParticleMessage::SetPosition(SGD::Point position)
+{
+	m_pPosition = position;
 }
 void CreateParticleMessage::SetVector(SGD::Vector _Vector)
 {

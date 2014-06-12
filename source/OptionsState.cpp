@@ -400,6 +400,19 @@ using namespace std;
 			m_pMainButton->Draw("Go Back", { 150, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 #else
+
+		// Create the string for the button
+		string musicVol = "Music Vol: ";
+		// Grab the volume
+		int musicVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+		// Add it to the string since C++ doesn't support [ string + "" ] 
+		musicVol.append(std::to_string(musicVolValue));
+
+		// Same stuff here for the sfx vol
+		string sfxVol = "SFX Vol: ";
+		int sfxVolValue = pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects);
+		sfxVol.append(std::to_string(sfxVolValue));
+
 		if (m_nCursor == MENU_MUSICVOL)
 			m_pMainButton->Draw(musicVol, { 140, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else

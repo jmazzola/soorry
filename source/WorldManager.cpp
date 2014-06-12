@@ -8,6 +8,9 @@
 
 #include "CreatePlayerSpawnMessage.h"
 #include "CreateShopMessage.h"
+#include "CreateBeaverZombieMessage.h"
+#include "CreateSlowZombieMessage.h"
+#include "CreateFastZombieMessage.h"
 
 #include "IEntity.h"
 
@@ -590,6 +593,30 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	{
 		CreateShopMessage* shop = new CreateShopMessage((float)_tile.GetX() * m_nTileWidth, (float)_tile.GetY() * m_nTileHeight);
 		shop->QueueMessage();
+	}
+
+	//Spawn 1 Zombie
+	if (_tile.GetTriggerInit() == "SPAWN_1_ZOMBIE")
+	{
+		CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+	}
+
+	//Spawn 1 Slow Zombie
+	if (_tile.GetTriggerInit() == "SPAWN_1_SLOW_ZOMBIE")
+	{
+		CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		pMsg->QueueMessage();
+		pMsg = nullptr;
+	}
+
+	//Spawn 1 Beaver
+	if (_tile.GetTriggerInit() == "SPAWN_1_BEAVER")
+	{
+		CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		pMsg->QueueMessage();
+		pMsg = nullptr;
 	}
 }
 

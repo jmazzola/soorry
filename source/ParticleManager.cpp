@@ -52,7 +52,7 @@ void ParticleManager::unload()
 	for (auto iter = loadedEmitters.begin(); iter != loadedEmitters.end(); ++iter)
 	{
 		SGD::GraphicsManager::GetInstance()->UnloadTexture(loadedEmitters.at(iter->first)->particleFlyweight->image);
-		delete loadedEmitters.at(iter->first);
+		delete iter->second;
 	}
 	activeEmitters.clear();
 	loadedEmitters.clear();
@@ -68,13 +68,13 @@ void ParticleManager::activate(std::string _emitterID,int _x, int _y)
 	activeEmitters.push_back(tempEmitter);
 }
 
-void ParticleManager::activate(std::string _emitterID, Entity* _entity, int _x, int _y, bool vector, SGD::Vector _direction)
+void ParticleManager::activate(std::string _emitterID, SGD::Point position, int _x, int _y, bool vector, SGD::Vector _direction)
 {
 	Emitter* tempEmitter = new Emitter;
  	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
-	tempEmitter->load(_entity->GetPosition(), vector, _direction);
-	tempEmitter->particleFlyweight->entity = _entity;
+	SGD::Point pos = position;
+	tempEmitter->load(pos, vector, _direction);
 	tempEmitter->emitterID = activeEmitters.size();
 	activeEmitters.push_back(tempEmitter);
 }
@@ -85,7 +85,7 @@ bool ParticleManager::loadEmitter(std::string fileName)
 	if (doc.LoadFile())
 	{
 		//Temporary variables for transfering data
-		double width, height, tempDouble, x, y, a, r, g, b;
+		float width, height, tempDouble, x, y, a, r, g, b;
 		int tempInt;
 		bool tempBool;
 		std::string tempStr;
@@ -104,12 +104,12 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		tempEmitter->isLooping = tempBool;
 		//Read XML for spawnRate
 		data = data->NextSiblingElement("spawnRate");
-		data->Attribute("rate", &tempDouble);
+		data->QueryFloatAttribute("rate", &tempDouble);
 		tempEmitter->spawnRate = (float)tempDouble;
 		//Read XML for Emitter size
 		data = data->NextSiblingElement("size");
-		data->Attribute("width", &width);
-		data->Attribute("height", &height);
+		data->QueryFloatAttribute("width", &width);
+		data->QueryFloatAttribute("height", &height);
 		tempEmitter->size = SGD::Size((float)width, (float)height);
 		//Read XML for max number of particles
 		data = data->NextSiblingElement("particles");
@@ -124,12 +124,12 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		//Read XML for Flyweight velocity
 		//get start velocity
 		data = flyweight->FirstChildElement("velocity");
-		data->Attribute("startx", &x);
-		data->Attribute("starty", &y);
+		data->QueryFloatAttribute("startx", &x);
+		data->QueryFloatAttribute("starty", &y);
 		tempFlyweight->startVelocity = SGD::Vector((float)x, (float)y);
 		//get end velocity
-		data->Attribute("endx", &x);
-		data->Attribute("endy", &y);
+		data->QueryFloatAttribute("endx", &x);
+		data->QueryFloatAttribute("endy", &y);
 		tempFlyweight->endVelocity = SGD::Vector((float)x, (float)y);
 		//get spread bool
 		data->Attribute("spread", &tempInt);
@@ -138,45 +138,45 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		tempFlyweight->isSpread = tempBool;
 		//Read XML for flyweight rotation
 		data = data->NextSiblingElement("rotate");
-		data->Attribute("startMax", &tempDouble);
+		data->QueryFloatAttribute("startMax", &tempDouble);
 		tempFlyweight->startMaxRotation = (float)tempDouble;
-		data->Attribute("startMin", &tempDouble);
+		data->QueryFloatAttribute("startMin", &tempDouble);
 		tempFlyweight->startMinRotation = (float)tempDouble;
-		data->Attribute("endMax", &tempDouble);
+		data->QueryFloatAttribute("endMax", &tempDouble);
 		tempFlyweight->endMaxRotation = (float)tempDouble;
-		data->Attribute("endMin", &tempDouble);
+		data->QueryFloatAttribute("endMin", &tempDouble);
 		tempFlyweight->endMinRotation = (float)tempDouble;
 		//Read XML for Flyweight color
 		data = data->NextSiblingElement("color");
-		data->Attribute("startMaxA", &a);
-		data->Attribute("startR", &r);
-		data->Attribute("startG", &g);
-		data->Attribute("startB", &b);
+		data->QueryFloatAttribute("startMaxA", &a);
+		data->QueryFloatAttribute("startR", &r);
+		data->QueryFloatAttribute("startG", &g);
+		data->QueryFloatAttribute("startB", &b);
 		tempFlyweight->startColor = SGD::Color((unsigned char)a, (unsigned char)r, (unsigned char)g, (unsigned char)b);
-		data->Attribute("endMaxA", &a);
-		data->Attribute("endR", &r);
-		data->Attribute("endG", &g);
-		data->Attribute("endB", &b);
+		data->QueryFloatAttribute("endMaxA", &a);
+		data->QueryFloatAttribute("endR", &r);
+		data->QueryFloatAttribute("endG", &g);
+		data->QueryFloatAttribute("endB", &b);
 		tempFlyweight->endColor = SGD::Color((unsigned char)a, (unsigned char)r, (unsigned char)g, (unsigned char)b);
 		//Read XML Flyweight Scale
 		data = data->NextSiblingElement("scale");
-		data->Attribute("startx", &x);
-		data->Attribute("starty", &y);
+		data->QueryFloatAttribute("startx", &x);
+		data->QueryFloatAttribute("starty", &y);
 		tempFlyweight->startScale = SGD::Size((float)x, (float)y);
-		data->Attribute("endx", &x);
-		data->Attribute("endy", &y);
+		data->QueryFloatAttribute("endx", &x);
+		data->QueryFloatAttribute("endy", &y);
 		tempFlyweight->endScale = SGD::Size((float)x, (float)y);
 		//Read XML Flyweight image size
 		data = data->NextSiblingElement("size");
-		data->Attribute("width", &tempDouble);
+		data->QueryFloatAttribute("width", &tempDouble);
 		tempFlyweight->imageSize.width = (float)tempDouble;
-		data->Attribute("height", &tempDouble);
+		data->QueryFloatAttribute("height", &tempDouble);
 		tempFlyweight->imageSize.height = (float)tempDouble;
 		//Read XML Flyweight lifetiem
 		data = data->NextSiblingElement("lifetime");
-		data->Attribute("max", &tempDouble);
+		data->QueryFloatAttribute("max", &tempDouble);
 		tempFlyweight->maxLifeTime = (float)tempDouble;
-		data->Attribute("min", &tempDouble);
+		data->QueryFloatAttribute("min", &tempDouble);
 		tempFlyweight->minLifeTime = (float)tempDouble;
 		//Read XML for the Flyweight Particle ID
 		data = data->NextSiblingElement("particleID");
@@ -197,10 +197,8 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		emitterKeyPair.first = tempFlyweight->particleID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
-
 		return true;
 	}
 	else
 		return false;
 }
-

@@ -124,6 +124,7 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 void Emitter::load()
 {
 	
+
 	if (allParticlesCreated != true)
 	{
 		for (unsigned int i = 0; i < maxParticles; i++)
@@ -135,7 +136,7 @@ void Emitter::load()
 			//Take data from particle flyweight and send it to the particle
 			tempParticle->Color = particleFlyweight->startColor;
 			//Create rates to update particles
-			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
+			tempParticle->maxLifeTime = (rand() % ((int)particleFlyweight->maxLifeTime * 100)) / 100.0f + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			tempParticle->scale = particleFlyweight->startScale;
 			if (!particleFlyweight->isSpread)
@@ -237,7 +238,7 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 			//Take data from particle flyweight and send it to the particle
 			tempParticle->Color = particleFlyweight->startColor;
 			//Create rates to update particles
-			tempParticle->maxLifeTime = rand() % (int)particleFlyweight->maxLifeTime + particleFlyweight->minLifeTime;
+			tempParticle->maxLifeTime = (rand() % (int)(particleFlyweight->maxLifeTime * 100)) / 100.0f  + particleFlyweight->minLifeTime;
 			tempParticle->currLifeTime = tempParticle->maxLifeTime;
 			tempParticle->scale = particleFlyweight->startScale;
 			if (!particleFlyweight->isSpread)
@@ -249,11 +250,9 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 					float rot = (float)(rand() % 45) ;
 					SGD::Vector rotated = _direction.ComputeRotated(rot);
 					rotated *= 100;
-					tempParticle->velocity.x = rotated.x * (float)(rand() % 100 / 100.0f);
-					tempParticle->velocity.y = rotated.y * (float)(rand() % 100 / 100.0f);
-
-					tempParticle->velocityOS = tempParticle->velocity;
-					tempParticle->velocityOE = rotated;
+					tempParticle->velocity = rotated;
+					tempParticle->velocityOS = rotated;
+					tempParticle->velocityOE = rotated * (float)(rand() % 100 / 100.0f);
 					tempParticle->velOverride = true;
 				}
 			}
@@ -266,28 +265,26 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 				}
 				else
 				{
-					float rot = (float)(rand() % 45);
-					SGD::Vector rotated = _direction.ComputeRotated(rot);
-					tempParticle->velocity.x = rotated.x * (float)(rand() % 100 / 100.0f);
-					tempParticle->velocity.y = rotated.y * (float)(rand() % 100 / 100.0f);
 
-					tempParticle->velocityOS = tempParticle->velocity;
-					tempParticle->velocityOE = rotated;
-					tempParticle->velOverride = true;
+					SGD::Vector rot = _direction;
+					rot.Rotate(((float)(rand() % 26) / 100.0f - .125f) * SGD::PI);
+					rot *= (float(rand() % 1000));
+					tempParticle->velocity = rot;
+					
 				}
 			}
 
 			if (particleFlyweight->startMaxRotation != 0)
-				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMaxRotation)) + particleFlyweight->startMinRotation;
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMaxRotation * 10)) / 10.0f + particleFlyweight->startMinRotation;
 			else if (particleFlyweight->startMinRotation != 0)
-				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMinRotation)) + particleFlyweight->startMaxRotation;
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->startMinRotation * 10)) / 10.0f + particleFlyweight->startMaxRotation;
 			else if (particleFlyweight->startMaxRotation == 0 && particleFlyweight->startMinRotation == 0)
 				tempParticle->rotation = 0;
 			float tempRotation = 0;
 			if (particleFlyweight->endMaxRotation != 0)
-				tempRotation = (rand() % (int)(particleFlyweight->endMaxRotation)) + particleFlyweight->endMinRotation;
+				tempRotation = (rand() % (int)(particleFlyweight->endMaxRotation * 10)) / 10.0f + particleFlyweight->endMinRotation;
 			else if (particleFlyweight->endMinRotation != 0)
-				tempParticle->rotation = (rand() % (int)(particleFlyweight->endMinRotation)) + particleFlyweight->endMaxRotation;
+				tempParticle->rotation = (rand() % (int)(particleFlyweight->endMinRotation * 10)) / 10.0f + particleFlyweight->endMaxRotation;
 			else if (particleFlyweight->endMaxRotation == 0 && particleFlyweight->endMinRotation == 0)
 				tempParticle->rotation = 0;
 
@@ -297,8 +294,8 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 			{
 			case 0://square
 			{
-				tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
-				tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
+				tempParticle->position.x = (float)(rand() % (int)size.width * 10) / 10.0f + position.x;
+				tempParticle->position.y = (float)(rand() % (int)size.height * 10) / 10.0f + position.y;
 			}
 				break;
 			case 1://circle
@@ -348,6 +345,7 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 			}
 			tempParticle->particleFlyweight = particleFlyweight;
 			tempParticle->currLifeTime = tempParticle->maxLifeTime;
+			
 			//add it to dead particles
 			deadParticles.push_back(tempParticle);
 			//Check if its zero, if it is then spawn the particles smoothly
@@ -389,13 +387,13 @@ bool Emitter::Update(float dt)
 				{
 				case 0://square
 				{
-					tempParticle->position.x = (float)(rand() % (int)size.width) + position.x;
-					tempParticle->position.y = (float)(rand() % (int)size.height) + position.y;
+					tempParticle->position.x = (float)(rand() % (int)size.width * 10) / 10.0f + position.x;
+					tempParticle->position.y = (float)(rand() % (int)size.height * 10) / 10.0f + position.y;
 				}
 					break;
 				case 1://circle
 				{
-					float radius = (float)(rand() % (int)size.width / 2);
+					float radius = (float)(rand() % (int)size.width * 10) / 20.0f;
 					//Point for the center of the emitter
 					SGD::Point center = SGD::Point(position.x + size.width / 2, position.y + size.width / 2);
 					//randomize the angle for the circle
