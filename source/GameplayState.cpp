@@ -1115,8 +1115,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
-	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false && m_pPlayer->GetCursorFaded())
+	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
 		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
+
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music

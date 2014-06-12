@@ -418,19 +418,6 @@ void Player::Update ( float dt )
 		m_fCursorFadeTimer = m_fCursorFadeLength;
 	}
 
-	// Hide the cursor if you haven't moved it recently
-	if ( m_fCursorFadeTimer <= 0 )
-	{
-		if ( pGraphics->IsCursorShowing () == true && m_pZombieWave->IsBuildMode() == false)
-			pGraphics->TurnCursorOff ();
-	}
-	// Show the cursor if you have moved it recently
-	else if ( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode () == false )
-	{
-		if ( pGraphics->IsCursorShowing () == false )
-			pGraphics->TurnCursorOn ();
-	}
-
 	// Input
 	// Move Left
 	if ( pInput->IsKeyDown ( SGD::Key::A ) == true || move.x < 0.0f )
