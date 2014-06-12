@@ -191,7 +191,7 @@ private:
 	Entity* CreateFastZombie(int _x, int _y) const;
 	Entity* CreateSlowZombie(int _x, int _y) const;
 	Entity* CreateProjectile(int _Weapon) const;
-	Entity* CreatePlaceable(int trap) const;
+	Entity* CreatePlaceable(SGD::Point pos, int trap) const;
 	Entity* CreatePickUp(int pick, SGD::Point pos) const;
 	Entity* CreateTower(int x, int y, int type) const;
 	Entity* CreateTrap(int x, int y, int type) const;

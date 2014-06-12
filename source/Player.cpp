@@ -797,16 +797,19 @@ void Player::Update ( float dt )
 
 		// Place item
 		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
-			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
+			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3))) ))
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == BEARTRAP && m_pInventory->GetBearTraps () > 0 )
 			{
 				// Cooldown for placing objects
-				m_fPlaceTimer = 1;
-				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				SGD::Point p((pos.x * pWorld->GetTileWidth()), (pos.y * pWorld->GetTileHeight()));
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( p , m_nCurrPlaceable );
 				pmsg->QueueMessage ();
 				pmsg = nullptr;
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+
 				// Decreasing the amount of bear traps left for the player
 				unsigned int newset = m_pInventory->GetBearTraps ();
 				--newset;
@@ -818,13 +821,16 @@ void Player::Update ( float dt )
 			}
 
 			// Mine
-			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
+			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0)
 			{
 				// Cooldown for placing objects
-				m_fPlaceTimer = 1;
-				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				SGD::Point p((pos.x * pWorld->GetTileWidth()), (pos.y * pWorld->GetTileHeight()));
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( p , m_nCurrPlaceable );
 				pmsg->QueueMessage ();
 				pmsg = nullptr;
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetMines ();
 				--newset;

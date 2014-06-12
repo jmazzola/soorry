@@ -35,7 +35,7 @@ void Projectile::Update(float dt)
 	{
 		if (this->GetType() == ENT_BULLET_ROCKET)
 		{
-			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, m_nDamage, m_fRadius);
+			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
 			msg->QueueMessage();
 		}
 
@@ -59,7 +59,7 @@ int Projectile::GetType() const
 	{
 		if (this->GetType() == ENT_BULLET_ROCKET)
 		{
-			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, m_nDamage, m_fRadius);
+			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
 			msg->QueueMessage();
 		}
 
