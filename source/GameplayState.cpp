@@ -207,6 +207,11 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	int lasers;
 	int lavaTraps;
 	int spikeTraps;
+	// Weapon bools
+	int hasAR;
+	int hasShotgun;
+	int hasRL;
+	int hasHattrick;
 
 	// Load data
 	pRoot->FirstChildElement("health")->Attribute("value", &health);
@@ -221,11 +226,20 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pRoot->FirstChildElement("lasers")->Attribute("amount", &lasers);
 	pRoot->FirstChildElement("lava_traps")->Attribute("amount", &lavaTraps);
 	pRoot->FirstChildElement("spike_traps")->Attribute("amount", &spikeTraps);
+	pRoot->FirstChildElement("hasAR")->Attribute("value", &hasAR);
+	pRoot->FirstChildElement("hasShotgun")->Attribute("value", &hasShotgun);
+	pRoot->FirstChildElement("hasRocketLauncher")->Attribute("value", &hasRL);
+	pRoot->FirstChildElement("hasHatTrick")->Attribute("value", &hasHattrick);
 
 	// Assign data
 	player->SetMaxHealth((float)health);
 	player->SetCurrHealth(player->GetMaxHealth());
 	player->SetSpeed((float)speed);
+
+	(hasAR == 0) ? player->SetAR(false) : player->SetAR(true);
+	(hasShotgun == 0) ? player->SetShotgun(false) : player->SetShotgun(true);
+	(hasRL == 0) ? player->SetRocketLauncher(false) : player->SetRocketLauncher(true);
+	(hasHattrick == 0) ? player->SetHatTrick(false) : player->SetHatTrick(true);
 	
 	Inventory* inventory = player->GetInventory();
 	inventory->SetWalls(walls);
@@ -1399,27 +1413,28 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					Weapon* weapons = player->GetWeapons();
 
 					// Assault Rifle
-					if (weapons[0].GetCurrAmmo() > 0)
+					if (player->HasAR() && weapons[0].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					// tint it red
+					else if (player->HasAR() && weapons[0].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					// Shotgun
-					if (weapons[1].GetCurrAmmo() > 0)
+					if (player->HasShotty() && weapons[1].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasShotty() && weapons[1].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					// Rocket Launcher
-					if (weapons[2].GetCurrAmmo() > 0)
+					if (player->HasRocketLauncher() && weapons[2].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasRocketLauncher() && weapons[2].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
-					// Who the fuck knows
-					if (weapons[3].GetCurrAmmo() > 0)
+					// Hat Trick
+					if (player->HasHatTrick() && weapons[3].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasHatTrick() && weapons[3].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					switch (player->GetCurrWeapon())
@@ -1544,7 +1559,26 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
 
 					// Draw the picture of the selected pic
-					pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					if (player->HasAR() && player->GetCurrWeapon() == 0)
+						pGraphics->DrawTextureSection(textures[0], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasAR() && player->GetCurrWeapon() == 0)
+						pGraphics->DrawTextureSection(textures[0], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
+					if (player->HasShotty() && player->GetCurrWeapon() == 1)
+						pGraphics->DrawTextureSection(textures[1], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasShotty() && player->GetCurrWeapon() == 1)
+						pGraphics->DrawTextureSection(textures[1], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 255, 0, 0 });
+
+					if (player->HasRocketLauncher() && player->GetCurrWeapon() == 2)
+						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasRocketLauncher() && player->GetCurrWeapon() == 2)
+						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
+					if (player->HasHatTrick() && player->GetCurrWeapon() == 3)
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasHatTrick() && player->GetCurrWeapon() == 3)
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
 
 					// Draw the ammo of the selected weapon
 					if (weapons[player->GetCurrWeapon()].GetCurrAmmo() < 10)
@@ -1554,7 +1588,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				}
 
 				//Draw the grid rectangle
-				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				/*SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
 				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
 				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/

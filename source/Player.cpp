@@ -93,6 +93,12 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetLaserTowers(20);
 	m_pInventory->SetLavaTraps(5);
 	m_pInventory->SetSpikeTraps(5);
+	m_pInventory->SetDroneCount(0);
+
+	m_bHasAssaultRifle = true;
+	m_bHasShotty = false;
+	m_bHasRocketz = false;
+	m_bHasHatTrick = false;
 
 	//Camera Lock - starts static
 	m_bStaticCamera = 1;
@@ -105,11 +111,22 @@ Player::Player () : Listener ( this )
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Assault rifle
-		tempWeapon.SetCurrAmmo(100);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.2f);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
-		m_pWeapons[0] = tempWeapon;
+		if (m_bHasAssaultRifle)
+		{
+			tempWeapon.SetCurrAmmo(200);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.2f);
+			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			m_pWeapons[0] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.2f);
+			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			m_pWeapons[0] = tempWeapon;
+		}
 	}
 	else
 	{
@@ -124,34 +141,64 @@ Player::Player () : Listener ( this )
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Shotgun
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(100);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.5f);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-		m_pWeapons[1] = tempWeapon;
+		if (m_bHasShotty)
+		{
+			tempWeapon.SetCurrAmmo(100);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.5f);
+			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			m_pWeapons[1] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.5f);
+			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			m_pWeapons[1] = tempWeapon;
+		}
 	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//rocket launcher
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(50);
-		tempWeapon.SetMaxAmmo(50);
-		tempWeapon.SetFireRate(2);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-		m_pWeapons[2] = tempWeapon;
+		if (m_bHasRocketz)
+		{
+			tempWeapon.SetCurrAmmo(20);
+			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetFireRate(2);
+			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
+			m_pWeapons[2] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetFireRate(2);
+			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
+			m_pWeapons[2] = tempWeapon;
+		}
 	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Trick Shot
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(500);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(0.75f);
-		tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
-		m_pWeapons[3] = tempWeapon;
+		if (m_bHasHatTrick)
+		{
+			tempWeapon.SetCurrAmmo(500);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(0.75f);
+			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+			m_pWeapons[3] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(0.75f);
+			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+			m_pWeapons[3] = tempWeapon;
+		}
 	}
 
 #pragma endregion
