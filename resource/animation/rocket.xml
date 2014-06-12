@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation Sprites="1">
-  <sprite>testParticle1.jpg</sprite>
+  <sprite>rocket.png</sprite>
   <spriteID>rocket</spriteID>
   <isLooping isIt="0" />
   <Frames numbers="1" />
   <frame>
-    <anchorPoint X="16" Y="16" />
-    <collisionRect left="-16" right="16" top="-16" bottom="16" />
-    <drawRect left="0" right="32" top="0" bottom="32" />
+    <anchorPoint X="0" Y="0" />
+    <collisionRect left="0" right="16" top="0" bottom="16" />
+    <drawRect left="0" right="16" top="0" bottom="16" />
     <duration time="0.1" />
   </frame>
 </animation>

@@ -31,6 +31,7 @@
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\CreateBeaverZombieMessage.cpp" />
     <ClCompile Include="source\CreateDroneMessage.cpp" />
+    <ClCompile Include="source\CreateExplosionMessage.cpp" />
     <ClCompile Include="source\CreateFastZombieMessage.cpp" />
     <ClCompile Include="source\CreateGrenadeMessage.cpp" />
     <ClCompile Include="source\CreateMachineGunBulletMessage.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="source\Enemy.cpp" />
     <ClCompile Include="source\Entity.cpp" />
     <ClCompile Include="source\EntityManager.cpp" />
+    <ClCompile Include="source\Explosion.cpp" />
     <ClCompile Include="source\FastZombie.cpp" />
     <ClCompile Include="source\FireRatePickup.cpp" />
     <ClCompile Include="source\Frame.cpp" />
@@ -141,6 +143,7 @@
     <ClInclude Include="source\Button.h" />
     <ClInclude Include="source\CreateBeaverZombieMessage.h" />
     <ClInclude Include="source\CreateDroneMessage.h" />
+    <ClInclude Include="source\CreateExplosionMessage.h" />
     <ClInclude Include="source\CreateFastZombieMessage.h" />
     <ClInclude Include="source\CreateGrenadeMessage.h" />
     <ClInclude Include="source\CreateMachineGunBulletMessage.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="source\Enemy.h" />
     <ClInclude Include="source\Entity.h" />
     <ClInclude Include="source\EntityManager.h" />
+    <ClInclude Include="source\Explosion.h" />
     <ClInclude Include="source\FastZombie.h" />
     <ClInclude Include="source\FireRatePickup.h" />
     <ClInclude Include="source\Frame.h" />

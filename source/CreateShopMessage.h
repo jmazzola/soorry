@@ -14,17 +14,17 @@ class CreateShopMessage : public SGD::Message
 {
 
 public:
-	CreateShopMessage(int x, int y);
+	CreateShopMessage(float x, float y);
 	~CreateShopMessage();
 
 	/**********************************************************/
 	// Accessors
-	int GetX() const;
-	int GetY() const;
+	float GetX() const;
+	float GetY() const;
 	
 protected:
 	
 	// X and Y coords of the shop spawn point
-	int m_nX, m_nY;
+	float m_nX, m_nY;
 };
 

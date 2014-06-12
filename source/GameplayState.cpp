@@ -48,6 +48,7 @@
 #include "CreateMapleSyrupBulletMessage.h"
 #include "CreateGrenadeMessage.h"
 #include "CreateShopMessage.h"
+#include "CreateExplosionMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -92,6 +93,8 @@
 
 #include "StatTracker.h"
 
+#include "Explosion.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -112,6 +115,8 @@ using namespace std;
 #define BUCKET_PROJECTILES 6
 #define BUCKET_DRONE 7
 #define BUCKET_GRENADES 8
+#define BUCKET_SHOP 9
+#define BUCKET_EXPLOSIONS 10
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -284,6 +289,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
+
+	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -529,6 +536,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
 	pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 
+	pGraphics->UnloadTexture(m_hExplosionImage);
+
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
 	AnimationManager::DeleteInstance();
@@ -675,17 +684,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			}
 		}
 
-	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
-	if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	{
-		pAudio->StopAudio(m_hBackgroundMus);
-		// to stop audio from playing after every backspace
-		if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
-		{
-			pAudio->PlayAudio(m_hShopMusic, true);
-		}
-		m_pShop->SetShopStatus(true);
-	}
+	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
+	//if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	//{
+	//	pAudio->StopAudio(m_hBackgroundMus);
+	//	// to stop audio from playing after every backspace
+	//	if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
+	//	{
+	//		pAudio->PlayAudio(m_hShopMusic, true);
+	//	}
+	//	m_pShop->SetShopStatus(true);
+	//}
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed(1, 6)))
@@ -991,7 +1000,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// -- Debugging Mode Input always last --
 	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused )
 	{
-		#define DEBUG_MAX 4
+		#define DEBUG_MAX 5
 		#define DEBUG_MIN 0
 
 		if (pInput->IsKeyPressed(SGD::Key::Up))
@@ -1029,8 +1038,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (pGame->GetDebugCurs() == 3)
 				pGame->SetShowRects(!pGame->IsShowingRects());
 
-			if (pGame->GetDebugCurs() == DEBUG_MAX)
+			if (pGame->GetDebugCurs() == 4)
 				dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
+
+			if (pGame->GetDebugCurs() == 5)
+				pGame->SetShowPos(!pGame->IsShowingPos());
+
 		}
 	}
 
@@ -1071,6 +1084,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
 		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_SHOP);
 		//draw grid rectangle
 
 		// Update the stat tracker
@@ -1256,7 +1270,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// Render the FPS
 		string fps = "FPS: ";
 		fps += std::to_string(m_unFPS);
-		pGraphics->DrawString(fps.c_str(), { 0, 580 }, { 255, 0, 0 });
+		pGraphics->DrawString(fps.c_str(), { 20, 560 }, { 255, 0, 0 });
 
 		// -- Render HUD --
 		if (!m_bIsPaused)
@@ -1625,6 +1639,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 		pGraphics->DrawString("Give 1000000 Cash", { 20, 191 }, { 255, 255, 0 });
 
+		if (pGame->IsShowingPos())
+			pGraphics->DrawString("Show Player Position", { 20, 211 }, { 0, 255, 0 });
+		else
+			pGraphics->DrawString("Show Player Position", { 20, 211 }, { 255, 0, 0 });
+
+
 
 	}
 
@@ -1706,11 +1726,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceablePos(), pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_TRAPS);
 		place->Release();
 		place = nullptr;
-
 	}
 		break;
 
@@ -1874,6 +1893,19 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreateShopMessage* pShop = dynamic_cast<const CreateShopMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
+		Entity* shop = g->CreateShop(pShop->GetX(), pShop->GetY());
+		g->m_pEntities->AddEntity(shop, BUCKET_SHOP);
+		shop->Release();
+	}
+		break;
+
+	case MessageID::MSG_CREATE_EXPLOSION:
+	{
+											const CreateExplosionMessage* msg = dynamic_cast<const CreateExplosionMessage*>(pMsg);
+									   GameplayState* g = GameplayState::GetInstance();
+									   Entity* explosion = g->CreateExplosion(msg->x, msg->y, msg->damage, msg->radius);
+									   g->m_pEntities->AddEntity(explosion, BUCKET_EXPLOSIONS);
+									   explosion->Release();
 	}
 		break;
 	}
@@ -1999,15 +2031,12 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	return zambie;
 }
 
-Entity* GameplayState::CreatePlaceable(int trap) const
+Entity* GameplayState::CreatePlaceable(SGD::Point pos, int trap) const
 {
 	if (trap == 2)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
-		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
@@ -2019,9 +2048,6 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 	{
 		Mine* trap = new Mine();
 		trap->SetDamage(30);
-		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("mine"));
 		trap->SetCurrFrame(0);
@@ -2042,7 +2068,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   playerCenter.x += 12;
 			   playerCenter.y += 12;
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
-			   tempProj->SetDamage(20);
+			   tempProj->SetDamage(m_pShop->GetARDamage());
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2062,7 +2088,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   playerCenter.x += 12;
 			   playerCenter.y += 12;
 			   ShotgunPellet* tempProj = new ShotgunPellet;
-			   tempProj->SetDamage(20);
+			   tempProj->SetDamage(m_pShop->GetShotgunDamage());
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2083,7 +2109,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 2://Rocket launcher
 	{
 			   Rocket* tempProj = new Rocket;
-			   tempProj->SetDamage(150);
+			   tempProj->SetDamage(m_pShop->GetRLDamage());
+			   tempProj->SetRadius(100.0f);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2106,7 +2133,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			playerCenter.x += 8;
 			playerCenter.y += 8;
 			TrickShotBullet* tsb = new TrickShotBullet;
-			tsb->SetDamage(75);
+			tsb->SetDamage(m_pShop->GetHTDamage());
 			tsb->SetPosition(playerCenter);
 			tsb->SetVelocity({0.0f, 0.0f});
 			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2359,6 +2386,27 @@ Entity* GameplayState::CreateDrone() const
 	drone->SetEntityManager(GetEntityManager());
 	drone->SetNumberID(0);
 	return drone;
+}
+
+Entity* GameplayState::CreateShop(float x, float y) const
+{
+	ShopEntity* shop = new ShopEntity();
+	shop->SetX(x);
+	shop->SetY(y);
+	return shop;
+
+}
+
+Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float _radius) const
+{
+	Explosion* explosion = new Explosion();
+
+	explosion->SetPosition(SGD::Point(_x, _y));
+	explosion->SetImage(m_hExplosionImage);
+	explosion->SetDamage(_damage);
+	explosion->SetRadius(_radius);
+
+	return explosion;
 }
 
 // LoadGameFromSlot

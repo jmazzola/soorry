@@ -17,6 +17,8 @@
 #include "CreateParticleMessage.h"
 #include "TrickShotBullet.h"
 #include "StatTracker.h"
+#include "Projectile.h"
+#include "Explosion.h"
 
 #define HEALTH_BAR 1
 
@@ -29,13 +31,13 @@ Enemy::Enemy() : Listener(this)
 	m_nMaxHeatlh = 100;
 	m_fSlowTime = 0.0f;
 	m_bIsInLava = false;
-	RegisterForEvent("GRENADE_EXPLOSION");
+	RegisterForEvent("EXPLOSION");
 }
 
 
 Enemy::~Enemy()
 {
-	UnregisterFromEvent("GRENADE_EXPLOSION");
+	UnregisterFromEvent("EXPLOSION");
 }
 
 
@@ -224,9 +226,9 @@ int Enemy::GetType() const
 		m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
 		break;
 		//NOTE: may have to delete
-	case ENT_TRAP_MINE:
+	/*case ENT_TRAP_MINE:
 		m_nCurrHealth = 0;
-		break;
+		break;*/
 	case ENT_TRAP_SPIKE:
 	{
 		const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);
@@ -260,16 +262,15 @@ int Enemy::GetType() const
 
 void Enemy::HandleEvent(const SGD::Event* pEvent)
 {
-	if(pEvent->GetEventID() == "GRENADE_EXPLOSION")
+	if(pEvent->GetEventID() == "EXPLOSION")
 	{
-		const Grenade* grenade = reinterpret_cast<const Grenade*>(pEvent->GetSender());
-		SGD::Point a = grenade->GetPosition();
+		const Explosion* explosion = reinterpret_cast<const Explosion*>(pEvent->GetSender());
+		SGD::Point a = explosion->GetPosition();
 		SGD::Point b = m_ptPosition;
 		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
-		if(distance <= grenade->GetRadius())
-			m_nCurrHealth -= grenade->GetDamage() * (distance/grenade->GetRadius());
+		if(distance <= explosion->GetRadius())
+			m_nCurrHealth -= explosion->GetDamage() * (distance/explosion->GetRadius());
 	}
-
 }
 
 /**********************************************************/

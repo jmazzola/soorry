@@ -586,10 +586,10 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	}
 
 	// SHOP
-	if (_tile.GetTriggerInit() == "SHOP_SPAWN")
+	if (_tile.GetTriggerInit() == "SHOP")
 	{
-		CreateShopMessage shop(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
-		shop.SendMessageNow();
+		CreateShopMessage* shop = new CreateShopMessage((float)_tile.GetX() * m_nTileWidth, (float)_tile.GetY() * m_nTileHeight);
+		shop->QueueMessage();
 	}
 
 	//Spawn 1 Zombie
