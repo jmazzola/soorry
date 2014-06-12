@@ -124,6 +124,7 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 void Emitter::load()
 {
 	
+
 	if (allParticlesCreated != true)
 	{
 		for (unsigned int i = 0; i < maxParticles; i++)

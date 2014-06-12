@@ -41,13 +41,13 @@ bool Particle::Update(float dt)
 	}
 	else
 	{
-			velocity.x -= (percent*(velocityOE.x - velocityOS.x))	*dt;
-			velocity.y -= (percent*(velocityOE.y - velocityOS.y))	*dt;
+		velocity.x	-= (percent*(velocityOE.x - velocityOS.x))	*dt;
+		velocity.y	-= (percent*(velocityOE.y - velocityOS.y))	*dt;
 	}
 	scale.width		-=	(percent*(particleFlyweight->startScale.width - particleFlyweight->endScale.width))	*dt					;
 	scale.height	-=	(percent*(particleFlyweight->startScale.height - particleFlyweight->endScale.height))*dt				;
-	position.x		+= velocity.x*dt;
-	position.y		+= velocity.y*dt;
+	position.x		+=	velocity.x*dt;
+	position.y		+=	velocity.y*dt;
 	rotation		-=	rotationRate*dt;
 	//return true to signal that the particle is alive
 	currLifeTime	-=	dt;
@@ -67,8 +67,8 @@ void Particle::Render()
 	else
 	{
 		SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
-		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width),
-		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
+		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
 	}
 }
 

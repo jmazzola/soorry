@@ -205,4 +205,3 @@ bool ParticleManager::loadEmitter(std::string fileName)
 	else
 		return false;
 }
-
