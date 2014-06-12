@@ -12,4 +12,8 @@
   <lasers amount="0"/>
   <lava_traps amount="0"/>
   <spike_traps amount="0"/>
+  <hasAR value="1" />
+  <hasShotgun value="0" />
+  <hasRocketLauncher value="0" />
+  <hasHatTrick value="0" />
 </player_stats>

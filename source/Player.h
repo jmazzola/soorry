@@ -62,6 +62,11 @@ public:
 	bool IsRunningMan(void) const;
 	bool GetCursorFaded(void) const;
 
+	bool HasAR() const { return m_bHasAssaultRifle; }
+	bool HasShotty() const { return m_bHasShotty; }
+	bool HasRocketLauncher() const { return m_bHasRocketz; }
+	bool HasHatTrick() const { return m_bHasHatTrick; }
+
 	/**********************************************************/
 	// Mutators
 	void SetMaxHealth(float maxHealth);
@@ -84,6 +89,11 @@ public:
 	void SetPlaceablesImage(SGD::HTexture placeablesImage);
 	void SetRangeCirclesImage(SGD::HTexture rangeCirclesImage);
 	void SetRunningMan(bool yes);
+
+	void SetAR(bool ar) { m_bHasAssaultRifle = ar; }
+	void SetShotgun(bool sh) { m_bHasShotty = sh; }
+	void SetRocketLauncher(bool r) { m_bHasRocketz = r; }
+	void SetHatTrick(bool h) { m_bHasHatTrick = h; }
 
 protected:
 
@@ -146,5 +156,11 @@ private:
 
 	// Are we near the shop?
 	bool m_bIsNearShop;
+
+	// Do we haz weapons?
+	bool m_bHasAssaultRifle;
+	bool m_bHasShotty;
+	bool m_bHasRocketz;
+	bool m_bHasHatTrick;
 };
 
