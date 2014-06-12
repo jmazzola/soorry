@@ -34,6 +34,8 @@ public:
 	void SetRadius(float radius);
 	void SetSpeed(float speed);
 	void SetLifeTime(float lifeTime);
+	void SetHitSound(SGD::HAudio hitSound);
+	void SetImpactSound(SGD::HAudio impactSound);
 
 protected:
 
@@ -44,6 +46,7 @@ protected:
 	float m_fSpeed;
 	float m_fLifeTime;
 	SGD::HAudio m_hHit;
+	SGD::HAudio m_hImpact;
 	// Enemy
 	Enemy* m_pEnemy;
 };

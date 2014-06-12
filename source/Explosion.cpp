@@ -4,6 +4,7 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 
 #include "Camera.h"
 
@@ -31,6 +32,8 @@ void Explosion::Update(float dt)
 	{
 		SGD::Event e("EXPLOSION", nullptr, this);
 		e.SendEventNow();
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hExplosion);
 
 		m_bExploded = true;
 	}
@@ -95,4 +98,9 @@ void Explosion::SetRadius(float _radius)
 void Explosion::SetImage(SGD::HTexture _image)
 {
 	m_hImage = _image;
+}
+
+void Explosion::SetExplosionSound(SGD::HAudio _explosionSound)
+{
+	m_hExplosion = _explosionSound;
 }

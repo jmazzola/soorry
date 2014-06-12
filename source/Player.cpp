@@ -650,7 +650,7 @@ void Player::Update ( float dt )
 		m_nCurrPlaceable = STRAP;
 #endif
 
-	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
+	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
 		SGD::Rectangle rect;
 		rect.left = pos.x * pWorld->GetTileWidth () + pWorld->GetTileWidth () / 4;

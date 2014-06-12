@@ -15,6 +15,10 @@ Tower::Tower()
 
 	m_nUpgradeOne = 0;
 	m_nUpgradeTwo = 0;
+
+	m_bHoverOne = false;
+	m_bHoverTwo = false;
+	m_bHoverSell = false;
 }
 
 
