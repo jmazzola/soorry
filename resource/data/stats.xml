@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Stats>
+<<<<<<< HEAD
     <Time Total="3463.641113" Build="2298.123291" Survival="1163.989502" />
     <General Walking="491595.812500" Rounds="14" RoundSpree="2" />
     <Violence Kills="840" Blood="3418.212891" Grenades="4" TotalShots="4551" MachineGun="2920" Shotgun="709" RPG="907" HatTrick="15" />
     <Exchange WallsPlaced="686" WallsPickedUp="19" WindowsPlaced="596" WindowsPickedUp="1" TowersBought="0" TowersSold="0" TrapsBought="0" TrapsSold="0" Money="32250" />
+=======
+    <Time Total="1905.907959" Build="900.646301" Survival="1005.276245" />
+    <General Walking="195222.000000" Rounds="11" RoundSpree="9" />
+    <Violence Kills="3892" Blood="19851.662109" Grenades="16" TotalShots="885" MachineGun="805" Shotgun="48" RPG="32" HatTrick="0" />
+    <Exchange WallsPlaced="142" WallsPickedUp="22" WindowsPlaced="0" WindowsPickedUp="2" TowersBought="0" TowersSold="0" TrapsBought="0" TrapsSold="0" Money="0" />
+>>>>>>> Justin'sBranch
 </Stats>

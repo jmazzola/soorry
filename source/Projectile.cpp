@@ -12,15 +12,14 @@
 
 Projectile::Projectile()
 {
-	m_hHit = SGD::AudioManager::GetInstance()->LoadAudio("resource/audio/Bullet_Hit.wav");
+	// sorry Matt, we don't want to load audio every time a projectile is made
+	//m_hHit = SGD::AudioManager::GetInstance()->LoadAudio("resource/audio/Bullet_Hit.wav");
 }
 
 
 Projectile::~Projectile()
 {
-	SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
-
-	
+	//SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
 }
 
 
@@ -43,7 +42,9 @@ void Projectile::Update(float dt)
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
-		SGD::AudioManager::GetInstance()->PlayAudio(m_hHit);
+
+		if (!SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHit))
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hHit);
 	}
 }
 
@@ -62,6 +63,9 @@ int Projectile::GetType() const
 			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
 			msg->QueueMessage();
 		}
+
+		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hImpact) == false)
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hImpact);
 
 		// Destroy the proj
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
@@ -115,4 +119,14 @@ void Projectile::SetSpeed(float _speed)
 void Projectile::SetLifeTime(float _lifeTime)
 {
 	m_fLifeTime = _lifeTime;
+}
+
+void Projectile::SetHitSound(SGD::HAudio _hitSound)
+{
+	m_hHit = _hitSound;
+}
+
+void Projectile::SetImpactSound(SGD::HAudio _impactSound)
+{
+	m_hImpact = _impactSound;
 }
