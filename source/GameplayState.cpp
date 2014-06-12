@@ -1314,9 +1314,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Draw the Maple Syrup Towers
 					if (inv->GetMapleSyrupTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Hockey Stick Towers
 					if (inv->GetHockeyStickTowers() > 0)

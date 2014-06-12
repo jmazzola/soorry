@@ -401,6 +401,7 @@ float ZombieFactory::GetSpawnInterval() const
 	return m_fSpawnInterval;
 }
 
+
 float ZombieFactory::GetNextSpawnTime() const
 {
 	return m_fNextSpawnTime;
