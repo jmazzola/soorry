@@ -73,6 +73,7 @@ public:
 		MINE, 
 		GRENADE, 
 		AMMO, 
+		DRONE,
 		ITEMGB, 
 		TOTAL_ITEMS
 	};
@@ -194,6 +195,7 @@ private:
 		ITEM_MINE, 
 		ITEM_GRENADE, 
 		ITEM_AMMO, 
+		ITEM_DRONE,
 		ITEM_GOBACK 
 	};
 

@@ -15,6 +15,8 @@
 #include "Weapon.h"
 #include "GameplayState.h"
 #include "StatTracker.h"
+#include "Drone.h"
+#include "CreateDroneMessage.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -658,6 +660,13 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			weapons[3].SetCurrAmmo(weapons[3].GetMaxAmmo());
 			// Set the player's weapons/ammo
 			player->SetWeapons(weapons);
+		}
+
+		if (parcel == DRONE)
+		{
+			CreateDroneMessage* pMsg = new CreateDroneMessage();
+			pMsg->QueueMessage();
+			pMsg = nullptr;
 		}
 
 	}

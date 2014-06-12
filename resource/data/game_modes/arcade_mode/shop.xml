@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- Shop XML 2.0 -->
 <shop>
-	<items count="7">
+	<items count="8">
 		<item name="Wall +50" 			price="100" 		description="Add 50 Walls" 			amountToAdd="50"	/>
 		<item name="Window +50" 		price="200" 		description="Add 50 Windows" 		amountToAdd="50"	/>
 		<item name="Beartrap +1" 		price="250" 		description="Add 1 Beartrap" 		amountToAdd="1"		/>
 		<item name="A-T Mine +1"		price="300" 		description="Add 1 AT-Mine" 		amountToAdd="1"		/>
 		<item name="Frag Grenade +3"	price="350" 		description="Add 3 Frag Grenades" 	amountToAdd="3"		/>
 		<item name="Refill Ammo"		price="500"			description="Refill your clips"/>
+    <item name="Drone +1"       price="2000"    description="Game of Drones." amountToAdd="1" />
     <item name="Go Back"       	price="0"       	description="Go Back" />
 	</items>
 
