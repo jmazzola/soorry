@@ -4,7 +4,7 @@
     <isLooping bool="0" />
     <spawnRate rate="1000" />
     <size width="10" height="10" />
-    <particles max="20" />
+    <particles max="50" />
     <shape number="3" />
   </emitter>
   <flyweight>

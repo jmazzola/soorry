@@ -5,10 +5,10 @@
     <spawnRate rate="1000" />
     <size width="20" height="20" />
     <particles max="30" />
-    <shape number="2" />
+    <shape number="3" />
   </emitter>
   <flyweight>
-    <velocity startx="200.00" starty="200.00" endx="-200.00" endy="-200.00" spread="0" />
+    <velocity startx="200.00" starty="200.00" endx="-200.00" endy="-200.00" spread="1" />
     <rotate startMax="0" startMin="0" endMax="0" endMin="0" />
     <color startMaxA="255" startMinA="0" startR="255" startG="255" startB="255" endMaxA="255" endMinA="0" endR="255" endG="255" endB="255" />
     <scale startx="1" starty="1" endx="0" endy="0" />
