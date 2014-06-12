@@ -832,6 +832,9 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Mine
@@ -853,6 +856,9 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Walls
@@ -871,6 +877,9 @@ void Player::Update ( float dt )
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 				StatTracker::GetInstance()->WallExchange(true);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Windows
@@ -889,14 +898,17 @@ void Player::Update ( float dt )
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 				StatTracker::GetInstance()->WindowExchange(true);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", {pos.x*32,pos.y*32}, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Machine gun tower
 			else if ( m_nCurrPlaceable == MGTOWER && m_pInventory->GetMachineGunTowers () > 0 )
 			{
-				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* pmsg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MACHINE_GUN);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
 
@@ -906,14 +918,17 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Maple Syrup tower
 			else if (m_nCurrPlaceable == MSTOWER && m_pInventory->GetMapleSyrupTowers() > 0)
 			{
-				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* pmsg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 					CreateTowerMessage::TOWER_MAPLE_SYRUP);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
@@ -922,14 +937,17 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Hockey Stick tower
 			else if (m_nCurrPlaceable == HSTOWER && m_pInventory->GetHockeyStickTowers() > 0)
 			{
-				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* pmsg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_HOCKEY_STICK);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
@@ -938,14 +956,17 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 
 			// Laser tower
 			else if (m_nCurrPlaceable == LTOWER && m_pInventory->GetLaserTowers() > 0)
 			{
-				CreateTowerMessage* msg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTowerMessage* pmsg = new CreateTowerMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTowerMessage::TOWER_LASER);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, true);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
@@ -954,12 +975,15 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 			else if ( m_nCurrPlaceable == LTRAP && m_pInventory->GetLavaTraps () > 0 )
 			{
-				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTrapMessage* pmsg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_LAVA);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
@@ -968,13 +992,16 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 
 			}
 			else if ( m_nCurrPlaceable == STRAP && m_pInventory->GetSpikeTraps () > 0 )
 			{
-				CreateTrapMessage* msg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
+				CreateTrapMessage* pmsg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_SPIKE);
-				msg->QueueMessage();
+				pmsg->QueueMessage();
 
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
@@ -983,6 +1010,9 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetSpikeTraps(m_pInventory->GetSpikeTraps() - 1);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				msg->QueueMessage();
+				msg = nullptr;
 			}
 		}
 

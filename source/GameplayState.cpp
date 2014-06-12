@@ -314,6 +314,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle1.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -1818,7 +1819,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity()->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_VECTOR_PARTICLE:
@@ -1826,7 +1827,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		//Here you go Ryan
 		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset(), true, pCreateMessage->GetVector().ComputeNormalized());
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetParticleEntity()->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset(), true, pCreateMessage->GetVector().ComputeNormalized());
+	}
+		break;
+	case MessageID::MSG_CREATE_POSITIONED_PARTICLE:
+	{
+		const CreateParticleMessage* pCreateMessage = dynamic_cast<const CreateParticleMessage*>(pMsg);
+		GameplayState* g = GameplayState::GetInstance();
+		ParticleManager::GetInstance()->activate(pCreateMessage->GetEmitterID(), pCreateMessage->GetPosition(), pCreateMessage->GetXOffset(), pCreateMessage->GetYOffset());
 	}
 		break;
 	case MessageID::MSG_CREATE_TOWER:

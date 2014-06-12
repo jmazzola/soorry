@@ -3893,12 +3893,12 @@
     </tile>
     <tile x="20" y="18" index="179" collider="false">
       <initial_trigger id="" />
-      <collision_trigger id="" />
+      <collision_trigger id="ENTER_MAZE" />
       <collision id="0" />
     </tile>
     <tile x="20" y="19" index="179" collider="false">
       <initial_trigger id="" />
-      <collision_trigger id="" />
+      <collision_trigger id="ENTER_MAZE" />
       <collision id="0" />
     </tile>
     <tile x="20" y="20" index="37" collider="true">
@@ -5988,7 +5988,7 @@
     </tile>
     <tile x="31" y="19" index="179" collider="false">
       <initial_trigger id="" />
-      <collision_trigger id="" />
+      <collision_trigger id="EXIT_MAZE" />
       <collision id="0" />
     </tile>
     <tile x="31" y="20" index="37" collider="true">
@@ -21413,7 +21413,7 @@
     </tile>
     <tile x="112" y="26" index="179" collider="false">
       <initial_trigger id="" />
-      <collision_trigger id="" />
+      <collision_trigger id="START_ROUND" />
       <collision id="0" />
     </tile>
     <tile x="112" y="27" index="37" collider="true">
