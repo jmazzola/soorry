@@ -77,6 +77,7 @@ Player::Player () : Listener ( this )
 	m_fTimeAlive = 0.0f;
 	m_fCursorFadeLength = 2.0f;
 	m_fCursorFadeTimer = 0.0f;
+	m_fRunningManTimer = 2.0f;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
@@ -225,6 +226,19 @@ void Player::Update ( float dt )
 	m_fPlaceTimer -= dt;
 	m_fCursorFadeTimer -= dt;
 	m_fSuperTimer -= dt;
+	m_fRunningManTimer -= dt;
+
+	if ( m_fRunningManTimer < 0.0f && isRunningMan )
+	{
+		m_fRunningManTimer = 0.3f;
+		SGD::Point a = m_ptLastPos;
+		SGD::Point b = m_ptPosition;
+		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
+		if(distance < 70.0f)
+			m_nCurrHealth -= 5.0f;
+		m_ptLastPos = m_ptPosition;
+	}
+
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
@@ -1246,6 +1260,7 @@ void Player::PostRender()
 				pGraphics->DrawTextureSectionSimple(m_hPlaceablesImage, worldPosition, SGD::Rectangle(32, 384, 64, 416));
 		}
 	}
+
 }
 
 int Player::GetType () const
@@ -1628,4 +1643,14 @@ void Player::Render ( void )
 	Game* pGame = Game::GetInstance();
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
+}
+
+bool Player::IsRunningMan( void ) const
+{
+	return isRunningMan;
+}
+
+void Player::SetRunningMan( bool yes)
+{
+	isRunningMan = yes;
 }

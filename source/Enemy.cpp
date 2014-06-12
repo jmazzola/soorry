@@ -191,7 +191,6 @@ int Enemy::GetType() const
 	{
 		const Projectile* proj = reinterpret_cast<const Projectile*>(pOther);
 		m_nCurrHealth -= proj->GetDamage();
-		shot = true;
 	}
 			break;
 	case ENT_BULLET_TRICKSHOT:

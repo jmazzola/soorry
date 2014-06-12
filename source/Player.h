@@ -59,6 +59,7 @@ public:
 	Inventory* GetInventory() const;
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
+	bool IsRunningMan(void) const;
 
 	/**********************************************************/
 	// Mutators
@@ -81,6 +82,7 @@ public:
 	void SetSelectedTower(Tower* tower);
 	void SetPlaceablesImage(SGD::HTexture placeablesImage);
 	void SetRangeCirclesImage(SGD::HTexture rangeCirclesImage);
+	void SetRunningMan(bool yes);
 
 protected:
 
@@ -128,7 +130,13 @@ private:
 	int** m_nNodeChart;
 	bool CheckLegalPlacement(Node end, Node block);
 	bool m_bStaticCamera;
+	
+	// RunningMan
+	bool isRunningMan;
+	SGD::Point m_ptLastPos;
+	float m_fRunningManTimer;
 
+	// ArcadeMode
 	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;

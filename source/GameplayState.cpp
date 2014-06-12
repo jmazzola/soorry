@@ -179,6 +179,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
 	player->SetSuperLength(4.0f);
+	if(m_nGamemode == 4)
+		player->SetRunningMan(true);
+	else
+		player->SetRunningMan(false);
 
 	// Load player stats
 	TiXmlDocument doc;
@@ -335,8 +339,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
 		break;
 	case 4:
-		// To be replaced with Ryan's file
-		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		gameModeFileName = "resource/data/game_modes/running_man_mode/runningMan.xml";
 	}
 
 	// Create a TinyXML document
