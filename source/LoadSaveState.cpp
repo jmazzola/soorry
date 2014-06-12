@@ -222,7 +222,7 @@ using namespace std;
 	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
 #endif
 #if ARCADE_MODE
-	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
 #endif
 	if (m_bTHEBOOL)
 	{
@@ -278,6 +278,10 @@ using namespace std;
 			return true;
 
 		}
+
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 
 	// If we press Backspace
@@ -285,9 +289,9 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0, 5);
+	m_bTHEBOOL = pInput->IsButtonPressed(1, 6) && m_bAccept;
 #endif
-	if (m_bTHEBOOL)
+	if (m_bTHEBOOL && m_nCursor >= MENU_SLOT1 && m_nCursor <= MENU_SLOT3)
 	{
 		// Delete the file
 		remove(m_szSaveFiles[m_nCursor].c_str());
@@ -295,6 +299,10 @@ using namespace std;
 		// Check if we have the files again to refresh
 		for (int i = 0; i < NUM_SLOTS; i++)
 			CheckSlotExists(i);
+
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// If we hit escape or B exit and go to main menu
 	// Quick Exit Options
@@ -302,7 +310,7 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0, 6);
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 6) && m_bAccept;
 #endif
 	if(m_bTHEBOOL)
 	{

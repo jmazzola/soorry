@@ -114,8 +114,8 @@ private:
 	Button* m_pMainButton;
 	BitmapFont* m_pFont;
 
+	// ARCADE_MODE
 	bool m_bTHEBOOL;
-
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
 

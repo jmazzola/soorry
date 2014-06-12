@@ -60,6 +60,7 @@ public:
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
 	bool IsRunningMan(void) const;
+	bool GetCursorFaded(void) const;
 
 	/**********************************************************/
 	// Mutators
@@ -89,6 +90,8 @@ protected:
 	/**********************************************************/
 	// Members
 	bool m_bCanLeftClick;
+	bool m_bCanLeftTrigger;
+	bool m_bCanRightTrigger;
 	float m_fGrenadeTimer;
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
