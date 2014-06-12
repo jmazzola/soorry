@@ -718,7 +718,13 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		pInput->IsButtonPressed ( 1 , 6 )) )
 	{
 		zombieFactory->SetBuildTImeRemaining ( 0.0f );
-		m_pEntities[BUCKET_PICKUP].RemoveAll();		
+		for ( unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++ )
+		{
+			Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
+			DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
+			pMsg->QueueMessage();
+		}
+		
 	}
 
 
