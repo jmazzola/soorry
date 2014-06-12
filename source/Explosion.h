@@ -1,50 +1,44 @@
 #pragma once
 
 #include "Entity.h"
+
 #include "../SGD Wrappers/SGD_Handle.h"
 
-class Entity;
-class EntityManager;
-class Enemy;
 
-class Projectile : public Entity
+class Explosion : public Entity
 {
 public:
 
-	Projectile();
-	~Projectile();
+	Explosion();
+	~Explosion();
 
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
-	virtual int GetType() const override;
-	virtual void HandleCollision(const IEntity* pOther) override;
-	
+	virtual void Render() override;
+	virtual SGD::Rectangle GetRect() const override;
 
 	/**********************************************************/
 	// Accessors
-	int GetDamage() const;
+	float GetDamage() const;
 	float GetRadius() const;
-	float GetSpeed() const;
-	float GetLifeTime() const;
 
 	/**********************************************************/
 	// Mutators
-	void SetDamage(int damage);
+	void SetDamage(float damage);
 	void SetRadius(float radius);
-	void SetSpeed(float speed);
-	void SetLifeTime(float lifeTime);
+	void SetImage(SGD::HTexture image);
 
 protected:
 
 	/**********************************************************/
-	// Members
-	int m_nDamage;
+	// Data Members
+	bool m_bExploded;
+	int _m_nImageIndex;
+	float _m_fImageSpeed;
+	float _m_fNextImage;
+	float m_fDamage;
 	float m_fRadius;
-	float m_fSpeed;
-	float m_fLifeTime;
-	SGD::HAudio m_hHit;
-	// Enemy
-	Enemy* m_pEnemy;
+	SGD::HTexture m_hImage = SGD::INVALID_HANDLE;
 };
 

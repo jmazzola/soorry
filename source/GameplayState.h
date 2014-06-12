@@ -161,6 +161,8 @@ private:
 	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hExplosionImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
@@ -195,6 +197,7 @@ private:
 	Entity* CreateMapleSyrupBullet(int x, int y, SGD::Vector velocity, float slowTime) const;
 	Entity* CreateDrone() const;
 	Entity* CreateGrenade(float x, float y, SGD::Vector velocity) const;
+	Entity* CreateExplosion(float x, float y, float damage, float radius) const;
 
 	// Create a button
 	Button* CreateButton() const;
