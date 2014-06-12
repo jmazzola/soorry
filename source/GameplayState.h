@@ -185,6 +185,11 @@ private:
 	SGD::HAudio m_hRocketShoot = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hShotgunShoot = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hBulletHit = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBulletImpact = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPurchase = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hExplosion = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;

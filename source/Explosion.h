@@ -28,6 +28,7 @@ public:
 	void SetDamage(float damage);
 	void SetRadius(float radius);
 	void SetImage(SGD::HTexture image);
+	void SetExplosionSound(SGD::HAudio explosionSound);
 
 protected:
 
@@ -40,5 +41,6 @@ protected:
 	float m_fDamage;
 	float m_fRadius;
 	SGD::HTexture m_hImage = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hExplosion = SGD::INVALID_HANDLE;
 };
 

@@ -8,6 +8,7 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 #include "BitmapFont.h"
 #include "Game.h"
 
@@ -199,6 +200,8 @@ void MapleSyrupTower::Upgrade(int _slot, unsigned int* _points)
 		m_nUpgradeOne++;
 		m_fSlowTime = m_pTowerFlyweight->GetMapleSyrupEffectDuration(m_nUpgradeOne);
 		m_fFireRate = m_pTowerFlyweight->GetMapleSyrupFireRate(m_nUpgradeOne);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 
 	else if (_slot == 1 && *_points >= (unsigned int)m_pTowerFlyweight->GetMapleSyrupRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
@@ -207,6 +210,8 @@ void MapleSyrupTower::Upgrade(int _slot, unsigned int* _points)
 		m_nSellValue += (int)(m_pTowerFlyweight->GetMapleSyrupRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
 		m_nUpgradeTwo++;
 		m_nRange = m_pTowerFlyweight->GetMapleSyrupRange(m_nUpgradeTwo);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 }
 

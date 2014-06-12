@@ -38,10 +38,14 @@ public:
 	int GetLaserDamageUpgradeCost(int index) const;
 	int GetLaserRangeUpgradeCost(int index) const;
 	SGD::HTexture GetRangeCirclesImage() const;
+	SGD::HAudio GetPurchaseSound() const;
+	SGD::HAudio GetClickSound() const;
 
 	/**********************************************************/
 	// Mutators
 	void SetRangeCirclesImage(SGD::HTexture rangeCirclesImage);
+	void SetPurchaseSound(SGD::HAudio purchaseSound);
+	void SetClickSound(SGD::HAudio clickSound);
 
 protected:
 
@@ -66,5 +70,7 @@ protected:
 	int m_nLaserDamageUpgradeCost[3];
 	int m_nLaserRangeUpgradeCost[3];
 	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPurchaseSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
 };
 
