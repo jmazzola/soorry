@@ -2,15 +2,16 @@
 <ParticleManager>
   <emitter>
     <isLooping bool="1" />
+    <spawnRate rate="0" />
     <size width="800" height="600" />
-    <particles max="1" />
+    <particles max="500" />
     <shape number="0" />
   </emitter>
   <flyweight>
-    <velocity startx="20.00" starty="20.00" endx="-20.00" endy="-20.00" />
-    <rotate start="0" end="0" />
-    <color startA="255" startR="255" startG="255" startB="255" endA="255" endR="255" endG="255" endB="255" />
-    <scale startx="1" starty="1" endx="0" endy="1" />
+    <velocity startx="20.00" starty="20.00" endx="-20.00" endy="-20.00" spread="1" />
+    <rotate startMax="0" startMin="0" endMax="0" endMin="0" />
+    <color startMaxA="255" startMinA="0" startR="255" startG="255" startB="255" endMaxA="0" endMinA="0" endR="255" endG="255" endB="255" />
+    <scale startx="1" starty="1" endx="0" endy="0.00" />
     <size width="32" height="32" />
     <lifetime max="10" min="5" />
     <particleID>Top_Down_Snow</particleID>

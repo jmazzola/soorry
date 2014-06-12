@@ -3,7 +3,7 @@
   <emitter>
     <isLooping bool="0" />
     <spawnRate rate="1000" />
-    <size width="100" height="100" />
+    <size width="20" height="20" />
     <particles max="30" />
     <shape number="2" />
   </emitter>
@@ -13,7 +13,7 @@
     <color startMaxA="255" startMinA="0" startR="255" startG="255" startB="255" endMaxA="255" endMinA="0" endR="255" endG="255" endB="255" />
     <scale startx="1" starty="1" endx="0" endy="0" />
     <size width="16" height="8" />
-    <lifetime max="1" min="1" />
+    <lifetime max="1" min="0.25" />
     <particleID>Blood_Particle1</particleID>
     <image name="blood_particle1.png" />
   </flyweight>

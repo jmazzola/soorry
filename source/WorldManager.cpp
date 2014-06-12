@@ -591,6 +591,12 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 		CreateShopMessage shop(_tile.GetX() * m_nTileWidth, _tile.GetY() * m_nTileHeight);
 		shop.SendMessageNow();
 	}
+
+	//Spawn 1 Zombie
+	if (_tile.GetTriggerInit() == "SPAWN_1_ZOMBIE")
+	{
+		
+	}
 }
 
 void WorldManager::GenerateSolidsChart()
