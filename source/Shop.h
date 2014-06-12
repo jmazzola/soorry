@@ -26,6 +26,18 @@ public:
 	Shop() = default;
 	virtual ~Shop() = default;
 
+	// Accessors
+	int GetShotgunDamage() { return m_nShotgunDamage; }
+	int GetARDamage() { return m_nARDamage; }
+	int GetRLDamage() { return m_nRLDamage; }
+	int GetHTDamage() { return m_nHattrickDamage; }
+
+	// Mutators
+	void SetShotgunDamage(int dmg) { m_nShotgunDamage = dmg; }
+	void SetARDamage(int dmg) { m_nARDamage = dmg; }
+	void SetRLDamage(int dmg) { m_nRLDamage = dmg; }
+	void SetHTDamage(int dmg) { m_nHattrickDamage = dmg; }
+
 	// Enter
 	void Enter(Entity* player);
 
@@ -148,6 +160,12 @@ private:
 
 	// Player
 	Entity* m_pPlayer;
+
+	// Weapon Attributes
+	int m_nShotgunDamage = 20;
+	int m_nARDamage = 20;
+	int m_nRLDamage = 150;
+	int m_nHattrickDamage = 75;
 
 	// Shop tabs
 	enum ShopTabs 

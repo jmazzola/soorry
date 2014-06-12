@@ -2069,7 +2069,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   playerCenter.x += 12;
 			   playerCenter.y += 12;
 			   AssaultRifleBullet* tempProj = new AssaultRifleBullet;
-			   tempProj->SetDamage(20);
+			   tempProj->SetDamage(m_pShop->GetARDamage());
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2089,7 +2089,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   playerCenter.x += 12;
 			   playerCenter.y += 12;
 			   ShotgunPellet* tempProj = new ShotgunPellet;
-			   tempProj->SetDamage(20);
+			   tempProj->SetDamage(m_pShop->GetShotgunDamage());
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2110,7 +2110,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 2://Rocket launcher
 	{
 			   Rocket* tempProj = new Rocket;
-			   tempProj->SetDamage(150);
+			   tempProj->SetDamage(m_pShop->GetRLDamage());
 			   tempProj->SetRadius(100.0f);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
@@ -2134,7 +2134,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			playerCenter.x += 8;
 			playerCenter.y += 8;
 			TrickShotBullet* tsb = new TrickShotBullet;
-			tsb->SetDamage(75);
+			tsb->SetDamage(m_pShop->GetHTDamage());
 			tsb->SetPosition(playerCenter);
 			tsb->SetVelocity({0.0f, 0.0f});
 			SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();

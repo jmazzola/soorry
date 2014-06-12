@@ -626,14 +626,27 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 	if (shopSection == UPGRADES)
 	{
+		
 		if (parcel == UG_SHOTGUN_ROF)
 			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
 		if (parcel == UG_SHOTGUN_DAMAGE)
+			SetShotgunDamage(GetShotgunDamage() + upgradeAmountToAdd[UG_SHOTGUN_DAMAGE]);
+		if (parcel == UG_SHOTGUN_AMMO)
+			weapons[1].SetMaxAmmo(weapons[1].GetMaxAmmo() + upgradeAmountToAdd[UG_SHOTGUN_AMMO]);
 
 		if (parcel == UG_AR_ROF)
 			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
+		if (parcel == UG_AR_DAMAGE)
+			SetARDamage(GetARDamage() + upgradeAmountToAdd[UG_AR_DAMAGE]);
+		if (parcel == UG_AR_AMMO)
+			weapons[0].SetMaxAmmo(weapons[0].GetMaxAmmo() + upgradeAmountToAdd[UG_AR_AMMO]);
+
 		if (parcel == UG_LAUNCHER_ROF)
 			weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
+		if (parcel == UG_LAUNCHER_DAMAGE)
+			SetRLDamage(GetRLDamage() + upgradeAmountToAdd[UG_LAUNCHER_DAMAGE]);
+		if (parcel == UG_LAUNCHER_AMMO)
+			weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
 
 		player->SetWeapons(weapons);
 	}

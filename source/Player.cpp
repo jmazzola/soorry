@@ -232,6 +232,14 @@ void Player::Update ( float dt )
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
 
+
+	// Check if we're at the shop
+	if (pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop)
+	{
+		Shop* shop = GameplayState::GetInstance()->GetShop();
+		shop->SetShopStatus(true);
+	}
+
 	m_bIsNearShop = false;
 
 	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
@@ -986,12 +994,7 @@ void Player::Update ( float dt )
 		Camera::y = (int)tempVector.y;
 	}
 
-	// Check if we're at the shop
-	if (pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode())
-	{
-		Shop* shop = GameplayState::GetInstance()->GetShop();
-		shop->SetShopStatus(true);
-	}
+	
 }
 
 void Player::PostRender()
