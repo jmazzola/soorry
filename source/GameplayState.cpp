@@ -678,17 +678,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			}
 		}
 
-	// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
-	if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	{
-		pAudio->StopAudio(m_hBackgroundMus);
-		// to stop audio from playing after every backspace
-		if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
-		{
-			pAudio->PlayAudio(m_hShopMusic, true);
-		}
-		m_pShop->SetShopStatus(true);
-	}
+	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
+	//if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	//{
+	//	pAudio->StopAudio(m_hBackgroundMus);
+	//	// to stop audio from playing after every backspace
+	//	if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
+	//	{
+	//		pAudio->PlayAudio(m_hShopMusic, true);
+	//	}
+	//	m_pShop->SetShopStatus(true);
+	//}
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed(1, 6)))

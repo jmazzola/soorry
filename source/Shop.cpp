@@ -378,6 +378,44 @@ void Shop::Render()
 			// Draw the menu items background
 			pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
+			// Draw the weapon's statszors
+			Weapon* weapons = dynamic_cast<Player*>(m_pPlayer)->GetWeapons();
+			string stuff = "AR Rate of Fire: ";
+			stuff += std::to_string(weapons[0].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 240, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "AR Damage: ";
+			stuff += std::to_string(GetARDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 260, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "AR Maximum Ammo: ";
+			stuff += std::to_string(weapons[0].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 280, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Rate of Fire: ";
+			stuff += std::to_string(weapons[1].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 300, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Damage: ";
+			stuff += std::to_string(GetShotgunDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 320, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Maximum Ammo: ";
+			stuff += std::to_string(weapons[1].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 340, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Rate of Fire: ";
+			stuff += std::to_string(weapons[2].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 360, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Damage: ";
+			stuff += std::to_string(GetRLDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 380, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Maximum Ammo: ";
+			stuff += std::to_string(weapons[2].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 400, 0.4f, { 255, 255, 0 });
+
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
