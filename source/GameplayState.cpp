@@ -48,6 +48,7 @@
 #include "CreateMapleSyrupBulletMessage.h"
 #include "CreateGrenadeMessage.h"
 #include "CreateShopMessage.h"
+#include "CreateExplosionMessage.h"
 
 //Object Includes
 #include "BeaverZombie.h"
@@ -92,6 +93,8 @@
 
 #include "StatTracker.h"
 
+#include "Explosion.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -113,6 +116,7 @@ using namespace std;
 #define BUCKET_DRONE 7
 #define BUCKET_GRENADES 8
 #define BUCKET_SHOP 9
+#define BUCKET_EXPLOSIONS 10
 
 // Winning Credits
 #define SCROLL_SPEED 0.04f;
@@ -285,6 +289,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
+
+	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
@@ -523,6 +529,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
 	pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
 	pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
+
+	pGraphics->UnloadTexture(m_hExplosionImage);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -1885,6 +1893,16 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		shop->Release();
 	}
 		break;
+
+	case MessageID::MSG_CREATE_EXPLOSION:
+	{
+											const CreateExplosionMessage* msg = dynamic_cast<const CreateExplosionMessage*>(pMsg);
+									   GameplayState* g = GameplayState::GetInstance();
+									   Entity* explosion = g->CreateExplosion(msg->x, msg->y, msg->damage, msg->radius);
+									   g->m_pEntities->AddEntity(explosion, BUCKET_EXPLOSIONS);
+									   explosion->Release();
+	}
+		break;
 	}
 	/* Restore previous warning levels */
 #pragma warning( pop )
@@ -2093,6 +2111,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	{
 			   Rocket* tempProj = new Rocket;
 			   tempProj->SetDamage(150);
+			   tempProj->SetRadius(100.0f);
 			   tempProj->SetLifeTime(5);
 			   tempProj->SetPosition(playerCenter);
 			   SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2377,6 +2396,18 @@ Entity* GameplayState::CreateShop(float x, float y) const
 	shop->SetY(y);
 	return shop;
 
+}
+
+Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float _radius) const
+{
+	Explosion* explosion = new Explosion();
+
+	explosion->SetPosition(SGD::Point(_x, _y));
+	explosion->SetImage(m_hExplosionImage);
+	explosion->SetDamage(_damage);
+	explosion->SetRadius(_radius);
+
+	return explosion;
 }
 
 // LoadGameFromSlot
