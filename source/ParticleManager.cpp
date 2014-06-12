@@ -197,7 +197,6 @@ bool ParticleManager::loadEmitter(std::string fileName)
 		emitterKeyPair.first = tempFlyweight->particleID;
 		emitterKeyPair.second = tempEmitter;
 		loadedEmitters.insert(iter, emitterKeyPair);
-
 		return true;
 	}
 	else
