@@ -95,7 +95,7 @@ using namespace std;
 
 	// Setup the universal button
 	m_pButton = CreateButton();
-	m_pButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();

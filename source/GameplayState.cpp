@@ -453,7 +453,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	//// Add it to the entity manager
 	// Load pause menu background
-	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
+	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
 
 	// Setup BitmapFont
@@ -463,7 +463,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Setup the main button (text)
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
-	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 	// Load Store
 	m_pShop = new Shop;
