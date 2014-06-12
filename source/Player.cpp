@@ -33,6 +33,7 @@
 #include "StatTracker.h"
 #include "BitmapFont.h"
 #include "DestroyEntityMessage.h"
+#include "Shop.h"
 
 #include "Game.h"
 
@@ -180,6 +181,8 @@ Player::Player () : Listener ( this )
 	m_bAccept = true;
 	m_bTHEBOOL = false;
 	m_vtStick = SGD::Vector{0.0f, 0.0f};
+
+	m_bIsNearShop = false;
 }
 
 
@@ -242,6 +245,16 @@ void Player::Update ( float dt )
 	SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
+
+
+	// Check if we're at the shop
+	if (pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop)
+	{
+		Shop* shop = GameplayState::GetInstance()->GetShop();
+		shop->SetShopStatus(true);
+	}
+
+	m_bIsNearShop = false;
 
 	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
 		m_bCanLeftClick = true;
@@ -798,16 +811,19 @@ void Player::Update ( float dt )
 
 		// Place item
 		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
-			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && m_nCurrPlaceable >= 8) ))
+			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3))) ))
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == BEARTRAP && m_pInventory->GetBearTraps () > 0 )
 			{
 				// Cooldown for placing objects
-				m_fPlaceTimer = 1;
-				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				SGD::Point p((pos.x * pWorld->GetTileWidth()), (pos.y * pWorld->GetTileHeight()));
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( p , m_nCurrPlaceable );
 				pmsg->QueueMessage ();
 				pmsg = nullptr;
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+
 				// Decreasing the amount of bear traps left for the player
 				unsigned int newset = m_pInventory->GetBearTraps ();
 				--newset;
@@ -819,13 +835,16 @@ void Player::Update ( float dt )
 			}
 
 			// Mine
-			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0 && m_fPlaceTimer <= 0 )
+			else if ( m_nCurrPlaceable == MINE && m_pInventory->GetMines () > 0)
 			{
 				// Cooldown for placing objects
-				m_fPlaceTimer = 1;
-				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( m_ptPosition , m_nCurrPlaceable );
+				SGD::Point p((pos.x * pWorld->GetTileWidth()), (pos.y * pWorld->GetTileHeight()));
+				CreatePlaceableMessage* pmsg = new CreatePlaceableMessage ( p , m_nCurrPlaceable );
 				pmsg->QueueMessage ();
 				pmsg = nullptr;
+
+				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
+
 				// Decreasing the amount of mines left for the player
 				unsigned int newset = m_pInventory->GetMines ();
 				--newset;
@@ -994,6 +1013,8 @@ void Player::Update ( float dt )
 		Camera::x = (int)tempVector.x;
 		Camera::y = (int)tempVector.y;
 	}
+
+	
 }
 
 void Player::PostRender()
@@ -1261,6 +1282,22 @@ void Player::PostRender()
 		}
 	}
 
+	// If we're next to the shop, show the popup
+	if (m_bIsNearShop && m_pZombieWave->IsBuildMode())
+		pFont->Draw("Press E to enter the shop", 180, 60, 0.8f, { 255, 255, 255 });
+
+
+	// Debugging
+	Game* pGame = Game::GetInstance();
+	if (pGame->IsShowingPos())
+	{
+		string position = "Player Pos [";
+		position += std::to_string(m_ptPosition.x);
+		position += " , ";
+		position += std::to_string(m_ptPosition.y);
+		position += " ]";
+		pGraphics->DrawString(position.c_str(), { 200, 60 }, { 255, 255, 255 });
+	}
 }
 
 int Player::GetType () const
@@ -1302,6 +1339,10 @@ void Player::HandleCollision ( const IEntity* pOther )
 	{
 		m_fSuperTimer = m_fSuperLength;
 	}
+
+	// If we are touching the shop
+	if (pOther->GetType() == ENT_SHOP)
+		m_bIsNearShop = true;
 }
 
 void Player::HandleEvent ( const SGD::Event* pEvent )
@@ -1643,6 +1684,8 @@ void Player::Render ( void )
 	Game* pGame = Game::GetInstance();
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
+
+	
 }
 
 bool Player::IsRunningMan( void ) const

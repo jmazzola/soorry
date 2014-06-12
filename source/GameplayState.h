@@ -65,6 +65,8 @@ public:
 	int GetGameMode() const;
 	void SetGameMode(int gameMode);
 
+	Shop* GetShop() const { return m_pShop; }
+
 	// Create and or save the game
 	void SaveGame(bool newFile);
 	void LoadGameFromSlot(int slot);
@@ -161,6 +163,8 @@ private:
 	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
 
+	SGD::HTexture m_hExplosionImage = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Pause Menu Stuff
 	Button* m_pMainButton;
@@ -187,7 +191,7 @@ private:
 	Entity* CreateFastZombie(int _x, int _y) const;
 	Entity* CreateSlowZombie(int _x, int _y) const;
 	Entity* CreateProjectile(int _Weapon) const;
-	Entity* CreatePlaceable(int trap) const;
+	Entity* CreatePlaceable(SGD::Point pos, int trap) const;
 	Entity* CreatePickUp(int pick, SGD::Point pos) const;
 	Entity* CreateTower(int x, int y, int type) const;
 	Entity* CreateTrap(int x, int y, int type) const;
@@ -195,6 +199,8 @@ private:
 	Entity* CreateMapleSyrupBullet(int x, int y, SGD::Vector velocity, float slowTime) const;
 	Entity* CreateDrone() const;
 	Entity* CreateGrenade(float x, float y, SGD::Vector velocity) const;
+	Entity* CreateShop(float x, float y) const;
+	Entity* CreateExplosion(float x, float y, float damage, float radius) const;
 
 	// Create a button
 	Button* CreateButton() const;

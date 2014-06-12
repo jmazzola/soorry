@@ -5,6 +5,7 @@
 #include "EntityManager.h"
 #include "DestroyEntityMessage.h"
 #include "WorldManager.h"
+#include "CreateExplosionMessage.h"
 
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
@@ -19,6 +20,7 @@ Projectile::~Projectile()
 {
 	SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
 
+	
 }
 
 
@@ -31,6 +33,12 @@ void Projectile::Update(float dt)
 
 	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true))
 	{
+		if (this->GetType() == ENT_BULLET_ROCKET)
+		{
+			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
+			msg->QueueMessage();
+		}
+
 		// Destroy the proj
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();
@@ -49,6 +57,12 @@ int Projectile::GetType() const
 	if (pOther->GetType() == ENT_ZOMBIE_BEAVER || pOther->GetType() == ENT_ZOMBIE_FAST ||
 		pOther->GetType() == ENT_ZOMBIE_SLOW)
 	{
+		if (this->GetType() == ENT_BULLET_ROCKET)
+		{
+			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
+			msg->QueueMessage();
+		}
+
 		// Destroy the proj
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();
@@ -63,6 +77,11 @@ int Projectile::GetType() const
 int Projectile::GetDamage() const
 {
 	return m_nDamage;
+}
+
+float Projectile::GetRadius() const
+{
+	return m_fRadius;
 }
 
 float Projectile::GetSpeed() const
@@ -81,6 +100,11 @@ float Projectile::GetLifeTime() const
 void Projectile::SetDamage(int _damage)
 {
 	m_nDamage = _damage;
+}
+
+void Projectile::SetRadius(float _radius)
+{
+	m_fRadius = _radius;
 }
 
 void Projectile::SetSpeed(float _speed)

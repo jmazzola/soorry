@@ -15,6 +15,8 @@
 #include "Weapon.h"
 #include "GameplayState.h"
 #include "StatTracker.h"
+#include "Drone.h"
+#include "CreateDroneMessage.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -378,6 +380,44 @@ void Shop::Render()
 			// Draw the menu items background
 			pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
+			// Draw the weapon's statszors
+			Weapon* weapons = dynamic_cast<Player*>(m_pPlayer)->GetWeapons();
+			string stuff = "AR Rate of Fire: ";
+			stuff += std::to_string(weapons[0].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 240, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "AR Damage: ";
+			stuff += std::to_string(GetARDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 260, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "AR Maximum Ammo: ";
+			stuff += std::to_string(weapons[0].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 280, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Rate of Fire: ";
+			stuff += std::to_string(weapons[1].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 300, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Damage: ";
+			stuff += std::to_string(GetShotgunDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 320, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Shotgun Maximum Ammo: ";
+			stuff += std::to_string(weapons[1].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 340, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Rate of Fire: ";
+			stuff += std::to_string(weapons[2].GetFireRate());
+			m_pFont->Draw(stuff.c_str(), 414, 360, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Damage: ";
+			stuff += std::to_string(GetRLDamage());
+			m_pFont->Draw(stuff.c_str(), 414, 380, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Rocket Launcher Maximum Ammo: ";
+			stuff += std::to_string(weapons[2].GetMaxAmmo());
+			m_pFont->Draw(stuff.c_str(), 414, 400, 0.4f, { 255, 255, 0 });
+
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
@@ -593,16 +633,18 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	Inventory* inventory = player->GetInventory();
 
+	enum { ITEMS, UPGRADES, TOWERS };
+
 	// Grab the player's weapons (4)
 	Weapon* weapons = player->GetWeapons();
 
 	// If we're in the items
-	if (shopSection == 0)
+	if (shopSection == ITEMS)
 	{
-		if (parcel == WALL)
-			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[WALL]);
-		if (parcel == WINDOW)
-			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[WINDOW]);
+		if (parcel == ITEM_PRICE_WALL)
+			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
+		if (parcel == ITEM_PRICE_WINDOW)
+			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]);
 		if (parcel == BEARTRAP)
 			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
 		if (parcel == MINE)
@@ -620,20 +662,42 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			player->SetWeapons(weapons);
 		}
 
+		if (parcel == DRONE)
+		{
+			CreateDroneMessage* pMsg = new CreateDroneMessage();
+			pMsg->QueueMessage();
+			pMsg = nullptr;
+		}
+
 	}
 
-	if (shopSection == 1)
+	if (shopSection == UPGRADES)
 	{
+		
 		if (parcel == UG_SHOTGUN_ROF)
 			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
+		if (parcel == UG_SHOTGUN_DAMAGE)
+			SetShotgunDamage(GetShotgunDamage() + upgradeAmountToAdd[UG_SHOTGUN_DAMAGE]);
+		if (parcel == UG_SHOTGUN_AMMO)
+			weapons[1].SetMaxAmmo(weapons[1].GetMaxAmmo() + upgradeAmountToAdd[UG_SHOTGUN_AMMO]);
+
 		if (parcel == UG_AR_ROF)
 			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
+		if (parcel == UG_AR_DAMAGE)
+			SetARDamage(GetARDamage() + upgradeAmountToAdd[UG_AR_DAMAGE]);
+		if (parcel == UG_AR_AMMO)
+			weapons[0].SetMaxAmmo(weapons[0].GetMaxAmmo() + upgradeAmountToAdd[UG_AR_AMMO]);
+
 		if (parcel == UG_LAUNCHER_ROF)
 			weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
+		if (parcel == UG_LAUNCHER_DAMAGE)
+			SetRLDamage(GetRLDamage() + upgradeAmountToAdd[UG_LAUNCHER_DAMAGE]);
+		if (parcel == UG_LAUNCHER_AMMO)
+			weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
 
 		player->SetWeapons(weapons);
 	}
-	if (shopSection == 2)
+	if (shopSection == TOWERS)
 	{
 		if (parcel == TOWER_MG)
 			inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1);

@@ -72,6 +72,7 @@ public:
 	bool IsShowingPaths() { return m_bShowPaths; }
 	bool IsShowingRects() { return m_bShowCollisionRects; }
 	bool HasInfAmmo() { return m_bInfiniteAmmo; }
+	bool IsShowingPos() { return m_bShowPlayerPos; }
 
 	// Debug Mode Mutator:
 	void SetDebugging(bool debugging) { m_bDebugMode = debugging; }
@@ -80,6 +81,7 @@ public:
 	void SetShowPaths(bool paths) { m_bShowPaths = paths; }
 	void SetShowRects(bool rect) { m_bShowCollisionRects = rect; }
 	void SetInfAmmo(bool inf) { m_bInfiniteAmmo = inf; }
+	void SetShowPos(bool pos) { m_bShowPlayerPos = pos; }
 
 
 
@@ -155,6 +157,7 @@ private:
 	bool m_bInfiniteAmmo = false;
 	bool m_bShowPaths = false;
 	bool m_bShowCollisionRects = false;
+	bool m_bShowPlayerPos = false;
 
 
 };

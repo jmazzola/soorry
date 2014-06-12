@@ -5,6 +5,8 @@
 #include "../SGD Wrappers/SGD_Event.h"
 #include "Camera.h"
 #include "Sprite.h"
+#include "CreateExplosionMessage.h"
+
 
 Grenade::Grenade ()
 {
@@ -27,9 +29,12 @@ void Grenade::Update ( float dt )
 
 	if(m_fDetonationTimer < 0)
 	{
+		CreateExplosionMessage* exploMsg = new CreateExplosionMessage(m_ptPosition.x, m_ptPosition.y, m_fDamage, m_fRadius);
+		exploMsg->QueueMessage();
+
 		// Send the explosion event
-		SGD::Event e("GRENADE_EXPLOSION", nullptr, this);
-		e.SendEventNow();
+		/*SGD::Event e("GRENADE_EXPLOSION", nullptr, this);
+		e.SendEventNow();*/
 
 		// Explode
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);

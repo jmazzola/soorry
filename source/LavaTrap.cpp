@@ -7,7 +7,7 @@ LavaTrap::LavaTrap ()
 	m_bRenderTop = false;
 	m_fImageSwitchRate = 0.5f;
 	m_fImageSwitchTimer = 0.5f;
-	m_fDamage = 1.0f;
+	m_fDamage = 10.0f;
 }
 
 
@@ -24,6 +24,8 @@ void  LavaTrap::Update(float dt)
 		m_bRenderTop = !m_bRenderTop;
 		m_fImageSwitchTimer = m_fImageSwitchRate;
 	}
+
+	m_fDt = dt;
 }
 
 void  LavaTrap::Render()
@@ -52,7 +54,7 @@ int   LavaTrap::GetType() const
 
 float LavaTrap::GetDamage(void) const
 {
-	return m_fDamage;
+	return m_fDamage * m_fDt;
 }
 
 float LavaTrap::GetImageSwitchRate( void ) const

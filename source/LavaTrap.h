@@ -33,6 +33,7 @@ private:
 	float m_fImageSwitchRate;
 	float m_fImageSwitchTimer;
 	float m_fDamage;
+	float m_fDt;
 	bool m_bRenderTop;
 };
 

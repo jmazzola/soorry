@@ -140,5 +140,8 @@ private:
 	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
+
+	// Are we near the shop?
+	bool m_bIsNearShop;
 };
 

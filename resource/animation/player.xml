@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <animation Sprites="1">
-  <sprite>player.png</sprite>
+  <sprite>Characterjersey.png</sprite>
   <spriteID>player</spriteID>
   <isLooping isIt="0" />
   <Frames numbers="1" />
