@@ -593,11 +593,13 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	Inventory* inventory = player->GetInventory();
 
+	enum { ITEMS, UPGRADES, TOWERS };
+
 	// Grab the player's weapons (4)
 	Weapon* weapons = player->GetWeapons();
 
 	// If we're in the items
-	if (shopSection == 0)
+	if (shopSection == ITEMS)
 	{
 		if (parcel == ITEM_PRICE_WALL)
 			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
@@ -622,10 +624,12 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 	}
 
-	if (shopSection == 1)
+	if (shopSection == UPGRADES)
 	{
 		if (parcel == UG_SHOTGUN_ROF)
 			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
+		if (parcel == UG_SHOTGUN_DAMAGE)
+
 		if (parcel == UG_AR_ROF)
 			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
 		if (parcel == UG_LAUNCHER_ROF)
@@ -633,7 +637,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 		player->SetWeapons(weapons);
 	}
-	if (shopSection == 2)
+	if (shopSection == TOWERS)
 	{
 		if (parcel == TOWER_MG)
 			inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1);

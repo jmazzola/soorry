@@ -53,13 +53,45 @@ public:
 	// -- Price enumeration --
 
 	// Item prices
-	enum ItemPrices { ITEM_PRICE_WALL, ITEM_PRICE_WINDOW, BEARTRAP, MINE, GRENADE, AMMO, ITEMGB, TOTAL_ITEMS };
+	enum ItemPrices 
+	{
+		ITEM_PRICE_WALL, 
+		ITEM_PRICE_WINDOW, 
+		BEARTRAP,
+		MINE, 
+		GRENADE, 
+		AMMO, 
+		ITEMGB, 
+		TOTAL_ITEMS
+	};
 
 	// Upgrade prices
-	enum UpgradePrices{ SHOTGUN_ROF, SHOTGUN_DMG, AR_ROF, AR_DMG, RL_ROF, RL_DMG, GRENADEUPGRADE, UGGB, TOTAL_UPGRADES};
+	enum UpgradePrices
+	{ 
+		SHOTGUN_ROF, 
+		SHOTGUN_DMG,
+		SHOTGUN_MAXAMMO,
+		AR_ROF, 
+		AR_DMG, 
+		AR_MAXAMMO,
+		RL_ROF, 
+		RL_DMG,
+		RL_MAXAMMO,
+		TRICKSHOT, 
+		UPGRADE_GOBACK, 
+		TOTAL_UPGRADES
+	};
 
 	// Tower prices
-	enum TowerPrices { MG, MAPLE_SYRUP, HOCKEY_STICK, LASER, TOWERGB, TOTAL_TOWERS};
+	enum TowerPrices
+	{ 
+		MG, 
+		MAPLE_SYRUP, 
+		HOCKEY_STICK, 
+		LASER, 
+		TOWERGB, 
+		TOTAL_TOWERS
+	};
 
 
 	// Accessors
@@ -118,20 +150,60 @@ private:
 	Entity* m_pPlayer;
 
 	// Shop tabs
-	enum ShopTabs { MAIN_TAB, ITEMS_TAB, UPGRADES_TAB, TOWERS_TAB };
+	enum ShopTabs 
+	{ 
+		MAIN_TAB, 
+		ITEMS_TAB, 
+		UPGRADES_TAB, 
+		TOWERS_TAB 
+	};
 
 	// Shop's main tab options
-	enum MainOptions { OPTIONS_ITEMS, OPTIONS_UPGRADES, OPTIONS_TOWERS, OPTIONS_EXITSHOP };
+	enum MainOptions 
+	{ 
+		OPTIONS_ITEMS, 
+		OPTIONS_UPGRADES, 
+		OPTIONS_TOWERS, 
+		OPTIONS_EXITSHOP 
+	};
 
 	// Shop's items tab options
-	enum ItemsOptions { ITEM_WALL, ITEM_WINDOW, ITEM_BEARTRAP, ITEM_MINE, ITEM_GRENADE, ITEM_AMMO, ITEM_GOBACK };
+	enum ItemsOptions 
+	{ 
+		ITEM_WALL, 
+		ITEM_WINDOW, 
+		ITEM_BEARTRAP, 
+		ITEM_MINE, 
+		ITEM_GRENADE, 
+		ITEM_AMMO, 
+		ITEM_GOBACK 
+	};
 
 	// Shop's upgrade tab options
-	enum UpgradesOptions { UG_SHOTGUN_ROF, UG_SHOTGUN_DAMAGE, UG_AR_ROF, UG_AR_DAMAGE, UG_LAUNCHER_ROF, UG_LAUNCHER_DAMAGE,
-							UG_GRENADE, UG_GOBACK };
+	enum UpgradesOptions
+	{
+		UG_SHOTGUN_ROF, 
+		UG_SHOTGUN_DAMAGE,
+		UG_SHOTGUN_AMMO,
+		UG_AR_ROF, 
+		UG_AR_DAMAGE, 
+		UG_AR_AMMO,
+		UG_LAUNCHER_ROF, 
+		UG_LAUNCHER_DAMAGE,
+		UG_LAUNCHER_AMMO,
+		UG_HATTRICK, 
+		UG_GOBACK 
+	};
 
 	// Shop's towers tab options
-	enum TowersOptions { TOWER_MG, TOWER_MAPLESYRUP, TOWER_HOCKEYSTICK, TOWER_LASER, TOWER_GOBACK};
+	enum TowersOptions 
+	{ 
+		TOWER_MG, 
+		TOWER_MAPLESYRUP, 
+		TOWER_HOCKEYSTICK, 
+		TOWER_LASER, 
+		TOWER_GOBACK
+	};
 
 
 };
