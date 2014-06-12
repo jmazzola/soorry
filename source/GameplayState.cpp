@@ -174,7 +174,7 @@ void GameplayState::SetGameMode(int _gameMode)
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
+Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Player* player = new Player();
 
@@ -211,6 +211,11 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	int lasers;
 	int lavaTraps;
 	int spikeTraps;
+	// Weapon bools
+	int hasAR;
+	int hasShotgun;
+	int hasRL;
+	int hasHattrick;
 
 	// Load data
 	pRoot->FirstChildElement("health")->Attribute("value", &health);
@@ -225,11 +230,20 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pRoot->FirstChildElement("lasers")->Attribute("amount", &lasers);
 	pRoot->FirstChildElement("lava_traps")->Attribute("amount", &lavaTraps);
 	pRoot->FirstChildElement("spike_traps")->Attribute("amount", &spikeTraps);
+	pRoot->FirstChildElement("hasAR")->Attribute("value", &hasAR);
+	pRoot->FirstChildElement("hasShotgun")->Attribute("value", &hasShotgun);
+	pRoot->FirstChildElement("hasRocketLauncher")->Attribute("value", &hasRL);
+	pRoot->FirstChildElement("hasHatTrick")->Attribute("value", &hasHattrick);
 
 	// Assign data
 	player->SetMaxHealth((float)health);
 	player->SetCurrHealth(player->GetMaxHealth());
 	player->SetSpeed((float)speed);
+
+	(hasAR == 0) ? player->SetAR(false) : player->SetAR(true);
+	(hasShotgun == 0) ? player->SetShotgun(false) : player->SetShotgun(true);
+	(hasRL == 0) ? player->SetRocketLauncher(false) : player->SetRocketLauncher(true);
+	(hasHattrick == 0) ? player->SetHatTrick(false) : player->SetHatTrick(true);
 	
 	Inventory* inventory = player->GetInventory();
 	inventory->SetWalls(walls);
@@ -305,9 +319,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
 	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
-	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocket_launch.wav");
+	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
 	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
+	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
+	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
+	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
+
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
@@ -399,6 +418,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight = new TowerFlyweight;
 	m_pTowerFlyweight->Load(towerStatsFileName);
 	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
+	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
+	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
 	// Load the gamesave
 
@@ -417,7 +438,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Create our player
 	m_pPlayer = CreatePlayer(playerStatsFileName);
-	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
+	zombieFactory->SetPlayer(m_pPlayer);
 
 	// If the slot is set
 
@@ -439,7 +460,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	//// Add it to the entity manager
 	// Load pause menu background
-	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/PausedBG.png");
+	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
 
 	// Setup BitmapFont
@@ -449,7 +470,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Setup the main button (text)
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
-	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 	// Load Store
 	m_pShop = new Shop;
@@ -555,6 +576,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hGunShoot);
 	pAudio->UnloadAudio(m_hShotgunShoot);
 	pAudio->UnloadAudio(m_hRocketShoot);
+	pAudio->UnloadAudio(m_hBulletImpact);
+	pAudio->UnloadAudio(m_hPurchase);
+	pAudio->UnloadAudio(m_hExplosion);
+	pAudio->UnloadAudio(m_hClickSound);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -686,6 +711,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			{
 				pGraphics->TurnCursorOn();
 			}
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 		}
 
 	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
@@ -701,16 +729,18 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//}
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
-		pInput->IsButtonPressed(1, 6)))
-		zombieFactory->SetBuildTImeRemaining(0.0f);
-
-#if !ARCADE_MODE
-	// Toggle the camera mode
-	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
+		pInput->IsButtonPressed ( 1 , 6 )) )
 	{
-		//TOGGLE THE CAMERA
+		zombieFactory->SetBuildTImeRemaining ( 0.0f );
+		for ( unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++ )
+		{
+			Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
+			DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
+			pMsg->QueueMessage();
+		}
+		
 	}
-#endif
+
 
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
@@ -730,12 +760,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down );
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+				m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
 #endif
 				if ( m_bTHEBOOL )
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
+
+					
 
 					// Wrap around the options
 					if ( m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT )
@@ -820,12 +852,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
 #endif
 				if (m_bTHEBOOL)
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+						m_nPauseMenuCursor++;
+#endif
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
@@ -841,11 +878,16 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
 #endif
 				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+						m_nPauseMenuCursor--;
+#endif
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
@@ -975,12 +1017,22 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = m_vtStick != SGD::Vector{0.0f, 0.0f};
+		m_bTHEBOOL = m_vtStick.y != 0 && m_bAccept;
+#endif
+		if ( m_bTHEBOOL )
+		{
+			m_bReplay = !m_bReplay;
+#if ARCADE_MODE
+			m_bAccept = false;
+#endif
+		}
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
 #endif
 		if (m_bTHEBOOL)
-			m_bReplay = !m_bReplay;
-
-		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 		{
 			switch (m_bReplay)
 			{
@@ -994,6 +1046,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				return true;
 				break;
 			}
+#if ARCADE_MODE
+			m_bAccept = false;
+#endif
 		}
 	}
 
@@ -1060,6 +1115,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
+	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
+		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
+
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music
@@ -1240,6 +1298,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
+#if !ARCADE_MODE
 				// If the game is in fullscreen
 				if (Game::GetInstance()->GetFullscreen())
 				{
@@ -1256,6 +1315,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					else
 						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 				}
+#endif
 
 				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
@@ -1324,9 +1384,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Draw the Maple Syrup Towers
 					if (inv->GetMapleSyrupTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Hockey Stick Towers
 					if (inv->GetHockeyStickTowers() > 0)
@@ -1409,27 +1469,28 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					Weapon* weapons = player->GetWeapons();
 
 					// Assault Rifle
-					if (weapons[0].GetCurrAmmo() > 0)
+					if (player->HasAR() && weapons[0].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					// tint it red
+					else if (player->HasAR() && weapons[0].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hARThumb, { 268, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					// Shotgun
-					if (weapons[1].GetCurrAmmo() > 0)
+					if (player->HasShotty() && weapons[1].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasShotty() && weapons[1].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hShotgunThumb, { 331, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					// Rocket Launcher
-					if (weapons[2].GetCurrAmmo() > 0)
+					if (player->HasRocketLauncher() && weapons[2].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasRocketLauncher() && weapons[2].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hRLThumb, { 394, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
-					// Who the fuck knows
-					if (weapons[3].GetCurrAmmo() > 0)
+					// Hat Trick
+					if (player->HasHatTrick() && weapons[3].GetCurrAmmo() > 0)
 						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
-					else
+					else if (player->HasHatTrick() && weapons[3].GetCurrAmmo() == 0)
 						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					switch (player->GetCurrWeapon())
@@ -1554,7 +1615,26 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
 
 					// Draw the picture of the selected pic
-					pGraphics->DrawTextureSection(textures[player->GetCurrWeapon()], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					if (player->HasAR() && player->GetCurrWeapon() == 0)
+						pGraphics->DrawTextureSection(textures[0], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasAR() && player->GetCurrWeapon() == 0)
+						pGraphics->DrawTextureSection(textures[0], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
+					if (player->HasShotty() && player->GetCurrWeapon() == 1)
+						pGraphics->DrawTextureSection(textures[1], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasShotty() && player->GetCurrWeapon() == 1)
+						pGraphics->DrawTextureSection(textures[1], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 255, 0, 0 });
+
+					if (player->HasRocketLauncher() && player->GetCurrWeapon() == 2)
+						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasRocketLauncher() && player->GetCurrWeapon() == 2)
+						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
+					if (player->HasHatTrick() && player->GetCurrWeapon() == 3)
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+					else if (!player->HasHatTrick() && player->GetCurrWeapon() == 3)
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+
 
 					// Draw the ammo of the selected weapon
 					if (weapons[player->GetCurrWeapon()].GetCurrAmmo() < 10)
@@ -1564,7 +1644,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				}
 
 				//Draw the grid rectangle
-				SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
+				/*SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 				/*pos.x = (pos.x + player->GetPosition().x - ((int)pos.x + (int)player->GetPosition().x) % 32) - Camera::x - 384;
 				pos.y = (pos.y + player->GetPosition().y - ((int)pos.y + (int)player->GetPosition().y) % 32) - Camera::y - 288;
 				pGraphics->DrawRectangle({ pos.x, pos.y, pos.x + 32, pos.y + 32 }, { 0, 0, 0, 0 }, { 255, 0, 0, 0 }, 2);*/
@@ -2089,6 +2169,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
+
+			   tempProj->SetHitSound(m_hBulletHit);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hGunShoot);
 		return tempProj;
 	}
@@ -2114,6 +2198,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Rotate(degree);
 
 			   tempProj->SetVelocity(vec);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+			   tempProj->SetHitSound(m_hBulletHit);
 			   return tempProj;
 	}
 		break;
@@ -2131,6 +2217,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+			   tempProj->SetHitSound(m_hBulletHit);
 
 			   //ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
@@ -2416,6 +2504,7 @@ Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float 
 	explosion->SetImage(m_hExplosionImage);
 	explosion->SetDamage(_damage);
 	explosion->SetRadius(_radius);
+	explosion->SetExplosionSound(m_hExplosion);
 
 	return explosion;
 }

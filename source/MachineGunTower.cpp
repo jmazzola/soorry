@@ -10,6 +10,7 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 
 
 MachineGunTower::MachineGunTower()
@@ -195,6 +196,8 @@ void MachineGunTower::Upgrade(int _slot, unsigned int* _points)
 		m_nUpgradeOne++;
 		m_nDamage = m_pTowerFlyweight->GetMachineGunDamage(m_nUpgradeOne);
 		m_fFireRate = m_pTowerFlyweight->GetMachineGunFireRate(m_nUpgradeOne);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 
 	else if (_slot == 1 && *_points >= (unsigned int)m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
@@ -203,6 +206,8 @@ void MachineGunTower::Upgrade(int _slot, unsigned int* _points)
 		m_nSellValue += (int)(m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
 		m_nUpgradeTwo++;
 		m_nRange = m_pTowerFlyweight->GetMachineGunRange(m_nUpgradeTwo);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 }
 

@@ -80,7 +80,7 @@ using namespace std;
 	// Setup the main button (text)
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
-	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 	// Load the Options
 	LoadOptions(STRING_CONFIGPATH);
@@ -152,6 +152,9 @@ using namespace std;
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
 
+		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_nCursor++;
+
 		// Wrap around the options
 		if (m_nCursor > MENU_GOBACK)
 			m_nCursor = MENU_MUSICVOL;
@@ -170,6 +173,9 @@ using namespace std;
 	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
+
+		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_nCursor--;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_MUSICVOL)

@@ -111,7 +111,7 @@ bool Shop::Input()
 
 			// Wrap around the options
 			if (m_nCursor > MainOptions::OPTIONS_EXITSHOP)
-				m_nCursor = MainOptions::OPTIONS_ITEMS;
+				m_nCursor = MainOptions::OPTIONS_WEAPONS;
 		}
 		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 		// Move the cursor (selected item) up
@@ -120,7 +120,7 @@ bool Shop::Input()
 			--m_nCursor;
 
 			// Wrap around the options
-			if (m_nCursor < MainOptions::OPTIONS_ITEMS)
+			if (m_nCursor < MainOptions::OPTIONS_WEAPONS)
 				m_nCursor = MainOptions::OPTIONS_EXITSHOP;
 		}
 
@@ -132,6 +132,11 @@ bool Shop::Input()
 			// Switch table for the item selected
 			switch (m_nCursor)
 			{
+
+			case MainOptions::OPTIONS_WEAPONS:
+				m_nCursor = 0;
+				m_nMenuTab = WEAPONS_TAB;
+				break;
 
 			case MainOptions::OPTIONS_ITEMS:
 				m_nCursor = 0;
@@ -155,6 +160,57 @@ bool Shop::Input()
 				break;
 			}
 		}
+	}
+
+	// Weapons Tab
+	else if (m_nMenuTab == WEAPONS_TAB)
+	{
+		// --- Scrolling through options ---
+		// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) down
+		if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+		{
+			// TODO: Add sound fx for going up and down
+			++m_nCursor;
+
+			// Wrap around the options
+			if (m_nCursor > WeaponsOptions::WEAPON_GOBACK)
+				m_nCursor = WeaponsOptions::WEAPON_AR;
+		}
+
+		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+		// Move the cursor (selected item) up
+		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+		{
+			--m_nCursor;
+
+			// Wrap around the options
+			if (m_nCursor < WeaponsOptions::WEAPON_AR)
+				m_nCursor = WeaponsOptions::WEAPON_GOBACK;
+		}
+
+		// --- Selecting an option ---
+		// If the enter key (PC) or A button (Xbox 360) are pressed
+		// Select the item
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		{
+			// If we're going back
+			if (m_nCursor == WeaponsOptions::WEAPON_GOBACK)
+			{
+				// Set it on the Items option
+				m_nCursor = MainOptions::OPTIONS_WEAPONS;
+				// Go back to the main tab
+				m_nMenuTab = MAIN_TAB;
+			}
+			else
+			{
+				// If we can buy the item
+				if (Buy(m_nCursor, 0))
+					// Give the item
+					GivePurchase(m_nCursor, 0);
+			}
+		}
+
 	}
 	// Items Tab
 	else if (m_nMenuTab == ITEMS_TAB)
@@ -198,9 +254,9 @@ bool Shop::Input()
 			else
 			{
 				// If we can buy the item
-				if (Buy(m_nCursor, 0))
+				if (Buy(m_nCursor, 1))
 					// Give the item
-					GivePurchase(m_nCursor, 0);
+					GivePurchase(m_nCursor, 1);
 			}
 		}
 	}
@@ -246,9 +302,9 @@ bool Shop::Input()
 			else
 			{
 				// If we can buy the item
-				if (Buy(m_nCursor, 1))
+				if (Buy(m_nCursor, 2))
 					// Give the item
-					GivePurchase(m_nCursor, 1);
+					GivePurchase(m_nCursor, 2);
 			}
 		}
 
@@ -295,14 +351,14 @@ bool Shop::Input()
 			else
 			{
 				// If we can buy the item
-				if (Buy(m_nCursor, 2))
+				if (Buy(m_nCursor, 3))
 					// Give the item
-					GivePurchase(m_nCursor, 2);
+					GivePurchase(m_nCursor, 3);
 			}
 		}
 		// Sell a tower
 		if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::X))
-			Sell(m_nCursor, 2);
+			Sell(m_nCursor, 3);
 
 	}
 
@@ -324,30 +380,102 @@ void Shop::Render()
 			pGraphics->DrawTexture(m_hBackgroundMain, { 0, 0 });
 
 			// Draw options
-			if (m_nCursor == MainOptions::OPTIONS_ITEMS)
-				m_pFont->Draw("Items", 200, 150, 1, { 0, 255, 0 });
+			if (m_nCursor == MainOptions::OPTIONS_WEAPONS)
+				m_pFont->Draw("Gun Rack", 200, 150, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Items", 200, 150, 1, { 0, 0, 0 });
+				m_pFont->Draw("Gun Rack", 200, 150, 1, { 0, 0, 0 });
+
+			if (m_nCursor == MainOptions::OPTIONS_ITEMS)
+				m_pFont->Draw("Items Store", 200, 200, 1, { 0, 255, 0 });
+			else
+				m_pFont->Draw("Items Store", 200, 200, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_UPGRADES)
-				m_pFont->Draw("Upgrades", 200, 200, 1, { 0, 255, 0 });
+				m_pFont->Draw("Upgrade Center", 200, 250, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Upgrades", 200, 200, 1, { 0, 0, 0 });
+				m_pFont->Draw("Upgrade Center", 200, 250, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_TOWERS)
-				m_pFont->Draw("Towers", 200, 250, 1, {0, 255, 0});
+				m_pFont->Draw("Tower Shop", 200, 300, 1, {0, 255, 0});
 			else
-				m_pFont->Draw("Towers", 200, 250, 1, {0, 0, 0});
+				m_pFont->Draw("Tower Shop", 200, 300, 1, {0, 0, 0});
 
 			if (m_nCursor == MainOptions::OPTIONS_EXITSHOP)
-				m_pFont->Draw("Exit Shop", 200, 300, 1, { 0, 255, 0 });
+				m_pFont->Draw("Exit Mall", 200, 350, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Exit Shop", 200, 300, 1, { 0, 0, 0 });
+				m_pFont->Draw("Exit Mall", 200, 350, 1, { 0, 0, 0 });
 		}
+
+		else if (m_nMenuTab == WEAPONS_TAB)
+		{
+			// Draw the menu items background
+			pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+
+			// Draw the mun-knee
+			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
+			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
+
+			// -- Draw the item's descriptions --
+			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+
+			// -- Draw the item's price --
+			string price = "Price: ";
+			price += std::to_string(weapPrices[m_nCursor]);
+			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
+
+			// -- Draw the item's Names and highlighting --
+			for (int i = 0; i < TOTAL_WEAPONS; i++)
+			{
+				// If we're currently selected
+				if (m_nCursor == i)
+					// Draw it in green
+					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				else
+					// Draw it in black
+					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+			}
+		}
+
 		else if (m_nMenuTab == ITEMS_TAB)
 		{
 			// Draw the menu items background
 			pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+
+			// Draw the stats of the items
+			Inventory* inv = dynamic_cast<Player*>(m_pPlayer)->GetInventory();
+			string stuff = "Walls: ";
+			stuff += std::to_string(inv->GetWalls());
+			m_pFont->Draw(stuff.c_str(), 414, 260, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Windows: ";
+			stuff += std::to_string(inv->GetWindows());
+			m_pFont->Draw(stuff.c_str(), 414, 280, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Beartraps: ";
+			stuff += std::to_string(inv->GetBearTraps());
+			m_pFont->Draw(stuff.c_str(), 414, 300, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "A-T Mines: ";
+			stuff += std::to_string(inv->GetMines());
+			m_pFont->Draw(stuff.c_str(), 414, 320, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Grenades: ";
+			stuff += std::to_string(inv->GetGrenades());
+			m_pFont->Draw(stuff.c_str(), 414, 340, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Drones: ";
+			stuff += std::to_string(inv->GetDroneCount());
+			m_pFont->Draw(stuff.c_str(), 414, 360, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Lava Traps: ";
+			stuff += std::to_string(inv->GetLavaTraps());
+			m_pFont->Draw(stuff.c_str(), 414, 380, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Spike Traps: ";
+			stuff += std::to_string(inv->GetSpikeTraps());
+			m_pFont->Draw(stuff.c_str(), 414, 400, 0.4f, { 255, 255, 0 });
+
+
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
@@ -497,7 +625,7 @@ void Shop::Render()
 // Buy
 // - check if the player has enough money
 // [in] parcel - the number of the item
-// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
+// [in] shopSection - 0 (Weapons) 1 (Items) 2 (Upgrades) 3 (Towers)
 // [out] return true - has sufficient funds
 // [out] return false - has insufficient funds
 bool Shop::Buy(int parcel, int shopSection)
@@ -506,9 +634,26 @@ bool Shop::Buy(int parcel, int shopSection)
 	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
+	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
+
 	switch (shopSection)
 	{
-	case 0:		// items
+
+	case WEAPONS:
+	{
+		if (player->GetScore() >= weapPrices[parcel])
+		{
+			// Subtract money
+			player->SetScore(curMoney -= weapPrices[parcel]);
+			tracker->SpendItUp(weapPrices[parcel]);
+			return true;
+		}
+		else
+			return false;
+	}
+		break;
+
+	case ITEMS:		
 	{
 		// If the player has the money for the item
 		if (player->GetScore() >= itemPrices[parcel])
@@ -523,7 +668,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	}
 
 		break;
-	case 1:
+	case UPGRADES:
 	{
 		// If the player has the money for the upgrade
 		if (player->GetScore() >= upgradePrices[parcel])
@@ -537,7 +682,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	}
 		break;
 
-	case 2:
+	case TOWERS:
 	{
 		// If the player has the money for the upgrade
 		if (player->GetScore() >= towerPrices[parcel])
@@ -562,7 +707,7 @@ bool Shop::Buy(int parcel, int shopSection)
 // - Give back 75% of the original price
 // - Add money
 // [in] parcel - the number of the item
-// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
+// [in] shopSection - 0 (Weapons) 1 (Items) 2 (Upgrades) 3 (Towers)
 void Shop::Sell(int parcel, int shopSection)
 {
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
@@ -570,21 +715,29 @@ void Shop::Sell(int parcel, int shopSection)
 	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
+	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
+
 	switch (shopSection)
 	{
-	case 0:		// items
+	case WEAPONS:		
+	{
+		player->SetScore(curMoney += int(weapPrices[parcel] * SELL_DISCOUNT));
+	}
+		break;
+
+	case ITEMS:
 	{
 		player->SetScore(curMoney += int(itemPrices[parcel] * SELL_DISCOUNT));
 	}
 		break;
 
-	case 1:		// upgrades
+	case UPGRADES:		// upgrades
 	{
 		player->SetScore(curMoney += int(upgradePrices[parcel] * SELL_DISCOUNT));
 	}
 		break;
 
-	case 2:		// towers
+	case TOWERS:		// towers
 	{
 		
 		if (parcel == TOWER_MG && inv->GetMachineGunTowers() > 0)
@@ -626,20 +779,61 @@ void Shop::Sell(int parcel, int shopSection)
 // GivePurchase
 // - give the player the item they purchased
 // [in] parcel - the item they want
-// [in] shopSection - 0 (Items) 1 (Upgrades) 2 (Towers)
+// [in] shopSection - 0 (Weapons) 1 (Items) 2 (Upgrades) 3 (Towers)
 void Shop::GivePurchase(int parcel, int shopSection)
 {
 	// Grab the player's inventory
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	Inventory* inventory = player->GetInventory();
+	Game* game = Game::GetInstance();
 
-	enum { ITEMS, UPGRADES, TOWERS };
+	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
 
 	// Grab the player's weapons (4)
 	Weapon* weapons = player->GetWeapons();
 
+	if (shopSection == WEAPONS)
+	{
+		if (parcel == WEAP_AR)
+		{
+			if (player->HasAR())
+				return;
+			
+			player->SetAR(true);
+			weapons[0].SetCurrAmmo(200);
+			
+		}
+
+		if (parcel == WEAP_SHOTGUN)
+		{
+			if (player->HasShotty())
+				return;
+
+			player->SetShotgun(true);
+			weapons[1].SetCurrAmmo(200);
+		}
+
+		if (parcel == WEAP_ROCKETLAUNCHER)
+		{
+			if (player->HasRocketLauncher())
+				return;
+
+			player->SetRocketLauncher(true);
+			weapons[2].SetCurrAmmo(20);
+		}
+
+		if (parcel == WEAP_HATTRICK)
+		{
+			if (player->HasHatTrick())
+				return;
+
+			player->SetHatTrick(true);
+			weapons[3].SetCurrAmmo(500);
+		}
+	}
+
 	// If we're in the items
-	if (shopSection == ITEMS)
+	else if (shopSection == ITEMS)
 	{
 		if (parcel == ITEM_PRICE_WALL)
 			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
@@ -658,8 +852,6 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			weapons[1].SetCurrAmmo(weapons[1].GetMaxAmmo());
 			weapons[2].SetCurrAmmo(weapons[2].GetMaxAmmo());
 			weapons[3].SetCurrAmmo(weapons[3].GetMaxAmmo());
-			// Set the player's weapons/ammo
-			player->SetWeapons(weapons);
 		}
 
 		if (parcel == DRONE)
@@ -667,8 +859,18 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			CreateDroneMessage* pMsg = new CreateDroneMessage();
 			pMsg->QueueMessage();
 			pMsg = nullptr;
+
+			inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]);
 		}
 
+		if (parcel == LAVATRAP)
+			inventory->SetLaserTowers(inventory->GetLavaTraps() + itemAmountToAdd[LAVATRAP]);
+
+		if (parcel == SPIKETRAP)
+			inventory->SetSpikeTraps(inventory->GetSpikeTraps() + itemAmountToAdd[SPIKETRAP]);
+
+		if (parcel != ITEM_GOBACK)
+			itemPrices[parcel] = (unsigned int)(itemPrices[parcel] + itemPrices[parcel] * SELL_DISCOUNT);
 	}
 
 	if (shopSection == UPGRADES)
@@ -695,7 +897,8 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		if (parcel == UG_LAUNCHER_AMMO)
 			weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
 
-		player->SetWeapons(weapons);
+		if (parcel != UG_GOBACK)
+			upgradePrices[parcel] = (unsigned int)(upgradePrices[parcel] + upgradePrices[parcel] * SELL_DISCOUNT);
 	}
 	if (shopSection == TOWERS)
 	{
@@ -707,10 +910,10 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1);
 		if (parcel == TOWER_LASER)
 			inventory->SetLaserTowers(inventory->GetLaserTowers() + 1);
-	}
 
-	// Set the player's inventory
-	player->SetInventory(inventory);
+		if (parcel != TOWER_GOBACK)
+			towerPrices[parcel] = (unsigned int)(towerPrices[parcel] + towerPrices[parcel] * SELL_DISCOUNT);
+	}
 }
 
 // LoadPrices
@@ -731,6 +934,34 @@ void Shop::LoadPrices(string xmlFileName)
 	// If the root isn't there, if not gtfo
 	if (pRoot == nullptr)
 		return;
+
+	// -- Read Weapons --
+	TiXmlElement* pWeapons = pRoot->FirstChildElement("weapons");
+
+	// Grab the number of weapons
+	int weapCount;
+	pWeapons->Attribute("count", &weapCount);
+
+	// Grab the 'weapon' element
+	TiXmlElement* pWeapon = pWeapons->FirstChildElement("weapon");
+
+	// Loop through all the weapons
+	for (int i = 0; i < weapCount; i++)
+	{
+		// Store the name
+		weapNames[i] = pWeapon->Attribute("name");
+
+		// Grab the price
+		int price = 0;
+		pWeapon->Attribute("price", &price);
+		weapPrices[i] = (unsigned int)price;
+
+		// Grab the description
+		weapDescs[i] = pWeapon->Attribute("description");
+
+		// Move down to the next element of 'item'
+		pWeapon = pWeapon->NextSiblingElement("weapon");
+	}
 
 
 	// -- Read Items --

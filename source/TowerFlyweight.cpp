@@ -346,10 +346,30 @@ SGD::HTexture TowerFlyweight::GetRangeCirclesImage() const
 	return m_hRangeCirclesImage;
 }
 
+SGD::HAudio TowerFlyweight::GetPurchaseSound() const
+{
+	return m_hPurchaseSound;
+}
+
+SGD::HAudio TowerFlyweight::GetClickSound() const
+{
+	return m_hClickSound;
+}
+
 /**********************************************************/
 // Mutators
 
 void TowerFlyweight::SetRangeCirclesImage(SGD::HTexture _rangeCirclesImage)
 {
 	m_hRangeCirclesImage = _rangeCirclesImage;
+}
+
+void TowerFlyweight::SetPurchaseSound(SGD::HAudio _purchaseSound)
+{
+	m_hPurchaseSound = _purchaseSound;
+}
+
+void TowerFlyweight::SetClickSound(SGD::HAudio _clickSound)
+{
+	m_hClickSound = _clickSound;
 }

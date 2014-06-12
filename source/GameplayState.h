@@ -100,7 +100,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Entity* m_pPlayer;
+	Player* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
@@ -185,6 +185,11 @@ private:
 	SGD::HAudio m_hRocketShoot = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hShotgunShoot = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hBulletHit = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBulletImpact = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPurchase = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hExplosion = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;
@@ -206,7 +211,7 @@ private:
 	Button* CreateButton() const;
 
 	// Creates a player
-	Entity*	CreatePlayer(string playerStatsFileName) const;
+	Player*	CreatePlayer(string playerStatsFileName) const;
 
 	// Message Callback Function:
 	static void MessageProc(const SGD::Message* pMsg);

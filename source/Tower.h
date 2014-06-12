@@ -49,6 +49,9 @@ protected:
 
 	/**********************************************************/
 	// Data members
+	bool m_bHoverOne;
+	bool m_bHoverTwo;
+	bool m_bHoverSell;
 	bool m_bSelected;
 	float m_fRotation;
 	int m_nUpgradeOne;

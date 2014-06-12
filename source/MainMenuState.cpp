@@ -95,7 +95,7 @@ using namespace std;
 
 	// Setup the universal button
 	m_pButton = CreateButton();
-	m_pButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 	// Grab the controllers
 	SGD::InputManager::GetInstance()->CheckForNewControllers();
@@ -188,7 +188,7 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = m_vtStick.x > 0 && m_bAccept;
+	m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
 #endif
 	// Move the cursor (selected item) down
 	if (m_bTHEBOOL)
@@ -208,7 +208,7 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
+	m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
 #endif
 	// Move the cursor (selected item) up
 	if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))

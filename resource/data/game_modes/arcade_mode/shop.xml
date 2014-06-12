@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- Shop XML 2.0 -->
 <shop>
-	<items count="8">
+
+  <weapons count ="5">
+    <weapon name="Assault Rifle" price="1000"     description="Purchase an AR" />
+    <weapon name="Shotgun" price="2000" description="Purchase a shotty" />
+    <weapon name="Rocket Launcher" price="6000" description="Purchase a RPG" />
+    <weapon name="Hat Trick" price="10000" description="Purchase the Hat Trick" />
+    <weapon name="Go Back" price="0" description="Leave the Gun Rack" />
+  </weapons>
+  
+	<items count="10">
 		<item name="Wall +50" 			price="100" 		description="Add 50 Walls" 			amountToAdd="50"	/>
 		<item name="Window +50" 		price="200" 		description="Add 50 Windows" 		amountToAdd="50"	/>
 		<item name="Beartrap +1" 		price="250" 		description="Add 1 Beartrap" 		amountToAdd="1"		/>
@@ -9,7 +18,9 @@
 		<item name="Frag Grenade +3"	price="350" 		description="Add 3 Frag Grenades" 	amountToAdd="3"		/>
 		<item name="Refill Ammo"		price="500"			description="Refill your clips"/>
     <item name="Drone +1"       price="2000"    description="Game of Drones." amountToAdd="1" />
-    <item name="Go Back"       	price="0"       	description="Go Back" />
+    <item name="Lava Trap +1"      price="600"     description="Add 1 Lava Trap" amountToAdd="1" />
+    <item name="Spike Trap +1"      price="750"     description="Add 1 Spike Trap" amountToAdd="1" />
+    <item name="Go Back"       	price="0"       	description="Leave the Items Store" />
 	</items>
 
 	<weaponUpgrades count="11">
@@ -23,7 +34,7 @@
 		<weaponUpgrade name="RPG Damage +2" 	price="5000" 	description="Add to the RPG's Damage." 				amountToAdd="2"/>
     <weaponUpgrade name="RPG Max Ammo +100" price="1000" description="RPG Max Ammo +10"               amountToAdd="10" />
 		<weaponUpgrade name="Hat Trick"					price="10000"	description="Puck you" />
-    <weaponUpgrade name="Go Back"					price="0"	description="Go Back" />
+    <weaponUpgrade name="Go Back"					price="0"	description="Leave Upgrade Central" />
 	</weaponUpgrades>
 
 	<towers count="5">
@@ -31,6 +42,7 @@
 		<tower name="Maple Syrup Tower"						price="150"	description="Maple Searup" />
 		<tower name="Hockey Stick Tower"					price="200"	description="GOOOOOOALL wrong sport." />
 		<tower name="Laser Tower"							price="300"	description="*laser noise*" />
-    <tower name="Go Back"							price="0"	description="Go Back" />
+    <tower name="Go Back"							price="0"	description="Leave Tower Shop" />
 	</towers>
+  
 </shop>

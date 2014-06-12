@@ -94,6 +94,12 @@ Player::Player () : Listener ( this )
 	m_pInventory->SetLaserTowers(20);
 	m_pInventory->SetLavaTraps(5);
 	m_pInventory->SetSpikeTraps(5);
+	m_pInventory->SetDroneCount(0);
+
+	m_bHasAssaultRifle = true;
+	m_bHasShotty = false;
+	m_bHasRocketz = false;
+	m_bHasHatTrick = false;
 
 	//Camera Lock - starts static
 	m_bStaticCamera = 1;
@@ -106,11 +112,22 @@ Player::Player () : Listener ( this )
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Assault rifle
-		tempWeapon.SetCurrAmmo(100);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.2f);
-		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
-		m_pWeapons[0] = tempWeapon;
+		if (m_bHasAssaultRifle)
+		{
+			tempWeapon.SetCurrAmmo(200);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.2f);
+			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			m_pWeapons[0] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.2f);
+			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
+			m_pWeapons[0] = tempWeapon;
+		}
 	}
 	else
 	{
@@ -125,34 +142,64 @@ Player::Player () : Listener ( this )
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Shotgun
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(100);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(.5f);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-		m_pWeapons[1] = tempWeapon;
+		if (m_bHasShotty)
+		{
+			tempWeapon.SetCurrAmmo(100);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.5f);
+			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			m_pWeapons[1] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(.5f);
+			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+			m_pWeapons[1] = tempWeapon;
+		}
 	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//rocket launcher
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(50);
-		tempWeapon.SetMaxAmmo(50);
-		tempWeapon.SetFireRate(2);
-		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
-		m_pWeapons[2] = tempWeapon;
+		if (m_bHasRocketz)
+		{
+			tempWeapon.SetCurrAmmo(20);
+			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetFireRate(2);
+			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
+			m_pWeapons[2] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetFireRate(2);
+			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
+			m_pWeapons[2] = tempWeapon;
+		}
 	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
 		//Trick Shot
-		tempWeapon;
-		tempWeapon.SetCurrAmmo(500);
-		tempWeapon.SetMaxAmmo(500);
-		tempWeapon.SetFireRate(0.75f);
-		tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
-		m_pWeapons[3] = tempWeapon;
+		if (m_bHasHatTrick)
+		{
+			tempWeapon.SetCurrAmmo(500);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(0.75f);
+			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+			m_pWeapons[3] = tempWeapon;
+		}
+		else
+		{
+			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetFireRate(0.75f);
+			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+			m_pWeapons[3] = tempWeapon;
+		}
 	}
 
 #pragma endregion
@@ -231,6 +278,17 @@ void Player::Update ( float dt )
 	m_fSuperTimer -= dt;
 	m_fRunningManTimer -= dt;
 
+	float trg = pInput->GetTrigger(0);
+
+	if(abs(trg) < 0.1)
+		trg = 0.0f;
+
+	if ( trg == 0 )
+	{
+		m_bCanLeftTrigger = true;
+		m_bCanRightTrigger = true;
+	}
+
 	if ( m_fRunningManTimer < 0.0f && isRunningMan )
 	{
 		m_fRunningManTimer = 0.3f;
@@ -246,33 +304,7 @@ void Player::Update ( float dt )
 	pos.x = (float)((int)(pos.x + Camera::x) / GRIDWIDTH);
 	pos.y = (float)((int)(pos.y + Camera::y) / GRIDHEIGHT);
 
-
-	// Check if we're at the shop
-	if (pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop)
-	{
-		Shop* shop = GameplayState::GetInstance()->GetShop();
-		shop->SetShopStatus(true);
-	}
-
-	m_bIsNearShop = false;
-
-	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
-		m_bCanLeftClick = true;
-
-
-	if ( m_nCurrHealth <= 0.0f )
-	{
-		GameplayState::GetInstance ()->HasLost();
-		return;
-	}
-	// Regenerate health
-	m_nCurrHealth += 7.0f * dt;
-	if ( m_nCurrHealth > m_nMaxHealth )
-		m_nCurrHealth = m_nMaxHealth;
-
-	//Update Timers
-
-	// Grab the left stick for movement
+		// Grab the left stick for movement
 	SGD::Vector move = pInput->GetLeftJoystick ( 0 );
 	if ( abs ( move.x ) < 0.1f )
 		move.x = 0.0f;
@@ -294,7 +326,53 @@ void Player::Update ( float dt )
 	if ( abs ( shoot.y ) < 0.2f )
 		shoot.y = 0.0f;
 #endif
-	if (pInput->IsKeyPressed(SGD::Key::Space) == true)
+
+
+
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop;
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = (pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(1,2) ) && m_bAccept;
+#endif
+
+	// Check if we're at the shop
+	if (m_bTHEBOOL)
+	{
+		Shop* shop = GameplayState::GetInstance()->GetShop();
+		shop->SetShopStatus(true);
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
+	}
+
+	m_bIsNearShop = false;
+
+	if (pInput->IsKeyUp(SGD::Key::MouseLeft))
+		m_bCanLeftClick = true;
+
+
+	if ( m_nCurrHealth <= 0.0f )
+	{
+		GameplayState::GetInstance ()->HasLost();
+		return;
+	}
+	// Regenerate health
+	m_nCurrHealth += 7.0f * dt;
+	if ( m_nCurrHealth > m_nMaxHealth )
+		m_nCurrHealth = m_nMaxHealth;
+
+	//Update Timers
+
+
+
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = (pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(1,2)) && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		if (m_bStaticCamera == true)
 		{
@@ -306,10 +384,11 @@ void Player::Update ( float dt )
 			m_bStaticCamera = true;
 			m_fCameraLerpTimer = 0;
 		}
+
+		m_bAccept = false;
 	}
 	if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode() == false)
 	{
-
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
 		SGD::Point playerPos = GetPosition ();
 		playerPos.x -= Camera::x;
@@ -337,19 +416,6 @@ void Player::Update ( float dt )
 	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
 	{
 		m_fCursorFadeTimer = m_fCursorFadeLength;
-	}
-
-	// Hide the cursor if you haven't moved it recently
-	if ( m_fCursorFadeTimer <= 0 )
-	{
-		if ( pGraphics->IsCursorShowing () == true && m_pZombieWave->IsBuildMode() == false)
-			pGraphics->TurnCursorOff ();
-	}
-	// Show the cursor if you have moved it recently
-	else if ( m_fCursorFadeTimer > 0 && m_pZombieWave->IsBuildMode () == false )
-	{
-		if ( pGraphics->IsCursorShowing () == false )
-			pGraphics->TurnCursorOn ();
 	}
 
 	// Input
@@ -424,7 +490,7 @@ void Player::Update ( float dt )
 		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A ));
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = pInput->IsButtonDown(1, 3);
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 3) || pInput->IsButtonPressed(1, 3);
 #endif
 		
 	if ( m_bTHEBOOL && m_pInventory->GetHealthPacks () > 0 && m_nCurrHealth < m_nMaxHealth )
@@ -436,10 +502,10 @@ void Player::Update ( float dt )
 	}
 	// Throw Grenade
 #if !ARCADE_MODE
-		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::F ) == true || pInput->GetTrigger ( 0 ) < -0.1f);
+		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::F ) == true || (trg < -0.1f && m_bCanLeftTrigger));
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = pInput->IsButtonReleased(1, 0);
+		m_bTHEBOOL = pInput->IsButtonReleased(1, 0) || pInput->IsButtonReleased(0, 0);
 #endif
 
 	if ( m_bTHEBOOL && m_pInventory->GetGrenades () > 0 && m_pZombieWave->IsBuildMode() == false && m_fGrenadeTimer < 0.0f)
@@ -473,8 +539,8 @@ void Player::Update ( float dt )
 		m_bTHEBOOL = (pInput->IsKeyDown(SGD::Key::E) == true) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::X);
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(0, 5) ||
-			         pInput->IsButtonPressed(1, 2) || pInput->IsButtonPressed(1, 5);
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 5) || pInput->IsButtonPressed(1, 5);
+			        
 #endif
 	// Open Shop
 	if(m_bTHEBOOL && m_pZombieWave->IsBuildMode() == true)
@@ -514,7 +580,7 @@ void Player::Update ( float dt )
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
 #if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyDown ( SGD::Key::MouseLeft ) || pInput->GetTrigger(0) > 0.1f;
+		m_bTHEBOOL = pInput->IsKeyDown ( SGD::Key::MouseLeft ) || trg > 0.1f;
 #endif
 #if ARCADE_MODE
 		m_bTHEBOOL = !(pInput->IsButtonDown ( 0 , 0 ) || pInput->IsButtonDown ( 1 , 0 )) && shoot != SGD::Vector { 0.0f , 0.0f };
@@ -561,8 +627,7 @@ void Player::Update ( float dt )
 	m_bTHEBOOL = pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::LB );
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0,0) || pInput->IsButtonPressed(0,3) ||
-				 pInput->IsButtonPressed(1,0) || pInput->IsButtonPressed(1,3);
+	m_bTHEBOOL = pInput->IsButtonPressed(0,1) || pInput->IsButtonPressed(1,1);
 #endif
 	// Cycle Left
 	if ( m_bTHEBOOL )
@@ -584,8 +649,7 @@ void Player::Update ( float dt )
 	m_bTHEBOOL =  pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::RB );
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0,1) || pInput->IsButtonPressed(0,4) ||
-				 pInput->IsButtonPressed(1,1) || pInput->IsButtonPressed(1,4);
+	m_bTHEBOOL = pInput->IsButtonPressed(0,2) || pInput->IsButtonPressed(1,2);
 #endif
 
 	// Cycle Right
@@ -650,7 +714,7 @@ void Player::Update ( float dt )
 		m_nCurrPlaceable = STRAP;
 #endif
 
-	if ((pInput->IsKeyPressed(SGD::Key::MouseRight) == true || pInput->GetTrigger(0) > 0.1f) && m_pZombieWave->IsBuildMode())	{
+	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || trg > 0.1f) && m_pZombieWave->IsBuildMode())	{
 		// Test rect
 		SGD::Rectangle rect;
 		rect.left = pos.x * pWorld->GetTileWidth () + pWorld->GetTileWidth () / 4;
@@ -753,7 +817,7 @@ void Player::Update ( float dt )
 				cursorInMenu = true;
 				m_bCanLeftClick = false;
 
-				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft) || (trg < -0.1f && m_bCanLeftTrigger))
 				{
 					SGD::Point topLeft = SGD::Point(backgroundRect.left, backgroundRect.top);
 
@@ -781,7 +845,7 @@ void Player::Update ( float dt )
 					if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
 					{
 						m_unScore += m_pSelectedTower->GetSellValue();
-
+						StatTracker::GetInstance()->TowerExchange(false);
 						DestroyEntityMessage* msg = new DestroyEntityMessage(m_pSelectedTower);
 						msg->QueueMessage();
 
@@ -1726,4 +1790,9 @@ bool Player::IsRunningMan( void ) const
 void Player::SetRunningMan( bool yes)
 {
 	isRunningMan = yes;
+}
+
+bool Player::GetCursorFaded(void) const
+{
+	return m_fCursorFadeTimer > 0;
 }

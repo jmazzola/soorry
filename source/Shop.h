@@ -64,6 +64,17 @@ public:
 
 	// -- Price enumeration --
 
+	// Weapon prices
+	enum WeaponPrices
+	{
+		WEAP_AR,
+		WEAP_SHOTGUN,
+		WEAP_ROCKETLAUNCHER,
+		WEAP_HATTRICK,
+		WEAP_GOBACK,
+		TOTAL_WEAPONS
+	};
+
 	// Item prices
 	enum ItemPrices 
 	{
@@ -74,6 +85,8 @@ public:
 		GRENADE, 
 		AMMO, 
 		DRONE,
+		LAVATRAP,
+		SPIKETRAP,
 		ITEMGB, 
 		TOTAL_ITEMS
 	};
@@ -121,6 +134,11 @@ private:
 	
 	// Is the shop open?
 	bool m_bIsOpen;
+
+	// --- Weapons ---
+	string weapNames[TOTAL_WEAPONS];
+	string weapDescs[TOTAL_WEAPONS];
+	unsigned int weapPrices[TOTAL_WEAPONS];
 
 	// --- Items ---
 	string itemNames[TOTAL_ITEMS];
@@ -171,7 +189,8 @@ private:
 	// Shop tabs
 	enum ShopTabs 
 	{ 
-		MAIN_TAB, 
+		MAIN_TAB,
+		WEAPONS_TAB,
 		ITEMS_TAB, 
 		UPGRADES_TAB, 
 		TOWERS_TAB 
@@ -180,10 +199,21 @@ private:
 	// Shop's main tab options
 	enum MainOptions 
 	{ 
+		OPTIONS_WEAPONS,
 		OPTIONS_ITEMS, 
 		OPTIONS_UPGRADES, 
 		OPTIONS_TOWERS, 
 		OPTIONS_EXITSHOP 
+	};
+
+
+	enum WeaponsOptions
+	{
+		WEAPON_AR,
+		WEAPON_SHOTGUN,
+		WEAPON_ROCKETLAUNCHER,
+		WEAPON_HATTRICK,
+		WEAPON_GOBACK
 	};
 
 	// Shop's items tab options
@@ -196,6 +226,8 @@ private:
 		ITEM_GRENADE, 
 		ITEM_AMMO, 
 		ITEM_DRONE,
+		ITEM_LAVATRAP,
+		ITEM_SPIKETRAP,
 		ITEM_GOBACK 
 	};
 

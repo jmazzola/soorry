@@ -6,6 +6,7 @@
 
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
+#include "../SGD Wrappers/SGD_AudioManager.h"
 #include "BitmapFont.h"
 #include "Game.h"
 
@@ -187,6 +188,8 @@ void HockeyStickTower::Upgrade(int _slot, unsigned int* _points)
 		m_nSellValue += (int)(m_pTowerFlyweight->GetHockeyStickDamageUpgradeCost(m_nUpgradeOne) * 0.75f);
 		m_nUpgradeOne++;
 		m_fDamage = m_pTowerFlyweight->GetHockeyStickDamage(m_nUpgradeOne);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 
 	else if (_slot == 1 && *_points >= (unsigned int)m_pTowerFlyweight->GetHockeyStickSpinRateUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
@@ -195,6 +198,8 @@ void HockeyStickTower::Upgrade(int _slot, unsigned int* _points)
 		m_nSellValue += (int)(m_pTowerFlyweight->GetHockeyStickSpinRateUpgradeCost(m_nUpgradeTwo) * 0.75f);
 		m_nUpgradeTwo++;
 		m_fRotationRate = m_pTowerFlyweight->GetHockeyStickSpinRate(m_nUpgradeTwo);
+
+		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 	}
 }
 

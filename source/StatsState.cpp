@@ -28,7 +28,7 @@ StatsState* StatsState::GetInstance(void)
 
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
-	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 	m_pFont = Game::GetInstance()->GetFont();
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
@@ -68,7 +68,7 @@ StatsState* StatsState::GetInstance(void)
 		 m_bAccept = true;
 #endif
 
-	 // Make this work with the scroll wheel, kthxbai :3
+	
 #if !ARCADE_MODE
 	 m_bTHEBOOL =  pInput->IsKeyDown ( SGD::Key::Down ) || pInput->IsDPadDown ( 0 , SGD::DPad::Down ) ;
 #endif
@@ -78,7 +78,7 @@ StatsState* StatsState::GetInstance(void)
 
 	 if (m_bTHEBOOL)
 	 {
-		m_fScrollY -= 0.5f;
+		m_fScrollY -= 0.25f;
 	 }
 #if !ARCADE_MODE
 	 m_bTHEBOOL =  pInput->IsKeyDown ( SGD::Key::Up ) || pInput->IsDPadDown ( 0 , SGD::DPad::Up ) ;
@@ -88,7 +88,7 @@ StatsState* StatsState::GetInstance(void)
 #endif 
 	 if (m_bTHEBOOL  )
 	 {		 
-		m_fScrollY += 0.5f;
+		m_fScrollY += 0.25f;
 	 }
 
 #if !ARCADE_MODE
@@ -164,7 +164,7 @@ StatsState* StatsState::GetInstance(void)
 			 SGD::Rectangle(0, 475, 800, 600), {}, {});
 
 		 // Render button
-		 
+#if !ARCADE_MODE
 			 SGD::Color color = (m_nCursor == 0) ? SGD::Color(255, 0, 0) : SGD::Color(0, 0, 0);
 			 if (m_nResetStatsStatus == AREYOUSURE)
 				 m_pMainButton->Draw("Reset Stats?", { 200, 420 }, color, { 0.9f, 0.9f }, 0);
@@ -172,13 +172,10 @@ StatsState* StatsState::GetInstance(void)
 				 m_pMainButton->Draw("Reset Stats?!", { 200, 420 }, color, { 1, 1 }, 0);
 			 else if (m_nResetStatsStatus == AIGHTITSGONE)
 				 m_pMainButton->Draw("Stats Reset!", { 200, 420 }, color, { 1, 1 }, 0);
-
-			 if (m_nCursor == 1)
-				m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
-			 else
-				 m_pMainButton->Draw("Go Back", { 200, 500 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
-
-
+#endif
+			
+			m_pMainButton->Draw ( "Go Back" , { 200 , 500 } , { 255 , 0 , 0 } , { 0.9f , 0.9f } , 0 );
+			
 
 		 //pFont->Draw ( "Stats" , Game::GetInstance ()->GetScreenWidth () / 2 - (int)((m_pFont->GetTextWidth ( "Stats" ) / 2) * 1.2f) - 20 , 100 , 1.2f , SGD::Color ( 255 , 0 , 0 , 0 ) );
 	 }
