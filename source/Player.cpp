@@ -1761,18 +1761,23 @@ void Player::Render ( void )
 		rotation = SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
 	else
 		rotation = -SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
+	SGD::Color col = SGD::Color(255, 255 ,255, 255);
+	// Testing purposes but also will do something like this with actual art
+	if(m_fSuperTimer > 0 && rand() % 2 == 0)
+		col = SGD::Color(255, 255, 0, 0);
 
+	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center, col );
 
-	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center );
+	if(m_fSuperTimer > 0)
+		SGD::GraphicsManager::GetInstance()->DrawString("Super Canadian!", SGD::Point(m_ptPosition.x - Camera::x, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
 
 	SGD::Rectangle drawRect = GetRect ();
 	drawRect.left -= Camera::x;
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y; 
-	// Testing purposes but also will do something like this with actual art
-	if(m_fSuperTimer > 0 && rand() % 2 == 0)
-		pGraphics->DrawRectangle(drawRect, {255, 0, 255});
+	
+	
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();
