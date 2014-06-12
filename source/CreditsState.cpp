@@ -89,7 +89,7 @@ using namespace std;
 	// Setup the main button (text)
 	m_pMainButton = CreateButton();
 	m_pMainButton->SetSize({ 350, 70 });
-	m_pMainButton->Initialize("resource/images/menus/mainMenuButton.png", m_pFont);
+	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};

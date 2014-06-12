@@ -20,6 +20,7 @@ public:
 	unsigned int GetLaserTowers() { return m_unLaserTowers; }
 	unsigned int GetLavaTraps() { return m_unLavaTraps; }
 	unsigned int GetSpikeTraps() { return m_unSpikeTraps; }
+	unsigned int GetDroneCount() { return m_unDrones; }
 	
 
 	/**********************************************************/
@@ -36,6 +37,7 @@ public:
 	void SetLaserTowers(unsigned int laserTowers) { if (laserTowers == UINT_MAX) laserTowers = 0; m_unLaserTowers = laserTowers; }
 	void SetLavaTraps(unsigned int lavaTraps) { if (lavaTraps == UINT_MAX) lavaTraps = 0; m_unLavaTraps = lavaTraps; }
 	void SetSpikeTraps(unsigned int spikeTraps) { if (spikeTraps == UINT_MAX) spikeTraps = 0; m_unSpikeTraps = spikeTraps; }
+	void SetDroneCount(unsigned int drones) { if (drones == UINT_MAX) drones = 0; m_unDrones = drones; }
 
 private:
 
@@ -51,5 +53,6 @@ private:
 	unsigned int m_unLaserTowers;
 	unsigned int m_unLavaTraps;
 	unsigned int m_unSpikeTraps;
+	unsigned int m_unDrones;
 };
 
