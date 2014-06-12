@@ -174,7 +174,7 @@ void GameplayState::SetGameMode(int _gameMode)
 // CreatePlayer
 //	- allocate a new player
 //	- set the player's properties
-Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
+Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	Player* player = new Player();
 
@@ -417,7 +417,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Create our player
 	m_pPlayer = CreatePlayer(playerStatsFileName);
-	zombieFactory->SetPlayer(dynamic_cast<Player*>(m_pPlayer));
+	zombieFactory->SetPlayer(m_pPlayer);
 
 	// If the slot is set
 
@@ -686,6 +686,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			{
 				pGraphics->TurnCursorOn();
 			}
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 		}
 
 	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
@@ -701,16 +704,12 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//}
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
-		pInput->IsButtonPressed(1, 6)))
-		zombieFactory->SetBuildTImeRemaining(0.0f);
-
-#if !ARCADE_MODE
-	// Toggle the camera mode
-	if(pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Y) || pInput->IsKeyPressed(SGD::Key::Spacebar))
+		pInput->IsButtonPressed ( 1 , 6 )) )
 	{
-		//TOGGLE THE CAMERA
+		zombieFactory->SetBuildTImeRemaining ( 0.0f );
+		m_pEntities[BUCKET_PICKUP].RemoveAll();		
 	}
-#endif
+
 
 #pragma region Pause Menu Navigation Clutter
 		// Handle pause menu input
@@ -730,12 +729,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed ( SGD::Key::Down ) || pInput->IsDPadPressed ( 0 , SGD::DPad::Down );
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+				m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
 #endif
 				if ( m_bTHEBOOL )
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
+
+					
 
 					// Wrap around the options
 					if ( m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT )
@@ -820,12 +821,17 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
 #endif
 				if (m_bTHEBOOL)
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+						m_nPauseMenuCursor++;
+#endif
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
@@ -841,11 +847,16 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
 #endif
 				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+						m_nPauseMenuCursor--;
+#endif
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
@@ -975,12 +986,22 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = m_vtStick != SGD::Vector{0.0f, 0.0f};
+		m_bTHEBOOL = m_vtStick.y != 0 && m_bAccept;
+#endif
+		if ( m_bTHEBOOL )
+		{
+			m_bReplay = !m_bReplay;
+#if ARCADE_MODE
+			m_bAccept = false;
+#endif
+		}
+#if !ARCADE_MODE
+		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+		m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
 #endif
 		if (m_bTHEBOOL)
-			m_bReplay = !m_bReplay;
-
-		else if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 		{
 			switch (m_bReplay)
 			{
@@ -994,6 +1015,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				return true;
 				break;
 			}
+#if ARCADE_MODE
+			m_bAccept = false;
+#endif
 		}
 	}
 
@@ -1060,6 +1084,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
+	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false && m_pPlayer->GetCursorFaded())
+		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music
@@ -1240,6 +1266,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
+#if !ARCADE_MODE
 				// If the game is in fullscreen
 				if (Game::GetInstance()->GetFullscreen())
 				{
@@ -1256,6 +1283,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					else
 						m_pMainButton->Draw("Fullscreen: Yes", { 160, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 				}
+#endif
 
 				if (m_nPauseMenuCursor == PauseMenuOptionsOption::OPTION_GOBACK)
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);

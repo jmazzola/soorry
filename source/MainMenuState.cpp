@@ -188,7 +188,7 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = m_vtStick.x > 0 && m_bAccept;
+	m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
 #endif
 	// Move the cursor (selected item) down
 	if (m_bTHEBOOL)
@@ -208,7 +208,7 @@ using namespace std;
 	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
+	m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
 #endif
 	// Move the cursor (selected item) up
 	if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))

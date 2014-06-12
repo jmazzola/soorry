@@ -139,6 +139,11 @@ int Game::Main(void)
 		return -10;		// abort!
 	}
 
+#if ARCADE_MODE
+	if(GetFullscreen() == false)
+		ToggleFullscreen();
+#endif
+
 	// Current time
 	unsigned long now = GetTickCount();
 	float elapsedTime = (now - m_ulGameTime) / 1000.0f;
