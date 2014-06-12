@@ -216,9 +216,9 @@ int Enemy::GetType() const
 		m_fSlowTime += dynamic_cast<const MapleSyrupBullet*>(pOther)->GetSlowTime();
 		break;
 		//NOTE: may have to delete
-	case ENT_TRAP_MINE:
+	/*case ENT_TRAP_MINE:
 		m_nCurrHealth = 0;
-		break;
+		break;*/
 	case ENT_TRAP_SPIKE:
 	{
 		const SpikeTrap* spike = dynamic_cast<const SpikeTrap*>(pOther);

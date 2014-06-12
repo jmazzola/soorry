@@ -1708,11 +1708,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
-		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceableType());
-		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceablePos(), pCreateMessage->GetPlaceableType());
+		g->m_pEntities->AddEntity(place, BUCKET_TRAPS);
 		place->Release();
 		place = nullptr;
-
 	}
 		break;
 
@@ -2011,15 +2010,12 @@ Entity* GameplayState::CreateSlowZombie(int _x, int _y) const
 	return zambie;
 }
 
-Entity* GameplayState::CreatePlaceable(int trap) const
+Entity* GameplayState::CreatePlaceable(SGD::Point pos, int trap) const
 {
 	if (trap == 2)
 	{
 		BearTrap* trap = new BearTrap();
 		trap->SetTrap(false);
-		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("crab"));
 		trap->SetCurrFrame(0);
@@ -2031,9 +2027,6 @@ Entity* GameplayState::CreatePlaceable(int trap) const
 	{
 		Mine* trap = new Mine();
 		trap->SetDamage(30);
-		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
-		pos.x = (pos.x - (int)pos.x % 32) + Camera::x;
-		pos.y = (pos.y - (int)pos.y % 32) + Camera::y;
 		trap->SetPosition(pos);
 		trap->SetSprite(AnimationManager::GetInstance()->GetSprite("mine"));
 		trap->SetCurrFrame(0);
