@@ -319,9 +319,14 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
 	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
-	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocket_launch.wav");
+	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
 	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
 	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
+	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
+	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
+	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
+
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
@@ -413,6 +418,8 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight = new TowerFlyweight;
 	m_pTowerFlyweight->Load(towerStatsFileName);
 	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
+	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
+	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
 	// Load the gamesave
 
@@ -569,6 +576,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hGunShoot);
 	pAudio->UnloadAudio(m_hShotgunShoot);
 	pAudio->UnloadAudio(m_hRocketShoot);
+	pAudio->UnloadAudio(m_hBulletImpact);
+	pAudio->UnloadAudio(m_hPurchase);
+	pAudio->UnloadAudio(m_hExplosion);
+	pAudio->UnloadAudio(m_hClickSound);
 
 	//Matt gets rid of the memory leaks
 	m_pParticleManager->unload();
@@ -1338,9 +1349,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Draw the Maple Syrup Towers
 					if (inv->GetMapleSyrupTowers() > 0)
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 255, 255 }, { 2.0f, 2.0f });
 					else
-						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 225 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
+						pGraphics->DrawTextureSection(m_hPlaceablesImage, { 395, 496 }, SGD::Rectangle({ 0, 220 }, SGD::Size(32, 32)), 0, {}, { 255, 0, 0 }, { 2.0f, 2.0f });
 
 					// Draw the Hockey Stick Towers
 					if (inv->GetHockeyStickTowers() > 0)
@@ -2123,6 +2134,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
+
+			   tempProj->SetHitSound(m_hBulletHit);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hGunShoot);
 		return tempProj;
 	}
@@ -2148,6 +2163,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Rotate(degree);
 
 			   tempProj->SetVelocity(vec);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+			   tempProj->SetHitSound(m_hBulletHit);
 			   return tempProj;
 	}
 		break;
@@ -2165,6 +2182,8 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 			   vec.Normalize();
 			   vec *= 1000;
 			   tempProj->SetVelocity(vec);
+			   tempProj->SetImpactSound(m_hBulletImpact);
+			   tempProj->SetHitSound(m_hBulletHit);
 
 			   //ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
@@ -2450,6 +2469,7 @@ Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float 
 	explosion->SetImage(m_hExplosionImage);
 	explosion->SetDamage(_damage);
 	explosion->SetRadius(_radius);
+	explosion->SetExplosionSound(m_hExplosion);
 
 	return explosion;
 }
