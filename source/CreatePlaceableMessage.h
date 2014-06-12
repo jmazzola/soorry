@@ -9,7 +9,7 @@ public:
 	~CreatePlaceableMessage() = default;
 
 	int GetPlaceableType() const { return m_nPlaceableType; }
-	SGD::Point GetPlaceablePos() { return m_ptPosition; }
+	SGD::Point GetPlaceablePos() const { return m_ptPosition; }
 
 protected:
 	SGD::Point m_ptPosition;
