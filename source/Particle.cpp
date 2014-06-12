@@ -46,8 +46,8 @@ bool Particle::Update(float dt)
 	}
 	scale.width		-=	(percent*(particleFlyweight->startScale.width - particleFlyweight->endScale.width))	*dt					;
 	scale.height	-=	(percent*(particleFlyweight->startScale.height - particleFlyweight->endScale.height))*dt				;
-	position.x += velocity.x*dt;
-	position.y += velocity.y*dt;
+	position.x		+= velocity.x*dt;
+	position.y		+= velocity.y*dt;
 	rotation		-=	rotationRate*dt;
 	//return true to signal that the particle is alive
 	currLifeTime	-=	dt;

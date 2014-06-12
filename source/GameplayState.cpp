@@ -184,6 +184,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	player->SetPlaceablesImage(m_hPlaceablesImage);
 	player->SetRangeCirclesImage(m_hRangeCirclesImage);
 	player->SetSuperLength(4.0f);
+	if(m_nGamemode == 4)
+		player->SetRunningMan(true);
+	else
+		player->SetRunningMan(false);
 
 	// Load player stats
 	TiXmlDocument doc;
@@ -307,7 +311,9 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Blood_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -342,8 +348,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		gameModeFileName = "resource/data/game_modes/beaver_feaver_mode/beaver_fever_mode.xml";
 		break;
 	case 4:
-		// To be replaced with Ryan's file
-		gameModeFileName = "resource/data/game_modes/arcade_mode/arcadeMode.xml";
+		gameModeFileName = "resource/data/game_modes/running_man_mode/runningMan.xml";
 	}
 
 	// Create a TinyXML document
@@ -494,6 +499,10 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
+	msg->QueueMessage();
+	msg = nullptr;
+	
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
 	m_bAccept = true;
