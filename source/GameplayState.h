@@ -100,7 +100,7 @@ private:
 	// Game Data
 	Shop* m_pShop;
 	bool m_bIsPaused;
-	Entity* m_pPlayer;
+	Player* m_pPlayer;
 	Entity* m_pPuppet;
 	unsigned int m_unWave;
 	unsigned int m_unEnemiesRemaining;
@@ -211,7 +211,7 @@ private:
 	Button* CreateButton() const;
 
 	// Creates a player
-	Entity*	CreatePlayer(string playerStatsFileName) const;
+	Player*	CreatePlayer(string playerStatsFileName) const;
 
 	// Message Callback Function:
 	static void MessageProc(const SGD::Message* pMsg);

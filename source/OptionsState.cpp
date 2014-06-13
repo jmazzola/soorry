@@ -152,6 +152,9 @@ using namespace std;
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
 
+		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_nCursor++;
+
 		// Wrap around the options
 		if (m_nCursor > MENU_GOBACK)
 			m_nCursor = MENU_MUSICVOL;
@@ -170,6 +173,9 @@ using namespace std;
 	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
+
+		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
+			m_nCursor--;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_MUSICVOL)

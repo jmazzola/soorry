@@ -95,10 +95,30 @@
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+
+#if ARCADE_MODE
+	 m_vtStick = pInput->GetLeftJoystick(0);
+	 
+	 if(abs(m_vtStick.x) < 0.2f)
+		 m_vtStick.x = 0.0f;
+	 if(abs(m_vtStick.y) < 0.2f)
+		 m_vtStick.y = 0.0f;
+
+	 if ( m_vtStick == SGD::Vector { 0.0f , 0.0f } )
+		 m_bAccept = true;
+#endif
+
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+
 	// Move the cursor (selected item) down
-	if (pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
@@ -109,7 +129,13 @@
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) up
-	else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
+#endif
+	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
 
@@ -121,7 +147,14 @@
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+#if !ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
+	// Select the item
+	if (m_bTHEBOOL)
 	{
 		GameplayState* pGameplay = GameplayState::GetInstance();
 		// Switch table for the item selected

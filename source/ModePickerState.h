@@ -11,6 +11,7 @@
 
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Handle.h"
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 class Button;
 class BitmapFont;
@@ -57,5 +58,10 @@ private:
 
 	// Enumeration
 	enum Modes { ARCADE, HARDCORE, SANDBOX, BEAVERFEVER, RUNNINGMAN, GOBACK };
+
+	// ARCADE_MODE
+	bool m_bTHEBOOL;
+	bool m_bAccept;
+	SGD::Vector m_vtStick;
 };
 

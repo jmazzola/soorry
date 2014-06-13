@@ -1623,7 +1623,7 @@ namespace SGD
 
 		 bool		GraphicsManager::IsCursorShowing		( void )
 		 {
-			 if(m_nCursorCount >= 0)
+			 if(m_nCursorCount > 0)
 				 return true;
 			 else
 				 return false;
@@ -1631,7 +1631,7 @@ namespace SGD
 
 		 void		GraphicsManager::TurnCursorOn			( void )
 		 {
-			while(m_nCursorCount < 0)
+			while(m_nCursorCount <= 0)
 			{
 				m_nCursorCount = ShowCursor(true);
 			}
