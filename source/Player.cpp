@@ -1421,8 +1421,11 @@ void Player::HandleCollision ( const IEntity* pOther )
 	}
 	if( pOther->GetType() == ENT_PICKUP_AMMO )
 	{
-		// NEED TO FIX HOW AMMO IS HANDLED AND GET AMOUNT FOR EACH PICKUP
-		m_pWeapons[m_nCurrWeapon].SetCurrAmmo(m_pWeapons[m_nCurrWeapon].GetCurrAmmo() + 25);
+		// Still need to tweak the amount of ammo given
+		(m_bHasAssaultRifle) ? m_pWeapons[0].SetCurrAmmo(m_pWeapons[0].GetCurrAmmo() + 50) : __noop;
+		(m_bHasShotty) ? m_pWeapons[1].SetCurrAmmo(m_pWeapons[1].GetCurrAmmo() + 30) : __noop;
+		(m_bHasRocketz) ? m_pWeapons[2].SetCurrAmmo(m_pWeapons[2].GetCurrAmmo() + 5) : __noop;
+		(m_bHasHatTrick) ? m_pWeapons[3].SetCurrAmmo(m_pWeapons[3].GetCurrAmmo() + 50) : __noop;
 	}
 	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
 	{
@@ -1761,18 +1764,23 @@ void Player::Render ( void )
 		rotation = SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
 	else
 		rotation = -SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
+	SGD::Color col = SGD::Color(255, 255 ,255, 255);
+	// Testing purposes but also will do something like this with actual art
+	if(m_fSuperTimer > 0 && rand() % 2 == 0)
+		col = SGD::Color(255, 255, 0, 0);
 
+	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center, col );
 
-	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center );
+	if(m_fSuperTimer > 0)
+		SGD::GraphicsManager::GetInstance()->DrawString("Super Canadian!", SGD::Point(m_ptPosition.x - Camera::x, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
 
 	SGD::Rectangle drawRect = GetRect ();
 	drawRect.left -= Camera::x;
 	drawRect.right -= Camera::x;
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y; 
-	// Testing purposes but also will do something like this with actual art
-	if(m_fSuperTimer > 0 && rand() % 2 == 0)
-		pGraphics->DrawRectangle(drawRect, {255, 0, 255});
+	
+	
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();

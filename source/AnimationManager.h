@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "../SGD Wrappers/SGD_Declarations.h"
+#include "../SGD Wrappers/SGD_GraphicsManager.h"
 class Sprite;
 
 struct AnimationTimestamp
@@ -25,7 +26,7 @@ public:
 	// Interface
 	std::string LoadSprites(std::string fileName);
 	void Update(AnimationTimestamp& ants, float dt);
-	void Render(AnimationTimestamp& ants, float x, float y, float rotation, SGD::Vector center);
+	void Render ( AnimationTimestamp& ants , float x , float y , float rotation , SGD::Vector center , SGD::Color col = {} );
 	void UnloadSprites();
 	void LoadAll();
 

@@ -23,7 +23,7 @@
     <item name="Go Back"       	price="0"       	description="Leave the Items Store" />
 	</items>
 
-	<weaponUpgrades count="11">
+	<weaponUpgrades count="10">
 		<weaponUpgrade name="Shotgun Rate of Fire +2"		price="200"		description="Add to the Shotgun's Rate of fire."	amountToAdd="2" />
 		<weaponUpgrade name="Shotgun Damage +2" 			price="250"		description="Add to the Shotgun's damage." 			amountToAdd="2"/>
     <weaponUpgrade name="Shotgun Max Ammo +100"   price="400"   description="Shotty +100 Maximum Ammo"          amountToAdd="100" />
@@ -33,7 +33,6 @@
 		<weaponUpgrade name="RPG Rate of Fire +2" 		price="5000" 	description="Add to the RPG's ROF." 				amountToAdd="2"/>
 		<weaponUpgrade name="RPG Damage +2" 	price="5000" 	description="Add to the RPG's Damage." 				amountToAdd="2"/>
     <weaponUpgrade name="RPG Max Ammo +100" price="1000" description="RPG Max Ammo +10"               amountToAdd="10" />
-		<weaponUpgrade name="Hat Trick"					price="10000"	description="Puck you" />
     <weaponUpgrade name="Go Back"					price="0"	description="Leave Upgrade Central" />
 	</weaponUpgrades>
 
