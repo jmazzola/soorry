@@ -1421,8 +1421,11 @@ void Player::HandleCollision ( const IEntity* pOther )
 	}
 	if( pOther->GetType() == ENT_PICKUP_AMMO )
 	{
-		// NEED TO FIX HOW AMMO IS HANDLED AND GET AMOUNT FOR EACH PICKUP
-		m_pWeapons[m_nCurrWeapon].SetCurrAmmo(m_pWeapons[m_nCurrWeapon].GetCurrAmmo() + 25);
+		// Still need to tweak the amount of ammo given
+		(m_bHasAssaultRifle) ? m_pWeapons[0].SetCurrAmmo(m_pWeapons[0].GetCurrAmmo() + 50) : __noop;
+		(m_bHasShotty) ? m_pWeapons[1].SetCurrAmmo(m_pWeapons[1].GetCurrAmmo() + 30) : __noop;
+		(m_bHasRocketz) ? m_pWeapons[2].SetCurrAmmo(m_pWeapons[2].GetCurrAmmo() + 5) : __noop;
+		(m_bHasHatTrick) ? m_pWeapons[3].SetCurrAmmo(m_pWeapons[3].GetCurrAmmo() + 50) : __noop;
 	}
 	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
 	{
