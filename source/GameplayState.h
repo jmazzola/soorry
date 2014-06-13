@@ -30,6 +30,8 @@ class BitmapFont;
 class Drone;
 class StatTracker;
 class TowerFlyweight;
+class RZBN;
+
 #include "../SGD Wrappers/SGD_Declarations.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
 
@@ -68,7 +70,7 @@ public:
 	Shop* GetShop() const { return m_pShop; }
 
 	// Create and or save the game
-	void SaveGame(bool newFile);
+	void SaveGame();
 	void LoadGameFromSlot(int slot);
 
 	// Player calls this once their hp is <= 0 to lose the game
@@ -235,6 +237,9 @@ private:
 	bool m_bHasLost;
 	bool m_bReplay;
 
+	// RZBN File Format
+	RZBN* rzbn;
+
 	// Enemy recipes
 	void LoadEnemyRecipes(string fileName);
 	float m_fHealthScaling;
@@ -264,6 +269,9 @@ private:
 	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
+
+	// Savegamez
+	void SaveGame(int slot);
 };
 
 #endif //GAMEPLAYSTATE_H
