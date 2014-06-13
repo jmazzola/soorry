@@ -461,7 +461,7 @@ Entity*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
-	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/OptionsBG.png");
+	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
 
 	// Setup BitmapFont
 	BitmapFont* pFont = Game::GetInstance()->GetFont();

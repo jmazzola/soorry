@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Stats>
-    <Time Total="3466.921387" Build="2300.402832" Survival="1164.988525" />
-    <General Walking="491595.812500" Rounds="14" RoundSpree="2" />
-    <Violence Kills="840" Blood="3418.212891" Grenades="4" TotalShots="4551" MachineGun="2920" Shotgun="709" RPG="907" HatTrick="15" />
-    <Exchange WallsPlaced="686" WallsPickedUp="19" WindowsPlaced="596" WindowsPickedUp="1" TowersBought="0" TowersSold="0" TrapsBought="0" TrapsSold="0" Money="32250" />
-=======
-    <Time Total="1905.907959" Build="900.646301" Survival="1005.276245" />
-    <General Walking="195222.000000" Rounds="11" RoundSpree="9" />
-    <Violence Kills="3892" Blood="19851.662109" Grenades="16" TotalShots="885" MachineGun="805" Shotgun="48" RPG="32" HatTrick="0" />
-    <Exchange WallsPlaced="142" WallsPickedUp="22" WindowsPlaced="0" WindowsPickedUp="2" TowersBought="0" TowersSold="0" TrapsBought="0" TrapsSold="0" Money="0" />
->>>>>>> Justin'sBranch
+    <Time Total="4575.985840" Build="2731.814209" Survival="1838.717773" />
+    <General Walking="670888.562500" Rounds="18" RoundSpree="3" />
+    <Violence Kills="1190" Blood="4967.016602" Grenades="33" TotalShots="6066" MachineGun="4307" Shotgun="729" RPG="980" HatTrick="50" />
+    <Exchange WallsPlaced="980" WallsPickedUp="137" WindowsPlaced="596" WindowsPickedUp="1" TowersBought="12" TowersSold="0" TrapsBought="0" TrapsSold="0" Money="67556" />
 </Stats>
