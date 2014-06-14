@@ -353,7 +353,7 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 	return false;
 }
 
-std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
+vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
 {
 	std::vector<SGD::Rectangle> hits;
 	// Set the tiles to check
@@ -402,6 +402,7 @@ std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, b
 
 	return hits;
 }
+
 int WorldManager::CheckCollisionID(IEntity* _object)
 {
 	// Get the object's collision rect
