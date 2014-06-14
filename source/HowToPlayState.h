@@ -88,6 +88,7 @@ private:
 	SGD::HAudio	m_hTutorial5 = SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hTutorial6 = SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hTutorial7 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hRock = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Factory Methods

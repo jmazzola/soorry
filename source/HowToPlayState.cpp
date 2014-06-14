@@ -79,6 +79,7 @@
 	m_hTutorial5 = pAudio->LoadAudio("resource/audio/Tutorial5.wav");
 	m_hTutorial6 = pAudio->LoadAudio("resource/audio/Tutorial6.wav");
 	m_hTutorial7 = pAudio->LoadAudio("resource/audio/Tutorial7.wav");
+	m_hRock = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 
 	// Set the tab
 	m_nTab = TUT_MAIN;
@@ -131,7 +132,8 @@
 	pAudio->UnloadAudio(m_hTutorial4);
 	pAudio->UnloadAudio(m_hTutorial5);
 	pAudio->UnloadAudio(m_hTutorial6);
-	pAudio->UnloadAudio(m_hTutorial7);
+	pAudio->UnloadAudio(m_hTutorial7); 
+	pAudio->UnloadAudio(m_hRock);
 
 	// Terminate & deallocate menu items
 	m_pMainButton->Terminate();
@@ -210,6 +212,9 @@
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+
+	static bool already = true;
+
 	// If we're transitioning
 	if (IsTransitioning())
 	{
@@ -217,15 +222,60 @@
 	}
 	else
 	{
+		// Too tired..cant remember to stop the audio from looping..
 		if (m_nTab == TUT_MAIN)
-			// Render the background
+		{
 			pGraphics->DrawTexture(m_hTutMain, SGD::Point{ 0, 0 });
+			/*if (already)
+			{
+				if (pAudio->IsAudioPlaying(m_hTutorial) == false)
+				{
+					pAudio->PlayAudio(m_hTutorial);
+					already = true;
+				}
+			}*/
+		}
 		else if (m_nTab == TUT_INTRO2)
+		{
 			pGraphics->DrawTexture(m_hTutTwo, SGD::Point{ 0, 0 });
+
+			/*if (already)
+			{
+				if (pAudio->IsAudioPlaying(m_hTutorial2) == false)
+				{
+					pAudio->PlayAudio(m_hTutorial2);
+					already = true;
+				}
+			}*/
+		}
 		else if (m_nTab == TUT_INTRO3)
+		{
 			pGraphics->DrawTexture(m_hTutThree, SGD::Point{ 0, 0 });
+
+			//if (already)
+			//{
+			//	if (pAudio->IsAudioPlaying(m_hTutorial3) == false)
+			//	{
+			//		pAudio->PlayAudio(m_hTutorial3);
+			//		already = true;
+			//	}
+			//}
+		}
+
 		else if (m_nTab == TUT_INTRO4)
+		{
 			pGraphics->DrawTexture(m_hTutFour, SGD::Point{ 0, 0 });
+
+			/*if (already)
+			{
+				if (pAudio->IsAudioPlaying(m_hTutorial4) == false)
+				{
+					pAudio->PlayAudio(m_hTutorial4);
+					already = true;
+				}
+			}*/
+
+		}
 		else if (m_nTab == TUT_MOVEMENT)
 			pGraphics->DrawTexture(m_hTutFive, SGD::Point{ 0, 0 });
 		else if (m_nTab == TUT_BUILD1)
@@ -263,6 +313,18 @@
 		page += " / ";
 		page += to_string(TABS_TOTAL);
 		m_pFont->Draw(page.c_str(), 50, 282, 0.5f, { 0, 0, 0 });
+
+		/*if (m_nTab > TUT_INTRO4)
+		{
+			if (already)
+			{
+				if (pAudio->IsAudioPlaying(m_hTutorial4) == false)
+				{
+					pAudio->PlayAudio(m_hTutorial4);
+					already = true;
+				}
+			}
+		}*/
 	}
 }
 
