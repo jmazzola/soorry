@@ -250,3 +250,10 @@ void MapleSyrupTower::SetRange(int _range)
 {
 	m_nRange = _range;
 }
+
+void MapleSyrupTower::ExternalUpgrade()
+{
+	m_fSlowTime = m_pTowerFlyweight->GetMapleSyrupEffectDuration(m_nUpgradeOne);
+	m_fFireRate = m_pTowerFlyweight->GetMapleSyrupFireRate(m_nUpgradeOne);
+	m_nRange = m_pTowerFlyweight->GetMapleSyrupRange(m_nUpgradeTwo);
+}

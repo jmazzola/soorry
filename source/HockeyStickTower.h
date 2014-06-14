@@ -36,6 +36,8 @@ protected:
 	float m_fDamage;
 	vector<EnemyHit> m_vEnemiesHit;
 
+	virtual void ExternalUpgrade() override;
+
 private:
 
 	/**********************************************************/

@@ -95,6 +95,8 @@
 
 #include "Explosion.h"
 
+#include "RZBN.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -260,7 +262,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	return player;
 }
 
-
 /**************************************************************/
 // Enter
 //	- reset game
@@ -423,17 +424,17 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Load the gamesave
 
-	// If the slot is set
-	if (m_nCurrGameSlot > 0)
-	{
-		// If we can't load the savegame
-		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-			// Make a new savegame
-			SaveGame(true);
-		else
-			// load the savegame
-			LoadGameFromSlot(m_nCurrGameSlot);
-	}
+	//// If the slot is set
+	//if (m_nCurrGameSlot > 0)
+	//{
+	//	// If we can't load the savegame
+	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	//		// Make a new savegame
+	//		SaveGame(true);
+	//	else
+	//		// load the savegame
+	//		LoadGameFromSlot(m_nCurrGameSlot);
+	//}
 
 
 	// Create our player
@@ -442,18 +443,18 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// If the slot is set
 
-	// TODO: Make it so I DON'T have to do this twice, since I can't set money because
-	// the player isn't created yet.
-	if (m_nCurrGameSlot > 0)
-	{
-		// If we can't load the savegame
-		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-			// Make a new savegame
-			SaveGame(true);
-		else
-			// load the savegame
-			LoadGameFromSlot(m_nCurrGameSlot);
-	}
+	//// TODO: Make it so I DON'T have to do this twice, since I can't set money because
+	//// the player isn't created yet.
+	//if (m_nCurrGameSlot > 0)
+	//{
+	//	// If we can't load the savegame
+	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	//		// Make a new savegame
+	//		SaveGame(true);
+	//	else
+	//		// load the savegame
+	//		LoadGameFromSlot(m_nCurrGameSlot);
+	//}	
 
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
@@ -530,6 +531,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_bAccept = true;
 #endif
 
+	// Load Gamesave
+	if (m_nCurrGameSlot > 0)
+		LoadGameFromSlot(m_nCurrGameSlot);
+	
 }
 
 
@@ -591,7 +596,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	delete m_pTowerFlyweight;
 
 	// Save the file
-	SaveGame(false);
+	SaveGame();
 
 	// Release the player
 	if (m_pPlayer != nullptr)
@@ -653,6 +658,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pShop->Exit();
 	delete m_pShop;
 	m_pShop = nullptr;
+
+	// Delete the RZBN
+	delete rzbn;
+	rzbn = nullptr;
 
 	// Reset Winning Credits
 	m_bCreditsStarted = false;
@@ -2509,75 +2518,11 @@ Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float 
 	return explosion;
 }
 
-// LoadGameFromSlot
-// - Load game from the slot
-void GameplayState::LoadGameFromSlot(int slot)
-{
-	HRESULT hr;
-	ostringstream stringstream;
-	char path[MAX_PATH];
-	LPWSTR wszPath = NULL;
-	size_t size;
-
-	// Get the path to the app data folder
-	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
-
-	// Convert from LPWSTR to char[]
-	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
-
-	// Convert char types
-	if (hr == S_OK)
-		stringstream << path;
-	string pathtowrite = stringstream.str();
-
-	// Add the company and game information
-	pathtowrite += "\\RazorBalloon\\";
-
-	// Create our directory
-	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
-
-	// Create our save file
-	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string(slot) + ".xml";
-
-
-	// Create a TinyXML document
-	TiXmlDocument doc;
-
-	// Attempt to load the file, if not gtfo
-	if (!doc.LoadFile(pathtowrite.c_str()))
-		return;
-
-	// Access the root element (volume)
-	TiXmlElement* pRoot = doc.RootElement();
-
-	// Is the root there, if not, gtfo
-	if (pRoot == nullptr)
-		return;
-
-	m_ptPlayerSpawnPoint.x = float(atoi(pRoot->Attribute("x")));
-	m_ptPlayerSpawnPoint.y = float(atoi(pRoot->Attribute("y")));
-
-	// Get the volume
-	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
-
-	// Set the player's score
-	if (dynamic_cast<Player*>(m_pPlayer) != nullptr)
-	{
-		int money = int(atoi(pStats->Attribute("money")));
-		dynamic_cast<Player*>(m_pPlayer)->SetScore(money);
-	}
-
-
-}
-
 // SaveGame
 // - Saves and or creates a savefile in the appdata
 // [in] newFile - if it's creating a file: true, otherwise false
-void GameplayState::SaveGame(bool newFile)
+void GameplayState::SaveGame()
 {
-
-	// --- Make a new XML file in Appdata ---
 	HRESULT hr;
 	ostringstream stringstream;
 	char path[MAX_PATH];
@@ -2602,78 +2547,11 @@ void GameplayState::SaveGame(bool newFile)
 	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
 
 	// Create our save file
-	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string(m_nCurrGameSlot) + ".xml";
+	pathtowrite += "SoorrySave_0";
+	pathtowrite += std::to_string(m_nCurrGameSlot);
+	pathtowrite += ".rzbn";
 
-
-	// If we're making a new file
-	if (newFile)
-	{
-
-		// Make a document
-		TiXmlDocument doc;
-
-		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
-
-		// Attach the declaration to the document
-		doc.LinkEndChild(pDecl);
-
-		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement("position");
-
-		// Add the X and Y of position
-		pRoot->SetAttribute("x", 0);
-		pRoot->SetAttribute("y", 0);
-
-		// Link the root to the doc
-		doc.LinkEndChild(pRoot);
-
-		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement("stats");
-
-		// Add the money
-		pStats->SetAttribute("money", 0);
-
-		// Link the stats to the doc
-		doc.LinkEndChild(pStats);
-
-		// Save the file
-		doc.SaveFile(pathtowrite.c_str());
-	}
-	else
-	{
-		// Make a document
-		TiXmlDocument doc;
-
-		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
-
-		// Attach the declaration to the document
-		doc.LinkEndChild(pDecl);
-
-		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement("position");
-
-		// Add the X and Y of position
-		pRoot->SetAttribute("x", (int)m_pPlayer->GetPosition().x);
-		pRoot->SetAttribute("y", (int)m_pPlayer->GetPosition().y);
-
-		// Link the root to the doc
-		doc.LinkEndChild(pRoot);
-
-		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement("stats");
-
-		// Add the money
-		pStats->SetAttribute("money", (int)dynamic_cast<Player*>(m_pPlayer)->GetScore());
-
-		// Link the stats to the doc
-		doc.LinkEndChild(pStats);
-
-		// Save the file
-		doc.SaveFile(pathtowrite.c_str());
-	}
+	rzbn->SaveRZBNFile(pathtowrite);
 }
 
 // Render Credits
@@ -2783,6 +2661,51 @@ void GameplayState::RenderLoss(void)
 
 
 }
+
+
+// LoadGameFromSlot
+// - Load the RZBN gamesave from the current game slot
+// [in] slot - game slot
+void GameplayState::LoadGameFromSlot(int slot)
+{
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "\\SoorrySave_0";
+	pathtowrite += std::to_string(slot);
+	pathtowrite += ".rzbn";
+
+	// New RZBN file
+	rzbn = new RZBN();
+
+	rzbn->SetPlayer(m_pPlayer);
+	rzbn->SetZombieFactory(zombieFactory);
+	rzbn->SetShop(m_pShop);
+
+	rzbn->LoadRZBNFile(pathtowrite);
+}
+
 
 void GameplayState::LoadEnemyRecipes(string fileName)
 {

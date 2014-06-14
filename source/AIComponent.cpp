@@ -164,19 +164,19 @@ void AIComponent::Update(float dt)
 
 			Pathfind(start, end);
 
-			if (start.x == end.x && start.y == end.y)
-			{
-				m_bFinished = true;
-				m_ptMoveTarget = m_pPlayer->GetPosition();
-			}
+			//if (start.x == end.x && start.y == end.y)
+			//{
+				//m_bFinished = true;
+				//m_ptMoveTarget = m_pPlayer->GetPosition();
+			//}
 
 			// Reset pathing timer
-			else
+			//else
 				m_fTimeToPathfind = 1.0f + (rand() % 200) / 100.0f;
 		}
 
 		// Determine where to go
-		else if (m_bFinished == false)
+		//else if (m_bFinished == false)
 			m_ptMoveTarget = SGD::Point((float)(goX * tileWidth), (float)(goY * tileHeight));
 	}
 
