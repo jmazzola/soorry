@@ -441,21 +441,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pPlayer = CreatePlayer(playerStatsFileName);
 	zombieFactory->SetPlayer(m_pPlayer);
 
-	// If the slot is set
-
-	//// TODO: Make it so I DON'T have to do this twice, since I can't set money because
-	//// the player isn't created yet.
-	//if (m_nCurrGameSlot > 0)
-	//{
-	//	// If we can't load the savegame
-	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-	//		// Make a new savegame
-	//		SaveGame(true);
-	//	else
-	//		// load the savegame
-	//		LoadGameFromSlot(m_nCurrGameSlot);
-	//}	
-
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 

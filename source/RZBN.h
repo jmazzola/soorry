@@ -28,6 +28,9 @@ public:
 	ZombieFactory* GetZombieFactory() const { return m_pZomFactory; }
 	Shop* GetShop() const { return m_pShop; }
 
+	int GetMoney() const { return m_nMoney; }
+	int GetGameMode() const { return m_nGamemode; }
+
 	// Mutators
 	void SetPlayer(Player* player) { m_pPlayer = player; }
 	void SetZombieFactory(ZombieFactory* zom) { m_pZomFactory = zom; }
@@ -49,5 +52,9 @@ private:
 
 	// Shop object
 	Shop* m_pShop;
+
+	// Save data
+	int m_nMoney;
+	int m_nGamemode;
 };
 

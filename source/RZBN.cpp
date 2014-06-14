@@ -91,7 +91,8 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// Load gamemode
 	int gameMode;
 	file.read((char*)&gameMode, sizeof(int));
-	GameplayState::GetInstance()->SetGameMode(gameMode);
+	m_nGamemode = gameMode;
+	//GameplayState::GetInstance()->SetGameMode(gameMode);
 
 	// Load in wave number
 	int waveNumber;
@@ -101,6 +102,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// Load in money
 	int money;
 	file.read((char*)&money, sizeof(int));
+	m_nMoney = money;
 	m_pPlayer->SetScore(money);
 
 	// -- Load in inventory --
