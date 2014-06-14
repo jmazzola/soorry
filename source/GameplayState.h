@@ -76,6 +76,7 @@ public:
 	// Player calls this once their hp is <= 0 to lose the game
 	void HasLost(void);
 
+	void PlayAmmoPickup(void);
 private:
 
 	/**********************************************************/

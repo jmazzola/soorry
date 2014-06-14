@@ -1431,7 +1431,7 @@ void Player::HandleCollision ( const IEntity* pOther )
 		(m_bHasHatTrick) ? m_pWeapons[3].SetCurrAmmo(m_pWeapons[3].GetCurrAmmo() + 50) : __noop;
 		m_sPickupMessage = "More Bullets Eh?";
 		m_fPickupMessageTimer = 1.5f;
-			
+		GameplayState::GetInstance()->PlayAmmoPickup();
 	}
 	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
 	{
