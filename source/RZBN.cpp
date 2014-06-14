@@ -213,7 +213,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 		placeableInfos.push_back(placeInfo);
 	}
 
-	return false;
+	return true;
 
 }
 

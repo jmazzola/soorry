@@ -602,6 +602,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 
+	// Set Drones
+	for (int i = 0; i < rzbn->m_nDrones; i++)
+	{
+		CreateDroneMessage* pMsg = new CreateDroneMessage();
+		pMsg->SendMessageNow();
+		delete pMsg;
+		pMsg = nullptr;
+	}
+
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });
