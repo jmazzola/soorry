@@ -748,9 +748,26 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hPurchase);
 	pAudio->UnloadAudio(m_hExplosion);
 	pAudio->UnloadAudio(m_hClickSound);
+	pAudio->UnloadAudio(m_hChaChing);
+	pAudio->UnloadAudio(m_hBeaverFever		  );
+		pAudio->UnloadAudio(m_hGoToShop		  );
+		pAudio->UnloadAudio(m_hGoodJob		  );
+		pAudio->UnloadAudio(m_hSoory1		  );
+		pAudio->UnloadAudio(m_hSoory2		  );
+		pAudio->UnloadAudio(m_hTrueHero		  );
+		pAudio->UnloadAudio(m_hTutorial		  );
+		pAudio->UnloadAudio(m_hTutorial2	  );
+		pAudio->UnloadAudio(m_hTutorial3	  );
+		pAudio->UnloadAudio(m_hTutorial4	  );
+		pAudio->UnloadAudio(m_hTutorial5	  );
+		pAudio->UnloadAudio(m_hTutorial6	  );
+		pAudio->UnloadAudio(m_hTutorial7	  );
+		pAudio->UnloadAudio(m_hUpgrade1		  );
+		pAudio->UnloadAudio(m_hWinTheGame);
+		pAudio->UnloadAudio(m_hWelcomeShop);
 
-	//Matt gets rid of the memory leaks
-	m_pParticleManager->unload();
+		//Matt gets rid of the memorym_hWelcomeShop	 leaks
+		m_pParticleManager->unload(); 
 
 	// Delete the zombie factory
 	delete zombieFactory;
