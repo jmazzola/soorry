@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <waves infinite="1">
+  <!--
   <wave>
     <infinite_build_time value="false"/>
     <build_time value="20"/>
@@ -72,4 +73,5 @@
     <beaver_zombies amount="1400"/>
     <spawn_interval value="0.01"/>
   </wave>
+  -->
 </waves>

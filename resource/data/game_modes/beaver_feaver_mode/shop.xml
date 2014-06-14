@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- Shop XML 2.0 -->
 <shop>
-	<items count="7">
+
+  <weapons count ="5">
+    <weapon name="Assault Rifle" price="1000"     description="Purchase an AR" />
+    <weapon name="Shotgun" price="2000" description="Purchase a shotty" />
+    <weapon name="Rocket Launcher" price="6000" description="Purchase a RPG" />
+    <weapon name="Hat Trick" price="10000" description="Purchase the Hat Trick" />
+    <weapon name="Go Back" price="0" description="Leave the Gun Rack" />
+  </weapons>
+  
+	<items count="10">
 		<item name="Wall +50" 			price="100" 		description="Add 50 Walls" 			amountToAdd="50"	/>
 		<item name="Window +50" 		price="200" 		description="Add 50 Windows" 		amountToAdd="50"	/>
 		<item name="Beartrap +1" 		price="250" 		description="Add 1 Beartrap" 		amountToAdd="1"		/>
 		<item name="A-T Mine +1"		price="300" 		description="Add 1 AT-Mine" 		amountToAdd="1"		/>
 		<item name="Frag Grenade +3"	price="350" 		description="Add 3 Frag Grenades" 	amountToAdd="3"		/>
 		<item name="Refill Ammo"		price="500"			description="Refill your clips"/>
-    <item name="Go Back"       	price="0"       	description="Go Back" />
+    <item name="Drone +1"       price="2000"    description="Game of Drones." amountToAdd="1" />
+    <item name="Lava Trap +1"      price="600"     description="Add 1 Lava Trap" amountToAdd="1" />
+    <item name="Spike Trap +1"      price="750"     description="Add 1 Spike Trap" amountToAdd="1" />
+    <item name="Go Back"       	price="0"       	description="Leave the Items Store" />
 	</items>
 
-	<weaponUpgrades count="8">
+	<weaponUpgrades count="10">
 		<weaponUpgrade name="Shotgun Rate of Fire +2"		price="200"		description="Add to the Shotgun's Rate of fire."	amountToAdd="2" />
 		<weaponUpgrade name="Shotgun Damage +2" 			price="250"		description="Add to the Shotgun's damage." 			amountToAdd="2"/>
+    <weaponUpgrade name="Shotgun Max Ammo +100"   price="400"   description="Shotty +100 Maximum Ammo"          amountToAdd="100" />
 		<weaponUpgrade name="AR Rate of Fire +2" 			price="1000" 	description="Add to the AR's Rate of fire." 		amountToAdd="2"/>
 		<weaponUpgrade name="AR Damage +2" 				price="3000" 	description="Add to the AR's Damage." 				amountToAdd="2"/>
-		<weaponUpgrade name="Rocket Launcher ROF +2" 		price="5000" 	description="Add to the RPG's ROF." 				amountToAdd="2"/>
-		<weaponUpgrade name="Rocket Launcher Damage +2" 	price="5000" 	description="Add to the RPG's Damage." 				amountToAdd="2"/>
-		<weaponUpgrade name="Hat Trick"					price="10000"	description="Puck you" />
-    <weaponUpgrade name="Go Back"					price="0"	description="Go Back" />
+    <weaponUpgrade name="AR Max Ammo +100"    price="700"   description="AR +100 Maximum Ammo"            amountToAdd="100" />
+		<weaponUpgrade name="RPG Rate of Fire +2" 		price="5000" 	description="Add to the RPG's ROF." 				amountToAdd="2"/>
+		<weaponUpgrade name="RPG Damage +2" 	price="5000" 	description="Add to the RPG's Damage." 				amountToAdd="2"/>
+    <weaponUpgrade name="RPG Max Ammo +100" price="1000" description="RPG Max Ammo +10"               amountToAdd="10" />
+    <weaponUpgrade name="Go Back"					price="0"	description="Leave Upgrade Central" />
 	</weaponUpgrades>
 
 	<towers count="5">
@@ -27,6 +41,7 @@
 		<tower name="Maple Syrup Tower"						price="150"	description="Maple Searup" />
 		<tower name="Hockey Stick Tower"					price="200"	description="GOOOOOOALL wrong sport." />
 		<tower name="Laser Tower"							price="300"	description="*laser noise*" />
-    <tower name="Go Back"							price="0"	description="Go Back" />
+    <tower name="Go Back"							price="0"	description="Leave Tower Shop" />
 	</towers>
+  
 </shop>

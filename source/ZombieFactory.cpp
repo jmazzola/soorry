@@ -383,7 +383,7 @@ int ZombieFactory::GetSpawnHeight() const
 
 int ZombieFactory::GetTotalWaves() const
 {
-	return waveData.size();
+	return (m_bInfiniteWaves) ? INT_MAX : waveData.size();
 }
 
 float ZombieFactory::GetBuildTime() const
