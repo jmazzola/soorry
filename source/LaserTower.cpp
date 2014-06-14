@@ -308,3 +308,9 @@ void LaserTower::SetRange(int _range)
 {
 	m_nRange = _range;
 }
+
+void LaserTower::ExternalUpgrade()
+{
+	m_nDamage = m_pTowerFlyweight->GetLaserDamage(m_nUpgradeOne);
+	m_nRange = m_pTowerFlyweight->GetLaserRange(m_nUpgradeTwo);
+}

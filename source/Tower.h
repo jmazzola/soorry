@@ -41,8 +41,8 @@ public:
 	void SetBaseImage(SGD::HTexture baseImage);
 	void SetGunImage(SGD::HTexture gunImage);
 	void SetTowerFlyweight(TowerFlyweight* towerFlyweight);
-	void SetUpgradeOne(int tier);
-	void SetUpgradeTwo(int tier);
+	virtual void SetUpgradeOne(int tier);
+	virtual void SetUpgradeTwo(int tier);
 	void SetSellValue(int sellValue);
 
 protected:
@@ -61,5 +61,7 @@ protected:
 	TowerFlyweight* m_pTowerFlyweight;
 	SGD::HTexture m_hBaseImage;
 	SGD::HTexture m_hGunImage;
+
+	virtual void ExternalUpgrade();
 };
 

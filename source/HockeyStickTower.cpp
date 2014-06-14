@@ -229,3 +229,9 @@ void HockeyStickTower::SetDamage(float _damage)
 {
 	m_fDamage = _damage;
 }
+
+void HockeyStickTower::ExternalUpgrade()
+{
+	m_fDamage = m_pTowerFlyweight->GetHockeyStickDamage(m_nUpgradeOne);
+	m_fRotationRate = m_pTowerFlyweight->GetHockeyStickSpinRate(m_nUpgradeTwo);
+}
