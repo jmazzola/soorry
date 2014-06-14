@@ -1,0 +1,57 @@
+magic
+version
+mapWidth
+mapHeight
+
+Every tile
+	X
+	Y
+	ColliderID
+
+spawnpoint X,Y
+gamemode
+wavenumber
+money
+walls
+windows
+beartraps
+mines
+grenades
+healthpacks
+mgtowers
+mapletowers
+hockeysticktowers
+lasertowers
+lavatraps
+spiketraps
+drones
+hasAR
+hasShotty
+hasRL
+hasHT
+arCurAmmo
+shCurAmmo
+rlCurAmmo
+htCurAmmo
+arMaxAmmo
+arDamage
+arFirerate
+shMaxAmmo
+shDamage
+shFirerate
+rlMaxAmmo
+rlDamage
+rlFirerate
+htMaxAmmo
+htDamage
+htFirerate
+
+towersSize
+
+Every tower
+	Type
+	X
+	Y
+	UpgradeOne
+	UpgradeTwo
+Every trap

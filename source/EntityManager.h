@@ -43,7 +43,7 @@ public:
 	void	CheckCollisions( unsigned int bucket1, unsigned int bucket2 );
 	IEntity* CheckCollision(SGD::Rectangle rect, int bucket = -1);
 	IEntity* CheckCollision(SGD::Point point, float radius, int bucket = -1);
-
+	unsigned int GetSize(void) const;
 	const std::vector<IEntity*> GetBucket(int index) const;
 
 private:

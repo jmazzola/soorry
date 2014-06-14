@@ -431,3 +431,9 @@ const std::vector<IEntity*> EntityManager::GetBucket(int _index) const
 {
 	return m_tEntities[_index];
 }
+
+unsigned int EntityManager::GetSize(void) const
+{
+	return m_tEntities.size();
+
+}

@@ -246,3 +246,10 @@ void MachineGunTower::SetRange(int _range)
 {
 	m_nRange = _range;
 }
+
+void MachineGunTower::ExternalUpgrade()
+{
+	m_nDamage = m_pTowerFlyweight->GetMachineGunDamage(m_nUpgradeOne);
+	m_fFireRate = m_pTowerFlyweight->GetMachineGunFireRate(m_nUpgradeOne);
+	m_nRange = m_pTowerFlyweight->GetMachineGunRange(m_nUpgradeTwo);
+}

@@ -135,14 +135,21 @@ void Tower::SetTowerFlyweight(TowerFlyweight* _towerFlyweight)
 void Tower::SetUpgradeOne(int _tier)
 {
 	m_nUpgradeOne = _tier;
+	this->ExternalUpgrade();
 }
 
 void Tower::SetUpgradeTwo(int _tier)
 {
 	m_nUpgradeTwo = _tier;
+	this->ExternalUpgrade();
 }
 
 void Tower::SetSellValue(int _sellValue)
 {
 	m_nSellValue = _sellValue;
+}
+
+void Tower::ExternalUpgrade()
+{
+
 }

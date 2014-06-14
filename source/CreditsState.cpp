@@ -203,6 +203,9 @@ using namespace std;
 					  Justin Patterson\n\n\
 					  Particle Software Engineer\n\
 					  Matthew Salow\n\n\
+					  Audio Engineer\n\
+					  Justin Patterson\n\
+					  Matthew Salow\n\n\
 					  Animation Software Engineer\n\
 					  James Sylvester\n\
 					  Ryan Simmons\n\n\
@@ -214,6 +217,8 @@ using namespace std;
 					  Ryan Simmons\n\n\
 					  Canadian Linguist\n\
 					  Jordan Scelsa\n\n\
+					  Voice Actor\n\
+					  Matthew Salow as Terry\n\n\
 					  Artists\n\
 					  Gregory Bey\n\
 					  Caris Frazier\n\

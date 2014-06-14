@@ -104,11 +104,11 @@ using namespace std;
 		m_szSaveFiles[i - 1] += path;
 
 		// Go to our folder in appdata and set up the save name
-		m_szSaveFiles[i - 1] += "\\RazorBalloon\\SoorrySaveGame_0";
+		m_szSaveFiles[i - 1] += "\\RazorBalloon\\SoorrySave_0";
 		// Set 1 - 3
 		m_szSaveFiles[i - 1] += std::to_string(i);
 		// Set it as .xml since we read it in that way
-		m_szSaveFiles[i - 1] += ".xml";
+		m_szSaveFiles[i - 1] += ".rzbn";
 	}
 
 	// Check if we have the files

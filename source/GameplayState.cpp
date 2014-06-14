@@ -95,6 +95,8 @@
 
 #include "Explosion.h"
 
+#include "RZBN.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <Shlobj.h>
@@ -260,7 +262,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	return player;
 }
 
-
 /**************************************************************/
 // Enter
 //	- reset game
@@ -366,7 +367,17 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
+
+
+	if (m_nCurrGameSlot > 0)
+		LoadGameFromSlot(m_nCurrGameSlot);
+
+	
+
 #pragma region Load Game Mode
+
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
+		m_nGamemode = rzbn->m_nGamemode;
 
 	// Load game mode information
 	string gameModeFileName;
@@ -414,19 +425,44 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	WorldManager* pWorld = WorldManager::GetInstance();
 	pWorld->LoadWorld(worldFileName);
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
-	pGraphics->Update();
+	// Set world data from save
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
+	}
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
 	//zombieFactory->LoadWaves("resource/data/singleEnemy.xml");
 	zombieFactory->LoadWaves(waveFileName);
 	//zombieFactory->LoadWaves("resource/data/longbuildtime.xml");
+
 	zombieFactory->Start();
 	zombieFactory->SetSpawnWidth(pWorld->GetWorldWidth() * pWorld->GetTileWidth());
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
+
+	m_pPlayer = CreatePlayer(playerStatsFileName);
+
+	m_pShop = new Shop();
+	m_pShop->Enter(m_pPlayer);
+	m_pShop->LoadPrices(shopFileName);
+
+	zombieFactory->SetPlayer(m_pPlayer);
+
+	
+
+	pGraphics->SetClearColor();
+	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
+	pGraphics->Update();
+
+	
+
+	// Set the zombie wave from save
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+		zombieFactory->SetWave(rzbn->m_nWaveNum);
 
 	// Load enemy stats recipes
 	LoadEnemyRecipes(enemyStatsFileName);
@@ -438,38 +474,145 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
+	// Load the towers from save
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < rzbn->towerInfos.size(); i++)
+		{
+
+			// Create the towers
+			switch (rzbn->towerInfos[i].m_nTowerType)
+			{
+			case Entity::ENT_TOWER_MACHINE_GUN:
+			{
+			CreateTowerMessage* pmsg =
+				new CreateTowerMessage((int)(rzbn->towerInfos[i].m_fTowerX), (int)(rzbn->towerInfos[i].m_fTowerY),
+			CreateTowerMessage::TOWER_MACHINE_GUN);
+			pmsg->SendMessageNow();
+			delete pmsg;
+			pmsg = nullptr;
+			}
+			break;
+
+			case Entity::ENT_TOWER_MAPLE_SYRUP:
+			{
+			CreateTowerMessage* pmsg =
+				new CreateTowerMessage((int)(rzbn->towerInfos[i].m_fTowerX), (int)(rzbn->towerInfos[i].m_fTowerY),
+			CreateTowerMessage::TOWER_MAPLE_SYRUP);
+			pmsg->SendMessageNow();
+			delete pmsg;
+			pmsg = nullptr;
+
+			}
+			break;
+
+			case Entity::ENT_TOWER_HOCKEY_STICK:
+			{
+			CreateTowerMessage* pmsg =
+				new CreateTowerMessage((int)(rzbn->towerInfos[i].m_fTowerX), (int)(rzbn->towerInfos[i].m_fTowerY),
+			CreateTowerMessage::TOWER_HOCKEY_STICK);
+			pmsg->SendMessageNow();
+			delete pmsg;
+			pmsg = nullptr;
+
+			}
+			break;
+
+			case Entity::ENT_TOWER_LASER:
+			{
+			CreateTowerMessage* pmsg =
+				new CreateTowerMessage((int)(rzbn->towerInfos[i].m_fTowerX), (int)(rzbn->towerInfos[i].m_fTowerY),
+			CreateTowerMessage::TOWER_LASER);
+			pmsg->SendMessageNow();
+			delete pmsg;
+			pmsg = nullptr;
+
+			}
+			break;
+
+			}
+
+			// Set upgrades 
+			GameplayState* gps = GameplayState::GetInstance();
+			vector<IEntity*> towers = gps->GetEntityManager()->GetBucket(3);
+			dynamic_cast<Tower*>(towers[i])->SetUpgradeOne(rzbn->towerInfos[i].m_nUpgradeOne);
+			dynamic_cast<Tower*>(towers[i])->SetUpgradeTwo(rzbn->towerInfos[i].m_nUpgradeTwo);
+		}
+	}
+
 	// Load the gamesave
 
-	// If the slot is set
-	if (m_nCurrGameSlot > 0)
-	{
-		// If we can't load the savegame
-		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-			// Make a new savegame
-			SaveGame(true);
-		else
-			// load the savegame
-			LoadGameFromSlot(m_nCurrGameSlot);
-	}
+	//// If the slot is set
+	//if (m_nCurrGameSlot > 0)
+	//{
+	//	// If we can't load the savegame
+	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	//		// Make a new savegame
+	//		SaveGame(true);
+	//	else
+	//		// load the savegame
+	//		LoadGameFromSlot(m_nCurrGameSlot);
+	//}
 
 
 	// Create our player
-	m_pPlayer = CreatePlayer(playerStatsFileName);
-	zombieFactory->SetPlayer(m_pPlayer);
 
-	// If the slot is set
 
-	// TODO: Make it so I DON'T have to do this twice, since I can't set money because
-	// the player isn't created yet.
-	if (m_nCurrGameSlot > 0)
+	// Set player's spawn point from save
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });
+
+	// Set player's money from save
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+		m_pPlayer->SetScore(rzbn->m_nMoney);
+
+
+	// Set inventory
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		// If we can't load the savegame
-		if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-			// Make a new savegame
-			SaveGame(true);
-		else
-			// load the savegame
-			LoadGameFromSlot(m_nCurrGameSlot);
+		Inventory* inv = m_pPlayer->GetInventory();
+		Weapon* weapons = m_pPlayer->GetWeapons();
+
+		inv->SetWalls(rzbn->m_nWalls);
+		inv->SetWindows(rzbn->m_nWindows);
+		inv->SetBearTraps(rzbn->m_nBeartraps);
+		inv->SetMines(rzbn->m_nMines);
+		inv->SetGrenades(rzbn->m_nGrenades);
+		inv->SetMachineGunTowers(rzbn->m_nMGTowers);
+		inv->SetMapleSyrupTowers(rzbn->m_nMapleTowers);
+		inv->SetHockeyStickTowers(rzbn->m_nHockeyTowers);
+		inv->SetLaserTowers(rzbn->m_nLaserTowers);
+		inv->SetLavaTraps(rzbn->m_nLavaTraps);
+		inv->SetSpikeTraps(rzbn->m_nSpikeTraps);
+		inv->SetDroneCount(rzbn->m_nDrones);
+
+		m_pPlayer->SetAR(rzbn->m_bHasAR);
+		m_pPlayer->SetShotgun(rzbn->m_bHasSH);
+		m_pPlayer->SetRocketLauncher(rzbn->m_bHasRL);
+		m_pPlayer->SetHatTrick(rzbn->m_bHasHT);
+
+
+		weapons[0].SetCurrAmmo(rzbn->m_nARAmmo);
+		weapons[1].SetCurrAmmo(rzbn->m_nSHAmmo);
+		weapons[2].SetCurrAmmo(rzbn->m_nRLAmmo);
+		weapons[3].SetCurrAmmo(rzbn->m_nHTAmmo);
+
+		weapons[0].SetMaxAmmo(rzbn->m_nArMaxAmmo);
+		weapons[0].SetFireRate(rzbn->m_fArFirerate);
+		m_pShop->SetARDamage(rzbn->m_nArDamage);
+
+		weapons[1].SetMaxAmmo(rzbn->m_nShMaxAmmo);
+		weapons[1].SetFireRate(rzbn->m_fShFirerate);
+		m_pShop->SetShotgunDamage(rzbn->m_nShDamage);
+
+		weapons[2].SetMaxAmmo(rzbn->m_nRlMaxAmmo);
+		weapons[2].SetFireRate(rzbn->m_fRlFirerate);
+		m_pShop->SetRLDamage(rzbn->m_nRlDamage);
+
+		weapons[3].SetMaxAmmo(rzbn->m_nHtMaxAmmo);
+		weapons[3].SetFireRate(rzbn->m_fHtFirerate);
+		m_pShop->SetRLDamage(rzbn->m_nHtDamage);
+
 	}
 
 	// Add it to the entity manager
@@ -489,12 +632,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
-	// Load Store
-	m_pShop = new Shop;
-	m_pShop->SetShopStatus(false);
-	m_pShop->Enter(m_pPlayer);
-	m_pShop->LoadPrices(shopFileName);
-	
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
@@ -546,7 +683,12 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_vtStick = {0.0f, 0.0f};
 	m_bAccept = true;
 #endif
-
+	
+	rzbn->SetPlayer(m_pPlayer);
+	rzbn->SetZombieFactory(zombieFactory);
+	rzbn->SetEntityManager(m_pEntities);
+	rzbn->SetWorldManager(WorldManager::GetInstance());
+	rzbn->SetShop(m_pShop);
 }
 
 
@@ -556,6 +698,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+
+	// Save the savegame
+	rzbn->SetPlayer(m_pPlayer);
+	rzbn->SetEntityManager(m_pEntities);
+	rzbn->SetShop(m_pShop);
+	rzbn->SetWorldManager(WorldManager::GetInstance());
+	rzbn->SetZombieFactory(zombieFactory);
+	SaveGame();
+
 	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -606,9 +757,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Delete tower flyweight
 	delete m_pTowerFlyweight;
-
-	// Save the file
-	SaveGame(false);
 
 	// Release the player
 	if (m_pPlayer != nullptr)
@@ -665,11 +813,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pEvents = nullptr;
 	SGD::EventManager::DeleteInstance();
 
-
 	// Terminate & deallocate shop
 	m_pShop->Exit();
 	delete m_pShop;
 	m_pShop = nullptr;
+
+	// Delete the RZBN
+	delete rzbn;
+	rzbn = nullptr;
 
 	// Reset Winning Credits
 	m_bCreditsStarted = false;
@@ -738,12 +889,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed ( 1 , 6 )) )
 	{
-		zombieFactory->SetBuildTImeRemaining ( 0.0f );
-		for ( unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++ )
+		zombieFactory->SetBuildTImeRemaining(0.0f);
+		if (m_pEntities->GetSize() >= BUCKET_PICKUP)
 		{
-			Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
-			DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
-			pMsg->QueueMessage();
+			for (unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++)
+			{
+				Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
+				DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
+				pMsg->QueueMessage();
+			}
 		}
 		
 	}
@@ -1150,24 +1304,24 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	// If the game isn't paused and you haven't won and you haven't lost
 	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
-	{
-		// Update the entities
-		m_pEntities->UpdateAll(elapsedTime);
-		m_pParticleManager->Update(elapsedTime);
-
-		// Process the events & messages
-		m_pEvents->Update();
-		m_pMessages->Update();
-
-		// Update Zombie Factory
-		zombieFactory->Update(elapsedTime);
-
-		// Check collisions
-		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);
+	{																					 // Fuckin north I guess
+		// Update the entities															 // Fuckin north I guess
+		m_pEntities->UpdateAll(elapsedTime);											 // Fuckin north I guess
+		m_pParticleManager->Update(elapsedTime);										 // Fuckin north I guess
+																						 // Fuckin north I guess
+		// Process the events & messages												 // Fuckin north I guess
+		m_pEvents->Update();															 // Fuckin north I guess
+		m_pMessages->Update(); // fuckin north I guess									 // Fuckin north I guess
+																						 // Fuckin north I guess
+		// Update Zombie Factory														 // Fuckin north I guess
+		zombieFactory->Update(elapsedTime);												 // Fuckin north I guess
+																						 // Fuckin north I guess
+		// Check collisions																 // Fuckin north I guess
+		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);						 // Fuckin north I guess
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);				 // Fuckin north I guess
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);					 // Fuckin north I guess
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);						 // Fuckin north I guess
+		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);						 // Fuckin north I guess
 		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_SHOP);
 		//draw grid rectangle
 
@@ -2538,75 +2692,11 @@ Entity* GameplayState::CreateExplosion(float _x, float _y, float _damage, float 
 	return explosion;
 }
 
-// LoadGameFromSlot
-// - Load game from the slot
-void GameplayState::LoadGameFromSlot(int slot)
-{
-	HRESULT hr;
-	ostringstream stringstream;
-	char path[MAX_PATH];
-	LPWSTR wszPath = NULL;
-	size_t size;
-
-	// Get the path to the app data folder
-	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
-
-	// Convert from LPWSTR to char[]
-	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
-
-	// Convert char types
-	if (hr == S_OK)
-		stringstream << path;
-	string pathtowrite = stringstream.str();
-
-	// Add the company and game information
-	pathtowrite += "\\RazorBalloon\\";
-
-	// Create our directory
-	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
-
-	// Create our save file
-	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string(slot) + ".xml";
-
-
-	// Create a TinyXML document
-	TiXmlDocument doc;
-
-	// Attempt to load the file, if not gtfo
-	if (!doc.LoadFile(pathtowrite.c_str()))
-		return;
-
-	// Access the root element (volume)
-	TiXmlElement* pRoot = doc.RootElement();
-
-	// Is the root there, if not, gtfo
-	if (pRoot == nullptr)
-		return;
-
-	m_ptPlayerSpawnPoint.x = float(atoi(pRoot->Attribute("x")));
-	m_ptPlayerSpawnPoint.y = float(atoi(pRoot->Attribute("y")));
-
-	// Get the volume
-	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
-
-	// Set the player's score
-	if (dynamic_cast<Player*>(m_pPlayer) != nullptr)
-	{
-		int money = int(atoi(pStats->Attribute("money")));
-		dynamic_cast<Player*>(m_pPlayer)->SetScore(money);
-	}
-
-
-}
-
 // SaveGame
 // - Saves and or creates a savefile in the appdata
 // [in] newFile - if it's creating a file: true, otherwise false
-void GameplayState::SaveGame(bool newFile)
+void GameplayState::SaveGame()
 {
-
-	// --- Make a new XML file in Appdata ---
 	HRESULT hr;
 	ostringstream stringstream;
 	char path[MAX_PATH];
@@ -2631,78 +2721,11 @@ void GameplayState::SaveGame(bool newFile)
 	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
 
 	// Create our save file
-	pathtowrite += "\\SoorrySaveGame_0";
-	pathtowrite += std::to_string(m_nCurrGameSlot) + ".xml";
+	pathtowrite += "SoorrySave_0";
+	pathtowrite += std::to_string(m_nCurrGameSlot);
+	pathtowrite += ".rzbn";
 
-
-	// If we're making a new file
-	if (newFile)
-	{
-
-		// Make a document
-		TiXmlDocument doc;
-
-		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
-
-		// Attach the declaration to the document
-		doc.LinkEndChild(pDecl);
-
-		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement("position");
-
-		// Add the X and Y of position
-		pRoot->SetAttribute("x", 0);
-		pRoot->SetAttribute("y", 0);
-
-		// Link the root to the doc
-		doc.LinkEndChild(pRoot);
-
-		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement("stats");
-
-		// Add the money
-		pStats->SetAttribute("money", 0);
-
-		// Link the stats to the doc
-		doc.LinkEndChild(pStats);
-
-		// Save the file
-		doc.SaveFile(pathtowrite.c_str());
-	}
-	else
-	{
-		// Make a document
-		TiXmlDocument doc;
-
-		// Allocate a Tiny XML Declaration
-		TiXmlDeclaration* pDecl = new TiXmlDeclaration("1.0", "utf-8", "");
-
-		// Attach the declaration to the document
-		doc.LinkEndChild(pDecl);
-
-		// Add a new element 'position'
-		TiXmlElement* pRoot = new TiXmlElement("position");
-
-		// Add the X and Y of position
-		pRoot->SetAttribute("x", (int)m_pPlayer->GetPosition().x);
-		pRoot->SetAttribute("y", (int)m_pPlayer->GetPosition().y);
-
-		// Link the root to the doc
-		doc.LinkEndChild(pRoot);
-
-		// Add a new element called 'stats'
-		TiXmlElement* pStats = new TiXmlElement("stats");
-
-		// Add the money
-		pStats->SetAttribute("money", (int)dynamic_cast<Player*>(m_pPlayer)->GetScore());
-
-		// Link the stats to the doc
-		doc.LinkEndChild(pStats);
-
-		// Save the file
-		doc.SaveFile(pathtowrite.c_str());
-	}
+	rzbn->SaveRZBNFile(pathtowrite);
 }
 
 // Render Credits
@@ -2812,6 +2835,51 @@ void GameplayState::RenderLoss(void)
 
 
 }
+
+
+// LoadGameFromSlot
+// - Load the RZBN gamesave from the current game slot
+// [in] slot - game slot
+void GameplayState::LoadGameFromSlot(int slot)
+{
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "\\SoorrySave_0";
+	pathtowrite += std::to_string(slot);
+	pathtowrite += ".rzbn";
+
+	// New RZBN file
+	rzbn = new RZBN();
+
+	/*rzbn->SetPlayer(m_pPlayer);
+	rzbn->SetZombieFactory(zombieFactory);
+	rzbn->SetShop(m_pShop);*/
+
+	rzbn->LoadRZBNFile(pathtowrite);
+}
+
 
 void GameplayState::LoadEnemyRecipes(string fileName)
 {

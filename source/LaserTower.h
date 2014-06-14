@@ -40,5 +40,7 @@ protected:
 	int m_nDamage;
 	int m_nRange;
 	vector<LaserTower*> m_vConnectedTowers;
+
+	virtual void ExternalUpgrade() override;
 };
 

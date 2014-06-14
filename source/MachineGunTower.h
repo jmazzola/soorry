@@ -39,6 +39,8 @@ protected:
 	float m_fBulletSpeed;
 	int m_nRange;
 
+	virtual void ExternalUpgrade() override;
+
 private:
 
 	float m_fNextShotTimer;
