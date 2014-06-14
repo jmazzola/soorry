@@ -41,7 +41,14 @@ void Shop::Enter(Entity* player)
 
 	// Load the audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+	/*if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
+	{
+		pAudio->PlayAudio(m_hShopMusic, true);
+	}
+	if (pAudio->IsAudioPlaying(m_hWelcome) == false)
+	{
+		pAudio->PlayAudio(m_hWelcome);
+	}*/
 	// Bitmap Font
 	m_pFont = new BitmapFont;
 	m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png", "resource/data/BitmapFont_Roboto.fnt");
@@ -49,7 +56,14 @@ void Shop::Enter(Entity* player)
 	m_nCursor = 0;
 	m_nMenuTab = MAIN_TAB;
 }
-
+//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
+//if (pInput->IsKeyPressed(SGD::Key::Backspace))
+//{
+//	pAudio->StopAudio(m_hBackgroundMus);
+//	// to stop audio from playing after every backspace
+//	
+//	m_pShop->SetShopStatus(true);
+//}
 // Exit
 void Shop::Exit()
 {
@@ -65,7 +79,8 @@ void Shop::Exit()
 	m_nMenuTab = MAIN_TAB;
 
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	
+	//pAudio->StopAudio(m_hShopMusic);
+
 	// Terminate and clean up bitmapfont
 	m_pFont->Terminate();
 	delete m_pFont;
