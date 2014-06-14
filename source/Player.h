@@ -131,11 +131,12 @@ protected:
 	SGD::HTexture m_hRangeCirclesImage;
 	
 	//Player sounds
-	SGD::HAudio m_hBlockPlace;
-	SGD::HAudio m_hBlockBreak;
-	SGD::HAudio m_hPickup;
-	SGD::HAudio m_hWalking;
-	SGD::HAudio m_hGunClick;
+	SGD::HAudio m_hBlockPlace = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBlockBreak = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPickup = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hWalking = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hGunClick	= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPlayerGrunt = SGD::INVALID_HANDLE;
 
 private:
 	

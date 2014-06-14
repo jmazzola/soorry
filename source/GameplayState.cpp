@@ -325,7 +325,24 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
 	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
 	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
-	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
+	m_hChaChing     = pAudio->LoadAudio("resource/audio/ChaChing.wav");
+	m_hClickSound	= pAudio->LoadAudio("resource/audio/click.wav");
+	m_hBeaverFever	= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
+	m_hGoToShop		= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
+	m_hGoodJob		= pAudio->LoadAudio("resource/audio/Good_Job.wav");
+	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
+	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
+	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
+	m_hTutorial		= pAudio->LoadAudio("resource/audio/Tutorial1.wav");
+	m_hTutorial2	= pAudio->LoadAudio("resource/audio/Tutorial2.wav");
+	m_hTutorial3	= pAudio->LoadAudio("resource/audio/Tutorial3.wav");
+	m_hTutorial4	= pAudio->LoadAudio("resource/audio/Tutorial4.wav");
+	m_hTutorial5	= pAudio->LoadAudio("resource/audio/Tutorial5.wav");
+	m_hTutorial6	= pAudio->LoadAudio("resource/audio/Tutorial6.wav");
+	m_hTutorial7	= pAudio->LoadAudio("resource/audio/Tutorial7.wav");
+	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
+	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
+	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -477,7 +494,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pShop->SetShopStatus(false);
 	m_pShop->Enter(m_pPlayer);
 	m_pShop->LoadPrices(shopFileName);
-
+	
 	// Load menu stuff
 	m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
 	m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
@@ -716,17 +733,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #endif
 		}
 
-	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
-	//if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	//{
-	//	pAudio->StopAudio(m_hBackgroundMus);
-	//	// to stop audio from playing after every backspace
-	//	if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
-	//	{
-	//		pAudio->PlayAudio(m_hShopMusic, true);
-	//	}
-	//	m_pShop->SetShopStatus(true);
-	//}
+	
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed ( 1 , 6 )) )
@@ -1125,6 +1132,21 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hBackgroundMus);
+		m_bEnterShop = false;
+	}
+	else if (m_pShop->IsOpen() == true && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == true)
+	{
+		SGD::AudioManager::GetInstance()->StopAudio(m_hBackgroundMus);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hShopMusic);
+		if (m_bEnterShop == false)
+		{
+			if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hWelcomeShop) == false)
+			{
+				SGD::AudioManager::GetInstance()->PlayAudio(m_hWelcomeShop);
+			}
+			m_bEnterShop = true;
+
+		}
 	}
 	// If the game isn't paused and you haven't won and you haven't lost
 	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
@@ -1529,6 +1551,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 
+					if (m_bBuildStart == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
+						m_bBuildStart = true;
+					}
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 					//timeRemaining += " secs";
@@ -1540,6 +1567,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
+					m_bBuildStart = false;
+
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
@@ -1660,7 +1689,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			pGraphics->DrawRectangle(
 				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
 				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
-
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hWinTheGame);
 			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
 		// If you have lost render You Lose and go to replay menu

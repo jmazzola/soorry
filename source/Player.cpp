@@ -223,6 +223,7 @@ Player::Player () : Listener ( this )
 	m_hPickup = pAudio->LoadAudio("resource/audio/block_pickup.wav");
 	m_hWalking = pAudio->LoadAudio("resource/audio/walking2.wav");
 	m_hGunClick = pAudio->LoadAudio("resource/audio/Gun_Click.wav");
+	m_hPlayerGrunt = pAudio->LoadAudio("resource/audio/Player_Grunt.wav");
 
 	m_bCanLeftClick = true;
 	m_bAccept = true;
@@ -1454,6 +1455,10 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 		// Make sure we don't underflow
 		if ( m_nCurrHealth < 0.0f )
 			m_nCurrHealth = 0.0f;
+		if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hPlayerGrunt) == false)
+		{
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hPlayerGrunt);
+		}
 	}
 
 	if ( pEvent->GetEventID () == "INCREASE_SCORE" )

@@ -178,17 +178,34 @@ private:
 
 	/**********************************************************/
 	// Audio
-	SGD::HAudio m_hBackgroundMus = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hPistol = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hShopMusic = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hGunShoot = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hRocketShoot = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hShotgunShoot = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hBulletHit = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hBulletImpact = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hPurchase = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hExplosion = SGD::INVALID_HANDLE;
-	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBackgroundMus	= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPistol			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hShopMusic		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hGunShoot			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hRocketShoot		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hShotgunShoot		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBulletHit		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBulletImpact		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hPurchase			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hExplosion		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hClickSound		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hChaChing			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hBeaverFever		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hGoToShop			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hGoodJob			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hSoory1			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hSoory2			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTrueHero			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial2		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial3		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial4		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial5		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial6		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hTutorial7		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
+	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Factory Methods
@@ -234,6 +251,8 @@ private:
 	float m_fLossTimer;
 	bool m_bHasLost;
 	bool m_bReplay;
+	bool m_bEnterShop = false;
+	bool m_bBuildStart = false;
 
 	// Enemy recipes
 	void LoadEnemyRecipes(string fileName);
