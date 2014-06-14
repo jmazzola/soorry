@@ -270,8 +270,7 @@ private:
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
 
-	// Savegamez
-	void SaveGame(int slot);
+	
 };
 
 #endif //GAMEPLAYSTATE_H
