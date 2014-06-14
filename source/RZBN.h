@@ -31,6 +31,12 @@ struct TrapInfo
 	float m_fTrapX, m_fTrapY;
 };
 
+struct PlaceableInfo
+{
+	int m_nPlaceType;
+	float m_fPlaceX, m_fPlaceY;
+};
+
 class RZBN
 {
 
@@ -103,5 +109,6 @@ public:
 
 	vector<TowerInfo> towerInfos;
 	vector<TrapInfo> trapInfos;
+	vector<PlaceableInfo> placeableInfos;
 };
 

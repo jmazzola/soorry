@@ -572,6 +572,36 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 
+	// Set Placeables (Beartraps and Mines)
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < rzbn->placeableInfos.size(); i++)
+		{
+			switch (rzbn->placeableInfos[i].m_nPlaceType)
+			{
+			case Entity::ENT_TRAP_BEARTRAP:
+			{
+				CreatePlaceableMessage* pmsg =
+					new CreatePlaceableMessage({ rzbn->placeableInfos[i].m_fPlaceX, rzbn->placeableInfos[i].m_fPlaceY }, 2);
+				pmsg->SendMessageNow();
+				delete pmsg;
+				pmsg = nullptr;
+			}
+				break;
+
+			case Entity::ENT_TRAP_MINE:
+			{
+				CreatePlaceableMessage* pmsg =
+					new CreatePlaceableMessage({ rzbn->placeableInfos[i].m_fPlaceX, rzbn->placeableInfos[i].m_fPlaceY }, 0x1337);
+				pmsg->SendMessageNow();
+				delete pmsg;
+				pmsg = nullptr;
+			}
+				break;
+			}
+		}
+	}
+
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });
@@ -2025,7 +2055,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceablePos(), pCreateMessage->GetPlaceableType());
-		g->m_pEntities->AddEntity(place, BUCKET_TRAPS);
+		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
 		place->Release();
 		place = nullptr;
 	}

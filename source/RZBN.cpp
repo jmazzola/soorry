@@ -197,6 +197,22 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 		trapInfos.push_back(trapInfo);
 	}
 
+	// -- Load Placeables --
+	int m_nPlaceSize;
+	file.read((char*)&m_nPlaceSize, sizeof(int));
+
+	for (int i = 0; i < m_nPlaceSize; i++)
+	{
+		PlaceableInfo placeInfo;
+
+		// Grab the information first
+		file.read((char*)&placeInfo.m_nPlaceType, sizeof(int));
+		file.read((char*)&placeInfo.m_fPlaceX, sizeof(float));
+		file.read((char*)&placeInfo.m_fPlaceY, sizeof(float));
+
+		placeableInfos.push_back(placeInfo);
+	}
+
 	return false;
 
 }
@@ -403,5 +419,25 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
 		file.write((char*)&trapY, sizeof(float));
 
+	}
+
+	// -- Write the placeables --
+
+	if (GameplayState::GetInstance()->GetEntityManager()->GetSize() >= 4)
+	{
+		vector<IEntity*> placeables = gps->GetEntityManager()->GetBucket(4);
+		int placeablesSize = placeables.size();
+		file.write((char*)&placeablesSize, sizeof(int));
+
+		// Save the placeables
+		for (size_t i = 0; i < placeablesSize; i++)
+		{
+			int placeType = dynamic_cast<Entity*>(placeables[i])->GetType();
+			file.write((char*)&placeType, sizeof(int));
+			float placeX = dynamic_cast<Entity*>(placeables[i])->GetPosition().x;
+			file.write((char*)&placeX, sizeof(float));
+			float placeY = dynamic_cast<Entity*>(placeables[i])->GetPosition().y;
+			file.write((char*)&placeY, sizeof(float));
+		}
 	}
 }
