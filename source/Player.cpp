@@ -402,8 +402,16 @@ void Player::Update ( float dt )
 	else if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode () == true )
 	{
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
-		pos.x += shoot.x * 2;
-		pos.y += shoot.y * 2;
+		if ( trg == 0.0f )
+		{
+			pos.x += shoot.x;
+			pos.y += shoot.y;
+		}
+		else
+		{
+			pos.x += shoot.x * 1.5f;
+			pos.y += shoot.y * 1.5f;
+		}
 
 		pInput->SetMousePosition( pos );
 	}
@@ -566,7 +574,7 @@ void Player::Update ( float dt )
 	{
 		m_nCurrWeapon = ROCKET_LAUNCHER;
 	}
-	//Switch to Trick Shot Gun
+	//Switch to Hat Trick Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
