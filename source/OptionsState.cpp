@@ -152,12 +152,20 @@ using namespace std;
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
 
+#if ARCADE_MODE
 		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
 			m_nCursor++;
 
 		// Wrap around the options
 		if (m_nCursor > MENU_GOBACK)
 			m_nCursor = MENU_MUSICVOL;
+#else
+
+		// Wrap around the options
+		if (m_nCursor > MENU_GOBACK)
+			m_nCursor = MENU_MUSICVOL;
+#endif
+
 #if ARCADE_MODE
 		m_bAccept = false;
 #endif
@@ -174,12 +182,21 @@ using namespace std;
 	{
 		--m_nCursor;
 
+#if ARCADE_MODE
 		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
 			m_nCursor--;
 
 		// Wrap around the options
 		if (m_nCursor < MENU_MUSICVOL)
 			m_nCursor = MENU_GOBACK;
+
+#else
+
+		// Wrap around the options
+		if (m_nCursor < MENU_MUSICVOL)
+			m_nCursor = MENU_GOBACK;
+
+#endif
 #if ARCADE_MODE
 		m_bAccept = false;
 #endif
