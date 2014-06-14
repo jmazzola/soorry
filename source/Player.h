@@ -111,6 +111,8 @@ protected:
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
+	float m_fPickupMessageTimer;
+	std::string m_sPickupMessage;
 	unsigned int m_unScore;
 	unsigned int m_unEnemiesKilled;
 	float m_fSpeed;

@@ -77,6 +77,7 @@ Player::Player () : Listener ( this )
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
 	m_fRunningManTimer = 2.0f;
+	m_fPickupMessageTimer = 0.0f;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
@@ -276,7 +277,7 @@ void Player::Update ( float dt )
 	m_fPlaceTimer -= dt;
 	m_fSuperTimer -= dt;
 	m_fRunningManTimer -= dt;
-
+	m_fPickupMessageTimer -= dt;
 	float trg = pInput->GetTrigger(0);
 
 	if(abs(trg) < 0.1)
@@ -401,8 +402,16 @@ void Player::Update ( float dt )
 	else if ( (shoot.x != 0.0f || shoot.y != 0.0f) && m_pZombieWave->IsBuildMode () == true )
 	{
 		SGD::Point pos = SGD::InputManager::GetInstance ()->GetMousePosition ();
-		pos.x += shoot.x * 2;
-		pos.y += shoot.y * 2;
+		if ( trg == 0.0f )
+		{
+			pos.x += shoot.x;
+			pos.y += shoot.y;
+		}
+		else
+		{
+			pos.x += shoot.x * 1.5f;
+			pos.y += shoot.y * 1.5f;
+		}
 
 		pInput->SetMousePosition( pos );
 	}
@@ -565,7 +574,7 @@ void Player::Update ( float dt )
 	{
 		m_nCurrWeapon = ROCKET_LAUNCHER;
 	}
-	//Switch to Trick Shot Gun
+	//Switch to Hat Trick Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
@@ -1420,15 +1429,22 @@ void Player::HandleCollision ( const IEntity* pOther )
 		(m_bHasShotty) ? m_pWeapons[1].SetCurrAmmo(m_pWeapons[1].GetCurrAmmo() + 30) : __noop;
 		(m_bHasRocketz) ? m_pWeapons[2].SetCurrAmmo(m_pWeapons[2].GetCurrAmmo() + 5) : __noop;
 		(m_bHasHatTrick) ? m_pWeapons[3].SetCurrAmmo(m_pWeapons[3].GetCurrAmmo() + 50) : __noop;
+		m_sPickupMessage = "More Bullets Eh?";
+		m_fPickupMessageTimer = 1.5f;
+			
 	}
 	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
 	{
 		int curr = m_pInventory->GetHealthPacks();
 		m_pInventory->SetHealthPacks ( curr + 1 );
+		m_sPickupMessage = "More Bandaids Eh?";
+		m_fPickupMessageTimer = 1.5f;
 	}
 	if ( pOther->GetType() == ENT_PICKUP_SUPER )
 	{
 		m_fSuperTimer = m_fSuperLength;
+		m_sPickupMessage = "Super Canadian!";
+		m_fPickupMessageTimer = 1.5f;
 	}
 
 	// If we are touching the shop
@@ -1769,8 +1785,8 @@ void Player::Render ( void )
 
 	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center, col );
 
-	if(m_fSuperTimer > 0)
-		SGD::GraphicsManager::GetInstance()->DrawString("Super Canadian!", SGD::Point(m_ptPosition.x - Camera::x - 60, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
+	if(m_fPickupMessageTimer > 0)
+		SGD::GraphicsManager::GetInstance()->DrawString(m_sPickupMessage.c_str(), SGD::Point(m_ptPosition.x - Camera::x - 60, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
 
 	SGD::Rectangle drawRect = GetRect ();
 	drawRect.left -= Camera::x;

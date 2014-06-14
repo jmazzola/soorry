@@ -442,9 +442,46 @@ void Shop::Render()
 			for (int i = 0; i < TOTAL_WEAPONS; i++)
 			{
 				// If we're currently selected
-				if (m_nCursor == i)
-					// Draw it in green
-					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				if ( m_nCursor == i )
+				{
+					// Draw it in green if we don't own it
+					switch ( i )
+					{
+					case 0:
+						m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						break;
+					case 1:
+					{
+						if ( dynamic_cast<Player*>(m_pPlayer)->HasShotty () == true )
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						else
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+						break;
+					}
+					case 2:
+					{
+						if ( dynamic_cast<Player*>(m_pPlayer)->HasRocketLauncher () == true )
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						else
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+					}
+						break;
+					case 3:
+					{
+						if ( dynamic_cast<Player*>(m_pPlayer)->HasHatTrick () == true )
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						else
+							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+					}
+						break;
+					case 4:
+						m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+						break;
+					default:
+						break;
+					}
+					
+				}
 				else
 					// Draw it in black
 					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
@@ -656,7 +693,26 @@ bool Shop::Buy(int parcel, int shopSection)
 
 	case WEAPONS:
 	{
-		if (player->GetScore() >= weapPrices[parcel])
+		switch ( parcel )
+		{
+		case 0:
+			return false;
+			break;
+		case 1:
+			if(player->HasShotty() == true)
+				return false;
+			break;
+		case 2:
+			if(player->HasRocketLauncher() == true)
+				return false;
+			break;
+		case 3:
+			if(player->HasHatTrick() == true)
+				return false;
+			break;
+		}
+
+		if (curMoney >= (int)weapPrices[parcel])
 		{
 			// Subtract money
 			player->SetScore(curMoney -= weapPrices[parcel]);
@@ -671,7 +727,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	case ITEMS:		
 	{
 		// If the player has the money for the item
-		if (player->GetScore() >= itemPrices[parcel])
+		if (curMoney >= (int)itemPrices[parcel])
 		{
 			// Subtract money
 			player->SetScore(curMoney -= itemPrices[parcel]);
@@ -686,7 +742,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	case UPGRADES:
 	{
 		// If the player has the money for the upgrade
-		if (player->GetScore() >= upgradePrices[parcel])
+		if (curMoney >= (int)upgradePrices[parcel])
 		{
 			player->SetScore(curMoney -= upgradePrices[parcel]);
 			tracker->SpendItUp(itemPrices[parcel]);
@@ -700,7 +756,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	case TOWERS:
 	{
 		// If the player has the money for the upgrade
-		if (player->GetScore() >= towerPrices[parcel])
+		if (curMoney >= (int)towerPrices[parcel])
 		{
 			player->SetScore(curMoney -= towerPrices[parcel]);
 			tracker->SpendItUp(itemPrices[parcel]);
@@ -801,6 +857,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	Inventory* inventory = player->GetInventory();
 	Game* game = Game::GetInstance();
+	StatTracker* tracker = StatTracker::GetInstance();
 
 	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
 
@@ -843,7 +900,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 				return;
 
 			player->SetHatTrick(true);
-			weapons[3].SetCurrAmmo(500);
+			weapons[3].SetCurrAmmo(50);
 		}
 	}
 
@@ -854,10 +911,16 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
 		if (parcel == ITEM_PRICE_WINDOW)
 			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]);
-		if (parcel == BEARTRAP)
-			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
-		if (parcel == MINE)
-			inventory->SetMines(inventory->GetMines() + itemAmountToAdd[MINE]);
+		if ( parcel == BEARTRAP )
+		{
+			inventory->SetBearTraps ( inventory->GetBearTraps () + itemAmountToAdd[ BEARTRAP ] );
+			tracker->TrapExchange(true);
+		}
+		if ( parcel == MINE )
+		{
+			inventory->SetMines ( inventory->GetMines () + itemAmountToAdd[ MINE ] );
+			tracker->TrapExchange ( true );
+		}
 		if (parcel == GRENADE)
 			inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]);
 		if (parcel == AMMO)
@@ -878,14 +941,17 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]);
 		}
 
-		if (parcel == LAVATRAP)
-			inventory->SetLaserTowers(inventory->GetLavaTraps() + itemAmountToAdd[LAVATRAP]);
+		if ( parcel == LAVATRAP )
+		{
+			inventory->SetLaserTowers ( inventory->GetLavaTraps () + itemAmountToAdd[ LAVATRAP ] );
+			tracker->TrapExchange ( true );
+		}
+		if ( parcel == SPIKETRAP )
+		{
+			inventory->SetSpikeTraps ( inventory->GetSpikeTraps () + itemAmountToAdd[ SPIKETRAP ] );
+			tracker->TrapExchange ( true );
+		}
 
-		if (parcel == SPIKETRAP)
-			inventory->SetSpikeTraps(inventory->GetSpikeTraps() + itemAmountToAdd[SPIKETRAP]);
-
-		if (parcel != ITEM_GOBACK)
-			itemPrices[parcel] = (unsigned int)(itemPrices[parcel] + itemPrices[parcel] * SELL_DISCOUNT);
 	}
 
 	if (shopSection == UPGRADES)
@@ -926,8 +992,6 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		if (parcel == TOWER_LASER)
 			inventory->SetLaserTowers(inventory->GetLaserTowers() + 1);
 
-		if (parcel != TOWER_GOBACK)
-			towerPrices[parcel] = (unsigned int)(towerPrices[parcel] + towerPrices[parcel] * SELL_DISCOUNT);
 	}
 }
 
