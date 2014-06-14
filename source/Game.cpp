@@ -173,6 +173,11 @@ int Game::Main(void)
 	{
 		ToggleFullscreen();
 		// Disable the 'Enter' input
+
+		// If we're in the gameplay state and not paused
+		if (m_pCurrState == GameplayState::GetInstance() && !GameplayState::GetInstance()->IsPaused())
+			// Toggle the pause state
+			GameplayState::GetInstance()->SetPaused(!GameplayState::GetInstance()->IsPaused());
 		return false;
 	}
 	
@@ -317,4 +322,10 @@ void Game::ChangeState(IGameState* pNewState)
 	// Enter the new state
 	if (m_pCurrState != nullptr)
 		m_pCurrState->Enter();
+}
+
+void Game::MouseWheel(int _direction)
+{
+	if (Game::GetInstance()->m_pCurrState == GameplayState::GetInstance())
+		GameplayState::GetInstance()->MouseWheel(_direction);
 }

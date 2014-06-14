@@ -305,8 +305,6 @@
 		else if (m_nTab == TUT_THANKYOU)
 			pGraphics->DrawTexture(m_hTutFinal, SGD::Point{ 0, 0 });
 
-
-
 		// Draw what page we're on
 		string page = "Page ";
 		page += to_string(m_nTab + 1);
