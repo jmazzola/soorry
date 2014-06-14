@@ -31,11 +31,11 @@ struct TrapInfo
 	float m_fTrapX, m_fTrapY;
 };
 
-struct PlaceableInfo
-{
-	int m_nPlaceType;
-	float m_fPlaceX, m_fPlaceY;
-};
+//struct PlaceableInfo
+//{
+//	int m_nPlaceType;
+//	float m_fPlaceX, m_fPlaceY;
+//};
 
 class RZBN
 {
@@ -63,7 +63,7 @@ public:
 	void SetWorldManager(WorldManager* wm) { m_pWorld = wm; }
 
 	// Load Savefile
-	bool LoadRZBNFile(string rzbnFilePath);
+	int LoadRZBNFile(string rzbnFilePath);
 
 	// Save savefile
 	void SaveRZBNFile(string rzbnFilePath);
@@ -109,6 +109,5 @@ public:
 
 	vector<TowerInfo> towerInfos;
 	vector<TrapInfo> trapInfos;
-	vector<PlaceableInfo> placeableInfos;
 };
 

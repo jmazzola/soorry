@@ -60,7 +60,6 @@ public:
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
 	bool IsRunningMan(void) const;
-	bool GetCursorFaded(void) const;
 
 	bool HasAR() const { return m_bHasAssaultRifle; }
 	bool HasShotty() const { return m_bHasShotty; }
@@ -106,8 +105,6 @@ protected:
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
-	float m_fCursorFadeLength;
-	float m_fCursorFadeTimer;
 	float m_fSuperTimer;
 	float m_fSuperLength;
 	float m_fCameraLerpTimer;

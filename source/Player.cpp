@@ -76,8 +76,6 @@ Player::Player () : Listener ( this )
 	m_fSpeed = 250.0f;
 	m_fScoreMultiplier = 0.0f;
 	m_fTimeAlive = 0.0f;
-	m_fCursorFadeLength = 2.0f;
-	m_fCursorFadeTimer = 0.0f;
 	m_fRunningManTimer = 2.0f;
 
 	// Player Inventory
@@ -276,7 +274,6 @@ void Player::Update ( float dt )
 	m_pWeapons[m_nCurrWeapon].SetFireTimer(m_pWeapons[m_nCurrWeapon].GetFireTimer() - dt);
 	m_fGrenadeTimer -= dt;
 	m_fPlaceTimer -= dt;
-	m_fCursorFadeTimer -= dt;
 	m_fSuperTimer -= dt;
 	m_fRunningManTimer -= dt;
 
@@ -414,11 +411,7 @@ void Player::Update ( float dt )
 	// Grab the mouse movement to hide the cursor if necessary
 	SGD::Vector mouseMove = pInput->GetMouseMovement ();
 
-	// If you have moved your cursor reset the fade timer
-	if ( mouseMove != SGD::Vector { 0.0f , 0.0f } || shoot != SGD::Vector { 0.0f , 0.0f } )
-	{
-		m_fCursorFadeTimer = m_fCursorFadeLength;
-	}
+	
 
 	// Input
 	// Move Left
@@ -590,7 +583,6 @@ void Player::Update ( float dt )
 		// Left click
 		if (m_bTHEBOOL)
 		{
-			m_fCursorFadeTimer = m_fCursorFadeLength;
 			CreateProjectileMessage* msg = new CreateProjectileMessage ( m_nCurrWeapon );
 			msg->QueueMessage ();
 			msg = nullptr;
@@ -1804,9 +1796,4 @@ bool Player::IsRunningMan( void ) const
 void Player::SetRunningMan( bool yes)
 {
 	isRunningMan = yes;
-}
-
-bool Player::GetCursorFaded(void) const
-{
-	return m_fCursorFadeTimer > 0;
 }

@@ -474,10 +474,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
+#pragma region Load Towers, Placeables and Drones [LONG CODE]
 	// Load the towers from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		for (int i = 0; i < rzbn->towerInfos.size(); i++)
+		for (size_t i = 0; i < rzbn->towerInfos.size(); i++)
 		{
 
 			// Create the towers
@@ -543,7 +544,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Set Traps (Lava and Spike)
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		for (int i = 0; i < rzbn->trapInfos.size(); i++)
+		for (size_t i = 0; i < rzbn->trapInfos.size(); i++)
 		{
 			switch (rzbn->trapInfos[i].m_nTrapType)
 			{
@@ -568,36 +569,26 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					pmsg = nullptr;
 				}
 					break;
-			}
-		}
-	}
 
-	// Set Placeables (Beartraps and Mines)
-	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-	{
-		for (int i = 0; i < rzbn->placeableInfos.size(); i++)
-		{
-			switch (rzbn->placeableInfos[i].m_nPlaceType)
-			{
-			case Entity::ENT_TRAP_BEARTRAP:
-			{
-				CreatePlaceableMessage* pmsg =
-					new CreatePlaceableMessage({ rzbn->placeableInfos[i].m_fPlaceX, rzbn->placeableInfos[i].m_fPlaceY }, 2);
-				pmsg->SendMessageNow();
-				delete pmsg;
-				pmsg = nullptr;
-			}
-				break;
+				case Entity::ENT_TRAP_BEARTRAP:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY}, 2);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-			case Entity::ENT_TRAP_MINE:
-			{
-				CreatePlaceableMessage* pmsg =
-					new CreatePlaceableMessage({ rzbn->placeableInfos[i].m_fPlaceX, rzbn->placeableInfos[i].m_fPlaceY }, 0x1337);
-				pmsg->SendMessageNow();
-				delete pmsg;
-				pmsg = nullptr;
-			}
-				break;
+				case Entity::ENT_TRAP_MINE:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY }, 0x1337);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 			}
 		}
 	}
@@ -610,6 +601,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		delete pMsg;
 		pMsg = nullptr;
 	}
+#pragma endregion 
 
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -723,8 +715,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 
 	// Turn the cursor on
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
+	//if(pGraphics->IsCursorShowing() == false)
+
 
 	// Create snow
 	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
@@ -1346,7 +1338,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
-	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
+	//if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
 		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 
 	// Grab the controllers
@@ -2064,7 +2056,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		const CreatePlaceableMessage* pCreateMessage = dynamic_cast<const CreatePlaceableMessage*>(pMsg);
 		GameplayState* g = GameplayState::GetInstance();
 		Entity* place = g->CreatePlaceable(pCreateMessage->GetPlaceablePos(), pCreateMessage->GetPlaceableType());
-		g->m_pEntities->AddEntity(place, BUCKET_PLACEABLE);
+		g->m_pEntities->AddEntity(place, BUCKET_TRAPS);
 		place->Release();
 		place = nullptr;
 	}
@@ -2804,8 +2796,8 @@ void GameplayState::RenderCredits(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOff();
+	//if(pGraphics->IsCursorShowing() == true)
+	//	pGraphics->TurnCursorOff();
 
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });

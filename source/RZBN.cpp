@@ -31,14 +31,17 @@
 #include <fstream>
 using namespace std;
 
-#define RZBN_VERSION 1
+#define RZBN_VERSION 3
 #define RZBN_MAGIC 0x4E425A52
 
 // LoadRZBNFile
 // [in] rzbnFilePath - filepath to load file in appdata
-// [out] return true - if the whole file is loaded successfully
+// [out] return 0 - File couldn't open
+// [out] return 1 - Magic mismatch
+// [out] return 2 - Version mismatch
+// [out] return 0x1337 - Good.
 // [out] return false - if at anytime, something fails.
-bool RZBN::LoadRZBNFile(string rzbnFilePath)
+int RZBN::LoadRZBNFile(string rzbnFilePath)
 {
 	fstream file;
 	file.open(rzbnFilePath, ios_base::binary | ios_base::in);
@@ -46,7 +49,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If we fail opening or anything at all
 	if (!file.is_open() || !file.good())
 		// return false
-		return false;
+		return 0;
 
 	// Check for magic number
 	int magic;
@@ -54,7 +57,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If the magic doesnt match
 	if (magic != RZBN_MAGIC)
 		// quit
-		return false;
+		return 1;
 
 	// Check for version
 	int version;
@@ -62,7 +65,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If the version doesnt match
 	if (version != RZBN_VERSION)
 		// quit
-		return false;
+		return 2;
 
 	// Load gamemode
 	int gameMode;
@@ -197,23 +200,23 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 		trapInfos.push_back(trapInfo);
 	}
 
-	// -- Load Placeables --
-	int m_nPlaceSize;
-	file.read((char*)&m_nPlaceSize, sizeof(int));
+	//// -- Load Placeables --
+	//int m_nPlaceSize;
+	//file.read((char*)&m_nPlaceSize, sizeof(int));
 
-	for (int i = 0; i < m_nPlaceSize; i++)
-	{
-		PlaceableInfo placeInfo;
+	//for (int i = 0; i < m_nPlaceSize; i++)
+	//{
+	//	PlaceableInfo placeInfo;
 
-		// Grab the information first
-		file.read((char*)&placeInfo.m_nPlaceType, sizeof(int));
-		file.read((char*)&placeInfo.m_fPlaceX, sizeof(float));
-		file.read((char*)&placeInfo.m_fPlaceY, sizeof(float));
+	//	// Grab the information first
+	//	file.read((char*)&placeInfo.m_nPlaceType, sizeof(int));
+	//	file.read((char*)&placeInfo.m_fPlaceX, sizeof(float));
+	//	file.read((char*)&placeInfo.m_fPlaceY, sizeof(float));
 
-		placeableInfos.push_back(placeInfo);
-	}
+	//	placeableInfos.push_back(placeInfo);
+	//}
 
-	return true;
+	return 0x1337;
 
 }
 
@@ -410,7 +413,7 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&trapsSize, sizeof(int));
 
 	// Save the traps
-	for (size_t i = 0; i < trapsSize; i++)
+	for (int i = 0; i < trapsSize; i++)
 	{
 		int trapType = dynamic_cast<Entity*>(traps[i])->GetType();
 		file.write((char*)&trapType, sizeof(int));
@@ -421,23 +424,23 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 
 	}
 
-	// -- Write the placeables --
+	//// -- Write the placeables --
 
-	if (GameplayState::GetInstance()->GetEntityManager()->GetSize() >= 4)
-	{
-		vector<IEntity*> placeables = gps->GetEntityManager()->GetBucket(4);
-		int placeablesSize = placeables.size();
-		file.write((char*)&placeablesSize, sizeof(int));
+	//if (GameplayState::GetInstance()->GetEntityManager()->GetSize() >= 4)
+	//{
+	//	vector<IEntity*> placeables = gps->GetEntityManager()->GetBucket(4);
+	//	int placeablesSize = placeables.size();
+	//	file.write((char*)&placeablesSize, sizeof(int));
 
-		// Save the placeables
-		for (size_t i = 0; i < placeablesSize; i++)
-		{
-			int placeType = dynamic_cast<Entity*>(placeables[i])->GetType();
-			file.write((char*)&placeType, sizeof(int));
-			float placeX = dynamic_cast<Entity*>(placeables[i])->GetPosition().x;
-			file.write((char*)&placeX, sizeof(float));
-			float placeY = dynamic_cast<Entity*>(placeables[i])->GetPosition().y;
-			file.write((char*)&placeY, sizeof(float));
-		}
-	}
+	//	// Save the placeables
+	//	for (int i = 0; i < placeablesSize; i++)
+	//	{
+	//		int placeType = dynamic_cast<Entity*>(placeables[i])->GetType();
+	//		file.write((char*)&placeType, sizeof(int));
+	//		float placeX = dynamic_cast<Entity*>(placeables[i])->GetPosition().x;
+	//		file.write((char*)&placeX, sizeof(float));
+	//		float placeY = dynamic_cast<Entity*>(placeables[i])->GetPosition().y;
+	//		file.write((char*)&placeY, sizeof(float));
+	//	}
+	//}
 }
