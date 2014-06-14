@@ -173,7 +173,10 @@ int Game::Main(void)
 	{
 		ToggleFullscreen();
 		// Disable the 'Enter' input
-		if (m_pCurrState == GameplayState::GetInstance())
+
+		// If we're in the gameplay state and not paused
+		if (m_pCurrState == GameplayState::GetInstance() && !GameplayState::GetInstance()->IsPaused())
+			// Toggle the pause state
 			GameplayState::GetInstance()->SetPaused(!GameplayState::GetInstance()->IsPaused());
 		return false;
 	}
