@@ -250,6 +250,7 @@ Player::~Player ()
 	pAudio->UnloadAudio(m_hPickup);
 	pAudio->UnloadAudio(m_hWalking);
 	pAudio->UnloadAudio(m_hGunClick);
+	pAudio->UnloadAudio(m_hPlayerGrunt);
 
 	//for (unsigned int i = drones.size() -1; i > 0; i--)
 	//{

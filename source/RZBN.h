@@ -25,6 +25,12 @@ struct TowerInfo
 	int m_nUpgradeOne, m_nUpgradeTwo;
 };
 
+struct TrapInfo
+{
+	int m_nTrapType;
+	float m_fTrapX, m_fTrapY;
+};
+
 class RZBN
 {
 
@@ -96,5 +102,6 @@ public:
 	int m_nHtMaxAmmo, m_nHtDamage; float m_fHtFirerate;
 
 	vector<TowerInfo> towerInfos;
+	vector<TrapInfo> trapInfos;
 };
 

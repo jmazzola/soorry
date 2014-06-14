@@ -78,33 +78,20 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 
 	// Load in the tile IDs
 	for (int x = 0; x < mapWidth; x++)
-	{
 		for (int y = 0; y < mapHeight; y++)
-		{
 			file.read((char*)&m_nColliderIDs[x][y], sizeof(int));
-			//m_pWorld->GetInstance()->SetColliderID(x, y, id[x][y]);
-		}
-	}
 
 	// Load spawn point
 	file.read((char*)&m_fSpawnPointX, sizeof(float));
 	file.read((char*)&m_fSpawnPointY, sizeof(float));
-	//m_pPlayer->SetPosition({ spawnPointX, spawnPointY });
-
 
 	// Load in wave number
 	file.read((char*)&m_nWaveNum, sizeof(int));
-	//m_pZomFactory->SetWave(waveNumber);
 
 	// Load in money
 	int money;
 	file.read((char*)&money, sizeof(int));
 	m_nMoney = money;
-	//m_pPlayer->SetScore(money);
-
-	// -- Load in inventory --
-
-	//Inventory* inv = m_pPlayer->GetInventory();
 
 	// Load in walls
 	file.read((char*)&m_nWalls, sizeof(unsigned int));
@@ -145,32 +132,12 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// Load drones
 	file.read((char*)&m_nDrones, sizeof(unsigned int));
 
-	//// Set inventory
-	//inv->SetWalls(walls);
-	//inv->SetWindows(windows);
-	//inv->SetBearTraps(beartraps);
-	//inv->SetMines(mines);
-	//inv->SetGrenades(grenades);
-	//inv->SetMachineGunTowers(mgTowers);
-	//inv->SetMapleSyrupTowers(mapleSyrup);
-	//inv->SetHockeyStickTowers(hockeyStick);
-	//inv->SetLaserTowers(laserTowers);
-	//inv->SetLavaTraps(lavaTraps);
-	//inv->SetSpikeTraps(spikeTraps);
-	//inv->SetDroneCount(droneCount);
-
-	//Weapon* weapons = m_pPlayer->GetWeapons();
-
 	// -- Load Weapon Booleans --
 	file.read((char*)&m_bHasAR, sizeof(bool));
 	file.read((char*)&m_bHasSH, sizeof(bool));
 	file.read((char*)&m_bHasRL, sizeof(bool));
 	file.read((char*)&m_bHasHT, sizeof(bool));
 
-	/*m_pPlayer->SetAR(hasAR);
-	m_pPlayer->SetShotgun(hasShotty);
-	m_pPlayer->SetRocketLauncher(hasRL);
-	m_pPlayer->SetHatTrick(hasHT);*/
 
 	// -- Load Weapon Ammos --
 	file.read((char*)&m_nARAmmo, sizeof(unsigned int));
@@ -178,44 +145,23 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	file.read((char*)&m_nRLAmmo, sizeof(unsigned int));
 	file.read((char*)&m_nHTAmmo, sizeof(unsigned int));
 
-	/*weapons[0].SetCurrAmmo(arAmmo);
-	weapons[1].SetCurrAmmo(shAmmo);
-	weapons[2].SetCurrAmmo(rlAmmo);
-	weapons[3].SetCurrAmmo(htAmmo);
-*/
 	// -- Load Weapon Stats --
 
 	file.read((char*)&m_nArMaxAmmo, sizeof(int));
 	file.read((char*)&m_nArDamage, sizeof(int));
 	file.read((char*)&m_fArFirerate, sizeof(float));
 
-	/*weapons[0].SetMaxAmmo(arMaxAmmo);
-	weapons[0].SetFireRate(arFirerate);
-	m_pShop->SetARDamage(arDamage);*/
-
 	file.read((char*)&m_nShMaxAmmo, sizeof(int));
 	file.read((char*)&m_nShDamage, sizeof(int));
 	file.read((char*)&m_fShFirerate, sizeof(float));
-
-	/*weapons[1].SetMaxAmmo(shMaxAmmo);
-	weapons[1].SetFireRate(shFirerate);
-	m_pShop->SetShotgunDamage(shDamage);*/
 
 	file.read((char*)&m_nRlMaxAmmo, sizeof(int));
 	file.read((char*)&m_nRlDamage, sizeof(int));
 	file.read((char*)&m_fRlFirerate, sizeof(float));
 
-	/*weapons[2].SetMaxAmmo(rlMaxAmmo);
-	weapons[2].SetFireRate(rlFirerate);
-	m_pShop->SetRLDamage(rlDamage);*/
-
 	file.read((char*)&m_nHtMaxAmmo, sizeof(int));
 	file.read((char*)&m_nHtDamage, sizeof(int));
 	file.read((char*)&m_fHtFirerate, sizeof(float));
-
-	/*weapons[2].SetMaxAmmo(htMaxAmmo);
-	weapons[2].SetFireRate(htFirerate);
-	m_pShop->SetHTDamage(htDamage);*/
 
 	// -- Load Towers --
 	int m_nTowerSize;
@@ -233,65 +179,22 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 		file.read((char*)&towerInfo.m_nUpgradeTwo, sizeof(int));
 
 		towerInfos.push_back(towerInfo);
+	}
 
-		// Create the towers
-		/*switch (m_nTowerType)
-		{
-		case Entity::ENT_TOWER_MACHINE_GUN:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_MACHINE_GUN);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-		}
-			break;
+	// -- Load Traps --
+	int m_nTrapSize;
+	file.read((char*)&m_nTrapSize, sizeof(int));
 
-		case Entity::ENT_TOWER_MAPLE_SYRUP:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_MAPLE_SYRUP);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
+	for (int i = 0; i < m_nTrapSize; i++)
+	{
+		TrapInfo trapInfo;
 
-		}
-			break;
+		// Grab the information first
+		file.read((char*)&trapInfo.m_nTrapType, sizeof(int));
+		file.read((char*)&trapInfo.m_fTrapX, sizeof(float));
+		file.read((char*)&trapInfo.m_fTrapY, sizeof(float));
 
-		case Entity::ENT_TOWER_HOCKEY_STICK:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_HOCKEY_STICK);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-
-		}
-			break;
-
-		case Entity::ENT_TOWER_LASER:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_LASER);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-
-		}
-			break;
-
-		}*/
-
-		// Set upgrades 
-		/*GameplayState* gps = GameplayState::GetInstance();
-		vector<IEntity*> towers = gps->GetEntityManager()->GetBucket(3);
-		dynamic_cast<Tower*>(towers[i])->SetUpgradeOne(m_nUpgradeOne);
-		dynamic_cast<Tower*>(towers[i])->SetUpgradeTwo(m_nUpgradeTwo);*/
-
+		trapInfos.push_back(trapInfo);
 	}
 
 	return false;
@@ -491,10 +394,14 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&trapsSize, sizeof(int));
 
 	// Save the traps
-	for (size_t i = 0; i < traps.size(); i++)
+	for (size_t i = 0; i < trapsSize; i++)
 	{
+		int trapType = dynamic_cast<Entity*>(traps[i])->GetType();
+		file.write((char*)&trapType, sizeof(int));
+		float trapX = dynamic_cast<Entity*>(traps[i])->GetPosition().x;
+		file.write((char*)&trapX, sizeof(float));
+		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
+		file.write((char*)&trapY, sizeof(float));
 
 	}
-
-
 }

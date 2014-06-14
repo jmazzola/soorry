@@ -269,6 +269,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- set up entities
 /*virtual*/ void GameplayState::Enter(void)
 {
+	// Load the stats for the stattracker
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
 	m_pStatTracker->Load("resource/data/stats.xml");
@@ -308,7 +309,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
-
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
 	pGraphics->SetClearColor();
@@ -368,7 +368,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pAnimation->LoadAll();
 
 
-
+	// Load the game from the current slot
 	if (m_nCurrGameSlot > 0)
 		LoadGameFromSlot(m_nCurrGameSlot);
 
@@ -376,6 +376,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 #pragma region Load Game Mode
 
+	// If we have a save slot, load the gamemode
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
 		m_nGamemode = rzbn->m_nGamemode;
 
@@ -444,21 +445,20 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
 
+	// Create the player from the player stats
 	m_pPlayer = CreatePlayer(playerStatsFileName);
 
+	// Create the shop and load it's prices from the shop's file
 	m_pShop = new Shop();
 	m_pShop->Enter(m_pPlayer);
 	m_pShop->LoadPrices(shopFileName);
 
+	// Set the zombie factory's player
 	zombieFactory->SetPlayer(m_pPlayer);
-
-	
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
 	pGraphics->Update();
-
-	
 
 	// Set the zombie wave from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -540,23 +540,37 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 
-	// Load the gamesave
+	// Set Traps (Lava and Spike)
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < rzbn->trapInfos.size(); i++)
+		{
+			switch (rzbn->trapInfos[i].m_nTrapType)
+			{
+				case Entity::ENT_TRAP_LAVA:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_LAVA);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-	//// If the slot is set
-	//if (m_nCurrGameSlot > 0)
-	//{
-	//	// If we can't load the savegame
-	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-	//		// Make a new savegame
-	//		SaveGame(true);
-	//	else
-	//		// load the savegame
-	//		LoadGameFromSlot(m_nCurrGameSlot);
-	//}
-
-
-	// Create our player
-
+				case Entity::ENT_TRAP_SPIKE:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_SPIKE);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
+			}
+		}
+	}
 
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -565,7 +579,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Set player's money from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetScore(rzbn->m_nMoney);
-
 
 	// Set inventory
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -618,7 +631,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
-	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
@@ -675,6 +687,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	// Create snow
 	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
 	msg->QueueMessage();
 	msg = nullptr;
@@ -684,6 +697,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_bAccept = true;
 #endif
 	
+	// Set all of RZBN's things it needs to save later
 	rzbn->SetPlayer(m_pPlayer);
 	rzbn->SetZombieFactory(zombieFactory);
 	rzbn->SetEntityManager(m_pEntities);
