@@ -544,6 +544,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- unload resources
 /*virtual*/ void GameplayState::Exit(void)
 {
+
+	// Save the savegame
+	SaveGame();
+
 	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -594,9 +598,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Delete tower flyweight
 	delete m_pTowerFlyweight;
-
-	// Save the file
-	SaveGame();
 
 	// Release the player
 	if (m_pPlayer != nullptr)
