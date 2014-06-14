@@ -77,6 +77,9 @@ public:
 	void HasLost(void);
 
 	void PlayAmmoPickup(void);
+
+	bool IsPaused() { return m_bIsPaused; }
+	void SetPaused(bool pause) { m_bIsPaused = pause; }
 private:
 
 	/**********************************************************/
