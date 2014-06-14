@@ -76,6 +76,7 @@ public:
 	// Player calls this once their hp is <= 0 to lose the game
 	void HasLost(void);
 
+	void PlayAmmoPickup(void);
 private:
 
 	/**********************************************************/
@@ -201,6 +202,7 @@ private:
 	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hAmmoPickup		= SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Factory Methods

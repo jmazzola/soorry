@@ -337,6 +337,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
 	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
 	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hAmmoPickup	= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -796,6 +797,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hUpgrade1		  );
 	pAudio->UnloadAudio(m_hWinTheGame);
 	pAudio->UnloadAudio(m_hWelcomeShop);
+		pAudio->UnloadAudio(m_hAmmoPickup);
 
 		//Matt gets rid of the memorym_hWelcomeShop	 leaks
 		m_pParticleManager->unload(); 
@@ -3011,4 +3013,10 @@ void GameplayState::LoadEnemyRecipes(string fileName)
 	m_fBeaverHealthChance = (float)beaverHealthChance;
 	m_fBeaverAmmoChance = (float)beaverAmmoChance;
 	m_fBeaverSuperChance = (float)beaverSuperChance;
+}
+
+void GameplayState::PlayAmmoPickup(void)
+{
+	if(m_hAmmoPickup != SGD::INVALID_HANDLE)
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hAmmoPickup);
 }

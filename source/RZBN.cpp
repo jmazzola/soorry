@@ -334,34 +334,46 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&htCurAmmo, sizeof(int));
 
 	// Max Ammo, Damage and Firerate upgrades
-	int arMaxAmmo = weapons[0].GetMaxAmmo();
+	int arMaxAmmo;
+	(hasAR) ? arMaxAmmo = weapons[0].GetMaxAmmo() : arMaxAmmo = 0;
 	file.write((char*)&arMaxAmmo, sizeof(int));
-	int arDamage = m_pShop->GetARDamage();
+	int arDamage;
+	(hasAR) ? arDamage = m_pShop->GetARDamage() : arDamage = 0;
 	file.write((char*)&arDamage, sizeof(int));
-	float arFirerate = weapons[0].GetFireRate();
+	float arFirerate;
+	(hasAR) ? arFirerate = weapons[0].GetFireRate() : arFirerate = 0.0f;
 	file.write((char*)&arFirerate, sizeof(float));
 
 	// Holy shit my fingers hurt.
 
-	int shMaxAmmo = weapons[1].GetMaxAmmo();
+	int shMaxAmmo;
+	(hasSH) ? shMaxAmmo = weapons[1].GetMaxAmmo() : shMaxAmmo = 0;
 	file.write((char*)&shMaxAmmo, sizeof(int));
-	int shDamage = m_pShop->GetShotgunDamage();
+	int shDamage;
+	(hasSH) ? shDamage = m_pShop->GetShotgunDamage() : shDamage = 20;
 	file.write((char*)&shDamage, sizeof(int));
-	float shFirerate = weapons[1].GetFireRate();
+	float shFirerate;
+	(hasSH) ? shFirerate = weapons[1].GetFireRate() : shFirerate = .5f;
 	file.write((char*)&shFirerate, sizeof(float));
 
-	int rlMaxAmmo = weapons[2].GetMaxAmmo();
+	int rlMaxAmmo;
+	(hasRL) ? rlMaxAmmo = weapons[2].GetMaxAmmo() : rlMaxAmmo = 0;;
 	file.write((char*)&rlMaxAmmo, sizeof(int));
-	int rlDamage = m_pShop->GetRLDamage();
+	int rlDamage;
+	(hasRL) ? rlDamage = m_pShop->GetRLDamage() : rlDamage = 150;
 	file.write((char*)&rlDamage, sizeof(int));
-	float rlFirerate = weapons[2].GetFireRate();
+	float rlFirerate;
+	(hasRL) ? rlFirerate = weapons[2].GetFireRate() : rlFirerate = 2;
 	file.write((char*)&rlFirerate, sizeof(float));
 
-	int htMaxAmmo = weapons[3].GetMaxAmmo();
+	int htMaxAmmo;
+	(hasHT) ? htMaxAmmo = weapons[3].GetMaxAmmo() : htMaxAmmo = 0;
 	file.write((char*)&htMaxAmmo, sizeof(int));
-	int htDamage = m_pShop->GetHTDamage();
+	int htDamage;
+	(hasHT) ? htDamage = m_pShop->GetHTDamage() : htMaxAmmo = 75;
 	file.write((char*)&htDamage, sizeof(int));
-	float htFirerate = weapons[3].GetFireRate();
+	float htFirerate;
+	(hasHT) ? htFirerate = weapons[3].GetFireRate() : htFirerate = .75f;
 	file.write((char*)&htFirerate, sizeof(float));
 
 

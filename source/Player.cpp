@@ -185,8 +185,8 @@ Player::Player () : Listener ( this )
 		//Trick Shot
 		if (m_bHasHatTrick)
 		{
-			tempWeapon.SetCurrAmmo(500);
-			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(75);
+			tempWeapon.SetMaxAmmo(75);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
@@ -194,7 +194,7 @@ Player::Player () : Listener ( this )
 		else
 		{
 			tempWeapon.SetCurrAmmo(0);
-			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetMaxAmmo(75);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
@@ -1431,7 +1431,7 @@ void Player::HandleCollision ( const IEntity* pOther )
 		(m_bHasHatTrick) ? m_pWeapons[3].SetCurrAmmo(m_pWeapons[3].GetCurrAmmo() + 50) : __noop;
 		m_sPickupMessage = "More Bullets Eh?";
 		m_fPickupMessageTimer = 1.5f;
-			
+		GameplayState::GetInstance()->PlayAmmoPickup();
 	}
 	if ( pOther->GetType () == ENT_PICKUP_HEALTHPACK )
 	{
