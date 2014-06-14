@@ -60,10 +60,16 @@ Player::Player () : Listener ( this )
 
 
 	// Animation/ Image
-	m_pSprite = AnimationManager::GetInstance ()->GetSprite ( "player" );
+	//m_pSprite = AnimationManager::GetInstance ()->GetSprite ( "player" );
+	//m_antsAnimation.m_fTimeOnFrame = 0;
+	//m_antsAnimation.m_nCurrFrame = 0;
+	//m_antsAnimation.m_nCurrAnimation = "player";
+
+	m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
-	m_antsAnimation.m_nCurrAnimation = "player";
+	m_antsAnimation.m_nCurrAnimation = "CarryAR";
+
 
 	// Player's variables
 	m_nMaxHealth = 100.0f;
@@ -563,21 +569,37 @@ void Player::Update ( float dt )
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = MACHINE_GUN;
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
+		m_antsAnimation.m_fTimeOnFrame = 0;
+		m_antsAnimation.m_nCurrFrame = 0;
+		m_antsAnimation.m_nCurrAnimation = "CarryAR";
 	}
 	//Switch to Shotgun
 	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SHOT_GUN;
+		//m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
+		//m_antsAnimation.m_fTimeOnFrame = 0;
+		//m_antsAnimation.m_nCurrFrame = 0;
+		//m_antsAnimation.m_nCurrAnimation = "player";
 	}
 	//Switch to Rocket Launcher
 	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = ROCKET_LAUNCHER;
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("RocketCarry");
+		m_antsAnimation.m_fTimeOnFrame = 0;
+		m_antsAnimation.m_nCurrFrame = 0;
+		m_antsAnimation.m_nCurrAnimation = "RocketCarry";
 	}
 	//Switch to Hat Trick Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
+		//m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
+		//m_antsAnimation.m_fTimeOnFrame = 0;
+		//m_antsAnimation.m_nCurrFrame = 0;
+		//m_antsAnimation.m_nCurrAnimation = "player";
 	}
 #endif
 	//Shoot
