@@ -204,8 +204,8 @@ using namespace std;
 					  Particle Software Engineer\n\
 					  Matthew Salow\n\n\
 					  Audio Engineer\n\
-					  Matthew Salow\n\
-					  Justin Patterson\n\n\
+					  Justin Patterson\n\
+					  Matthew Salow\n\n\
 					  Animation Software Engineer\n\
 					  James Sylvester\n\
 					  Ryan Simmons\n\n\

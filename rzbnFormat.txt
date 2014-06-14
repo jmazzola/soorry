@@ -1,16 +1,5 @@
 magic
 version
-
-towersSize
-
-Every tower
-	Type
-	X
-	Y
-	UpgradeOne
-	UpgradeTwo
-
-Every trap
 mapWidth
 mapHeight
 
@@ -57,3 +46,12 @@ htMaxAmmo
 htDamage
 htFirerate
 
+towersSize
+
+Every tower
+	Type
+	X
+	Y
+	UpgradeOne
+	UpgradeTwo
+Every trap
