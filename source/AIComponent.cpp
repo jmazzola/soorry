@@ -89,7 +89,7 @@ void AIComponent::Update(float dt)
 		if (m_fTimeToPathfind <= 0.0f)
 		{
 			// Pathfind to player
-			//m_ptFindTarget = m_pPlayer->GetPosition();
+			m_ptFindTarget = m_pPlayer->GetPosition();
 
 			// Start node
 			Node start;
