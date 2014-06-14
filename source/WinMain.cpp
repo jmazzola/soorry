@@ -219,6 +219,10 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_CREATE:			// Window constructed
 		break;
+
+	case WM_MOUSEWHEEL:
+		Game::GetInstance()->MouseWheel(GET_WHEEL_DELTA_WPARAM(wParam));
+		break;
 	
 	case WM_CLOSE:			// Window closed
 		DestroyWindow( hWnd );	// completely destroy the window

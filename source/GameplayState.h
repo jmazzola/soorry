@@ -77,6 +77,9 @@ public:
 	void HasLost(void);
 
 	void PlayAmmoPickup(void);
+
+	void MouseWheel(int direction);
+
 private:
 
 	/**********************************************************/

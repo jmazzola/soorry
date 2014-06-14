@@ -3020,3 +3020,47 @@ void GameplayState::PlayAmmoPickup(void)
 	if(m_hAmmoPickup != SGD::INVALID_HANDLE)
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hAmmoPickup);
 }
+
+void GameplayState::MouseWheel(int _direction)
+{
+	if (m_pPlayer)
+	{
+		if (zombieFactory->IsBuildMode())
+		{
+			if (_direction < 0)
+			{
+				m_pPlayer->SetCurrPlaceable(m_pPlayer->GetCurrPlaceable() + 1);
+
+				if (m_pPlayer->GetCurrPlaceable() > 9)
+					m_pPlayer->SetCurrPlaceable(0);
+			}
+
+			else if (_direction > 0)
+			{
+				m_pPlayer->SetCurrPlaceable(m_pPlayer->GetCurrPlaceable() - 1);
+
+				if (m_pPlayer->GetCurrPlaceable() < 0)
+					m_pPlayer->SetCurrPlaceable(9);
+			}
+		}
+
+		else
+		{
+			if (_direction < 0)
+			{
+				m_pPlayer->SetCurrWeapon(m_pPlayer->GetCurrWeapon() + 1);
+
+				if (m_pPlayer->GetCurrWeapon() > 3)
+					m_pPlayer->SetCurrWeapon(0);
+			}
+
+			else if (_direction > 0)
+			{
+				m_pPlayer->SetCurrWeapon(m_pPlayer->GetCurrWeapon() - 1);
+
+				if (m_pPlayer->GetCurrWeapon() < 0)
+					m_pPlayer->SetCurrWeapon(3);
+			}
+		}
+	}
+}
