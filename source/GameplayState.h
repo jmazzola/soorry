@@ -78,8 +78,13 @@ public:
 
 	void PlayAmmoPickup(void);
 
+<<<<<<< HEAD
 	bool IsPaused() { return m_bIsPaused; }
 	void SetPaused(bool pause) { m_bIsPaused = pause; }
+=======
+	void MouseWheel(int direction);
+
+>>>>>>> Justin'sBranch
 private:
 
 	/**********************************************************/

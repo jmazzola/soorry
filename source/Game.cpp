@@ -323,3 +323,9 @@ void Game::ChangeState(IGameState* pNewState)
 	if (m_pCurrState != nullptr)
 		m_pCurrState->Enter();
 }
+
+void Game::MouseWheel(int _direction)
+{
+	if (Game::GetInstance()->m_pCurrState == GameplayState::GetInstance())
+		GameplayState::GetInstance()->MouseWheel(_direction);
+}
