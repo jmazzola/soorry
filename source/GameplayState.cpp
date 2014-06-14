@@ -334,13 +334,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
 	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
 	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
-	m_hTutorial		= pAudio->LoadAudio("resource/audio/Tutorial1.wav");
-	m_hTutorial2	= pAudio->LoadAudio("resource/audio/Tutorial2.wav");
-	m_hTutorial3	= pAudio->LoadAudio("resource/audio/Tutorial3.wav");
-	m_hTutorial4	= pAudio->LoadAudio("resource/audio/Tutorial4.wav");
-	m_hTutorial5	= pAudio->LoadAudio("resource/audio/Tutorial5.wav");
-	m_hTutorial6	= pAudio->LoadAudio("resource/audio/Tutorial6.wav");
-	m_hTutorial7	= pAudio->LoadAudio("resource/audio/Tutorial7.wav");
 	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
 	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
 	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
@@ -795,21 +788,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hClickSound);
 	pAudio->UnloadAudio(m_hChaChing);
 	pAudio->UnloadAudio(m_hBeaverFever		  );
-		pAudio->UnloadAudio(m_hGoToShop		  );
-		pAudio->UnloadAudio(m_hGoodJob		  );
-		pAudio->UnloadAudio(m_hSoory1		  );
-		pAudio->UnloadAudio(m_hSoory2		  );
-		pAudio->UnloadAudio(m_hTrueHero		  );
-		pAudio->UnloadAudio(m_hTutorial		  );
-		pAudio->UnloadAudio(m_hTutorial2	  );
-		pAudio->UnloadAudio(m_hTutorial3	  );
-		pAudio->UnloadAudio(m_hTutorial4	  );
-		pAudio->UnloadAudio(m_hTutorial5	  );
-		pAudio->UnloadAudio(m_hTutorial6	  );
-		pAudio->UnloadAudio(m_hTutorial7	  );
-		pAudio->UnloadAudio(m_hUpgrade1		  );
-		pAudio->UnloadAudio(m_hWinTheGame);
-		pAudio->UnloadAudio(m_hWelcomeShop);
+	pAudio->UnloadAudio(m_hGoToShop		  );
+	pAudio->UnloadAudio(m_hGoodJob		  );
+	pAudio->UnloadAudio(m_hSoory1		  );
+	pAudio->UnloadAudio(m_hSoory2		  );
+	pAudio->UnloadAudio(m_hTrueHero		  );
+	pAudio->UnloadAudio(m_hUpgrade1		  );
+	pAudio->UnloadAudio(m_hWinTheGame);
+	pAudio->UnloadAudio(m_hWelcomeShop);
 
 		//Matt gets rid of the memorym_hWelcomeShop	 leaks
 		m_pParticleManager->unload(); 

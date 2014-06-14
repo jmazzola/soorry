@@ -198,13 +198,6 @@ private:
 	SGD::HAudio	m_hSoory1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hSoory2			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hTrueHero			= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial			= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial2		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial3		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial4		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial5		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial6		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial7		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;

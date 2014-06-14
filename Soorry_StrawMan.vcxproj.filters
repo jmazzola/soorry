@@ -387,6 +387,9 @@
     <ClCompile Include="source\CreateExplosionMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
+    <ClCompile Include="source\HowToPlayState.cpp">
+      <Filter>Game States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SGD Wrappers\SGD_AudioManager.h">
@@ -726,6 +729,12 @@
       <Filter>Game Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\EventArea.h">
+      <Filter>Game Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HowToPlay.h">
+      <Filter>Game Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\HowToPlayState.h">
       <Filter>Game Core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -389,7 +389,6 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 			file.write((char*)&upgradeOne, sizeof(int));
 			int upgradeTwo = dynamic_cast<Tower*>(towers[i])->GetUpgradeTwo();
 			file.write((char*)&upgradeTwo, sizeof(int));
-
 		}
 	}
 
@@ -408,6 +407,5 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 		file.write((char*)&trapX, sizeof(float));
 		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
 		file.write((char*)&trapY, sizeof(float));
-
 	}
 }

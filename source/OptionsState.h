@@ -62,7 +62,7 @@ public:
 private:
 
 	/**********************************************************/
-	// SINGLETON (not-dynamically allocated)
+	// SINGLETON (not-dynamically allocated)a
 	OptionsState( void )			= default;	// default constructor
 	virtual ~OptionsState( void )	= default;	// destructor
 

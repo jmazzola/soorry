@@ -63,6 +63,7 @@
     <ClCompile Include="source\HealthPackPickup.cpp" />
     <ClCompile Include="source\HealthPickup.cpp" />
     <ClCompile Include="source\HockeyStickTower.cpp" />
+    <ClCompile Include="source\HowToPlayState.cpp" />
     <ClCompile Include="source\IntroState.cpp" />
     <ClCompile Include="source\Inventory.cpp" />
     <ClCompile Include="source\LaserTower.cpp" />
@@ -177,6 +178,8 @@
     <ClInclude Include="source\HealthPackPickup.h" />
     <ClInclude Include="source\HealthPickup.h" />
     <ClInclude Include="source\HockeyStickTower.h" />
+    <ClInclude Include="source\HowToPlay.h" />
+    <ClInclude Include="source\HowToPlayState.h" />
     <ClInclude Include="source\IEntity.h" />
     <ClInclude Include="source\IGameState.h" />
     <ClInclude Include="source\IntroState.h" />
