@@ -1339,7 +1339,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
 	//if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
-		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
+		//SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();

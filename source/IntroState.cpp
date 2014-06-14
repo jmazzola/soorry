@@ -115,7 +115,9 @@ using namespace std;
 	SGD::EventManager::DeleteInstance();
 	
 	// Show the cursor
-	ShowCursor(true);
+	//ShowCursor(true);
+	if (pGraphics->IsCursorShowing() == false)
+		pGraphics->TurnCursorOn();
 }
 
 

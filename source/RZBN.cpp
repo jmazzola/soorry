@@ -200,22 +200,6 @@ int RZBN::LoadRZBNFile(string rzbnFilePath)
 		trapInfos.push_back(trapInfo);
 	}
 
-	//// -- Load Placeables --
-	//int m_nPlaceSize;
-	//file.read((char*)&m_nPlaceSize, sizeof(int));
-
-	//for (int i = 0; i < m_nPlaceSize; i++)
-	//{
-	//	PlaceableInfo placeInfo;
-
-	//	// Grab the information first
-	//	file.read((char*)&placeInfo.m_nPlaceType, sizeof(int));
-	//	file.read((char*)&placeInfo.m_fPlaceX, sizeof(float));
-	//	file.read((char*)&placeInfo.m_fPlaceY, sizeof(float));
-
-	//	placeableInfos.push_back(placeInfo);
-	//}
-
 	return 0x1337;
 
 }
@@ -336,11 +320,14 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 
 	// -- Write weapon stats --
 	Weapon* weapons = m_pPlayer->GetWeapons();
+
 	// Current Weapon Ammo
-	int arCurAmmo = weapons[0].GetCurrAmmo();
-	int shCurAmmo = weapons[1].GetCurrAmmo();
-	int rlCurAmmo = weapons[2].GetCurrAmmo();
-	int htCurAmmo = weapons[3].GetCurrAmmo();
+	int arCurAmmo, shCurAmmo, rlCurAmmo, htCurAmmo;
+	(hasAR) ? arCurAmmo = weapons[0].GetCurrAmmo() : arCurAmmo = 0;
+	(hasSH) ? shCurAmmo = weapons[1].GetCurrAmmo() : shCurAmmo = 0;
+	(hasRL) ? rlCurAmmo = weapons[2].GetCurrAmmo() : rlCurAmmo = 0;
+	(hasHT) ? htCurAmmo = weapons[3].GetCurrAmmo() : htCurAmmo = 0;
+
 	file.write((char*)&arCurAmmo, sizeof(int));
 	file.write((char*)&shCurAmmo, sizeof(int));
 	file.write((char*)&rlCurAmmo, sizeof(int));
@@ -423,24 +410,4 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 		file.write((char*)&trapY, sizeof(float));
 
 	}
-
-	//// -- Write the placeables --
-
-	//if (GameplayState::GetInstance()->GetEntityManager()->GetSize() >= 4)
-	//{
-	//	vector<IEntity*> placeables = gps->GetEntityManager()->GetBucket(4);
-	//	int placeablesSize = placeables.size();
-	//	file.write((char*)&placeablesSize, sizeof(int));
-
-	//	// Save the placeables
-	//	for (int i = 0; i < placeablesSize; i++)
-	//	{
-	//		int placeType = dynamic_cast<Entity*>(placeables[i])->GetType();
-	//		file.write((char*)&placeType, sizeof(int));
-	//		float placeX = dynamic_cast<Entity*>(placeables[i])->GetPosition().x;
-	//		file.write((char*)&placeX, sizeof(float));
-	//		float placeY = dynamic_cast<Entity*>(placeables[i])->GetPosition().y;
-	//		file.write((char*)&placeY, sizeof(float));
-	//	}
-	//}
 }

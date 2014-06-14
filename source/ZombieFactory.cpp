@@ -90,7 +90,7 @@ void ZombieFactory::Start()
 	// Default start behavior
 	m_bIsPaused = false;
 	m_bBuildMode = true;
-	ShowCursor(false);
+	//ShowCursor(false);
 
 	// Start at wave one
 	m_nWave = 1;
