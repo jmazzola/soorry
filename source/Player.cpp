@@ -185,8 +185,8 @@ Player::Player () : Listener ( this )
 		//Trick Shot
 		if (m_bHasHatTrick)
 		{
-			tempWeapon.SetCurrAmmo(500);
-			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(75);
+			tempWeapon.SetMaxAmmo(75);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
@@ -194,7 +194,7 @@ Player::Player () : Listener ( this )
 		else
 		{
 			tempWeapon.SetCurrAmmo(0);
-			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetMaxAmmo(75);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;

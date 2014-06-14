@@ -208,6 +208,7 @@ private:
 	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hAmmoPickup		= SGD::INVALID_HANDLE;
 
 	/**********************************************************/
 	// Factory Methods
