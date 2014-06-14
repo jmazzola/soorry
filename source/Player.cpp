@@ -1777,7 +1777,7 @@ void Player::Render ( void )
 	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center, col );
 
 	if(m_fSuperTimer > 0)
-		SGD::GraphicsManager::GetInstance()->DrawString("Super Canadian!", SGD::Point(m_ptPosition.x - Camera::x, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
+		SGD::GraphicsManager::GetInstance()->DrawString("Super Canadian!", SGD::Point(m_ptPosition.x - Camera::x - 60, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
 
 	SGD::Rectangle drawRect = GetRect ();
 	drawRect.left -= Camera::x;
