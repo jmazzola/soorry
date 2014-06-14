@@ -220,11 +220,6 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y, float 
 	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
 	r, rotation, center, col);
-
-	if (m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetTriggerID() == "ha")
-	{
-		g->DrawString("ha", { (float)x, (float)y });
-	}
 }
 
 Sprite* AnimationManager::GetSprite(std::string nameID)
@@ -253,4 +248,6 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/drone.xml");
 	LoadSprites("resource/animation/grenade.xml");
 	LoadSprites("resource/animation/trickshot.xml");
+	LoadSprites("resource/animation/RocketCarry.xml");
+	LoadSprites("resource/animation/AssultCarry.xml");
 }
