@@ -107,7 +107,7 @@ private:
 	string m_szSaveFiles[NUM_SLOTS];
 	int m_pnSlots[NUM_SLOTS];
 	bool m_bFileExists[NUM_SLOTS];
-	string LoadFileInfo(int slot);
+	void RenderAndLoadFileInfo(int slot);
 
 	// Message Callback Function:
 	//static void MessageProc(const SGD::Message* pMsg);

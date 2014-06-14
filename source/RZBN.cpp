@@ -31,14 +31,17 @@
 #include <fstream>
 using namespace std;
 
-#define RZBN_VERSION 1
+#define RZBN_VERSION 3
 #define RZBN_MAGIC 0x4E425A52
 
 // LoadRZBNFile
 // [in] rzbnFilePath - filepath to load file in appdata
-// [out] return true - if the whole file is loaded successfully
+// [out] return 0 - File couldn't open
+// [out] return 1 - Magic mismatch
+// [out] return 2 - Version mismatch
+// [out] return 0x1337 - Good.
 // [out] return false - if at anytime, something fails.
-bool RZBN::LoadRZBNFile(string rzbnFilePath)
+int RZBN::LoadRZBNFile(string rzbnFilePath)
 {
 	fstream file;
 	file.open(rzbnFilePath, ios_base::binary | ios_base::in);
@@ -46,7 +49,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If we fail opening or anything at all
 	if (!file.is_open() || !file.good())
 		// return false
-		return false;
+		return 0;
 
 	// Check for magic number
 	int magic;
@@ -54,7 +57,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If the magic doesnt match
 	if (magic != RZBN_MAGIC)
 		// quit
-		return false;
+		return 1;
 
 	// Check for version
 	int version;
@@ -62,7 +65,7 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// If the version doesnt match
 	if (version != RZBN_VERSION)
 		// quit
-		return false;
+		return 2;
 
 	// Load gamemode
 	int gameMode;
@@ -78,33 +81,20 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 
 	// Load in the tile IDs
 	for (int x = 0; x < mapWidth; x++)
-	{
 		for (int y = 0; y < mapHeight; y++)
-		{
 			file.read((char*)&m_nColliderIDs[x][y], sizeof(int));
-			//m_pWorld->GetInstance()->SetColliderID(x, y, id[x][y]);
-		}
-	}
 
 	// Load spawn point
 	file.read((char*)&m_fSpawnPointX, sizeof(float));
 	file.read((char*)&m_fSpawnPointY, sizeof(float));
-	//m_pPlayer->SetPosition({ spawnPointX, spawnPointY });
-
 
 	// Load in wave number
 	file.read((char*)&m_nWaveNum, sizeof(int));
-	//m_pZomFactory->SetWave(waveNumber);
 
 	// Load in money
 	int money;
 	file.read((char*)&money, sizeof(int));
 	m_nMoney = money;
-	//m_pPlayer->SetScore(money);
-
-	// -- Load in inventory --
-
-	//Inventory* inv = m_pPlayer->GetInventory();
 
 	// Load in walls
 	file.read((char*)&m_nWalls, sizeof(unsigned int));
@@ -145,32 +135,12 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	// Load drones
 	file.read((char*)&m_nDrones, sizeof(unsigned int));
 
-	//// Set inventory
-	//inv->SetWalls(walls);
-	//inv->SetWindows(windows);
-	//inv->SetBearTraps(beartraps);
-	//inv->SetMines(mines);
-	//inv->SetGrenades(grenades);
-	//inv->SetMachineGunTowers(mgTowers);
-	//inv->SetMapleSyrupTowers(mapleSyrup);
-	//inv->SetHockeyStickTowers(hockeyStick);
-	//inv->SetLaserTowers(laserTowers);
-	//inv->SetLavaTraps(lavaTraps);
-	//inv->SetSpikeTraps(spikeTraps);
-	//inv->SetDroneCount(droneCount);
-
-	//Weapon* weapons = m_pPlayer->GetWeapons();
-
 	// -- Load Weapon Booleans --
 	file.read((char*)&m_bHasAR, sizeof(bool));
 	file.read((char*)&m_bHasSH, sizeof(bool));
 	file.read((char*)&m_bHasRL, sizeof(bool));
 	file.read((char*)&m_bHasHT, sizeof(bool));
 
-	/*m_pPlayer->SetAR(hasAR);
-	m_pPlayer->SetShotgun(hasShotty);
-	m_pPlayer->SetRocketLauncher(hasRL);
-	m_pPlayer->SetHatTrick(hasHT);*/
 
 	// -- Load Weapon Ammos --
 	file.read((char*)&m_nARAmmo, sizeof(unsigned int));
@@ -178,44 +148,23 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 	file.read((char*)&m_nRLAmmo, sizeof(unsigned int));
 	file.read((char*)&m_nHTAmmo, sizeof(unsigned int));
 
-	/*weapons[0].SetCurrAmmo(arAmmo);
-	weapons[1].SetCurrAmmo(shAmmo);
-	weapons[2].SetCurrAmmo(rlAmmo);
-	weapons[3].SetCurrAmmo(htAmmo);
-*/
 	// -- Load Weapon Stats --
 
 	file.read((char*)&m_nArMaxAmmo, sizeof(int));
 	file.read((char*)&m_nArDamage, sizeof(int));
 	file.read((char*)&m_fArFirerate, sizeof(float));
 
-	/*weapons[0].SetMaxAmmo(arMaxAmmo);
-	weapons[0].SetFireRate(arFirerate);
-	m_pShop->SetARDamage(arDamage);*/
-
 	file.read((char*)&m_nShMaxAmmo, sizeof(int));
 	file.read((char*)&m_nShDamage, sizeof(int));
 	file.read((char*)&m_fShFirerate, sizeof(float));
-
-	/*weapons[1].SetMaxAmmo(shMaxAmmo);
-	weapons[1].SetFireRate(shFirerate);
-	m_pShop->SetShotgunDamage(shDamage);*/
 
 	file.read((char*)&m_nRlMaxAmmo, sizeof(int));
 	file.read((char*)&m_nRlDamage, sizeof(int));
 	file.read((char*)&m_fRlFirerate, sizeof(float));
 
-	/*weapons[2].SetMaxAmmo(rlMaxAmmo);
-	weapons[2].SetFireRate(rlFirerate);
-	m_pShop->SetRLDamage(rlDamage);*/
-
 	file.read((char*)&m_nHtMaxAmmo, sizeof(int));
 	file.read((char*)&m_nHtDamage, sizeof(int));
 	file.read((char*)&m_fHtFirerate, sizeof(float));
-
-	/*weapons[2].SetMaxAmmo(htMaxAmmo);
-	weapons[2].SetFireRate(htFirerate);
-	m_pShop->SetHTDamage(htDamage);*/
 
 	// -- Load Towers --
 	int m_nTowerSize;
@@ -233,68 +182,25 @@ bool RZBN::LoadRZBNFile(string rzbnFilePath)
 		file.read((char*)&towerInfo.m_nUpgradeTwo, sizeof(int));
 
 		towerInfos.push_back(towerInfo);
-
-		// Create the towers
-		/*switch (m_nTowerType)
-		{
-		case Entity::ENT_TOWER_MACHINE_GUN:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_MACHINE_GUN);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-		}
-			break;
-
-		case Entity::ENT_TOWER_MAPLE_SYRUP:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_MAPLE_SYRUP);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-
-		}
-			break;
-
-		case Entity::ENT_TOWER_HOCKEY_STICK:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_HOCKEY_STICK);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-
-		}
-			break;
-
-		case Entity::ENT_TOWER_LASER:
-		{
-			CreateTowerMessage* pmsg =
-				new CreateTowerMessage((int)(m_fTowerX), (int)(m_fTowerY),
-				CreateTowerMessage::TOWER_LASER);
-			pmsg->SendMessageNow();
-			delete pmsg;
-			pmsg = nullptr;
-
-		}
-			break;
-
-		}*/
-
-		// Set upgrades 
-		/*GameplayState* gps = GameplayState::GetInstance();
-		vector<IEntity*> towers = gps->GetEntityManager()->GetBucket(3);
-		dynamic_cast<Tower*>(towers[i])->SetUpgradeOne(m_nUpgradeOne);
-		dynamic_cast<Tower*>(towers[i])->SetUpgradeTwo(m_nUpgradeTwo);*/
-
 	}
 
-	return false;
+	// -- Load Traps --
+	int m_nTrapSize;
+	file.read((char*)&m_nTrapSize, sizeof(int));
+
+	for (int i = 0; i < m_nTrapSize; i++)
+	{
+		TrapInfo trapInfo;
+
+		// Grab the information first
+		file.read((char*)&trapInfo.m_nTrapType, sizeof(int));
+		file.read((char*)&trapInfo.m_fTrapX, sizeof(float));
+		file.read((char*)&trapInfo.m_fTrapY, sizeof(float));
+
+		trapInfos.push_back(trapInfo);
+	}
+
+	return 0x1337;
 
 }
 
@@ -414,45 +320,60 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 
 	// -- Write weapon stats --
 	Weapon* weapons = m_pPlayer->GetWeapons();
+
 	// Current Weapon Ammo
-	int arCurAmmo = weapons[0].GetCurrAmmo();
-	int shCurAmmo = weapons[1].GetCurrAmmo();
-	int rlCurAmmo = weapons[2].GetCurrAmmo();
-	int htCurAmmo = weapons[3].GetCurrAmmo();
+	int arCurAmmo, shCurAmmo, rlCurAmmo, htCurAmmo;
+	(hasAR) ? arCurAmmo = weapons[0].GetCurrAmmo() : arCurAmmo = 0;
+	(hasSH) ? shCurAmmo = weapons[1].GetCurrAmmo() : shCurAmmo = 0;
+	(hasRL) ? rlCurAmmo = weapons[2].GetCurrAmmo() : rlCurAmmo = 0;
+	(hasHT) ? htCurAmmo = weapons[3].GetCurrAmmo() : htCurAmmo = 0;
+
 	file.write((char*)&arCurAmmo, sizeof(int));
 	file.write((char*)&shCurAmmo, sizeof(int));
 	file.write((char*)&rlCurAmmo, sizeof(int));
 	file.write((char*)&htCurAmmo, sizeof(int));
 
 	// Max Ammo, Damage and Firerate upgrades
-	int arMaxAmmo = weapons[0].GetMaxAmmo();
+	int arMaxAmmo;
+	(hasAR) ? arMaxAmmo = weapons[0].GetMaxAmmo() : arMaxAmmo = 0;
 	file.write((char*)&arMaxAmmo, sizeof(int));
-	int arDamage = m_pShop->GetARDamage();
+	int arDamage;
+	(hasAR) ? arDamage = m_pShop->GetARDamage() : arDamage = 0;
 	file.write((char*)&arDamage, sizeof(int));
-	float arFirerate = weapons[0].GetFireRate();
+	float arFirerate;
+	(hasAR) ? arFirerate = weapons[0].GetFireRate() : arFirerate = 0.0f;
 	file.write((char*)&arFirerate, sizeof(float));
 
 	// Holy shit my fingers hurt.
 
-	int shMaxAmmo = weapons[1].GetMaxAmmo();
+	int shMaxAmmo;
+	(hasSH) ? shMaxAmmo = weapons[1].GetMaxAmmo() : shMaxAmmo = 0;
 	file.write((char*)&shMaxAmmo, sizeof(int));
-	int shDamage = m_pShop->GetShotgunDamage();
+	int shDamage;
+	(hasSH) ? shDamage = m_pShop->GetShotgunDamage() : shDamage = 20;
 	file.write((char*)&shDamage, sizeof(int));
-	float shFirerate = weapons[1].GetFireRate();
+	float shFirerate;
+	(hasSH) ? shFirerate = weapons[1].GetFireRate() : shFirerate = .5f;
 	file.write((char*)&shFirerate, sizeof(float));
 
-	int rlMaxAmmo = weapons[2].GetMaxAmmo();
+	int rlMaxAmmo;
+	(hasRL) ? rlMaxAmmo = weapons[2].GetMaxAmmo() : rlMaxAmmo = 0;;
 	file.write((char*)&rlMaxAmmo, sizeof(int));
-	int rlDamage = m_pShop->GetRLDamage();
+	int rlDamage;
+	(hasRL) ? rlDamage = m_pShop->GetRLDamage() : rlDamage = 150;
 	file.write((char*)&rlDamage, sizeof(int));
-	float rlFirerate = weapons[2].GetFireRate();
+	float rlFirerate;
+	(hasRL) ? rlFirerate = weapons[2].GetFireRate() : rlFirerate = 2;
 	file.write((char*)&rlFirerate, sizeof(float));
 
-	int htMaxAmmo = weapons[3].GetMaxAmmo();
+	int htMaxAmmo;
+	(hasHT) ? htMaxAmmo = weapons[3].GetMaxAmmo() : htMaxAmmo = 0;
 	file.write((char*)&htMaxAmmo, sizeof(int));
-	int htDamage = m_pShop->GetHTDamage();
+	int htDamage;
+	(hasHT) ? htDamage = m_pShop->GetHTDamage() : htMaxAmmo = 75;
 	file.write((char*)&htDamage, sizeof(int));
-	float htFirerate = weapons[3].GetFireRate();
+	float htFirerate;
+	(hasHT) ? htFirerate = weapons[3].GetFireRate() : htFirerate = .75f;
 	file.write((char*)&htFirerate, sizeof(float));
 
 
@@ -480,7 +401,6 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 			file.write((char*)&upgradeOne, sizeof(int));
 			int upgradeTwo = dynamic_cast<Tower*>(towers[i])->GetUpgradeTwo();
 			file.write((char*)&upgradeTwo, sizeof(int));
-
 		}
 	}
 
@@ -491,10 +411,13 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&trapsSize, sizeof(int));
 
 	// Save the traps
-	for (size_t i = 0; i < traps.size(); i++)
+	for (int i = 0; i < trapsSize; i++)
 	{
-
+		int trapType = dynamic_cast<Entity*>(traps[i])->GetType();
+		file.write((char*)&trapType, sizeof(int));
+		float trapX = dynamic_cast<Entity*>(traps[i])->GetPosition().x;
+		file.write((char*)&trapX, sizeof(float));
+		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
+		file.write((char*)&trapY, sizeof(float));
 	}
-
-
 }

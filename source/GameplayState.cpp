@@ -269,6 +269,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- set up entities
 /*virtual*/ void GameplayState::Enter(void)
 {
+	// Load the stats for the stattracker
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
 	m_pStatTracker->Load("resource/data/stats.xml");
@@ -308,7 +309,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
-
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
 	pGraphics->SetClearColor();
@@ -326,7 +326,18 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
 	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
 	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
-	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
+	m_hChaChing     = pAudio->LoadAudio("resource/audio/ChaChing.wav");
+	m_hClickSound	= pAudio->LoadAudio("resource/audio/click.wav");
+	m_hBeaverFever	= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
+	m_hGoToShop		= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
+	m_hGoodJob		= pAudio->LoadAudio("resource/audio/Good_Job.wav");
+	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
+	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
+	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
+	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
+	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
+	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hAmmoPickup	= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -351,7 +362,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pAnimation->LoadAll();
 
 
-
+	// Load the game from the current slot
 	if (m_nCurrGameSlot > 0)
 		LoadGameFromSlot(m_nCurrGameSlot);
 
@@ -359,6 +370,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 #pragma region Load Game Mode
 
+	// If we have a save slot, load the gamemode
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
 		m_nGamemode = rzbn->m_nGamemode;
 
@@ -427,21 +439,20 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
 
+	// Create the player from the player stats
 	m_pPlayer = CreatePlayer(playerStatsFileName);
 
+	// Create the shop and load it's prices from the shop's file
 	m_pShop = new Shop();
 	m_pShop->Enter(m_pPlayer);
 	m_pShop->LoadPrices(shopFileName);
 
+	// Set the zombie factory's player
 	zombieFactory->SetPlayer(m_pPlayer);
-
-	
 
 	pGraphics->SetClearColor();
 	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
 	pGraphics->Update();
-
-	
 
 	// Set the zombie wave from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -457,10 +468,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
+#pragma region Load Towers, Placeables and Drones [LONG CODE]
 	// Load the towers from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		for (int i = 0; i < rzbn->towerInfos.size(); i++)
+		for (size_t i = 0; i < rzbn->towerInfos.size(); i++)
 		{
 
 			// Create the towers
@@ -523,23 +535,67 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 
-	// Load the gamesave
+	// Set Traps (Lava and Spike)
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (size_t i = 0; i < rzbn->trapInfos.size(); i++)
+		{
+			switch (rzbn->trapInfos[i].m_nTrapType)
+			{
+				case Entity::ENT_TRAP_LAVA:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_LAVA);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-	//// If the slot is set
-	//if (m_nCurrGameSlot > 0)
-	//{
-	//	// If we can't load the savegame
-	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-	//		// Make a new savegame
-	//		SaveGame(true);
-	//	else
-	//		// load the savegame
-	//		LoadGameFromSlot(m_nCurrGameSlot);
-	//}
+				case Entity::ENT_TRAP_SPIKE:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_SPIKE);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
+				case Entity::ENT_TRAP_BEARTRAP:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY}, 2);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-	// Create our player
+				case Entity::ENT_TRAP_MINE:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY }, 0x1337);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
+			}
+		}
+	}
 
+	// Set Drones
+	for (int i = 0; i < rzbn->m_nDrones; i++)
+	{
+		CreateDroneMessage* pMsg = new CreateDroneMessage();
+		pMsg->SendMessageNow();
+		delete pMsg;
+		pMsg = nullptr;
+	}
+#pragma endregion 
 
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -548,7 +604,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Set player's money from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetScore(rzbn->m_nMoney);
-
 
 	// Set inventory
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -601,7 +656,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
-	//// Add it to the entity manager
 	// Load pause menu background
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
@@ -655,9 +709,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 
 	// Turn the cursor on
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
+	//if(pGraphics->IsCursorShowing() == false)
 
+
+	// Create snow
 	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
 	msg->QueueMessage();
 	msg = nullptr;
@@ -667,6 +722,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_bAccept = true;
 #endif
 	
+	// Set all of RZBN's things it needs to save later
 	rzbn->SetPlayer(m_pPlayer);
 	rzbn->SetZombieFactory(zombieFactory);
 	rzbn->SetEntityManager(m_pEntities);
@@ -731,9 +787,20 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hPurchase);
 	pAudio->UnloadAudio(m_hExplosion);
 	pAudio->UnloadAudio(m_hClickSound);
+	pAudio->UnloadAudio(m_hChaChing);
+	pAudio->UnloadAudio(m_hBeaverFever		  );
+	pAudio->UnloadAudio(m_hGoToShop		  );
+	pAudio->UnloadAudio(m_hGoodJob		  );
+	pAudio->UnloadAudio(m_hSoory1		  );
+	pAudio->UnloadAudio(m_hSoory2		  );
+	pAudio->UnloadAudio(m_hTrueHero		  );
+	pAudio->UnloadAudio(m_hUpgrade1		  );
+	pAudio->UnloadAudio(m_hWinTheGame);
+	pAudio->UnloadAudio(m_hWelcomeShop);
+		pAudio->UnloadAudio(m_hAmmoPickup);
 
-	//Matt gets rid of the memory leaks
-	m_pParticleManager->unload();
+		//Matt gets rid of the memorym_hWelcomeShop	 leaks
+		m_pParticleManager->unload(); 
 
 	// Delete the zombie factory
 	delete zombieFactory;
@@ -867,17 +934,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #endif
 		}
 
-	//// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
-	//if (pInput->IsKeyPressed(SGD::Key::Backspace))
-	//{
-	//	pAudio->StopAudio(m_hBackgroundMus);
-	//	// to stop audio from playing after every backspace
-	//	if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
-	//	{
-	//		pAudio->PlayAudio(m_hShopMusic, true);
-	//	}
-	//	m_pShop->SetShopStatus(true);
-	//}
+	
 	// Start the wave if in build mode
 	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed ( 1 , 6 )) )
@@ -1269,8 +1326,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
-	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
-		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
+	//if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
+		//SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
@@ -1279,6 +1336,21 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hBackgroundMus);
+		m_bEnterShop = false;
+	}
+	else if (m_pShop->IsOpen() == true && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == true)
+	{
+		SGD::AudioManager::GetInstance()->StopAudio(m_hBackgroundMus);
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hShopMusic);
+		if (m_bEnterShop == false)
+		{
+			if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hWelcomeShop) == false)
+			{
+				SGD::AudioManager::GetInstance()->PlayAudio(m_hWelcomeShop);
+			}
+			m_bEnterShop = true;
+
+		}
 	}
 	// If the game isn't paused and you haven't won and you haven't lost
 	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
@@ -1683,6 +1755,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 
+					if (m_bBuildStart == false)
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
+						m_bBuildStart = true;
+					}
 					//string timeRemaining = "Time remaining: ";
 					//timeRemaining += (std::to_string(zombieFactory->GetBuildTimeRemaining() / 100.0f));
 					//timeRemaining += " secs";
@@ -1694,6 +1771,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// -- Draw the number of enemies remaining [during fight mode] --
 				else
 				{
+					m_bBuildStart = false;
+
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
@@ -1814,7 +1893,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			pGraphics->DrawRectangle(
 				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
 				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
-
+			SGD::AudioManager::GetInstance()->PlayAudio(m_hWinTheGame);
 			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
 		// If you have lost render You Lose and go to replay menu
@@ -2705,8 +2784,8 @@ void GameplayState::RenderCredits(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOff();
+	//if(pGraphics->IsCursorShowing() == true)
+	//	pGraphics->TurnCursorOff();
 
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
@@ -2934,4 +3013,10 @@ void GameplayState::LoadEnemyRecipes(string fileName)
 	m_fBeaverHealthChance = (float)beaverHealthChance;
 	m_fBeaverAmmoChance = (float)beaverAmmoChance;
 	m_fBeaverSuperChance = (float)beaverSuperChance;
+}
+
+void GameplayState::PlayAmmoPickup(void)
+{
+	if(m_hAmmoPickup != SGD::INVALID_HANDLE)
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hAmmoPickup);
 }

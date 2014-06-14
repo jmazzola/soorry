@@ -31,6 +31,8 @@
 #include "Entity.h"
 #include "EntityManager.h"
 
+#include "RZBN.h"
+
 #include "../TinyXML/tinyxml.h"
 
 #include <cstdlib>
@@ -421,7 +423,7 @@ using namespace std;
 			m_pMainButton->Draw("Go Back", { 170, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		// Render game info (basic info for now for selected option)
-		m_pFont->Draw(LoadFileInfo(m_nCursor), 560, 498, 0.4f, { 0, 0, 0 });
+		RenderAndLoadFileInfo(m_nCursor + 1);
 	}
 }
 
@@ -458,35 +460,100 @@ bool LoadSaveState::CheckSlotExists(int slot)
 }
 
 // LoadFileInfo
-// - return a string containing info about the savegame
+// - draw the file's info on the screen
 // [in] slot - the number slot you're loading
-// [out] string - text to display
-string LoadSaveState::LoadFileInfo(int slot)
+void LoadSaveState::RenderAndLoadFileInfo(int slot)
 {
-	// TODO, redo the load/save screen to have space for the game info, such as:
-	// Date and Time the gamesave was last modified, wave number, upgrades, and money.
 
-	TiXmlDocument doc;
-	// Attempt to load the file, if not gtfo
-	if (!doc.LoadFile(m_szSaveFiles[slot].c_str()))
-		return "Can't load XML file";
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
 
-	// Access the root element (volume)
-	TiXmlElement* pRoot = doc.RootElement();
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
 
-	// Is the root there, if not, gtfo
-	if (pRoot == nullptr)
-		return "Root cannot be null!";
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
 
-	float x = float(atoi(pRoot->Attribute("x")));
-	float y = float(atoi(pRoot->Attribute("y")));
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
 
-	// Get the stats
-	TiXmlElement* pStats = pRoot->NextSiblingElement("stats");
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
 
-	// Grab the money
-	int money = int(atoi(pStats->Attribute("money")));
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
 
-	string returnString = "Money: ";
-	return returnString + std::to_string(money);
+	// Create our save file
+	pathtowrite += "\\SoorrySave_0";
+	pathtowrite += std::to_string(slot);
+	pathtowrite += ".rzbn";
+
+	RZBN* rzbn = new RZBN();
+	
+	string returnStr;
+
+	switch (rzbn->LoadRZBNFile(pathtowrite))
+	{
+	case 0:
+		returnStr = "File couldn't load.";
+		break;
+
+	case 1:
+		returnStr = "Magic Mismatch.";
+		break;
+
+	case 2:
+		returnStr = "Version Mismatch.";
+		break;
+		
+	case 0x1337:
+		{	
+			// Read the gamemode
+		returnStr = "GameMode: ";
+		string gameMode;
+		switch (rzbn->m_nGamemode)
+		{
+		case 0:
+			gameMode = "Arcade Mode";
+			break;
+		case 1:
+			gameMode = "Hardcore Mode";
+			break;
+		case 2:
+			gameMode = "Sandbox Mode";
+			break;
+		case 3:
+			gameMode = "Beaver Fever";
+			break;
+		case 4:
+			gameMode = "Running Man";
+			break;
+		}
+
+			returnStr += gameMode;
+		}
+	}
+
+	// Draw gamemode
+	m_pFont->Draw(returnStr.c_str(), 560, 498, 0.35f, { 0, 0, 0 });
+
+	// Draw money
+	string money = "Money: ";
+	money += std::to_string(rzbn->m_nMoney);
+	m_pFont->Draw(money.c_str(), 560, 518, 0.35f, { 0, 0, 0 });
+
+	// Draw wave number
+	string waveNum = "Current Wave: ";
+	waveNum += std::to_string(rzbn->m_nWaveNum);
+	m_pFont->Draw(waveNum.c_str(), 560, 538, 0.35f, { 0, 0, 0 });
+
+	
+
+	delete rzbn;
+	
 }
