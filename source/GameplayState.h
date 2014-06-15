@@ -9,7 +9,6 @@
 #ifndef GAMEPLAYSTATE_H
 #define GAMEPLAYSTATE_H
 
-
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
 #include "../SGD Wrappers/SGD_Listener.h"
@@ -50,6 +49,7 @@ public:
 	// Singleton Accessor:
 	static GameplayState* GetInstance(void);
 
+	enum GameModes { ARCADE_GAME_MODE = 0, HARDCORE_MODE = 1, SANDBOX_MODE = 2, BEAVER_FEAVER_MODE = 3, RUNNING_MAN_MODE = 4 };
 
 	/**********************************************************/
 	// IGameState Interface:
@@ -208,7 +208,7 @@ private:
 	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;
-
+	SGD::HAudio m_hSandboxMusic		= SGD::INVALID_HANDLE;
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;

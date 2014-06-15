@@ -5,6 +5,7 @@
 #include "ParticleFlyweight.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "Entity.h"
+#include "Camera.h"
 #include <map>
 ParticleManager::ParticleManager()
 {
@@ -39,7 +40,7 @@ void ParticleManager::Render()
 {
 	for (unsigned int i = 0; i < activeEmitters.size(); i++)
 	{
-		activeEmitters[i]->Render();
+			activeEmitters[i]->Render();
 	}
 }
 

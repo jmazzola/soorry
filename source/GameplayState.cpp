@@ -61,7 +61,6 @@
 #include "Grenade.h"
 #include "TrickShotBullet.h"
 #include "ShopEntity.h"
-
 #include "MessageID.h"
 #include "BitmapFont.h"
 #include "Entity.h"
@@ -308,7 +307,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hSpikeTrapSpikeImage = pGraphics->LoadTexture("resource/images/towers/spikeTrapUp.png");
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
-
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
 	pGraphics->SetClearColor();
@@ -317,33 +315,34 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
-	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
-	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
-	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
-	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
-	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
-	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
-	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
-	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
-	m_hChaChing     = pAudio->LoadAudio("resource/audio/ChaChing.wav");
-	m_hClickSound	= pAudio->LoadAudio("resource/audio/click.wav");
-	m_hBeaverFever	= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
-	m_hGoToShop		= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
-	m_hGoodJob		= pAudio->LoadAudio("resource/audio/Good_Job.wav");
-	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
-	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
-	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
-	m_hTutorial		= pAudio->LoadAudio("resource/audio/Tutorial1.wav");
-	m_hTutorial2	= pAudio->LoadAudio("resource/audio/Tutorial2.wav");
-	m_hTutorial3	= pAudio->LoadAudio("resource/audio/Tutorial3.wav");
-	m_hTutorial4	= pAudio->LoadAudio("resource/audio/Tutorial4.wav");
-	m_hTutorial5	= pAudio->LoadAudio("resource/audio/Tutorial5.wav");
-	m_hTutorial6	= pAudio->LoadAudio("resource/audio/Tutorial6.wav");
-	m_hTutorial7	= pAudio->LoadAudio("resource/audio/Tutorial7.wav");
-	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
-	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
-	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hBackgroundMus	= pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
+	m_hSandboxMusic		= pAudio->LoadAudio("resource/audio/Sandbox_Music.xwm");
+	m_hShopMusic		= pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hGunShoot			= pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
+	m_hRocketShoot		= pAudio->LoadAudio("resource/audio/rocketFire.wav");
+	m_hShotgunShoot		= pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
+	m_hBulletHit		= pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_hBulletImpact		= pAudio->LoadAudio("resource/audio/bulletImpact.wav");
+	m_hPurchase			= pAudio->LoadAudio("resource/audio/purchase.wav");
+	m_hExplosion		= pAudio->LoadAudio("resource/audio/explosion.wav");
+	m_hChaChing			= pAudio->LoadAudio("resource/audio/ChaChing.wav");
+	m_hClickSound		= pAudio->LoadAudio("resource/audio/click.wav");
+	m_hBeaverFever		= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
+	m_hGoToShop			= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
+	m_hGoodJob			= pAudio->LoadAudio("resource/audio/Good_Job.wav");
+	m_hSoory1			= pAudio->LoadAudio("resource/audio/Soory1.wav");
+	m_hSoory2			= pAudio->LoadAudio("resource/audio/Soory2.wav");
+	m_hTrueHero			= pAudio->LoadAudio("resource/audio/True_Hero.wav");
+	m_hTutorial			= pAudio->LoadAudio("resource/audio/Tutorial1.wav");
+	m_hTutorial2		= pAudio->LoadAudio("resource/audio/Tutorial2.wav");
+	m_hTutorial3		= pAudio->LoadAudio("resource/audio/Tutorial3.wav");
+	m_hTutorial4		= pAudio->LoadAudio("resource/audio/Tutorial4.wav");
+	m_hTutorial5		= pAudio->LoadAudio("resource/audio/Tutorial5.wav");
+	m_hTutorial6		= pAudio->LoadAudio("resource/audio/Tutorial6.wav");
+	m_hTutorial7		= pAudio->LoadAudio("resource/audio/Tutorial7.wav");
+	m_hUpgrade1			= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
+	m_hWelcomeShop		= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
+	m_hWinTheGame		= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
 
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
@@ -477,7 +476,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Load the towers from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		for (int i = 0; i < rzbn->towerInfos.size(); i++)
+		for (unsigned int i = 0; i < rzbn->towerInfos.size(); i++)
 		{
 
 			// Create the towers
@@ -619,7 +618,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
 	//// Add it to the entity manager
-	// Load pause menu background
+	// Load pause menu dmusicd
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
 
@@ -655,7 +654,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_fLossTimer = 5.0f;
 
 	// Play the background music
-	pAudio->PlayAudio(m_hBackgroundMus, true);
+	if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+	{
+		pAudio->PlayAudio(m_hBackgroundMus, true);
+	}
+	if (m_nGamemode == BEAVER_FEAVER_MODE)
+	{
+		pAudio->PlayAudio(m_hSandboxMusic, true);
+	}
+	if (m_nGamemode == SANDBOX_MODE)
+	{
+
+	}
+	if (m_nGamemode == RUNNING_MAN_MODE)
+	{
+
+	}
 
 	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 

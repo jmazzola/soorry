@@ -57,18 +57,21 @@ bool Particle::Update(float dt)
 void Particle::Render()
 {
 	//Offset position based on scale
-	if (particleFlyweight->entity != nullptr)
-	{
-		SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
-		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
-		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y},
-		rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
-	}
-	else
-	{
-		SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
-		{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
-		(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+	if (position.x >= Camera::x && position.y >= Camera::y && position.x <= Camera::x+800 && position.y <= Camera::y+600)
+		{
+		if (particleFlyweight->entity != nullptr)
+		{
+			SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
+			{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
+			(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y },
+			rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+		}
+		else
+		{
+			SGD::GraphicsManager::GetInstance()->DrawTexture(particleFlyweight->image,
+			{ (position.x - (particleFlyweight->imageSize.width / 2)*scale.width) - Camera::x,
+			(position.y - (particleFlyweight->imageSize.height / 2)*scale.height) - Camera::y }, rotation, { particleFlyweight->imageSize.width / 2, particleFlyweight->imageSize.height / 2 }, Color, scale);
+		}
 	}
 }
 
