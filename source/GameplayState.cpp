@@ -1742,10 +1742,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				
 
 
-				// -- Draw the score --
-				string score = "Points";
-				m_pFont->Draw(std::to_string(player->GetScore()).c_str(), 665, 60, 0.45f, { 255, 255, 255 });
-				m_pFont->Draw(score.c_str(), 665, 35, 0.45f, { 255, 255, 255 });
+				// Draw the loonies
+				m_pFont->Draw(std::to_string(player->GetScore()).c_str(), 644, 40, 0.6f, { 255, 255, 255 });
 
 				// -- Draw the wave number --
 				string waveNum = "Wave: ";
