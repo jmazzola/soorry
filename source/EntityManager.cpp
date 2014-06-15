@@ -10,6 +10,8 @@
 #include "IEntity.h"
 #include <cassert>
 
+#include "Camera.h"
+
 
 //***********************************************************************
 // AddEntity
@@ -197,8 +199,13 @@ void EntityManager::RenderAll( void )
 		for( unsigned int bucket = 0; bucket < m_tEntities.size( ); bucket++ )
 		{
 			EntityVector& vec = m_tEntities[ bucket ];
-			for( unsigned int i = 0; i < vec.size( ); i++ )
-				vec[ i ]->Render( );
+			for (unsigned int i = 0; i < vec.size(); i++)
+			{
+				SGD::Point center = vec[i]->GetRect().ComputeCenter();
+
+				if (center.x > Camera::x - 32 && center.y > Camera::y - 32 && center.x < Camera::x + 832 && center.y < Camera::y + 632)
+					vec[ i ]->Render( );
+			}
 		}
 
 		// Render the tower's post render
@@ -206,7 +213,10 @@ void EntityManager::RenderAll( void )
 		{
 			for (unsigned int tower = 0; tower < m_tEntities[3].size(); tower++)
 			{
-				m_tEntities[3][tower]->PostRender();
+				SGD::Point center = m_tEntities[3][tower]->GetRect().ComputeCenter();
+
+				if (center.x > Camera::x - 32 && center.y > Camera::y - 32 && center.x < Camera::x + 832 && center.y < Camera::y + 632)
+					m_tEntities[3][tower]->PostRender();
 			}
 		}
 
@@ -215,7 +225,10 @@ void EntityManager::RenderAll( void )
 		{
 			for(unsigned int trap = 0; trap < m_tEntities[0].size(); trap++)
 			{
-				m_tEntities[0][trap]->PostRender();
+				SGD::Point center = m_tEntities[0][trap]->GetRect().ComputeCenter();
+
+				if (center.x > Camera::x - 32 && center.y > Camera::y - 32 && center.x < Camera::x + 832 && center.y < Camera::y + 632)
+					m_tEntities[0][trap]->PostRender();
 			}
 		}
 
@@ -227,7 +240,10 @@ void EntityManager::RenderAll( void )
 		{
 			for (unsigned int enemies = 0; enemies < m_tEntities[2].size(); enemies++)
 			{
-				m_tEntities[2][enemies]->PostRender();
+				SGD::Point center = m_tEntities[2][enemies]->GetRect().ComputeCenter();
+
+				if (center.x > Camera::x - 32 && center.y > Camera::y - 32 && center.x < Camera::x + 832 && center.y < Camera::y + 632)
+					m_tEntities[2][enemies]->PostRender();
 			}
 		}
 	}
