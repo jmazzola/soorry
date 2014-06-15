@@ -186,3 +186,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 /resource/data/stats.xml
 /resource/data/stats.xml
+stats.xml
