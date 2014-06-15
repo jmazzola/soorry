@@ -83,8 +83,8 @@ using namespace std;
 	SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
 	// Turn the cursor on
-	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOff();
+	//if(pGraphics->IsCursorShowing() == true)
+	//	pGraphics->TurnCursorOff();
 }
 
 

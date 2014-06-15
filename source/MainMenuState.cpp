@@ -19,6 +19,7 @@
 #include "LoadSaveState.h"
 #include "OptionsState.h"
 #include "StatsState.h"
+#include "HowToPlayState.h"
 
 #include "Button.h"
 
@@ -250,7 +251,7 @@ using namespace std;
 		{
 			// How to Play (Gameplay loading tutorial level)
 			// This doesn't transition since it'll load a tutorial level, no screen.
-			pGame->ChangeState(GameplayState::GetInstance());
+			pGame->Transition(HowToPlayState::GetInstance());
 			// Leave immediately
 			return true;
 		}

@@ -76,6 +76,14 @@ public:
 	// Player calls this once their hp is <= 0 to lose the game
 	void HasLost(void);
 
+	void PlayAmmoPickup(void);
+
+	bool IsPaused() { return m_bIsPaused; }
+	void SetPaused(bool pause) { m_bIsPaused = pause; }
+	void MouseWheel(int direction);
+
+	void SetLoadingBar(float percent, const char* message);
+
 private:
 
 	/**********************************************************/
@@ -198,16 +206,11 @@ private:
 	SGD::HAudio	m_hSoory1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hSoory2			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hTrueHero			= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial			= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial2		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial3		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial4		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial5		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial6		= SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial7		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hUpgrade1			= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWelcomeShop		= SGD::INVALID_HANDLE;
 	SGD::HAudio	m_hWinTheGame		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hAmmoPickup		= SGD::INVALID_HANDLE;
+
 	SGD::HAudio m_hSandboxMusic		= SGD::INVALID_HANDLE;
 	/**********************************************************/
 	// Factory Methods

@@ -2,6 +2,8 @@
 
 #include "../TinyXML/tinyxml.h"
 
+#include "GameplayState.h"
+
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_Event.h"
@@ -20,6 +22,10 @@ using namespace std;
 
 #define CLOSED 0
 
+// Margins for GameplayState's loading bar
+#define BAR_BEGIN 0.1f
+#define BAR_END 0.85f
+
 
 WorldManager* WorldManager::GetInstance()
 {
@@ -33,6 +39,11 @@ WorldManager* WorldManager::GetInstance()
 
 bool WorldManager::LoadWorld(string fileName)
 {
+	// Get the GameplayState for setting the loading bar
+	GameplayState* pGameplay = GameplayState::GetInstance();
+
+	pGameplay->SetLoadingBar(0.15f, "Loading World");
+
 	// Create a TinyXML document
 	TiXmlDocument doc;
 
@@ -54,12 +65,22 @@ bool WorldManager::LoadWorld(string fileName)
 	pRoot->Attribute("tileHeight", &m_nTileHeight);
 	pRoot->Attribute("tilesetWidth", &m_nTilesetWidth);
 
+	// Get percent per tile (for loading bar)
+	float tilePercent = (BAR_END - BAR_BEGIN) / (m_nWorldWidth * m_nWorldHeight);
+	int totalTiles = m_nWorldWidth * m_nWorldHeight;
+
+	// Keep track of tiles loaded
+	int tilesLoaded = 0;
+
 	// Load tilesetImage
 	const char* tilesetImage = pRoot->Attribute("image");
+
 	m_hTilesetImage = SGD::GraphicsManager::GetInstance()->LoadTexture(tilesetImage);
 
 	// Get the first layer
 	TiXmlElement* pLayer = pRoot->FirstChildElement("layer");
+
+	pGameplay->SetLoadingBar(0.3f, "Loading World");
 
 	// Go through all the layers
 	while (pLayer != nullptr)
@@ -102,6 +123,11 @@ bool WorldManager::LoadWorld(string fileName)
 			if (triggerInit != "")
 				SendInitialTriggerMessage(tile);
 
+			// Set the loading bar
+			tilesLoaded++;
+			if (tilesLoaded % 3 == 0)
+				pGameplay->SetLoadingBar(0.3f + 0.16f * ((float)tilesLoaded / (float)totalTiles), "Loading Tiles");
+
 			// Move on to next tile
 			pTile = pTile->NextSiblingElement("tile");
 		}
@@ -115,6 +141,10 @@ bool WorldManager::LoadWorld(string fileName)
 
 	// Create wall/window layer
 	Layer layer(m_nWorldWidth, m_nWorldHeight);
+
+	//pGameplay->SetLoadingBar(0.5f, "Setting world stuff");
+
+#if 0
 
 	// Loop through the tiles
 	for (int x = 0; x < m_nWorldWidth; x++)
@@ -135,9 +165,13 @@ bool WorldManager::LoadWorld(string fileName)
 		}
 	}
 
+#endif
+
 	m_vLayers.push_back(layer);
 
 	GenerateSolidsChart();
+
+	pGameplay->SetLoadingBar(0.69f, "4 8 15 16 23 42");
 
 	// Add walls to top layer
 	for (unsigned int i = 0; i < m_vInitWalls.size(); i++)
@@ -343,7 +377,7 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 				{
 					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
 						continue;
-					
+
 					return true;
 				}
 			}
@@ -353,7 +387,7 @@ bool WorldManager::CheckCollision(SGD::Rectangle _rect, bool _ignoreWindows)
 	return false;
 }
 
-std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
+vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, bool _ignoreWindows)
 {
 	std::vector<SGD::Rectangle> hits;
 	// Set the tiles to check
@@ -389,12 +423,12 @@ std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, b
 				{
 					if (_ignoreWindows && GetColliderID(x, y) == WINDOW)
 						continue;
-					
+
 					float L = (float)(x * m_nTileWidth);
 					float T = (float)(y * m_nTileHeight);
 					float R = L + m_nTileWidth;
 					float B = T + m_nTileHeight;
-					hits.push_back(SGD::Rectangle { L , T , R , B });
+					hits.push_back(SGD::Rectangle{ L, T, R, B });
 				}
 			}
 		}
@@ -402,6 +436,7 @@ std::vector<SGD::Rectangle> WorldManager::CheckTrickShot(SGD::Rectangle _rect, b
 
 	return hits;
 }
+
 int WorldManager::CheckCollisionID(IEntity* _object)
 {
 	// Get the object's collision rect
@@ -598,7 +633,7 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	//Spawn 1 Zombie
 	if (_tile.GetTriggerInit() == "SPAWN_1_ZOMBIE")
 	{
-		CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		CreateFastZombieMessage* pMsg = new CreateFastZombieMessage(_tile.GetX() * 32, _tile.GetY() * 32);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 	}
@@ -606,7 +641,7 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	//Spawn 1 Slow Zombie
 	if (_tile.GetTriggerInit() == "SPAWN_1_SLOW_ZOMBIE")
 	{
-		CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		CreateSlowZombieMessage* pMsg = new CreateSlowZombieMessage(_tile.GetX() * 32, _tile.GetY() * 32);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 	}
@@ -614,7 +649,7 @@ void WorldManager::SendInitialTriggerMessage(Tile& _tile)
 	//Spawn 1 Beaver
 	if (_tile.GetTriggerInit() == "SPAWN_1_BEAVER")
 	{
-		CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(_tile.GetX()*32, _tile.GetY()*32);
+		CreateBeaverZombieMessage* pMsg = new CreateBeaverZombieMessage(_tile.GetX() * 32, _tile.GetY() * 32);
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 	}
@@ -627,6 +662,8 @@ void WorldManager::GenerateSolidsChart()
 	for (int x = 0; x < m_nWorldWidth; x++)
 		m_bSolidsChart[x] = new bool[m_nWorldHeight];
 
+	GameplayState* pGameplay = GameplayState::GetInstance();
+
 	// Default the solids chart
 	for (int x = 0; x < m_nWorldWidth; x++)
 	{
@@ -635,6 +672,9 @@ void WorldManager::GenerateSolidsChart()
 			m_bSolidsChart[x][y] = false;
 		}
 	}
+
+	float totalTiles = m_nWorldWidth * m_nWorldHeight * 2.0f;
+	float loadedTiles = 0;
 
 	// Loop through each of the layers
 	for (unsigned int i = 0; i < m_vLayers.size(); i++)
@@ -647,6 +687,11 @@ void WorldManager::GenerateSolidsChart()
 				// Check if collidable
 				if (m_vLayers[i][x][y].IsCollidable())
 					m_bSolidsChart[x][y] = true;
+
+				loadedTiles += 1.0f;
+
+				if ((int)(loadedTiles) % 3 == 0)
+					pGameplay->SetLoadingBar(0.46f + 0.19f * (loadedTiles / totalTiles), "Generating Solids Chart");
 			}
 		}
 	}

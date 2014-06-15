@@ -268,6 +268,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- set up entities
 /*virtual*/ void GameplayState::Enter(void)
 {
+	// Load the stats for the stattracker
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
 	m_pStatTracker->Load("resource/data/stats.xml");
@@ -284,9 +285,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Textures", SGD::Point(280, 300));
-	pGraphics->Update();
+	SetLoadingBar(0.0f, "Loading Textures");
 
 	// Load Tim
 	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
@@ -309,41 +308,36 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
-	pGraphics->Update();
 
 	// Load Audio
+	// 5%
+	SetLoadingBar(0.01f, "Loading Audio");
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus	= pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
-	m_hSandboxMusic		= pAudio->LoadAudio("resource/audio/Sandbox_Music.xwm");
-	m_hShopMusic		= pAudio->LoadAudio("resource/audio/shop_music.xwm");
-	m_hGunShoot			= pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
-	m_hRocketShoot		= pAudio->LoadAudio("resource/audio/rocketFire.wav");
-	m_hShotgunShoot		= pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
-	m_hBulletHit		= pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
-	m_hBulletImpact		= pAudio->LoadAudio("resource/audio/bulletImpact.wav");
-	m_hPurchase			= pAudio->LoadAudio("resource/audio/purchase.wav");
-	m_hExplosion		= pAudio->LoadAudio("resource/audio/explosion.wav");
-	m_hChaChing			= pAudio->LoadAudio("resource/audio/ChaChing.wav");
-	m_hClickSound		= pAudio->LoadAudio("resource/audio/click.wav");
-	m_hBeaverFever		= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
-	m_hGoToShop			= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
-	m_hGoodJob			= pAudio->LoadAudio("resource/audio/Good_Job.wav");
-	m_hSoory1			= pAudio->LoadAudio("resource/audio/Soory1.wav");
-	m_hSoory2			= pAudio->LoadAudio("resource/audio/Soory2.wav");
-	m_hTrueHero			= pAudio->LoadAudio("resource/audio/True_Hero.wav");
-	m_hTutorial			= pAudio->LoadAudio("resource/audio/Tutorial1.wav");
-	m_hTutorial2		= pAudio->LoadAudio("resource/audio/Tutorial2.wav");
-	m_hTutorial3		= pAudio->LoadAudio("resource/audio/Tutorial3.wav");
-	m_hTutorial4		= pAudio->LoadAudio("resource/audio/Tutorial4.wav");
-	m_hTutorial5		= pAudio->LoadAudio("resource/audio/Tutorial5.wav");
-	m_hTutorial6		= pAudio->LoadAudio("resource/audio/Tutorial6.wav");
-	m_hTutorial7		= pAudio->LoadAudio("resource/audio/Tutorial7.wav");
-	m_hUpgrade1			= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
-	m_hWelcomeShop		= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
-	m_hWinTheGame		= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
+	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
+	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
+	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
+	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
+	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
+	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
+	m_hChaChing     = pAudio->LoadAudio("resource/audio/ChaChing.wav");
+	m_hClickSound	= pAudio->LoadAudio("resource/audio/click.wav");
+	m_hBeaverFever	= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
+	m_hGoToShop		= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
+	m_hGoodJob		= pAudio->LoadAudio("resource/audio/Good_Job.wav");
+	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
+	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
+	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
+	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
+	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
+	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hAmmoPickup	= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 
+
+	// 12%
+	SetLoadingBar(0.12f, "Loading Particles");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
@@ -358,23 +352,30 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	Camera::x = 0;
 	Camera::y = 0;
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Animations", SGD::Point(280, 300));
-	pGraphics->Update();
-
+	// 13%
+	SetLoadingBar(0.13f, "Loading Animations");
+	
 	// Load all animation
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
 
 
-
+	// Load the game from the current slot
 	if (m_nCurrGameSlot > 0)
+	{
+		// 14%
+		SetLoadingBar(0.14f, "Loading Save");
 		LoadGameFromSlot(m_nCurrGameSlot);
+	}
 
 	
 
 #pragma region Load Game Mode
 
+	// 15%
+	SetLoadingBar(0.15f, "Loading Gamemode");
+
+	// If we have a save slot, load the gamemode
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
 		m_nGamemode = rzbn->m_nGamemode;
 
@@ -410,19 +411,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	string worldFileName = pRoot->FirstChildElement("world")->GetText();
 	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
 	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
+
+	// 26%
+	SetLoadingBar(0.26f, "Loading Gamemode");
 	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
 	string towerStatsFileName = pRoot->FirstChildElement("tower_stats")->GetText();
 	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
 
+	//SetLoadingBar(0.00f, "4 8 15 16 23 42");
+
 #pragma endregion
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
-	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
 	pWorld->LoadWorld(worldFileName);
+
 
 	// Set world data from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -431,6 +435,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
 	}
+
+
+	// 70%
+	SetLoadingBar(0.7f, "Loading Zombie Factory");
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
@@ -443,28 +451,32 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	zombieFactory->SetSpawnHeight(pWorld->GetWorldHeight() * pWorld->GetTileHeight());
 	zombieFactory->SetEntityManager(m_pEntities);
 
+	// Create the player from the player stats
 	m_pPlayer = CreatePlayer(playerStatsFileName);
 
+	// 80%
+	SetLoadingBar(0.8f, "Loading Shop");
+
+	// Create the shop and load it's prices from the shop's file
 	m_pShop = new Shop();
 	m_pShop->Enter(m_pPlayer);
 	m_pShop->LoadPrices(shopFileName);
 
+	// Set the zombie factory's player
 	zombieFactory->SetPlayer(m_pPlayer);
-
-	
-
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
-	pGraphics->Update();
-
-	
 
 	// Set the zombie wave from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		zombieFactory->SetWave(rzbn->m_nWaveNum);
 
+	// 86%
+	SetLoadingBar(0.86f, "Loading Enemies");
+
 	// Load enemy stats recipes
 	LoadEnemyRecipes(enemyStatsFileName);
+
+	// 92%
+	SetLoadingBar(0.92f, "Loading Towers");
 
 	// Load tower flyweight
 	m_pTowerFlyweight = new TowerFlyweight;
@@ -473,10 +485,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
 
+#pragma region Load Towers, Placeables and Drones [LONG CODE]
 	// Load the towers from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
-		for (unsigned int i = 0; i < rzbn->towerInfos.size(); i++)
+		// 95%
+		SetLoadingBar(0.95f, "Loading Objects");
+
+		for (size_t i = 0; i < rzbn->towerInfos.size(); i++)
 		{
 
 			// Create the towers
@@ -539,23 +555,67 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 
-	// Load the gamesave
+	// Set Traps (Lava and Spike)
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (size_t i = 0; i < rzbn->trapInfos.size(); i++)
+		{
+			switch (rzbn->trapInfos[i].m_nTrapType)
+			{
+				case Entity::ENT_TRAP_LAVA:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_LAVA);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-	//// If the slot is set
-	//if (m_nCurrGameSlot > 0)
-	//{
-	//	// If we can't load the savegame
-	//	if (!LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
-	//		// Make a new savegame
-	//		SaveGame(true);
-	//	else
-	//		// load the savegame
-	//		LoadGameFromSlot(m_nCurrGameSlot);
-	//}
+				case Entity::ENT_TRAP_SPIKE:
+				{
+					CreateTrapMessage* pmsg =
+						new CreateTrapMessage((int)(rzbn->trapInfos[i].m_fTrapX), (int)(rzbn->trapInfos[i].m_fTrapY),
+						CreateTrapMessage::TRAP_SPIKE);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
+				case Entity::ENT_TRAP_BEARTRAP:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY}, 2);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
 
-	// Create our player
+				case Entity::ENT_TRAP_MINE:
+				{
+					CreatePlaceableMessage* pmsg =
+						new CreatePlaceableMessage({ rzbn->trapInfos[i].m_fTrapX, rzbn->trapInfos[i].m_fTrapY }, 0x1337);
+					pmsg->SendMessageNow();
+					delete pmsg;
+					pmsg = nullptr;
+				}
+					break;
+			}
+		}
+	}
 
+	// Set Drones
+	for (int i = 0; i < rzbn->m_nDrones; i++)
+	{
+		CreateDroneMessage* pMsg = new CreateDroneMessage();
+		pMsg->SendMessageNow();
+		delete pMsg;
+		pMsg = nullptr;
+	}
+#pragma endregion 
 
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -564,7 +624,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Set player's money from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetScore(rzbn->m_nMoney);
-
 
 	// Set inventory
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -617,7 +676,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
-	//// Add it to the entity manager
 	// Load pause menu dmusicd
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
@@ -686,9 +744,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 
 	// Turn the cursor on
-	if(pGraphics->IsCursorShowing() == false)
-		pGraphics->TurnCursorOn();
+	//if(pGraphics->IsCursorShowing() == false)
 
+
+	// Create snow
 	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
 	msg->QueueMessage();
 	msg = nullptr;
@@ -698,6 +757,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_bAccept = true;
 #endif
 	
+	// Set all of RZBN's things it needs to save later
 	rzbn->SetPlayer(m_pPlayer);
 	rzbn->SetZombieFactory(zombieFactory);
 	rzbn->SetEntityManager(m_pEntities);
@@ -764,21 +824,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hClickSound);
 	pAudio->UnloadAudio(m_hChaChing);
 	pAudio->UnloadAudio(m_hBeaverFever		  );
-		pAudio->UnloadAudio(m_hGoToShop		  );
-		pAudio->UnloadAudio(m_hGoodJob		  );
-		pAudio->UnloadAudio(m_hSoory1		  );
-		pAudio->UnloadAudio(m_hSoory2		  );
-		pAudio->UnloadAudio(m_hTrueHero		  );
-		pAudio->UnloadAudio(m_hTutorial		  );
-		pAudio->UnloadAudio(m_hTutorial2	  );
-		pAudio->UnloadAudio(m_hTutorial3	  );
-		pAudio->UnloadAudio(m_hTutorial4	  );
-		pAudio->UnloadAudio(m_hTutorial5	  );
-		pAudio->UnloadAudio(m_hTutorial6	  );
-		pAudio->UnloadAudio(m_hTutorial7	  );
-		pAudio->UnloadAudio(m_hUpgrade1		  );
-		pAudio->UnloadAudio(m_hWinTheGame);
-		pAudio->UnloadAudio(m_hWelcomeShop);
+	pAudio->UnloadAudio(m_hGoToShop		  );
+	pAudio->UnloadAudio(m_hGoodJob		  );
+	pAudio->UnloadAudio(m_hSoory1		  );
+	pAudio->UnloadAudio(m_hSoory2		  );
+	pAudio->UnloadAudio(m_hTrueHero		  );
+	pAudio->UnloadAudio(m_hUpgrade1		  );
+	pAudio->UnloadAudio(m_hWinTheGame);
+	pAudio->UnloadAudio(m_hWelcomeShop);
+		pAudio->UnloadAudio(m_hAmmoPickup);
 
 		//Matt gets rid of the memorym_hWelcomeShop	 leaks
 		m_pParticleManager->unload(); 
@@ -1307,8 +1361,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
-	if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
-		SGD::GraphicsManager::GetInstance()->TurnCursorOn();
+	//if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
+		//SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
@@ -2765,8 +2819,8 @@ void GameplayState::RenderCredits(void)
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	if(pGraphics->IsCursorShowing() == true)
-		pGraphics->TurnCursorOff();
+	//if(pGraphics->IsCursorShowing() == true)
+	//	pGraphics->TurnCursorOff();
 
 	// Draw the background
 	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
@@ -2994,4 +3048,89 @@ void GameplayState::LoadEnemyRecipes(string fileName)
 	m_fBeaverHealthChance = (float)beaverHealthChance;
 	m_fBeaverAmmoChance = (float)beaverAmmoChance;
 	m_fBeaverSuperChance = (float)beaverSuperChance;
+}
+
+void GameplayState::PlayAmmoPickup(void)
+{
+	if(m_hAmmoPickup != SGD::INVALID_HANDLE)
+		SGD::AudioManager::GetInstance()->PlayAudio(m_hAmmoPickup);
+}
+
+void GameplayState::MouseWheel(int _direction)
+{
+	if (m_pPlayer)
+	{
+		if (zombieFactory->IsBuildMode())
+		{
+			if (_direction < 0)
+			{
+				m_pPlayer->SetCurrPlaceable(m_pPlayer->GetCurrPlaceable() + 1);
+
+				if (m_pPlayer->GetCurrPlaceable() > 9)
+					m_pPlayer->SetCurrPlaceable(0);
+			}
+
+			else if (_direction > 0)
+			{
+				m_pPlayer->SetCurrPlaceable(m_pPlayer->GetCurrPlaceable() - 1);
+
+				if (m_pPlayer->GetCurrPlaceable() < 0)
+					m_pPlayer->SetCurrPlaceable(9);
+			}
+		}
+
+		else
+		{
+			if (_direction < 0)
+			{
+				m_pPlayer->SetCurrWeapon(m_pPlayer->GetCurrWeapon() + 1);
+
+				if (m_pPlayer->GetCurrWeapon() > 3)
+					m_pPlayer->SetCurrWeapon(0);
+			}
+
+			else if (_direction > 0)
+			{
+				m_pPlayer->SetCurrWeapon(m_pPlayer->GetCurrWeapon() - 1);
+
+				if (m_pPlayer->GetCurrWeapon() < 0)
+					m_pPlayer->SetCurrWeapon(3);
+			}
+		}
+	}
+}
+
+void GameplayState::SetLoadingBar(float _percent, const char* _message)
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+
+	// Start Rendering
+	pGraphics->SetClearColor();
+
+	// Outline rect
+	SGD::Rectangle outline;
+	outline.left = 196;
+	outline.top = 225;
+	outline.right = 604;
+	outline.bottom = 300;
+
+	// Draw outline rect
+	pGraphics->DrawRectangle(outline, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 255), 2);
+
+	// Bar rect
+	SGD::Rectangle bar;
+	bar.left = 200;
+	bar.top = 229;
+	bar.right = 200 + 400 * _percent;
+	bar.bottom = 296;
+
+	// Draw bar rect
+	pGraphics->DrawRectangle(bar, SGD::Color(255, 255, 255));
+
+	// Draw message
+	pFont->Draw(_message, 400 - pFont->GetTextWidth(_message) / 2, 400, 1.0f, SGD::Color(255, 255, 255));
+
+	// End rendering
+	pGraphics->Update();
 }

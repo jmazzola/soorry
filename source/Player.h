@@ -60,7 +60,6 @@ public:
 	Weapon* GetWeapons() const;
 	EntityManager* GetEntityManager() const { return m_pEntityManager; }
 	bool IsRunningMan(void) const;
-	bool GetCursorFaded(void) const;
 
 	bool HasAR() const { return m_bHasAssaultRifle; }
 	bool HasShotty() const { return m_bHasShotty; }
@@ -106,14 +105,14 @@ protected:
 	float m_fPlaceTimer;
 	float m_nMaxHealth;
 	float m_nCurrHealth;
-	float m_fCursorFadeLength;
-	float m_fCursorFadeTimer;
 	float m_fSuperTimer;
 	float m_fSuperLength;
 	float m_fCameraLerpTimer;
 	int m_nCurrWeapon = 0;
 	int m_nCurrPowerup;
 	int m_nCurrPlaceable;
+	float m_fPickupMessageTimer;
+	std::string m_sPickupMessage;
 	unsigned int m_unScore;
 	unsigned int m_unEnemiesKilled;
 	float m_fSpeed;

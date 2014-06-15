@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 using namespace std;
 
 class Player;
@@ -24,6 +25,18 @@ struct TowerInfo
 	float m_fTowerX, m_fTowerY;
 	int m_nUpgradeOne, m_nUpgradeTwo;
 };
+
+struct TrapInfo
+{
+	int m_nTrapType;
+	float m_fTrapX, m_fTrapY;
+};
+
+//struct PlaceableInfo
+//{
+//	int m_nPlaceType;
+//	float m_fPlaceX, m_fPlaceY;
+//};
 
 class RZBN
 {
@@ -51,7 +64,7 @@ public:
 	void SetWorldManager(WorldManager* wm) { m_pWorld = wm; }
 
 	// Load Savefile
-	bool LoadRZBNFile(string rzbnFilePath);
+	int LoadRZBNFile(string rzbnFilePath);
 
 	// Save savefile
 	void SaveRZBNFile(string rzbnFilePath);
@@ -75,6 +88,8 @@ private:
 
 public:
 
+	time_t m_Time;
+
 	int m_nMoney;
 	int m_nGamemode;
 	int m_nColliderIDs[100][100];
@@ -96,5 +111,6 @@ public:
 	int m_nHtMaxAmmo, m_nHtDamage; float m_fHtFirerate;
 
 	vector<TowerInfo> towerInfos;
+	vector<TrapInfo> trapInfos;
 };
 
