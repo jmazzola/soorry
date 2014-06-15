@@ -1812,14 +1812,14 @@ void Player::Render ( void )
 	drawRect.bottom -= Camera::y; 
 	
 
-	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
-	g->DrawLine({ m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y }, { (m_ptPosition.x - Camera::x) + 1, (m_ptPosition.y - Camera::y) + 1 });
+	//SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
+	//g->DrawLine({ m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y }, { (m_ptPosition.x - Camera::x) + 1, (m_ptPosition.y - Camera::y) + 1 });
 
 	
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();
-	pGame->SetShowRects(true);
+	//pGame->SetShowRects(true);
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 
