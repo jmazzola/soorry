@@ -286,9 +286,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Textures", SGD::Point(280, 300));
-	pGraphics->Update();
+	SetLoadingBar(0.0f, "Loading Textures");
 
 	// Load Tim
 	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
@@ -311,11 +309,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Audio", SGD::Point(280, 300));
-	pGraphics->Update();
 
 	// Load Audio
+	// 5%
+	SetLoadingBar(0.01f, "Loading Audio");
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
@@ -339,6 +336,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
 	m_hAmmoPickup	= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 
+
+	// 12%
+	SetLoadingBar(0.12f, "Loading Particles");
 	//Load Particle Manager
 	m_pParticleManager = ParticleManager::GetInstance();
 	m_pParticleManager->loadEmitter("resource/particle/Blood_Spurt.xml");
@@ -353,10 +353,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	Camera::x = 0;
 	Camera::y = 0;
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading Animations", SGD::Point(280, 300));
-	pGraphics->Update();
-
+	// 13%
+	SetLoadingBar(0.13f, "Loading Animations");
+	
 	// Load all animation
 	m_pAnimation = AnimationManager::GetInstance();
 	m_pAnimation->LoadAll();
@@ -364,11 +363,18 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	// Load the game from the current slot
 	if (m_nCurrGameSlot > 0)
+	{
+		// 14%
+		SetLoadingBar(0.14f, "Loading Save");
 		LoadGameFromSlot(m_nCurrGameSlot);
+	}
 
 	
 
 #pragma region Load Game Mode
+
+	// 15%
+	SetLoadingBar(0.15f, "Loading Gamemode");
 
 	// If we have a save slot, load the gamemode
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
@@ -406,19 +412,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	string worldFileName = pRoot->FirstChildElement("world")->GetText();
 	string waveFileName = pRoot->FirstChildElement("wave_data")->GetText();
 	string playerStatsFileName = pRoot->FirstChildElement("player_stats")->GetText();
+
+	// 26%
+	SetLoadingBar(0.26f, "Loading Gamemode");
 	string enemyStatsFileName = pRoot->FirstChildElement("enemy_stats")->GetText();
 	string towerStatsFileName = pRoot->FirstChildElement("tower_stats")->GetText();
 	string shopFileName = pRoot->FirstChildElement("shop")->GetText();
 
+	//SetLoadingBar(0.00f, "4 8 15 16 23 42");
+
 #pragma endregion
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Loading World", SGD::Point(280, 300));
-	pGraphics->Update();
 
 	// Load the world
 	WorldManager* pWorld = WorldManager::GetInstance();
 	pWorld->LoadWorld(worldFileName);
+
 
 	// Set world data from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
@@ -427,6 +436,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
 	}
+
+
+	// 70%
+	SetLoadingBar(0.7f, "Loading Zombie Factory");
 
 	// Start Zombie Factory
 	zombieFactory = new ZombieFactory;
@@ -442,6 +455,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Create the player from the player stats
 	m_pPlayer = CreatePlayer(playerStatsFileName);
 
+	// 80%
+	SetLoadingBar(0.8f, "Loading Shop");
+
 	// Create the shop and load it's prices from the shop's file
 	m_pShop = new Shop();
 	m_pShop->Enter(m_pPlayer);
@@ -450,16 +466,18 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Set the zombie factory's player
 	zombieFactory->SetPlayer(m_pPlayer);
 
-	pGraphics->SetClearColor();
-	pGraphics->DrawString("Initializing", SGD::Point(280, 300));
-	pGraphics->Update();
-
 	// Set the zombie wave from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		zombieFactory->SetWave(rzbn->m_nWaveNum);
 
+	// 86%
+	SetLoadingBar(0.86f, "Loading Enemies");
+
 	// Load enemy stats recipes
 	LoadEnemyRecipes(enemyStatsFileName);
+
+	// 92%
+	SetLoadingBar(0.92f, "Loading Towers");
 
 	// Load tower flyweight
 	m_pTowerFlyweight = new TowerFlyweight;
@@ -472,6 +490,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Load the towers from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
+		// 95%
+		SetLoadingBar(0.95f, "Loading Objects");
+
 		for (size_t i = 0; i < rzbn->towerInfos.size(); i++)
 		{
 
@@ -3063,4 +3084,39 @@ void GameplayState::MouseWheel(int _direction)
 			}
 		}
 	}
+}
+
+void GameplayState::SetLoadingBar(float _percent, const char* _message)
+{
+	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	BitmapFont* pFont = Game::GetInstance()->GetFont();
+
+	// Start Rendering
+	pGraphics->SetClearColor();
+
+	// Outline rect
+	SGD::Rectangle outline;
+	outline.left = 196;
+	outline.top = 225;
+	outline.right = 604;
+	outline.bottom = 300;
+
+	// Draw outline rect
+	pGraphics->DrawRectangle(outline, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 255), 2);
+
+	// Bar rect
+	SGD::Rectangle bar;
+	bar.left = 200;
+	bar.top = 229;
+	bar.right = 200 + 400 * _percent;
+	bar.bottom = 296;
+
+	// Draw bar rect
+	pGraphics->DrawRectangle(bar, SGD::Color(255, 255, 255));
+
+	// Draw message
+	pFont->Draw(_message, 400 - pFont->GetTextWidth(_message) / 2, 400, 1.0f, SGD::Color(255, 255, 255));
+
+	// End rendering
+	pGraphics->Update();
 }

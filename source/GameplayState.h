@@ -81,6 +81,9 @@ public:
 	bool IsPaused() { return m_bIsPaused; }
 	void SetPaused(bool pause) { m_bIsPaused = pause; }
 	void MouseWheel(int direction);
+
+	void SetLoadingBar(float percent, const char* message);
+
 private:
 
 	/**********************************************************/
