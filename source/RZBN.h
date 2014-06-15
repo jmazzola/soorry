@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 using namespace std;
 
 class Player;
@@ -86,6 +87,8 @@ private:
 	WorldManager* m_pWorld;
 
 public:
+
+	time_t m_Time;
 
 	int m_nMoney;
 	int m_nGamemode;
