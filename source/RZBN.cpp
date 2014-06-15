@@ -31,7 +31,7 @@
 #include <fstream>
 using namespace std;
 
-#define RZBN_VERSION 3
+#define RZBN_VERSION 4
 #define RZBN_MAGIC 0x4E425A52
 
 // LoadRZBNFile
@@ -66,6 +66,9 @@ int RZBN::LoadRZBNFile(string rzbnFilePath)
 	if (version != RZBN_VERSION)
 		// quit
 		return 2;
+
+	// Load Time
+	file.read((char*)&m_Time, sizeof(time_t));
 
 	// Load gamemode
 	int gameMode;
@@ -224,6 +227,10 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	// Write the version
 	int vers = RZBN_VERSION;
 	file.write((char*)&vers, sizeof(int));
+
+	// Write time
+	time_t t = time(nullptr);
+	file.write((char*)&t, sizeof(time_t));
 
 	// Set gamemode
 	int gameMode = GameplayState::GetInstance()->GetGameMode();

@@ -39,6 +39,7 @@
 #include <cassert>
 #include <sstream>
 #include <fstream>
+#include <time.h>
 
 #include <shlobj.h>
 #include "Shlwapi.h"
@@ -540,19 +541,24 @@ void LoadSaveState::RenderAndLoadFileInfo(int slot)
 	}
 
 	// Draw gamemode
-	m_pFont->Draw(returnStr.c_str(), 560, 498, 0.35f, { 0, 0, 0 });
+	m_pFont->Draw(returnStr.c_str(), 560, 498, 0.3f, { 0, 0, 0 });
 
 	// Draw money
 	string money = "Money: ";
 	money += std::to_string(rzbn->m_nMoney);
-	m_pFont->Draw(money.c_str(), 560, 518, 0.35f, { 0, 0, 0 });
+	m_pFont->Draw(money.c_str(), 560, 516, 0.3f, { 0, 0, 0 });
 
 	// Draw wave number
 	string waveNum = "Current Wave: ";
 	waveNum += std::to_string(rzbn->m_nWaveNum);
-	m_pFont->Draw(waveNum.c_str(), 560, 538, 0.35f, { 0, 0, 0 });
+	m_pFont->Draw(waveNum.c_str(), 560, 534, 0.3f, { 0, 0, 0 });
 
-	
+	// Draw the time
+	char strDate[40];
+	struct tm tms;
+	localtime_s(&tms, &rzbn->m_Time);
+	strftime(strDate, sizeof(strDate), "%m/%d/%y    %I:%M %p", &tms);
+	m_pFont->Draw(strDate, 560, 552, 0.3f, { 0, 0, 0 });
 
 	delete rzbn;
 	
