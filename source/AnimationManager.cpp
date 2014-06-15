@@ -214,8 +214,9 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y, float 
 	SGD::Rectangle r = m_mSprites[ants.m_nCurrAnimation]->GetFrame(ants.m_nCurrFrame).GetFrameRect();
 
 	// Getting the specific frame
-	r.right += r.left;
-	r.bottom += r.top;
+	//r.right += r.left;
+	//r.bottom += r.top;
+
 
 	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },

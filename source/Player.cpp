@@ -60,15 +60,10 @@ Player::Player () : Listener ( this )
 
 
 	// Animation/ Image
-	//m_pSprite = AnimationManager::GetInstance ()->GetSprite ( "player" );
-	//m_antsAnimation.m_fTimeOnFrame = 0;
-	//m_antsAnimation.m_nCurrFrame = 0;
-	//m_antsAnimation.m_nCurrAnimation = "player";
-
-	m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
+	m_pSprite = AnimationManager::GetInstance ()->GetSprite ( "player" );
 	m_antsAnimation.m_fTimeOnFrame = 0;
 	m_antsAnimation.m_nCurrFrame = 0;
-	m_antsAnimation.m_nCurrAnimation = "CarryAR";
+	m_antsAnimation.m_nCurrAnimation = "player";
 
 
 	// Player's variables
@@ -1816,10 +1811,15 @@ void Player::Render ( void )
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y; 
 	
+
+	SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
+	g->DrawLine({ m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y }, { (m_ptPosition.x - Camera::x) + 1, (m_ptPosition.y - Camera::y) + 1 });
+
 	
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();
+	pGame->SetShowRects(true);
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 
