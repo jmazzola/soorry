@@ -63,5 +63,7 @@ private:
 	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
+
+	void DrawDescription(int mode);
 };
 
