@@ -281,6 +281,31 @@
 		else
 			m_pMainButton->Draw("Go Back", { 130, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
+		DrawDescription(m_nCursor);
+
+	}
+}
+
+void ModePickerState::DrawDescription(int mode)
+{
+	switch (mode)
+	{
+	case ARCADE:
+		m_pFont->Draw("Classic Arcade", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case HARDCORE:
+		m_pFont->Draw("This mode is hard.", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case SANDBOX:
+		m_pFont->Draw("Unlimited Blocks!", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case BEAVERFEVER:
+		m_pFont->Draw("1000 beavers. 1 awesome gun.", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case RUNNINGMAN:
+		m_pFont->Draw("Keep moving. Or you'll die.", 560, 516, 0.3f, { 0, 0, 0 });
+		m_pFont->Draw("(True Hardcore) - Ryan Simmons", 560, 534, 0.3f, { 0, 0, 0 });
+		break;
 	}
 }
 
