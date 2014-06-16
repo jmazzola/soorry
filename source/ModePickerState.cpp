@@ -252,35 +252,61 @@
 		pGraphics->DrawTexture(m_hBackground, SGD::Point{ 0, 0 });
 
 		if (m_nCursor == ARCADE)
-			m_pMainButton->Draw("ARCADE", { 120, 180 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("ARCADE", { 125, 180 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("ARCADE", { 140, 180 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("ARCADE", { 125, 180 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == HARDCORE)
-			m_pMainButton->Draw("HARDCORE", { 130, 240 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("HARDCORE", { 170, 240 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("HARDCORE", { 150, 240 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("HARDCORE", { 170, 240 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == SANDBOX)
-			m_pMainButton->Draw("SANDBOX", { 160, 300 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("SANDBOX", { 130, 300 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
 			m_pMainButton->Draw("SANDBOX", { 130, 300 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == BEAVERFEVER)
-			m_pMainButton->Draw("BEAVER FEVER", { 130, 360 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("BEAVER FEVER", { 110, 360 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("BEAVER FEVER", { 150, 360 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("BEAVER FEVER", { 110, 360 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == RUNNINGMAN)
-			m_pMainButton->Draw("RUNNING MAN", { 150, 420 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("RUNNING MAN", { 185, 420 }, { 255, 0, 0 }, { 0.8f, 0.8f }, 0);
 		else
-			m_pMainButton->Draw("RUNNING MAN", { 140, 420 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
+			m_pMainButton->Draw("RUNNING MAN", { 185, 420 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
 		if (m_nCursor == GOBACK)
-			m_pMainButton->Draw("Go Back", { 140, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("Go Back", { 135, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw("Go Back", { 130, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("Go Back", { 135, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
+		// Draw the description
+		DrawDescription(m_nCursor);
+
+	}
+}
+
+void ModePickerState::DrawDescription(int mode)
+{
+	switch (mode)
+	{
+	case ARCADE:
+		m_pFont->Draw("Classic Arcade", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case HARDCORE:
+		m_pFont->Draw("This mode is hard.", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case SANDBOX:
+		m_pFont->Draw("Unlimited Blocks!", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case BEAVERFEVER:
+		m_pFont->Draw("1000 beavers. 1 awesome gun.", 560, 516, 0.3f, { 0, 0, 0 });
+		break;
+	case RUNNINGMAN:
+		m_pFont->Draw("Keep moving. Or you'll die.", 560, 516, 0.3f, { 0, 0, 0 });
+		m_pFont->Draw("(True Hardcore) - Ryan Simmons", 560, 534, 0.3f, { 0, 0, 0 });
+		break;
 	}
 }
 

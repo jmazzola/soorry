@@ -230,7 +230,7 @@ using namespace std;
 	if (m_bTHEBOOL)
 	{
 		// If we're on the first slot and the file exists (not a new game)
-		if (m_nCursor == MENU_SLOT1 && m_bFileExists[0])
+		if (m_nCursor == MENU_SLOT1 && m_bFileExists[0] && m_bIsFileValid[0])
 		{
 			// Set the gameplay to slot 1
 			GameplayState::GetInstance()->SetCurrentGameSlot(1);
@@ -248,7 +248,7 @@ using namespace std;
 			// Exit immediately
 			return true;
 		}
-		else if (m_nCursor == MENU_SLOT2 && m_bFileExists[1])
+		else if (m_nCursor == MENU_SLOT2 && m_bFileExists[1] && m_bIsFileValid[1])
 		{
 			// Set the gameplay to slot 2
 			GameplayState::GetInstance()->SetCurrentGameSlot(2);
@@ -261,7 +261,7 @@ using namespace std;
 			pGame->Transition(ModePickerState::GetInstance());
 			return true;
 		}
-		else if (m_nCursor == MENU_SLOT3 && m_bFileExists[2])
+		else if (m_nCursor == MENU_SLOT3 && m_bFileExists[2] && m_bIsFileValid[2])
 		{
 			// Set the gameplay to slot 3
 			GameplayState::GetInstance()->SetCurrentGameSlot(3);
@@ -342,6 +342,7 @@ using namespace std;
 	}
 	else
 	{
+		CheckForValidSaves();
 		// Reset the transition time to allow for transitions again
 		m_fTransitionTime = TRANSITION_TIME;
 	}
@@ -379,13 +380,23 @@ using namespace std;
 			else
 				m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
-		else
+		// If it doesn't exist
+		if (!m_bFileExists[0])
 		{
 			// Prompt a new game.
 			if (m_nCursor == MENU_SLOT1)
 				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
 				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+		// If the file isn't valid
+		if (!m_bIsFileValid[0])
+		{
+			// Show they have a corrupt savegame.
+			if (m_nCursor == MENU_SLOT1)
+				m_pMainButton->Draw("Corrupt Savegame", { 180, 200 }, { 54, 54, 54 }, { 0.8f, 0.8f }, 0);
+			else
+				m_pMainButton->Draw("Corrupt Savegame", { 180, 200 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 		}
 
 		if (m_bFileExists[1])
@@ -395,12 +406,20 @@ using namespace std;
 			else
 				m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
-		else
+		if (!m_bFileExists[1])
 		{
 			if (m_nCursor == MENU_SLOT2)
 				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
 				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+		if (!m_bIsFileValid[1])
+		{
+			if (m_nCursor == MENU_SLOT2)
+				m_pMainButton->Draw("Corrupt Savegame", { 150, 290 }, { 54, 54, 54 }, { 0.8f, 0.8f }, 0);
+			else
+				m_pMainButton->Draw("Corrupt Savegame", { 150, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 		}
 
 		if (m_bFileExists[2])
@@ -410,12 +429,20 @@ using namespace std;
 			else
 				m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
-		else
+		if (!m_bFileExists[2])
 		{
 			if (m_nCursor == MENU_SLOT3)
 				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
 				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+		}
+
+		if(!m_bIsFileValid[2])
+		{
+			if (m_nCursor == MENU_SLOT3)
+				m_pMainButton->Draw("Corrupt Savegame", { 190, 380 }, { 54, 54, 54 }, { 0.8f, 0.8f }, 0);
+			else
+				m_pMainButton->Draw("Corrupt Savegame", { 190, 380 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 		}
 
 		if (m_nCursor == MENU_GOBACK)
@@ -506,14 +533,17 @@ void LoadSaveState::RenderAndLoadFileInfo(int slot)
 
 	case 1:
 		returnStr = "Magic Mismatch.";
+
 		break;
 
 	case 2:
 		returnStr = "Version Mismatch.";
+
 		break;
 		
 	case 0x1337:
-		{	
+		{
+
 			// Read the gamemode
 		returnStr = "GameMode: ";
 		string gameMode;
@@ -543,23 +573,90 @@ void LoadSaveState::RenderAndLoadFileInfo(int slot)
 	// Draw gamemode
 	m_pFont->Draw(returnStr.c_str(), 560, 498, 0.3f, { 0, 0, 0 });
 
-	// Draw money
-	string money = "Money: ";
-	money += std::to_string(rzbn->m_nMoney);
-	m_pFont->Draw(money.c_str(), 560, 516, 0.3f, { 0, 0, 0 });
 
-	// Draw wave number
-	string waveNum = "Current Wave: ";
-	waveNum += std::to_string(rzbn->m_nWaveNum);
-	m_pFont->Draw(waveNum.c_str(), 560, 534, 0.3f, { 0, 0, 0 });
+	if (!returnStr.find("GameMode"))
+	{
+		// Draw money
+		string money = "Money: ";
+		money += std::to_string(rzbn->m_nMoney);
+		m_pFont->Draw(money.c_str(), 560, 516, 0.3f, { 0, 0, 0 });
 
-	// Draw the time
-	char strDate[40];
-	struct tm tms;
-	localtime_s(&tms, &rzbn->m_Time);
-	strftime(strDate, sizeof(strDate), "%m/%d/%y    %I:%M %p", &tms);
-	m_pFont->Draw(strDate, 560, 552, 0.3f, { 0, 0, 0 });
+		// Draw wave number
+		string waveNum = "Current Wave: ";
+		waveNum += std::to_string(rzbn->m_nWaveNum);
+		m_pFont->Draw(waveNum.c_str(), 560, 534, 0.3f, { 0, 0, 0 });
+
+		// Draw the time
+		char strDate[40];
+		struct tm tms;
+		localtime_s(&tms, &rzbn->m_Time);
+		strftime(strDate, sizeof(strDate), "%m/%d/%y    %I:%M %p", &tms);
+		m_pFont->Draw(strDate, 560, 552, 0.3f, { 0, 0, 0 });
+	}
+	else
+	{
+		// Draw notice
+		string money = "Make a new game! ";
+		m_pFont->Draw(money.c_str(), 560, 516, 0.3f, { 0, 0, 0 });
+	}
 
 	delete rzbn;
 	
+}
+
+void LoadSaveState::CheckForValidSaves()
+{
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	RZBN* rzbn = new RZBN();
+
+	for (int i = 0; i < NUM_SLOTS; i++)
+	{
+		// Create our save file
+		pathtowrite += "\\SoorrySave_0";
+		pathtowrite += std::to_string(i + 1);
+		pathtowrite += ".rzbn";
+		switch (rzbn->LoadRZBNFile(pathtowrite))
+		{
+		case 0:
+			m_bIsFileValid[i] = true;
+			break;
+
+		case 1:
+			m_bIsFileValid[i] = false;
+
+			break;
+
+		case 2:
+			m_bIsFileValid[i] = false;
+			break;
+
+		case 0x1337:
+			m_bIsFileValid[i] = true;
+			break;
+		}
+	}
+
+	delete rzbn;
 }

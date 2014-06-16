@@ -37,6 +37,7 @@
 	// Get the current frame
 	int frame = GetSprite()->GetCurrFrame();
 
+
 	// Find the center of the image
 	SGD::Vector center;
 	center.x = GetSprite()->GetFrame(frame).GetFrameRect().right - GetSprite()->GetFrame(frame).GetFrameRect().left;
