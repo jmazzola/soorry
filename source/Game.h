@@ -9,7 +9,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define ARCADE_MODE 1
+#define ARCADE_MODE 0
 
 /**************************************************************/
 // Forward class declaration
