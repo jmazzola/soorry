@@ -65,6 +65,7 @@ Player::Player () : Listener ( this )
 	m_antsAnimation.m_nCurrFrame = 0;
 	m_antsAnimation.m_nCurrAnimation = "player";
 
+
 	// Player's variables
 	m_nMaxHealth = 100.0f;
 	m_nCurrHealth = 100.0f;
@@ -563,21 +564,37 @@ void Player::Update ( float dt )
 	if ((pInput->IsKeyPressed(SGD::Key::One) == true || pInput->IsDPadPressed(0, SGD::DPad::Up)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = MACHINE_GUN;
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
+		m_antsAnimation.m_fTimeOnFrame = 0;
+		m_antsAnimation.m_nCurrFrame = 0;
+		m_antsAnimation.m_nCurrAnimation = "CarryAR";
 	}
 	//Switch to Shotgun
 	if (( pInput->IsKeyPressed(SGD::Key::Two) == true || pInput->IsDPadPressed(0, SGD::DPad::Right)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = SHOT_GUN;
+		//m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
+		//m_antsAnimation.m_fTimeOnFrame = 0;
+		//m_antsAnimation.m_nCurrFrame = 0;
+		//m_antsAnimation.m_nCurrAnimation = "player";
 	}
 	//Switch to Rocket Launcher
 	if ((pInput->IsKeyPressed(SGD::Key::Three) == true || pInput->IsDPadPressed(0, SGD::DPad::Down)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = ROCKET_LAUNCHER;
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("RocketCarry");
+		m_antsAnimation.m_fTimeOnFrame = 0;
+		m_antsAnimation.m_nCurrFrame = 0;
+		m_antsAnimation.m_nCurrAnimation = "RocketCarry";
 	}
 	//Switch to Hat Trick Gun
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
+		//m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
+		//m_antsAnimation.m_fTimeOnFrame = 0;
+		//m_antsAnimation.m_nCurrFrame = 0;
+		//m_antsAnimation.m_nCurrAnimation = "player";
 	}
 #endif
 	//Shoot
@@ -717,7 +734,8 @@ void Player::Update ( float dt )
 		m_nCurrPlaceable = STRAP;
 #endif
 
-	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || trg > 0.1f) && m_pZombieWave->IsBuildMode())	{
+	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || trg > 0.1f) && m_pZombieWave->IsBuildMode() && Blockable(pos))	
+	{
 		// Test rect
 		SGD::Rectangle rect;
 		rect.left = pos.x * pWorld->GetTileWidth () + pWorld->GetTileWidth () / 4;
@@ -1794,10 +1812,15 @@ void Player::Render ( void )
 	drawRect.top -= Camera::y;
 	drawRect.bottom -= Camera::y; 
 	
+
+	//SGD::GraphicsManager* g = SGD::GraphicsManager::GetInstance();
+	//g->DrawLine({ m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y }, { (m_ptPosition.x - Camera::x) + 1, (m_ptPosition.y - Camera::y) + 1 });
+
 	
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();
+	//pGame->SetShowRects(true);
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 
