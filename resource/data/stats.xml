@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<Stats>
-    <Time Total="9084.306641" Build="5600.738281" Survival="3496.464355" />
-    <General Walking="1229481.250000" Rounds="34" RoundSpree="4" />
-    <Violence Kills="2513" Blood="9279.079102" Grenades="63" TotalShots="11488" MachineGun="9247" Shotgun="1183" RPG="1008" HatTrick="50" />
-    <Exchange WallsPlaced="2265" WallsPickedUp="178" WindowsPlaced="800" WindowsPickedUp="5" TowersBought="32" TowersSold="8" TrapsBought="0" TrapsSold="0" Money="365938" />
-</Stats>
