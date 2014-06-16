@@ -221,6 +221,15 @@ void AnimationManager::Render(AnimationTimestamp& ants, float x, float y, float 
 	g->DrawTextureSection(m_mSprites[ants.m_nCurrAnimation]->GetImage(),
 	{ (float)x, (float)y },
 	r, rotation, center, col);
+
+	SGD::Rectangle dr = r;
+	dr.top += y;
+	dr.bottom += y;
+	dr.left += x;
+	dr.right += x;
+
+	//g->DrawRectangle(dr, { 128, 255, 255, 0 });
+
 }
 
 Sprite* AnimationManager::GetSprite(std::string nameID)
