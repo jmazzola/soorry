@@ -597,15 +597,16 @@ void Player::Update ( float dt )
 		//m_antsAnimation.m_nCurrAnimation = "player";
 	}
 #endif
+
+#if !ARCADE_MODE
+	m_bTHEBOOL = pInput->IsKeyDown(SGD::Key::MouseLeft) || trg > 0.1f;
+#endif
+#if ARCADE_MODE
+	m_bTHEBOOL = !(pInput->IsButtonDown(0, 0) || pInput->IsButtonDown(1, 0)) && shoot != SGD::Vector{ 0.0f, 0.0f };
+#endif
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
-#if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyDown ( SGD::Key::MouseLeft ) || trg > 0.1f;
-#endif
-#if ARCADE_MODE
-		m_bTHEBOOL = !(pInput->IsButtonDown ( 0 , 0 ) || pInput->IsButtonDown ( 1 , 0 )) && shoot != SGD::Vector { 0.0f , 0.0f };
-#endif
 		// Left click
 		if (m_bTHEBOOL)
 		{
