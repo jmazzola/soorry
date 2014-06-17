@@ -435,11 +435,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
 		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
-			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
-			{
-
+			for (int y = 0; y < pWorld->GetWorldHeight(); y++)				
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
-			}
 	}
 
 
@@ -979,10 +976,13 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #endif
 		}
 
-
-		// Start the wave if in build mode
-		if (zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ||
-			pInput->IsButtonPressed(1, 6)))
+	
+	// Start the wave if in build mode
+	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && !m_bIsPaused && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
+		pInput->IsButtonPressed ( 1 , 6 )) )
+	{
+		zombieFactory->SetBuildTImeRemaining(0.0f);
+		if (m_pEntities->GetSize() >= BUCKET_PICKUP)
 		{
 			zombieFactory->SetBuildTImeRemaining(0.0f);
 			if (m_pEntities->GetSize() >= BUCKET_PICKUP)
