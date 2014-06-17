@@ -25,19 +25,19 @@ public:
 
 	/**********************************************************/
 	// Mutators
-	void SetWalls(unsigned int walls);
-	void SetWindows(unsigned int windows);
-	void SetBearTraps(unsigned int beartraps);
-	void SetMines(unsigned int mines);
-	void SetGrenades(unsigned int grenades);
-	void SetHealthPacks(unsigned int healthpack);
-	void SetMachineGunTowers(unsigned int machineGunTowers);
-	void SetMapleSyrupTowers(unsigned int mapleSyrupTowers);
-	void SetHockeyStickTowers(unsigned int hockeyStickTowers);
-	void SetLaserTowers(unsigned int laserTowers);
-	void SetLavaTraps(unsigned int lavaTraps);
-	void SetSpikeTraps(unsigned int spikeTraps);
-	void SetDroneCount(unsigned int drones);
+	bool SetWalls(unsigned int walls);
+	bool SetWindows(unsigned int windows);
+	bool SetBearTraps(unsigned int beartraps);
+	bool SetMines(unsigned int mines);
+	bool SetGrenades(unsigned int grenades);
+	bool SetHealthPacks(unsigned int healthpack);
+	bool SetMachineGunTowers(unsigned int machineGunTowers);
+	bool SetMapleSyrupTowers(unsigned int mapleSyrupTowers);
+	bool SetHockeyStickTowers(unsigned int hockeyStickTowers);
+	bool SetLaserTowers(unsigned int laserTowers);
+	bool SetLavaTraps(unsigned int lavaTraps);
+	bool SetSpikeTraps(unsigned int spikeTraps);
+	bool SetDroneCount(unsigned int drones);
 
 private:
 
@@ -56,11 +56,11 @@ private:
 	unsigned int m_unDrones;
 
 
-	unsigned int m_unWallsMAX = 150;
-	unsigned int m_unWindowsMAX = 150;
-	unsigned int m_unBearTrapsMAX = 100;
-	unsigned int m_unMinesMAX = 100;
-	unsigned int m_unGrenadesMAX = 100;
+	unsigned int m_unWallsMAX = 100;
+	unsigned int m_unWindowsMAX = 100;
+	unsigned int m_unBearTrapsMAX = 50;
+	unsigned int m_unMinesMAX = 50;
+	unsigned int m_unGrenadesMAX = 20;
 	unsigned int m_unHealthPacksMAX = 20;
 	unsigned int m_unMachineGunTowersMAX = 50;
 	unsigned int m_unMapleSyrupTowersMAX = 50;
@@ -68,7 +68,6 @@ private:
 	unsigned int m_unLaserTowersMAX = 50;
 	unsigned int m_unLavaTrapsMAX = 100;
 	unsigned int m_unSpikeTrapsMAX = 100;
-	unsigned int m_unDronesMAX = 25;
-
+	unsigned int m_unDronesMAX = 5;
 };
 

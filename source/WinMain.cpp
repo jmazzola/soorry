@@ -16,8 +16,7 @@
 #include <Windows.h>		// Win32 Application
 #include <vld.h>			// Visual Leak Detector!!!
 #include "Game.h"			// Our Game class
-
-
+#include "../resource.h"
 //*********************************************************************//
 // Preprocessor Constants
 #define WINDOW_CLASS_NAME	((const wchar_t*)L"Soorry")	// window class name
@@ -61,6 +60,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// Load the cursor
 	hCursor = LoadCursor( hInstance, MAKEINTRESOURCE(102)); 
+	
 	/////////////////////////////////////////////////////////////////////
 	// Initialize game
 	
@@ -152,8 +152,8 @@ HWND MakeWindow( HINSTANCE hInstance )
 	winClassEx.cbClsExtra		= 0;
 	winClassEx.cbWndExtra		= 0;
 	winClassEx.hInstance		= hInstance;
-	winClassEx.hIcon			= LoadIconW( NULL, (LPWSTR)IDI_APPLICATION );
-	winClassEx.hIconSm			= LoadIconW( NULL, (LPWSTR)IDI_APPLICATION );
+	winClassEx.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	winClassEx.hIconSm			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	winClassEx.hCursor			= LoadCursorW( NULL, (LPWSTR)IDC_ARROW );
 	winClassEx.hbrBackground	= (HBRUSH)(1+COLOR_WINDOW);
 	winClassEx.lpszMenuName		= NULL; 

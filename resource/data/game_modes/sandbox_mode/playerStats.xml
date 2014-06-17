@@ -2,16 +2,16 @@
 <player_stats>
   <health value="80"/>
   <speed value="250"/>
-  <walls amount="100"/>
-  <windows amount="100"/>
-  <bear_traps amount="10"/>
-  <mines amount="10"/>
-  <machine_guns amount="150"/>
-  <maple_syrups amount="10"/>
-  <hockey_sticks amount="5"/>
-  <lasers amount="10"/>
-  <lava_traps amount="50"/>
-  <spike_traps amount="50"/>
+  <walls amount="0"/>
+  <windows amount="0"/>
+  <bear_traps amount="0"/>
+  <mines amount="0"/>
+  <machine_guns amount="0"/>
+  <maple_syrups amount="0"/>
+  <hockey_sticks amount="0"/>
+  <lasers amount="0"/>
+  <lava_traps amount="0"/>
+  <spike_traps amount="0"/>
   <hasAR value="1" />
   <hasShotgun value="0" />
   <hasRocketLauncher value="0" />

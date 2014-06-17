@@ -89,6 +89,12 @@ using namespace std;
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	m_ptButtonPositions[MENU_MUSICVOL] = SGD::Point(140, 200);
+	m_ptButtonPositions[MENU_SFXVOL] = SGD::Point(120, 270);
+	m_ptButtonPositions[MENU_TOGGLEFULLSCREEN] = SGD::Point(160, 340);
+	m_ptButtonPositions[MENU_STATS] = SGD::Point(170, 410);
+	m_ptButtonPositions[MENU_GOBACK] = SGD::Point(150, 480);
+
 #if ARCADE_MODE
 	m_bAccept = true;
 	m_vtStick = SGD::Vector { 0.0f , 0.0f };
@@ -209,6 +215,29 @@ using namespace std;
 #if ARCADE_MODE
 	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
+
+	 // Mouse Selection
+	 if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+	 {
+		 for (int i = 0; i < MENU_TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.9f)))
+			 {
+				 m_nCursor = i;
+			 }
+		 }
+	 }
+	 if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+	 {
+		 for (int i = 0; i < MENU_TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.9f)))
+			 {
+				 m_bTHEBOOL = true;
+			 }
+		 }
+	 }
+
 	// Select the item
 	if (m_bTHEBOOL)
 	{
@@ -247,7 +276,7 @@ using namespace std;
 	// --- Increasing an option ---
 	// If the right key (PC) or right dpad (Xbox 360) are pressed
 #if !ARCADE_MODE
-	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right) || pInput->IsKeyPressed(SGD::Key::MouseLeft);
 #endif
 #if ARCADE_MODE
 	 m_bTHEBOOL = m_vtStick.x > 0 && m_bAccept;
@@ -278,7 +307,7 @@ using namespace std;
 	// --- Decreasing an option ---
 	// If the left key (PC) or left dpad (Xbox 360) are pressed
 #if !ARCADE_MODE
-	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left) || pInput->IsKeyPressed(SGD::Key::MouseRight);
 #endif
 #if ARCADE_MODE
 	 m_bTHEBOOL = m_vtStick.x < 0 && m_bAccept;
@@ -421,6 +450,8 @@ using namespace std;
 			m_pMainButton->Draw("Go Back", { 150, 480 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
 			m_pMainButton->Draw("Go Back", { 150, 480 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+		
 
 #else
 

@@ -64,7 +64,12 @@
 	if (pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
-
+	m_ptButtonPositions[ARCADE] = SGD::Point(120, 180);
+	m_ptButtonPositions[HARDCORE] = SGD::Point(130, 240);
+	m_ptButtonPositions[SANDBOX] = SGD::Point(160, 300);
+	m_ptButtonPositions[BEAVERFEVER] = SGD::Point(130, 360);
+	m_ptButtonPositions[RUNNINGMAN] = SGD::Point(150, 420);
+	m_ptButtonPositions[GOBACK] = SGD::Point(140, 480);
 }
 
 /**************************************************************/
@@ -153,6 +158,29 @@
 #if ARCADE_MODE
 	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
+
+	 // Mouse Selection
+	 if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+	 {
+		 for (int i = 0; i < TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.8f)))
+			 {
+				 m_nCursor = i;
+			 }
+		 }
+	 }
+	 if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+	 {
+		 for (int i = 0; i < TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.8f)))
+			 {
+				 m_bTHEBOOL = true;
+			 }
+		 }
+	 }
+
 	// Select the item
 	if (m_bTHEBOOL)
 	{

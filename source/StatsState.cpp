@@ -118,6 +118,12 @@ StatsState* StatsState::GetInstance(void)
 	 }
 	
 	 return true;
+
+#if !ARCADE_MODE
+
+
+
+#endif
 }
 
  void StatsState::Update(float elapsedTime)
