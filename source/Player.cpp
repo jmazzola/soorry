@@ -1821,7 +1821,7 @@ void Player::Render ( void )
 
 	// -- Debugging Mode --
 	Game* pGame = Game::GetInstance();
-	//pGame->SetShowRects(true);
+	pGame->SetShowRects(true);
 	if (pGame->IsShowingRects())
 		pGraphics->DrawRectangle(drawRect, { 128, 255, 255, 0 });
 
