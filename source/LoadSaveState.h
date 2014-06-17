@@ -90,8 +90,9 @@ private:
 
 	/**********************************************************/
 	// Enumerations
-	enum MenuOption { MENU_SLOT1, MENU_SLOT2, MENU_SLOT3, MENU_GOBACK };
+	enum MenuOption { MENU_SLOT1, MENU_SLOT2, MENU_SLOT3, MENU_GOBACK, MENU_TOTAL };
 
+	SGD::Point m_ptButtonPositions[MENU_TOTAL];
 
 	/**********************************************************/
 	// Factory Methods

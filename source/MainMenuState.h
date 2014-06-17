@@ -101,7 +101,9 @@ private:
 
 	/**********************************************************/
 	// Enumerations
-	enum MenuOption { MENU_START, MENU_HOWTOPLAY, MENU_OPTIONS, MENU_CREDITS, MENU_EXIT };
+	enum MenuOption { MENU_START, MENU_HOWTOPLAY, MENU_OPTIONS, MENU_CREDITS, MENU_EXIT, MENU_TOTAL };
+
+	SGD::Point m_ptButtonPositions[MENU_TOTAL];
 
 	bool m_bTHEBOOL;
 	bool m_bAccept;
