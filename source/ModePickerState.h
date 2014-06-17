@@ -57,7 +57,9 @@ private:
 	SGD::HTexture m_hBackground = SGD::INVALID_HANDLE;
 
 	// Enumeration
-	enum Modes { ARCADE, HARDCORE, SANDBOX, BEAVERFEVER, RUNNINGMAN, GOBACK };
+	enum Modes { ARCADE, HARDCORE, SANDBOX, BEAVERFEVER, RUNNINGMAN, GOBACK, TOTAL };
+
+	SGD::Point m_ptButtonPositions[TOTAL];
 
 	// ARCADE_MODE
 	bool m_bTHEBOOL;
