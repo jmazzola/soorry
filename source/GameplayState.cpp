@@ -976,420 +976,420 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #endif
 		}
 
-	
-	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && !m_bIsPaused && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
-		pInput->IsButtonPressed ( 1 , 6 )) )
-	{
-		zombieFactory->SetBuildTImeRemaining(0.0f);
-		if (m_pEntities->GetSize() >= BUCKET_PICKUP)
+
+		// Start the wave if in build mode
+		if (zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && !m_bIsPaused && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) ||
+			pInput->IsButtonPressed(1, 6)))
 		{
 			zombieFactory->SetBuildTImeRemaining(0.0f);
 			if (m_pEntities->GetSize() >= BUCKET_PICKUP)
 			{
-				for (unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++)
+				zombieFactory->SetBuildTImeRemaining(0.0f);
+				if (m_pEntities->GetSize() >= BUCKET_PICKUP)
 				{
-					Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
-					DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
-					pMsg->QueueMessage();
+					for (unsigned int i = 0; i < m_pEntities->GetBucket(BUCKET_PICKUP).size(); i++)
+					{
+						Entity * ent = dynamic_cast<Entity *>(m_pEntities->GetBucket(BUCKET_PICKUP)[i]);
+						DestroyEntityMessage* pMsg = new DestroyEntityMessage(ent);
+						pMsg->QueueMessage();
+					}
 				}
-			}
 
-		}
+			}
 
 
 #pragma region Pause Menu Navigation Clutter
-		// Handle pause menu input
-		// If we're paused
-		if (m_bIsPaused)
-		{
-			//-----------------------------------------------------------------------
-			// --- Handling what tab we're in ---
-			// If we're in the Main menu OF the pause menu. 
-			if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
+			// Handle pause menu input
+			// If we're paused
+			if (m_bIsPaused)
 			{
-
-				// --- Scrolling through options ---
-				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
-				// Move the cursor (selected item) down
-#if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
-#endif
-#if ARCADE_MODE
-				m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
-#endif
-				if (m_bTHEBOOL)
+				//-----------------------------------------------------------------------
+				// --- Handling what tab we're in ---
+				// If we're in the Main menu OF the pause menu. 
+				if (m_nPauseMenuTab == PauseMenuTab::TAB_MAIN)
 				{
-					// TODO: Add sound fx for going up and down
-					++m_nPauseMenuCursor;
 
-
-
-					// Wrap around the options
-					if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
+					// --- Scrolling through options ---
+					// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+					// Move the cursor (selected item) down
 #if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+					m_bTHEBOOL = m_vtStick.y > 0 && m_bAccept;
 #endif
-				// Move the cursor (selected item) up
-				if (m_bTHEBOOL)
-				{
-					--m_nPauseMenuCursor;
-
-					// Wrap around the options
-					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
-
-
-				// --- Selecting an option ---
-				// If the enter key (PC) or A button (Xbox 360) are pressed
-				// Select the item
-#if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
-#endif
-#if ARCADE_MODE
-				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
-#endif
-
-				// Mouse Selection
-				if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
-				{
-					for (int i = 0; i < PAUSE_TOTAL; i++)
+					if (m_bTHEBOOL)
 					{
-						if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+						// TODO: Add sound fx for going up and down
+						++m_nPauseMenuCursor;
+
+
+
+						// Wrap around the options
+						if (m_nPauseMenuCursor > PauseMenuOption::PAUSE_EXIT)
+							m_nPauseMenuCursor = PauseMenuOption::PAUSE_RESUME;
+#if ARCADE_MODE
+						m_bAccept = false;
+#endif
+					}
+#if !ARCADE_MODE
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+					m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
+					// Move the cursor (selected item) up
+					if (m_bTHEBOOL)
+					{
+						--m_nPauseMenuCursor;
+
+						// Wrap around the options
+						if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
+							m_nPauseMenuCursor = PauseMenuOption::PAUSE_EXIT;
+#if ARCADE_MODE
+						m_bAccept = false;
+#endif
+					}
+
+
+					// --- Selecting an option ---
+					// If the enter key (PC) or A button (Xbox 360) are pressed
+					// Select the item
+#if !ARCADE_MODE
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+					m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
+#endif
+
+					// Mouse Selection
+					if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+					{
+						for (int i = 0; i < PAUSE_TOTAL; i++)
 						{
-							m_nPauseMenuCursor = i;
+							if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+							{
+								m_nPauseMenuCursor = i;
+							}
+						}
+					}
+					if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+					{
+						for (int i = 0; i < PAUSE_TOTAL; i++)
+						{
+							if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+							{
+								m_bTHEBOOL = true;
+							}
+						}
+					}
+
+					if (m_bTHEBOOL)
+					{
+						// Switch table for the item selected
+						switch (m_nPauseMenuCursor)
+						{
+						case PauseMenuOption::PAUSE_RESUME:
+						{
+							// Resume gameplay
+							m_bIsPaused = false;
+							break;
+						}
+							break;
+
+						case PauseMenuOption::PAUSE_OPTION:
+						{
+							// Set the cursor to the first option in the options tab
+							m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+							// Go to the options tab
+							m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
+							// Load the options
+							OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
+							break;
+						}
+							break;
+
+						case PauseMenuOption::PAUSE_EXIT:
+						{
+							//Go to Main Menu
+							pGame->ChangeState(MainMenuState::GetInstance());
+							// Exit immediately
+							return true;
+						}
+							break;
 						}
 					}
 				}
-				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				// If we're in the main menu's options tab
+				else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 				{
-					for (int i = 0; i < PAUSE_TOTAL; i++)
+
+					// --- Scrolling through options ---
+					// If the down arrow (PC), or down dpad (Xbox 360) are pressed
+					// Move the cursor (selected item) down
+#if !ARCADE_MODE
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+#endif
+#if ARCADE_MODE
+					m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+#endif
+					if (m_bTHEBOOL)
 					{
-						if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+						// TODO: Add sound fx for going up and down
+						++m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+						if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+							m_nPauseMenuCursor++;
+#endif
+
+						// Wrap around the options
+						if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
+							m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
+
+#if ARCADE_MODE
+						m_bAccept = false;
+#endif
+					}
+					// If the up arrow (PC), or up dpad (Xbox 360) are pressed
+					// Move the cursor (selected item) up
+#if !ARCADE_MODE
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+#endif
+#if ARCADE_MODE
+					m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+#endif
+					if (m_bTHEBOOL)
+					{
+						--m_nPauseMenuCursor;
+
+#if ARCADE_MODE
+						if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+							m_nPauseMenuCursor--;
+#endif
+
+						// Wrap around the options
+						if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
+							m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
+
+#if ARCADE_MODE
+						m_bAccept = false;
+#endif
+					}
+
+					// --- Increasing an option ---
+					// If the right key (PC) or right dpad (Xbox 360) are pressed
+					// Increase the value
+#if !ARCADE_MODE
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+#endif
+#if ARCADE_MODE
+					m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
+#endif
+
+
+
+					if (m_bTHEBOOL)
+					{
+						switch (m_nPauseMenuCursor)
 						{
-							m_bTHEBOOL = true;
+						case PauseMenuOptionsOption::OPTION_MUSIC:
+						{
+							// Increase the music volume += 5
+							pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
 						}
-					}
-				}
+							break;
 
-				if (m_bTHEBOOL)
-				{
-					// Switch table for the item selected
-					switch (m_nPauseMenuCursor)
-					{
-					case PauseMenuOption::PAUSE_RESUME:
-					{
-						// Resume gameplay
-						m_bIsPaused = false;
-						break;
+						case PauseMenuOptionsOption::OPTION_SFX:
+						{
+							// Increase the sound effects volume += 5
+							pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+						}
+							break;
+						}
+#if ARCADE_MODE
+						m_bAccept = false;
+#endif
 					}
-						break;
-
-					case PauseMenuOption::PAUSE_OPTION:
-					{
-						// Set the cursor to the first option in the options tab
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-						// Go to the options tab
-						m_nPauseMenuTab = PauseMenuTab::TAB_OPTION;
-						// Load the options
-						OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
-						break;
-					}
-						break;
-
-					case PauseMenuOption::PAUSE_EXIT:
-					{
-						//Go to Main Menu
-						pGame->ChangeState(MainMenuState::GetInstance());
-						// Exit immediately
-						return true;
-					}
-						break;
-					}
-				}
-			}
-			// If we're in the main menu's options tab
-			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
-			{
-
-				// --- Scrolling through options ---
-				// If the down arrow (PC), or down dpad (Xbox 360) are pressed
-				// Move the cursor (selected item) down
+					// --- Decreasing an option ---
+					// If the left key (PC) or left dpad (Xbox 360) are pressed
+					// Decrease the value
 #if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Down);
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
+					m_bTHEBOOL = m_bAccept && m_vtStick.x < 0;
 #endif
-				if (m_bTHEBOOL)
-				{
-					// TODO: Add sound fx for going up and down
-					++m_nPauseMenuCursor;
+					if (m_bTHEBOOL)
+					{
+						switch (m_nPauseMenuCursor)
+						{
+						case PauseMenuOptionsOption::OPTION_MUSIC:
+						{
+							// Increase the music volume -= 5
+							pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+						}
+							break;
 
+						case PauseMenuOptionsOption::OPTION_SFX:
+						{
+							// Increase the sound effects volume -= 5
+							pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+						}
+							break;
+						}
 #if ARCADE_MODE
-					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
-						m_nPauseMenuCursor++;
+						m_bAccept = false;
 #endif
+					}
 
-					// Wrap around the options
-					if (m_nPauseMenuCursor > PauseMenuOptionsOption::OPTION_GOBACK)
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_MUSIC;
-
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
-				// If the up arrow (PC), or up dpad (Xbox 360) are pressed
-				// Move the cursor (selected item) up
+					// --- Selecting an option ---
+					// If the enter key (PC) or A button (Xbox 360) are pressed
+					// Select the item
 #if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up);
+					m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.y < 0;
+					m_bTHEBOOL = pInput->IsButtonPressed(0,0);
 #endif
-				if (m_bTHEBOOL)
-				{
-					--m_nPauseMenuCursor;
-
-#if ARCADE_MODE
-					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
-						m_nPauseMenuCursor--;
-#endif
-
-					// Wrap around the options
-					if (m_nPauseMenuCursor < PauseMenuOptionsOption::OPTION_MUSIC)
-						m_nPauseMenuCursor = PauseMenuOptionsOption::OPTION_GOBACK;
-
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
-
-				// --- Increasing an option ---
-				// If the right key (PC) or right dpad (Xbox 360) are pressed
-				// Increase the value
-#if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
-#endif
-#if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
-#endif
-
-
-
-				if (m_bTHEBOOL)
-				{
-					switch (m_nPauseMenuCursor)
+					if (m_bTHEBOOL)
 					{
-					case PauseMenuOptionsOption::OPTION_MUSIC:
-					{
-						// Increase the music volume += 5
-						pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
-					}
-						break;
+						switch (m_nPauseMenuCursor)
+						{
+						case PauseMenuOptionsOption::OPTION_FULLSCREEN:
+						{
+							pGame->ToggleFullscreen();
+						}
+							break;
+						case PauseMenuOptionsOption::OPTION_GOBACK:
+						{
+							// Go back to the pause menu's main menu
+							m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
+							// Make the highlighted option 'Options'
+							m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
+							// Save options
+							OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
 
-					case PauseMenuOptionsOption::OPTION_SFX:
-					{
-						// Increase the sound effects volume += 5
-						pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
-					}
-						break;
-					}
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
-				// --- Decreasing an option ---
-				// If the left key (PC) or left dpad (Xbox 360) are pressed
-				// Decrease the value
-#if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
-#endif
-#if ARCADE_MODE
-				m_bTHEBOOL = m_bAccept && m_vtStick.x < 0;
-#endif
-				if (m_bTHEBOOL)
-				{
-					switch (m_nPauseMenuCursor)
-					{
-					case PauseMenuOptionsOption::OPTION_MUSIC:
-					{
-						// Increase the music volume -= 5
-						pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
-					}
-						break;
-
-					case PauseMenuOptionsOption::OPTION_SFX:
-					{
-						// Increase the sound effects volume -= 5
-						pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
-					}
-						break;
-					}
-#if ARCADE_MODE
-					m_bAccept = false;
-#endif
-				}
-
-				// --- Selecting an option ---
-				// If the enter key (PC) or A button (Xbox 360) are pressed
-				// Select the item
-#if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
-#endif
-#if ARCADE_MODE
-				m_bTHEBOOL = pInput->IsButtonPressed(0,0);
-#endif
-				if (m_bTHEBOOL)
-				{
-					switch (m_nPauseMenuCursor)
-					{
-					case PauseMenuOptionsOption::OPTION_FULLSCREEN:
-					{
-						pGame->ToggleFullscreen();
-					}
-						break;
-					case PauseMenuOptionsOption::OPTION_GOBACK:
-					{
-						// Go back to the pause menu's main menu
-						m_nPauseMenuTab = PauseMenuTab::TAB_MAIN;
-						// Make the highlighted option 'Options'
-						m_nPauseMenuCursor = PauseMenuOption::PAUSE_OPTION;
-						// Save options
-						OptionsState::GetInstance()->SaveOptions("resource/data/config.xml");
-
-						break;
-					}
-						break;
+							break;
+						}
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
 
 #pragma endregion
 
 #if !ARCADE_MODE
-	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A));
+		m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A));
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+		m_bTHEBOOL = pInput->IsButtonPressed(0,0);
 #endif
-	if (m_bCreditsStarted == true && m_bTHEBOOL)
-	{
-		// Since there's only one state..go back to main menu
-		pGame->ChangeState(MainMenuState::GetInstance());
-		return true;
-	}
-	if (m_bHasLost == true && m_fLossTimer <= 0.0f)
-	{
-#if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
-#endif
-#if ARCADE_MODE
-		m_bTHEBOOL = m_vtStick.y != 0 && m_bAccept;
-#endif
-		if (m_bTHEBOOL)
+		if (m_bCreditsStarted == true && m_bTHEBOOL)
 		{
-			m_bReplay = !m_bReplay;
-#if ARCADE_MODE
-			m_bAccept = false;
-#endif
+			// Since there's only one state..go back to main menu
+			pGame->ChangeState(MainMenuState::GetInstance());
+			return true;
 		}
+		if (m_bHasLost == true && m_fLossTimer <= 0.0f)
+		{
 #if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+			m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsKeyPressed(SGD::Key::Down) || pInput->IsDPadPressed(0, SGD::DPad::Up) || pInput->IsDPadPressed(0, SGD::DPad::Down);
 #endif
 #if ARCADE_MODE
-		m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
+			m_bTHEBOOL = m_vtStick.y != 0 && m_bAccept;
 #endif
-		if (m_bTHEBOOL)
-		{
-			switch (m_bReplay)
+			if (m_bTHEBOOL)
 			{
-			case true:
-				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
-				return true;
-				break;
-
-			case false:
-				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
-				return true;
-				break;
-			}
+				m_bReplay = !m_bReplay;
 #if ARCADE_MODE
-			m_bAccept = false;
+				m_bAccept = false;
 #endif
+			}
+#if !ARCADE_MODE
+			m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
+#endif
+#if ARCADE_MODE
+			m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
+#endif
+			if (m_bTHEBOOL)
+			{
+				switch (m_bReplay)
+				{
+				case true:
+					Game::GetInstance()->ChangeState(GameplayState::GetInstance());
+					return true;
+					break;
+
+				case false:
+					Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
+					return true;
+					break;
+				}
+#if ARCADE_MODE
+				m_bAccept = false;
+#endif
+			}
 		}
-	}
 
-	if (m_pShop->IsOpen())
-		m_pShop->Input();
+		if (m_pShop->IsOpen())
+			m_pShop->Input();
 
 
-	// -- Debugging Mode Input always last --
-	if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused)
-	{
+		// -- Debugging Mode Input always last --
+		if (pGame->IsDebugMode() && !m_pShop->IsOpen() && !m_bIsPaused)
+		{
 #define DEBUG_MAX 5
 #define DEBUG_MIN 0
 
-		if (pInput->IsKeyPressed(SGD::Key::Up))
-		{
-			int cur = pGame->GetDebugCurs();
-			cur--;
-			pGame->SetDebugCurs(cur);
+			if (pInput->IsKeyPressed(SGD::Key::Up))
+			{
+				int cur = pGame->GetDebugCurs();
+				cur--;
+				pGame->SetDebugCurs(cur);
 
-			// Wrap around
-			if (pGame->GetDebugCurs() < DEBUG_MIN)
-				pGame->SetDebugCurs(DEBUG_MAX);
-		}
-		if (pInput->IsKeyPressed(SGD::Key::Down))
-		{
-			int cur = pGame->GetDebugCurs();
-			cur++;
-			pGame->SetDebugCurs(cur);
+				// Wrap around
+				if (pGame->GetDebugCurs() < DEBUG_MIN)
+					pGame->SetDebugCurs(DEBUG_MAX);
+			}
+			if (pInput->IsKeyPressed(SGD::Key::Down))
+			{
+				int cur = pGame->GetDebugCurs();
+				cur++;
+				pGame->SetDebugCurs(cur);
 
-			// Wrap around
-			if (pGame->GetDebugCurs() > DEBUG_MAX)
-				pGame->SetDebugCurs(DEBUG_MIN);
-		}
+				// Wrap around
+				if (pGame->GetDebugCurs() > DEBUG_MAX)
+					pGame->SetDebugCurs(DEBUG_MIN);
+			}
 
-		if (pInput->IsKeyPressed(SGD::Key::Shift))
-		{
-			if (pGame->GetDebugCurs() == DEBUG_MIN)
-				pGame->SetGod(!pGame->IsGod());
+			if (pInput->IsKeyPressed(SGD::Key::Shift))
+			{
+				if (pGame->GetDebugCurs() == DEBUG_MIN)
+					pGame->SetGod(!pGame->IsGod());
 
-			if (pGame->GetDebugCurs() == 1)
-				pGame->SetInfAmmo(!pGame->HasInfAmmo());
+				if (pGame->GetDebugCurs() == 1)
+					pGame->SetInfAmmo(!pGame->HasInfAmmo());
 
-			if (pGame->GetDebugCurs() == 2)
-				pGame->SetShowPaths(!pGame->IsShowingPaths());
+				if (pGame->GetDebugCurs() == 2)
+					pGame->SetShowPaths(!pGame->IsShowingPaths());
 
-			if (pGame->GetDebugCurs() == 3)
-				pGame->SetShowRects(!pGame->IsShowingRects());
+				if (pGame->GetDebugCurs() == 3)
+					pGame->SetShowRects(!pGame->IsShowingRects());
 
-			if (pGame->GetDebugCurs() == 4)
-				dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
+				if (pGame->GetDebugCurs() == 4)
+					dynamic_cast<Player*>(m_pPlayer)->SetScore(dynamic_cast<Player*>(m_pPlayer)->GetScore() + 1000000);
 
-			if (pGame->GetDebugCurs() == 5)
-				pGame->SetShowPos(!pGame->IsShowingPos());
+				if (pGame->GetDebugCurs() == 5)
+					pGame->SetShowPos(!pGame->IsShowingPos());
 
+			}
 		}
 	}
-
-	return true;	// keep playing
-}
+		return true;	// keep playing
+	}
 
 
 /**************************************************************/
