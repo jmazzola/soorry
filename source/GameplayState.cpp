@@ -61,7 +61,6 @@
 #include "Grenade.h"
 #include "TrickShotBullet.h"
 #include "ShopEntity.h"
-
 #include "MessageID.h"
 #include "BitmapFont.h"
 #include "Entity.h"
@@ -314,27 +313,30 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// 5%
 	SetLoadingBar(0.01f, "Loading Audio");
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	m_hBackgroundMus = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
-	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
-	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
-	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
-	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
-	m_hBulletHit = pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
-	m_hBulletImpact = pAudio->LoadAudio("resource/audio/bulletImpact.wav");
-	m_hPurchase = pAudio->LoadAudio("resource/audio/purchase.wav");
-	m_hExplosion = pAudio->LoadAudio("resource/audio/explosion.wav");
-	m_hChaChing     = pAudio->LoadAudio("resource/audio/ChaChing.wav");
-	m_hClickSound	= pAudio->LoadAudio("resource/audio/click.wav");
-	m_hBeaverFever	= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
-	m_hGoToShop		= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
-	m_hGoodJob		= pAudio->LoadAudio("resource/audio/Good_Job.wav");
-	m_hSoory1		= pAudio->LoadAudio("resource/audio/Soory1.wav");
-	m_hSoory2		= pAudio->LoadAudio("resource/audio/Soory2.wav");
-	m_hTrueHero		= pAudio->LoadAudio("resource/audio/True_Hero.wav");
-	m_hUpgrade1		= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
-	m_hWelcomeShop	= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
-	m_hWinTheGame	= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
-	m_hAmmoPickup	= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
+	m_hBackgroundMus	= pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
+	m_hSandboxMusic		= pAudio->LoadAudio("resource/audio/Sandbox_Music.xwm");
+	m_hBeaverFeverMusic = pAudio->LoadAudio("resource/audio/Beaver_Fever_Music.xwm");
+	m_hRunningManMusic = pAudio->LoadAudio("resource/audio/Running_Man_Music.xwm");
+	m_hShopMusic		= pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hGunShoot			= pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
+	m_hRocketShoot		= pAudio->LoadAudio("resource/audio/rocketFire.wav");
+	m_hShotgunShoot		= pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
+	m_hBulletHit		= pAudio->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_hBulletImpact		= pAudio->LoadAudio("resource/audio/bulletImpact.wav");
+	m_hPurchase			= pAudio->LoadAudio("resource/audio/purchase.wav");
+	m_hExplosion		= pAudio->LoadAudio("resource/audio/explosion.wav");
+	m_hChaChing			= pAudio->LoadAudio("resource/audio/ChaChing.wav");
+	m_hClickSound		= pAudio->LoadAudio("resource/audio/click.wav");
+	m_hBeaverFever		= pAudio->LoadAudio("resource/audio/Beaver_Fever.wav");
+	m_hGoToShop			= pAudio->LoadAudio("resource/audio/Go_To_The_Shop1.wav");
+	m_hGoodJob			= pAudio->LoadAudio("resource/audio/Good_Job.wav");
+	m_hSoory1			= pAudio->LoadAudio("resource/audio/Soory1.wav");
+	m_hSoory2			= pAudio->LoadAudio("resource/audio/Soory2.wav");
+	m_hTrueHero			= pAudio->LoadAudio("resource/audio/True_Hero.wav");
+	m_hUpgrade1			= pAudio->LoadAudio("resource/audio/Upgrade1.wav");
+	m_hWelcomeShop		= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
+	m_hWinTheGame		= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
+	m_hAmmoPickup		= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 
 
 	// 12%
@@ -677,7 +679,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Add it to the entity manager
 	m_pEntities->AddEntity(m_pPlayer, BUCKET_PLAYER);
 
-	// Load pause menu background
+	// Load pause menu dmusicd
 	m_hPauseMainBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_PauseMenu.png");
 	m_hPauseOptionsBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_optionsMenu.png");
 
@@ -713,7 +715,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_fLossTimer = 5.0f;
 
 	// Play the background music
-	pAudio->PlayAudio(m_hBackgroundMus, true);
+	if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+	{
+		pAudio->PlayAudio(m_hBackgroundMus, true);
+	}
+	if (m_nGamemode == BEAVER_FEAVER_MODE)
+	{
+		pAudio->PlayAudio(m_hBeaverFeverMusic, true);
+	}
+	if (m_nGamemode == SANDBOX_MODE)
+	{
+		pAudio->PlayAudio(m_hSandboxMusic, true);
+	}
+	if (m_nGamemode == RUNNING_MAN_MODE)
+	{
+		pAudio->PlayAudio(m_hRunningManMusic, true);
+	}
 
 	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
@@ -798,6 +815,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
+	pAudio->UnloadAudio(m_hSandboxMusic);
+	pAudio->UnloadAudio(m_hBeaverFeverMusic);
+	pAudio->UnloadAudio(m_hRunningManMusic);
 	pAudio->StopAudio(m_hShopMusic);
 	pAudio->UnloadAudio(m_hShopMusic);
 	pAudio->UnloadAudio(m_hBulletHit);
@@ -1353,21 +1373,57 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Grab the controllers
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music
-	if (m_pShop->IsOpen() == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == false)
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	if (m_pShop->IsOpen() == false && pAudio->IsAudioPlaying(m_hBackgroundMus) == false)
 	{
-		SGD::AudioManager::GetInstance()->StopAudio(m_hShopMusic);
-		SGD::AudioManager::GetInstance()->PlayAudio(m_hBackgroundMus);
+		pAudio->StopAudio(m_hShopMusic);
+		if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+		{
+			pAudio->PlayAudio(m_hBackgroundMus, true);
+		}
+		if (m_nGamemode == BEAVER_FEAVER_MODE)
+		{
+			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
+			{
+				pAudio->PlayAudio(m_hBeaverFeverMusic, true);
+			}
+		}
+		if (m_nGamemode == SANDBOX_MODE)
+		{
+			if (pAudio->IsAudioPlaying(m_hSandboxMusic) == false)
+			{
+				pAudio->PlayAudio(m_hSandboxMusic, true);
+			}
+		}
+		if (m_nGamemode == RUNNING_MAN_MODE)
+		{
+
+		}
 		m_bEnterShop = false;
 	}
-	else if (m_pShop->IsOpen() == true && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBackgroundMus) == true)
+	else if (m_pShop->IsOpen() == true && pAudio->IsAudioPlaying(m_hBackgroundMus) == true)
 	{
-		SGD::AudioManager::GetInstance()->StopAudio(m_hBackgroundMus);
-		SGD::AudioManager::GetInstance()->PlayAudio(m_hShopMusic);
+		if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+		{
+			pAudio->StopAudio(m_hBackgroundMus);
+		}
+		if (m_nGamemode == BEAVER_FEAVER_MODE)
+		{
+		}
+		if (m_nGamemode == SANDBOX_MODE)
+		{
+			pAudio->StopAudio(m_hSandboxMusic);
+		}
+		if (m_nGamemode == RUNNING_MAN_MODE)
+		{
+
+		}
+		pAudio->PlayAudio(m_hShopMusic);
 		if (m_bEnterShop == false)
 		{
-			if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hWelcomeShop) == false)
+			if (pAudio->IsAudioPlaying(m_hWelcomeShop) == false)
 			{
-				SGD::AudioManager::GetInstance()->PlayAudio(m_hWelcomeShop);
+				pAudio->PlayAudio(m_hWelcomeShop);
 			}
 			m_bEnterShop = true;
 
