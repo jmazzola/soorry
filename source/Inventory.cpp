@@ -11,107 +11,146 @@ Inventory::~Inventory()
 }
 /**********************************************************/
 // Mutators
-void Inventory::SetWalls(unsigned int walls) 
+bool Inventory::SetWalls(unsigned int walls)
 { 
 	if (walls > m_unWallsMAX) 
-		return; 
+		return false; 
 	else
+	{
 		m_unWalls = walls;
+		return true;
+	}
 }
 
-void Inventory::SetWindows(unsigned int windows) 
+bool Inventory::SetWindows(unsigned int windows)
 { 
 	if (windows > m_unWindowsMAX) 
-		return; 
+		return false; 
 	else
+	{
 		m_unWindows = windows;
+		return true;
+	}
 }
 
-void Inventory::SetBearTraps(unsigned int beartraps) 
+bool Inventory::SetBearTraps(unsigned int beartraps)
 { 
 	if (beartraps > m_unBearTrapsMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unBearTraps = beartraps;
+		return true;
+	}
 }
 
-void Inventory::SetMines(unsigned int mines) 
+bool Inventory::SetMines(unsigned int mines)
 { 
 	if (mines > m_unMinesMAX)
-		return;
+		return false;
 	else
+	{
 		m_unMines = mines;
+		return true;
+	}
 }
 
-void Inventory::SetGrenades(unsigned int grenades) 
+bool Inventory::SetGrenades(unsigned int grenades)
 { 
 	if (grenades > m_unGrenadesMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unGrenades = grenades;
+		return true;
+	}
 }
 
-void Inventory::SetHealthPacks(unsigned int healthpack) 
+bool Inventory::SetHealthPacks(unsigned int healthpack)
 { 
 	if (healthpack > m_unHealthPacksMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unHealthPacks = healthpack;
+		return true;
+	}
 }
 
-void Inventory::SetMachineGunTowers(unsigned int machineGunTowers) 
+bool Inventory::SetMachineGunTowers(unsigned int machineGunTowers)
 { 
 	if (machineGunTowers > m_unMachineGunTowersMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unMachineGunTowers = machineGunTowers;
+		return true;
+	}
 }
 
-void Inventory::SetMapleSyrupTowers(unsigned int mapleSyrupTowers) 
+bool Inventory::SetMapleSyrupTowers(unsigned int mapleSyrupTowers)
 { 
 	if (mapleSyrupTowers > m_unMapleSyrupTowersMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unMapleSyrupTowers = mapleSyrupTowers;
+		return true;
+	}
 }
 
-void Inventory::SetHockeyStickTowers(unsigned int hockeyStickTowers) 
+bool Inventory::SetHockeyStickTowers(unsigned int hockeyStickTowers)
 { 
 	if (hockeyStickTowers > m_unHockeyStickTowersMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unHockeyStickTowers = hockeyStickTowers;
+		return true;
+	}
 }
 
-void Inventory::SetLaserTowers(unsigned int laserTowers) 
+bool Inventory::SetLaserTowers(unsigned int laserTowers)
 {
 	if (laserTowers > m_unLaserTowersMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unLaserTowers = laserTowers;
+		return true;
+	}
 }
 
-void Inventory::SetLavaTraps(unsigned int lavaTraps) 
+bool Inventory::SetLavaTraps(unsigned int lavaTraps)
 { 
 	if (lavaTraps > m_unLavaTrapsMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unLavaTraps = lavaTraps;
+		return true;
+	}
 }
 
-void Inventory::SetSpikeTraps(unsigned int spikeTraps) 
+bool Inventory::SetSpikeTraps(unsigned int spikeTraps)
 { 
 	if (spikeTraps > m_unSpikeTrapsMAX) 
-		return;
+		return false;
 	else
+	{
 		m_unSpikeTraps = spikeTraps;
+		return true;
+	}
 }
 
-void Inventory::SetDroneCount(unsigned int drones) 
+bool Inventory::SetDroneCount(unsigned int drones)
 { 
 	if (drones > m_unDronesMAX) 
-		return;
+		return false;
 	else
-		m_unDrones = drones; 
+	{
+		m_unDrones = drones;
+		return true;
+	}
 }
 
