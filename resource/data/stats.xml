@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Stats>
-    <Time Total="9501.804688" Build="5876.762207" Survival="3650.125732" />
-    <General Walking="1308333.000000" Rounds="34" RoundSpree="4" />
-    <Violence Kills="2546" Blood="9412.373047" Grenades="73" TotalShots="11831" MachineGun="9590" Shotgun="1183" RPG="1008" HatTrick="50" />
-    <Exchange WallsPlaced="2434" WallsPickedUp="217" WindowsPlaced="800" WindowsPickedUp="9" TowersBought="32" TowersSold="8" TrapsBought="0" TrapsSold="0" Money="365938" />
+    <Time Total="9690.854492" Build="5898.346680" Survival="3822.107910" />
+    <General Walking="1352069.625000" Rounds="35" RoundSpree="4" />
+    <Violence Kills="2598" Blood="9632.961914" Grenades="81" TotalShots="12220" MachineGun="9979" Shotgun="1183" RPG="1008" HatTrick="50" />
+    <Exchange WallsPlaced="2436" WallsPickedUp="219" WindowsPlaced="800" WindowsPickedUp="9" TowersBought="32" TowersSold="8" TrapsBought="0" TrapsSold="0" Money="365938" />
 </Stats>

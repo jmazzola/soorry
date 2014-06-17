@@ -435,11 +435,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
 		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
-			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
-			{
-				
+			for (int y = 0; y < pWorld->GetWorldHeight(); y++)				
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
-			}
 	}
 
 
