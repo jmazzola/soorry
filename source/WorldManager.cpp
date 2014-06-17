@@ -51,6 +51,8 @@ bool WorldManager::LoadWorld(string fileName)
 	if (doc.LoadFile(fileName.c_str()) == false)
 		return false;
 
+	pGameplay->SetLoadingBar(0.0f, "sdfjklsdfjkl");
+
 	// Access the 'root' TinyXML Element
 	TiXmlElement* pRoot = doc.RootElement();
 

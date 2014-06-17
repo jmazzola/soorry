@@ -10,6 +10,7 @@
 
 #include "IGameState.h"						// uses IGameState
 #include "../SGD Wrappers/SGD_Handle.h"		// uses HTexture & HAudio
+#include "../SGD Wrappers/SGD_Geometry.h"
 
 #include <string>
 using namespace std;
@@ -142,18 +143,21 @@ private:
 	string weapNames[TOTAL_WEAPONS];
 	string weapDescs[TOTAL_WEAPONS];
 	unsigned int weapPrices[TOTAL_WEAPONS];
+	SGD::Point weapTopLeft[TOTAL_WEAPONS];
 
 	// --- Items ---
 	string itemNames[TOTAL_ITEMS];
 	string itemDescs[TOTAL_ITEMS];
 	unsigned int itemPrices[TOTAL_ITEMS];
 	unsigned int itemAmountToAdd[TOTAL_ITEMS];
+	SGD::Point itemTopLeft[TOTAL_ITEMS];
 
 	// --- Weapon Upgrades ---
 	string upgradeNames[TOTAL_UPGRADES];
 	string upgradeDescs[TOTAL_UPGRADES];
 	unsigned int upgradePrices[TOTAL_UPGRADES];
 	unsigned int upgradeAmountToAdd[TOTAL_UPGRADES];
+	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
 
 
 	// --- Towers ---
@@ -161,6 +165,7 @@ private:
 	string towerDescs[TOTAL_TOWERS];
 	unsigned int towerPrices[TOTAL_TOWERS];
 	unsigned int towerAmountToAdd[TOTAL_TOWERS];
+	SGD::Point towerTopLeft[TOTAL_TOWERS];
 
 	// Textures
 	// - Backgrounds

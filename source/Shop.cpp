@@ -38,16 +38,17 @@ void Shop::Enter(Entity* player)
 	m_hBackgroundMain = pGraphics->LoadTexture("resource/images/menus/ShopMainBG.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/ShopBG.png");
 	m_hTowerMain = pGraphics->LoadTexture("resource/images/menus/ShopTowersBG.png");
+	m_hShopItems = pGraphics->LoadTexture("resource/images/menus/shopsheet.png");
 
 	// Load the audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	/*if (pAudio->IsAudioPlaying(m_hShopMusic) == false)
 	{
-		pAudio->PlayAudio(m_hShopMusic, true);
+	pAudio->PlayAudio(m_hShopMusic, true);
 	}
 	if (pAudio->IsAudioPlaying(m_hWelcome) == false)
 	{
-		pAudio->PlayAudio(m_hWelcome);
+	pAudio->PlayAudio(m_hWelcome);
 	}*/
 	// Bitmap Font
 	m_pFont = new BitmapFont;
@@ -75,6 +76,7 @@ void Shop::Exit()
 	pGraphics->UnloadTexture(m_hBackground);
 	pGraphics->UnloadTexture(m_hBackgroundMain);
 	pGraphics->UnloadTexture(m_hTowerMain);
+	pGraphics->UnloadTexture(m_hShopItems);
 
 	m_nMenuTab = MAIN_TAB;
 
@@ -411,9 +413,9 @@ void Shop::Render()
 				m_pFont->Draw("Upgrade Center", 200, 250, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_TOWERS)
-				m_pFont->Draw("Tower Shop", 200, 300, 1, {0, 255, 0});
+				m_pFont->Draw("Tower Shop", 200, 300, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Tower Shop", 200, 300, 1, {0, 0, 0});
+				m_pFont->Draw("Tower Shop", 200, 300, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_EXITSHOP)
 				m_pFont->Draw("Exit Mall", 200, 350, 1, { 0, 255, 0 });
@@ -430,57 +432,61 @@ void Shop::Render()
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
-			// -- Draw the item's descriptions --
+			// -- Draw the weapon's descriptions --
 			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
 
-			// -- Draw the item's price --
+			// -- Draw the weapon's price --
 			string price = "Price: ";
 			price += std::to_string(weapPrices[m_nCursor]);
 			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
-			// -- Draw the item's Names and highlighting --
+			// -- Draw the weapon's picture --
+			SGD::Point shitfucks = weapTopLeft[m_nCursor];
+			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(weapTopLeft[m_nCursor], SGD::Size(100, 100)));
+
+			// -- Draw the weapon's Names and highlighting --
 			for (int i = 0; i < TOTAL_WEAPONS; i++)
 			{
 				// If we're currently selected
-				if ( m_nCursor == i )
+				if (m_nCursor == i)
 				{
 					// Draw it in green if we don't own it
-					switch ( i )
+					switch (i)
 					{
 					case 0:
-						m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						break;
 					case 1:
 					{
-						if ( dynamic_cast<Player*>(m_pPlayer)->HasShotty () == true )
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						if (dynamic_cast<Player*>(m_pPlayer)->HasShotty() == true)
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						else
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 						break;
 					}
 					case 2:
 					{
-						if ( dynamic_cast<Player*>(m_pPlayer)->HasRocketLauncher () == true )
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						if (dynamic_cast<Player*>(m_pPlayer)->HasRocketLauncher() == true)
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						else
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 					}
 						break;
 					case 3:
 					{
-						if ( dynamic_cast<Player*>(m_pPlayer)->HasHatTrick () == true )
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 255 , 0 , 0 } );
+						if (dynamic_cast<Player*>(m_pPlayer)->HasHatTrick() == true)
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						else
-							m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 					}
 						break;
 					case 4:
-						m_pFont->Draw ( weapNames[ i ].c_str () , 55 , 70 + 40 * i , 0.5f , { 0 , 255 , 0 } );
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 						break;
 					default:
 						break;
 					}
-					
+
 				}
 				else
 					// Draw it in black
@@ -541,6 +547,9 @@ void Shop::Render()
 			price += std::to_string(itemPrices[m_nCursor]);
 			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
+			// -- Draw the item's picture --
+			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(itemTopLeft[m_nCursor], SGD::Size(100, 100)));
+
 			// -- Draw the item's Names and highlighting --
 			for (int i = 0; i < TOTAL_ITEMS; i++)
 			{
@@ -553,7 +562,7 @@ void Shop::Render()
 					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
 			}
 
-			
+
 		}
 		else if (m_nMenuTab == UPGRADES_TAB)
 		{
@@ -610,6 +619,9 @@ void Shop::Render()
 			price += std::to_string(upgradePrices[m_nCursor]);
 			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
+			// -- Draw the upgrade's picture --
+			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(upgradeTopLeft[m_nCursor], SGD::Size(100, 100)));
+
 			// -- Draw the upgrades names and highlighting --
 			for (int i = 0; i < TOTAL_UPGRADES; i++)
 			{
@@ -658,6 +670,9 @@ void Shop::Render()
 			price += std::to_string(towerPrices[m_nCursor]);
 			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
+			// -- Draw the tower's picture --
+			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(towerTopLeft[m_nCursor], SGD::Size(100, 100)));
+
 			// -- Draw the item's Names and highlighting --
 			for (int i = 0; i < TOTAL_TOWERS; i++)
 			{
@@ -693,21 +708,21 @@ bool Shop::Buy(int parcel, int shopSection)
 
 	case WEAPONS:
 	{
-		switch ( parcel )
+		switch (parcel)
 		{
 		case 0:
 			return false;
 			break;
 		case 1:
-			if(player->HasShotty() == true)
+			if (player->HasShotty() == true)
 				return false;
 			break;
 		case 2:
-			if(player->HasRocketLauncher() == true)
+			if (player->HasRocketLauncher() == true)
 				return false;
 			break;
 		case 3:
-			if(player->HasHatTrick() == true)
+			if (player->HasHatTrick() == true)
 				return false;
 			break;
 		}
@@ -724,7 +739,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	}
 		break;
 
-	case ITEMS:		
+	case ITEMS:
 	{
 		// If the player has the money for the item
 		if (curMoney >= (int)itemPrices[parcel])
@@ -790,7 +805,7 @@ void Shop::Sell(int parcel, int shopSection)
 
 	switch (shopSection)
 	{
-	case WEAPONS:		
+	case WEAPONS:
 	{
 		player->SetScore(curMoney += int(weapPrices[parcel] * SELL_DISCOUNT));
 	}
@@ -810,7 +825,7 @@ void Shop::Sell(int parcel, int shopSection)
 
 	case TOWERS:		// towers
 	{
-		
+
 		if (parcel == TOWER_MG && inv->GetMachineGunTowers() > 0)
 		{
 			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
@@ -870,10 +885,10 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		{
 			if (player->HasAR())
 				return;
-			
+
 			player->SetAR(true);
 			weapons[0].SetCurrAmmo(200);
-			
+
 		}
 
 		if (parcel == WEAP_SHOTGUN)
@@ -911,15 +926,15 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
 		if (parcel == ITEM_PRICE_WINDOW)
 			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]);
-		if ( parcel == BEARTRAP )
+		if (parcel == BEARTRAP)
 		{
-			inventory->SetBearTraps ( inventory->GetBearTraps () + itemAmountToAdd[ BEARTRAP ] );
+			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
 			tracker->TrapExchange(true);
 		}
-		if ( parcel == MINE )
+		if (parcel == MINE)
 		{
-			inventory->SetMines ( inventory->GetMines () + itemAmountToAdd[ MINE ] );
-			tracker->TrapExchange ( true );
+			inventory->SetMines(inventory->GetMines() + itemAmountToAdd[MINE]);
+			tracker->TrapExchange(true);
 		}
 		if (parcel == GRENADE)
 			inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]);
@@ -941,22 +956,22 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]);
 		}
 
-		if ( parcel == LAVATRAP )
+		if (parcel == LAVATRAP)
 		{
-			inventory->SetLaserTowers ( inventory->GetLavaTraps () + itemAmountToAdd[ LAVATRAP ] );
-			tracker->TrapExchange ( true );
+			inventory->SetLaserTowers(inventory->GetLavaTraps() + itemAmountToAdd[LAVATRAP]);
+			tracker->TrapExchange(true);
 		}
-		if ( parcel == SPIKETRAP )
+		if (parcel == SPIKETRAP)
 		{
-			inventory->SetSpikeTraps ( inventory->GetSpikeTraps () + itemAmountToAdd[ SPIKETRAP ] );
-			tracker->TrapExchange ( true );
+			inventory->SetSpikeTraps(inventory->GetSpikeTraps() + itemAmountToAdd[SPIKETRAP]);
+			tracker->TrapExchange(true);
 		}
 
 	}
 
 	if (shopSection == UPGRADES)
 	{
-		
+
 		if (parcel == UG_SHOTGUN_ROF)
 			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
 		if (parcel == UG_SHOTGUN_DAMAGE)
@@ -1038,7 +1053,11 @@ void Shop::LoadPrices(string xmlFileName)
 		// Grab the description
 		weapDescs[i] = pWeapon->Attribute("description");
 
-		// Move down to the next element of 'item'
+		// Grab the top-left of the images
+		pWeapon->QueryFloatAttribute("top", &weapTopLeft[i].x);
+		pWeapon->QueryFloatAttribute("left", &weapTopLeft[i].y);
+
+		// Move down to the next element of 'weapon'
 		pWeapon = pWeapon->NextSiblingElement("weapon");
 	}
 
@@ -1085,19 +1104,23 @@ void Shop::LoadPrices(string xmlFileName)
 			// since unsigned can't be negative.
 			itemAmountToAdd[i] = 0xDEAD;
 
+		// Grab the top-left of the images
+		pItem->QueryFloatAttribute("top", &itemTopLeft[i].x);
+		pItem->QueryFloatAttribute("left", &itemTopLeft[i].y);
+
 		// Move down to the next element of 'item'
 		pItem = pItem->NextSiblingElement("item");
 	}
 
 	// -- Read Upgrades --
-	
+
 	// Get the element for upgrades
 	TiXmlElement* pUpgrades = pRoot->FirstChildElement("weaponUpgrades");
 
 	// Grab the upgrade count
 	int upgradeCount;
 	pUpgrades->Attribute("count", &upgradeCount);
-	
+
 	// Grab the 'upgrade' element
 	TiXmlElement* pUpgrade = pUpgrades->FirstChildElement("weaponUpgrade");
 
@@ -1124,6 +1147,10 @@ void Shop::LoadPrices(string xmlFileName)
 		}
 		else
 			upgradeAmountToAdd[i] = 0xDEAD;
+
+		// Grab the top-left of the images
+		pUpgrade->QueryFloatAttribute("top", &upgradeTopLeft[i].x);
+		pUpgrade->QueryFloatAttribute("left", &upgradeTopLeft[i].y);
 
 		// Go to the next upgrade
 		pUpgrade = pUpgrade->NextSiblingElement("weaponUpgrade");
@@ -1154,6 +1181,10 @@ void Shop::LoadPrices(string xmlFileName)
 
 		// Store the description
 		towerDescs[i] = pTower->Attribute("description");
+
+		// Grab the top-left of the images
+		pTower->QueryFloatAttribute("top", &towerTopLeft[i].x);
+		pTower->QueryFloatAttribute("left", &towerTopLeft[i].y);
 
 		// Go to the next tower
 		pTower = pTower->NextSiblingElement("tower");
