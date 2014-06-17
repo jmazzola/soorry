@@ -1009,13 +1009,29 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	if (shopSection == TOWERS)
 	{
 		if (parcel == TOWER_MG)
-			inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1);
+		{
+			if (inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_MAPLESYRUP)
-			inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1);
+		{
+			if (inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_HOCKEYSTICK)
-			inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1);
+		{
+			if (inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_LASER)
-			inventory->SetLaserTowers(inventory->GetLaserTowers() + 1);
+		{
+			if (inventory->SetLaserTowers(inventory->GetLaserTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 
 	}
 }
