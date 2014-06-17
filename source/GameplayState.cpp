@@ -348,6 +348,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -754,7 +755,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 
 	// Create snow
-	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
+	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
 	msg->QueueMessage();
 	msg = nullptr;
 	
