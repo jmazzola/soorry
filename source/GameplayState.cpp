@@ -363,6 +363,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pAnimation->LoadAll();
 
 
+
 	// Load the game from the current slot
 	if (m_nCurrGameSlot > 0)
 	{
@@ -379,7 +380,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SetLoadingBar(0.15f, "Loading Gamemode");
 
 	// If we have a save slot, load the gamemode
-	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot -1))
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_nGamemode = rzbn->m_nGamemode;
 
 	// Load game mode information
@@ -435,7 +436,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
 		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
-			for (int y = 0; y < pWorld->GetWorldHeight(); y++)				
+			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
 	}
 
@@ -509,6 +510,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			pmsg->SendMessageNow();
 			delete pmsg;
 			pmsg = nullptr;
+
+			pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 			}
 			break;
 
@@ -919,6 +922,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pShop = nullptr;
 
 	// Delete the RZBN
+	rzbn->DeleteThatShit();
 	delete rzbn;
 	rzbn = nullptr;
 
@@ -1338,6 +1342,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #endif
 		}
 	}
+#pragma endregion
 
 	if (m_pShop->IsOpen())
 		m_pShop->Input();
@@ -3037,12 +3042,14 @@ void GameplayState::LoadGameFromSlot(int slot)
 
 	// New RZBN file
 	rzbn = new RZBN();
+	rzbn->MakeThatShit();
 
 	/*rzbn->SetPlayer(m_pPlayer);
 	rzbn->SetZombieFactory(zombieFactory);
 	rzbn->SetShop(m_pShop);*/
 
 	rzbn->LoadRZBNFile(pathtowrite);
+
 }
 
 

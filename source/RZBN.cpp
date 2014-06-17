@@ -34,6 +34,8 @@ using namespace std;
 #define RZBN_VERSION 4
 #define RZBN_MAGIC 0x4E425A52
 
+
+
 // LoadRZBNFile
 // [in] rzbnFilePath - filepath to load file in appdata
 // [out] return 0 - File couldn't open
@@ -41,7 +43,7 @@ using namespace std;
 // [out] return 2 - Version mismatch
 // [out] return 0x1337 - Good.
 // [out] return false - if at anytime, something fails.
-int RZBN::LoadRZBNFile(string rzbnFilePath)
+int RZBN::LoadRZBNFile(string rzbnFilePath, bool isCheck)
 {
 	fstream file;
 	file.open(rzbnFilePath, ios_base::binary | ios_base::in);
@@ -67,6 +69,7 @@ int RZBN::LoadRZBNFile(string rzbnFilePath)
 		// quit
 		return 2;
 
+
 	// Load Time
 	file.read((char*)&m_Time, sizeof(time_t));
 
@@ -74,6 +77,9 @@ int RZBN::LoadRZBNFile(string rzbnFilePath)
 	int gameMode;
 	file.read((char*)&gameMode, sizeof(int));
 	m_nGamemode = gameMode;
+
+	if (isCheck)
+		return 0x1337;
 
 	// -- Load in the map --
 
@@ -248,13 +254,22 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&mapHeight, sizeof(int));
 
 	// Save the IDs
-	int id[100][100];
 	for (int x = 0; x < mapWidth; x++)
 	{
 		for (int y = 0; y < mapHeight; y++)
 		{
-			id[x][y] = m_pWorld->GetInstance()->GetColliderID(x, y);
-			file.write((char*)&id[x][y], sizeof(int));
+			int id = m_nColliderIDs[x][y] = m_pWorld->GetInstance()->GetColliderID(x, y);
+
+			SGD::Rectangle rect;
+			rect.left = x * 32 + 1;
+			rect.top = y * 32 + 1;
+			rect.right = rect.left + 30;
+			rect.bottom = rect.top + 30;
+
+			if (m_pEntities->CheckCollision(rect, 3))
+				m_nColliderIDs[x][y] = 0;
+
+			file.write((char*)&m_nColliderIDs[x][y], sizeof(int));
 		}
 	}
 
@@ -427,4 +442,21 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
 		file.write((char*)&trapY, sizeof(float));
 	}
+}
+
+
+void RZBN::MakeThatShit()
+{
+	m_nColliderIDs = new int*[100];
+	for (int i = 0; i < 100; i++)
+		m_nColliderIDs[i] = new int[100];
+}
+
+
+void RZBN::DeleteThatShit()
+{
+	for (int i = 0; i < 100; i++)
+		delete[] m_nColliderIDs[i];
+
+	delete[] m_nColliderIDs;
 }

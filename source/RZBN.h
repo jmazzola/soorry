@@ -64,10 +64,16 @@ public:
 	void SetWorldManager(WorldManager* wm) { m_pWorld = wm; }
 
 	// Load Savefile
-	int LoadRZBNFile(string rzbnFilePath);
+	int LoadRZBNFile(string rzbnFilePath, bool isCheck = false);
 
 	// Save savefile
 	void SaveRZBNFile(string rzbnFilePath);
+
+	// MakeThatShit
+	void MakeThatShit();
+
+	// DeleteThatShit
+	void DeleteThatShit();
 
 private:
 
@@ -92,7 +98,7 @@ public:
 
 	int m_nMoney;
 	int m_nGamemode;
-	int m_nColliderIDs[100][100];
+	int** m_nColliderIDs;
 	float m_fSpawnPointX;
 	float m_fSpawnPointY;
 	int m_nWaveNum;
