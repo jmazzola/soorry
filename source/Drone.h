@@ -17,6 +17,7 @@ public:
 	void			SetDamage			(int _Damage)							;
 	void			SetNumberID			(int _ID)								;
 	void			SetHealth			(int _Health)							;
+	void			SetAngle			(float _Angle)							;
 	void			SetNextShotTimer	(float _Timer)							;
 	void			SetFireRate			(float _FireRate)						;
 	void			SetBulletSpeed		(float _BulletSpeed)					;
@@ -36,7 +37,8 @@ public:
 	Player*			GetPlayer			()					const				;
 	EntityManager*	GetEntityManager	()					const				;
 	SGD::HTexture	GetDroneImage		()					const				;
-
+	Drone*			Next														;
+	Drone*			Previous													;
 protected:
 	Player*			m_pPlayer													;
 	EntityManager*	m_pEntityManager											;

@@ -2,8 +2,8 @@
 <player_stats>
   <health value="80"/>
   <speed value="250"/>
-  <walls amount="0"/>
-  <windows amount="0"/>
+  <walls amount="1"/>
+  <windows amount="1"/>
   <bear_traps amount="0"/>
   <mines amount="0"/>
   <machine_guns amount="0"/>

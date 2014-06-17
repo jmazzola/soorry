@@ -27,6 +27,7 @@ public:
 	virtual SGD::Rectangle GetRect() const override;
 	virtual int GetType() const override;
 	virtual void Upgrade(int slot, unsigned int* points);
+	void PlaySellSound();
 
 	/**********************************************************/
 	// Accessors

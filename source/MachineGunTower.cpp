@@ -70,6 +70,8 @@ void MachineGunTower::Update(float dt)
 			bulletVelocity *= m_fBulletSpeed;
 			SGD::Vector offset = bulletVelocity.ComputeNormalized() * 16;
 
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetMachineGunShotSound());
+
 			CreateMachineGunBulletMessage* msg = new CreateMachineGunBulletMessage((int)(m_ptPosition.x + 16 + offset.x), (int)(m_ptPosition.y + 16 + offset.y), bulletVelocity, m_nDamage);
 			msg->QueueMessage();
 
@@ -77,6 +79,8 @@ void MachineGunTower::Update(float dt)
 			m_fNextShotTimer = m_fFireRate;
 		}
 	}
+
+	Tower::Update(dt);
 }
 
 void MachineGunTower::Render()
