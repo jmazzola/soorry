@@ -14,6 +14,7 @@
 #include "../SGD Wrappers/SGD_Listener.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
 #include "AnimationManager.h"
+#include "Drone.h"
 
 /**************************************************************/
 // Forward class declaration
@@ -26,7 +27,7 @@ class Player;
 class ParticleManager;
 class Button;
 class BitmapFont;
-class Drone;
+
 class StatTracker;
 class TowerFlyweight;
 class RZBN;
@@ -83,6 +84,7 @@ public:
 	void MouseWheel(int direction);
 
 	void SetLoadingBar(float percent, const char* message);
+	int droneCount = 0;
 
 private:
 
@@ -120,7 +122,7 @@ private:
 	StatTracker* m_pStatTracker;
 	char m_nCurrGameSlot;
 	int m_nGamemode;
-
+	std::vector<Drone*> drones;
 	/**********************************************************/
 	// FPS
 	// FPS stuff

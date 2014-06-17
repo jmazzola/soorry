@@ -280,7 +280,7 @@ void Player::Update ( float dt )
 	m_fRunningManTimer -= dt;
 	m_fPickupMessageTimer -= dt;
 	float trg = pInput->GetTrigger(0);
-
+	m_fDroneRotation += dt * 2;
 	if(abs(trg) < 0.1)
 		trg = 0.0f;
 

@@ -8,10 +8,10 @@
 #include "Sprite.h"
 #include "DestroyEntityMessage.h"
 #include <math.h>
+#include "GameplayState.h"
 
 Drone::Drone()
 {
-	//NOTE: hardcoded should change for upgrades
 	m_nDamage = 20;
 	m_fNextShotTimer = 1;
 	m_fFireRate = 1;
@@ -25,7 +25,7 @@ Drone::Drone()
 
 Drone::~Drone()
 {
-	
+	GameplayState::GetInstance()->droneCount--;
 }
 
 void Drone::Update(float dt)
@@ -42,31 +42,40 @@ void Drone::Update(float dt)
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 	}
-	//only update when lag timer is < 0 to create a following effect
-	
-		//radius from the center(player pos)
-		float radius = 36;
-		// center x and y
-		float x = m_pPlayer->GetPosition().x +8;
-		float y = m_pPlayer->GetPosition().y +8;
-		//center point
-		SGD::Point center = SGD::Point(x, y);
-		//Angle that will incriment to spin it around the player
-		m_fAngle += 2*dt;
 
-		//If the angle is over 360 reset to 0
-		if (m_fAngle > 360)
-			m_fAngle = 0;
-		//set position to the center plus the angle spot 
-		m_ptPosition.x = center.x + (radius*cosf(m_fAngle));
-		m_ptPosition.y = center.y + (radius*sinf(m_fAngle));
+	//radius from the center(player pos)
+	float radius = 36;
+	// center x and y
+	float x = m_pPlayer->GetPosition().x + 8;
+	float y = m_pPlayer->GetPosition().y + 8;
+	//center point
+	SGD::Vector center = SGD::Vector(x, y);
 
-
-	/*
-	SGD::Point tempPoint = { m_pPlayer->GetPosition().x - 32, m_pPlayer->GetPosition().y + 32 };
-	
-	SetPosition(tempPoint);*/
-
+	//for (unsigned int i = 0; i < drones.size(); i++)
+	//{
+	//	//run check to see if there is a drone behind
+	//	for (unsigned int j = 0; j < drones.size(); j++)
+	//	{
+	//		if (drones[j]->m_nNumberID == drones[j]->m_nNumberID - 1 && drones[j] != nullptr)
+	//		{
+	//			drones[i]->m_fAngle = drones[j]->m_fAngle - 72;
+	//		}
+	//		if (drones[j]->m_nNumberID == drones[j]->m_nNumberID + 1 && drones[j] != nullptr)
+	//		{
+	//			drones[i]->m_fAngle = drones[j]->m_fAngle + 72;
+	//		}
+	//	}
+	//}
+	//Angle that will incriment to spin it around the player
+	//m_fAngle += 2 * dt;
+	m_fAngle = (m_pPlayer->m_fDroneRotation + (6.28f / GameplayState::GetInstance()->droneCount)*m_nNumberID) ;
+	//If the angle is over 360 reset to 0
+	/*if (m_fAngle > 360)
+		m_fAngle -= 360;*/
+	//set position to the center plus the angle spot 
+	SGD::Vector newVec = center.Lerp({ m_ptPosition.x, m_ptPosition.y }, { center.x + (radius*cosf(m_fAngle)), center.y + (radius*sinf(m_fAngle)) }, 0.15f);
+	m_ptPosition.x = newVec.x;
+	m_ptPosition.y = newVec.y;
 	//Find enemy and shoot at it
 	Enemy* enemy = dynamic_cast<Enemy*>(m_pEntityManager->CheckCollision(SGD::Point(m_ptPosition.x + 16.0f, m_ptPosition.y + 16.0f), m_fRange, 2));
 	SGD::Vector toEnemy;
@@ -151,6 +160,10 @@ void			Drone::SetHealth(int _Health)
 {
 	m_nHealth = _Health;
 }
+void			Drone::SetAngle(float _Angle)
+{
+	m_fAngle = _Angle;
+}
 void			Drone::SetNextShotTimer(float _Timer)
 {
 	m_fNextShotTimer = _Timer;
@@ -208,7 +221,7 @@ float			Drone::GetRotation() const
 	return m_fRotation;
 }
 float			Drone::GetRange()const
-{ 
+{
 	return m_fRange;
 }
 Player*			Drone::GetPlayer()const
