@@ -60,7 +60,7 @@ private:
 	unsigned int m_unWindowsMAX = 100;
 	unsigned int m_unBearTrapsMAX = 100;
 	unsigned int m_unMinesMAX = 100;
-	unsigned int m_unGrenadesMAX = 100;
+	unsigned int m_unGrenadesMAX = 20;
 	unsigned int m_unHealthPacksMAX = 20;
 	unsigned int m_unMachineGunTowersMAX = 50;
 	unsigned int m_unMapleSyrupTowersMAX = 50;
@@ -68,7 +68,6 @@ private:
 	unsigned int m_unLaserTowersMAX = 50;
 	unsigned int m_unLavaTrapsMAX = 100;
 	unsigned int m_unSpikeTrapsMAX = 100;
-	unsigned int m_unDronesMAX = 25;
-
+	unsigned int m_unDronesMAX = 5;
 };
 
