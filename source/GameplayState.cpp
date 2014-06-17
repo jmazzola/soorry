@@ -436,7 +436,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	{
 		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
 			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+			{
+				
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
+			}
 	}
 
 
