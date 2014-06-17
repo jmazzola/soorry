@@ -240,26 +240,26 @@ void AIComponent::Render()
 {
 	// NOTE: This function is only called for certain debug practices
 
-	//// Get camera position in terms of tiles
-	//int camTileX = Camera::x / 32;
-	//int camTileY = Camera::y / 32;
+	// Get camera position in terms of tiles
+	int camTileX = Camera::x / 32;
+	int camTileY = Camera::y / 32;
 
-	//// Get stop point for rendering
-	//int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
-	//int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
+	// Get stop point for rendering
+	int stopX = camTileX + (int)ceil((800.0f / 32)) + 1;
+	int stopY = camTileY + (int)ceil((600.0f / 32)) + 1;
 
-	//// Loop through the viewport
-	//for (int x = camTileX; x < stopX; x++)
-	//{
-	//	for (int y = camTileY; y < stopY; y++)
-	//	{
-	//		// Don't render out-of-bounds index
-	//		if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
-	//			continue;
+	// Loop through the viewport
+	for (int x = camTileX; x < stopX; x++)
+	{
+		for (int y = camTileY; y < stopY; y++)
+		{
+			// Don't render out-of-bounds index
+			if (x < 0 || y < 0 || x >= m_nWorldWidth || y >= m_nWorldHeight)
+				continue;
 
-	//		SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
-	//	}
-	//}
+			SGD::GraphicsManager::GetInstance()->DrawString(std::to_string(m_nNodeChart[x][y]).c_str(), { x * 32.0f - Camera::x, y * 32.0f - Camera::y });
+		}
+	}
 
 	/*ostringstream address;
 	address << (void*)m_pAlpha;

@@ -124,7 +124,7 @@ void Enemy::Render()
 {
 	Entity::Render();
 
-	m_AIComponent.Render();
+	//m_AIComponent.Render();
 }
 
 void Enemy::PostRender()
