@@ -25,19 +25,19 @@ public:
 
 	/**********************************************************/
 	// Mutators
-	void SetWalls(unsigned int walls) { if (walls == UINT_MAX) walls = 0; m_unWalls = walls; }
-	void SetWindows(unsigned int windows) { if (windows == UINT_MAX) windows = 0; m_unWindows = windows; }
-	void SetBearTraps(unsigned int beartraps) { if (beartraps == UINT_MAX) beartraps = 0; m_unBearTraps = beartraps; }
-	void SetMines(unsigned int mines) { if (mines == UINT_MAX) mines = 0; m_unMines = mines; }
-	void SetGrenades(unsigned int grenades) { if (grenades == UINT_MAX) grenades = 0; m_unGrenades = grenades; }
-	void SetHealthPacks(unsigned int healthpack) { if (healthpack == UINT_MAX) healthpack = 0; m_unHealthPacks = healthpack; }
-	void SetMachineGunTowers(unsigned int machineGunTowers) { if (machineGunTowers == UINT_MAX) machineGunTowers = 0; m_unMachineGunTowers = machineGunTowers; }
-	void SetMapleSyrupTowers(unsigned int mapleSyrupTowers) { if (mapleSyrupTowers == UINT_MAX) mapleSyrupTowers = 0; m_unMapleSyrupTowers = mapleSyrupTowers; }
-	void SetHockeyStickTowers(unsigned int hockeyStickTowers) { if (hockeyStickTowers == UINT_MAX) hockeyStickTowers = 0; m_unHockeyStickTowers = hockeyStickTowers; }
-	void SetLaserTowers(unsigned int laserTowers) { if (laserTowers == UINT_MAX) laserTowers = 0; m_unLaserTowers = laserTowers; }
-	void SetLavaTraps(unsigned int lavaTraps) { if (lavaTraps == UINT_MAX) lavaTraps = 0; m_unLavaTraps = lavaTraps; }
-	void SetSpikeTraps(unsigned int spikeTraps) { if (spikeTraps == UINT_MAX) spikeTraps = 0; m_unSpikeTraps = spikeTraps; }
-	void SetDroneCount(unsigned int drones) { if (drones == UINT_MAX) drones = 0; m_unDrones = drones; }
+	void SetWalls(unsigned int walls);
+	void SetWindows(unsigned int windows);
+	void SetBearTraps(unsigned int beartraps);
+	void SetMines(unsigned int mines);
+	void SetGrenades(unsigned int grenades);
+	void SetHealthPacks(unsigned int healthpack);
+	void SetMachineGunTowers(unsigned int machineGunTowers);
+	void SetMapleSyrupTowers(unsigned int mapleSyrupTowers);
+	void SetHockeyStickTowers(unsigned int hockeyStickTowers);
+	void SetLaserTowers(unsigned int laserTowers);
+	void SetLavaTraps(unsigned int lavaTraps);
+	void SetSpikeTraps(unsigned int spikeTraps);
+	void SetDroneCount(unsigned int drones);
 
 private:
 
@@ -54,5 +54,21 @@ private:
 	unsigned int m_unLavaTraps;
 	unsigned int m_unSpikeTraps;
 	unsigned int m_unDrones;
+
+
+	unsigned int m_unWallsMAX = 100;
+	unsigned int m_unWindowsMAX = 100;
+	unsigned int m_unBearTrapsMAX = 100;
+	unsigned int m_unMinesMAX = 100;
+	unsigned int m_unGrenadesMAX = 100;
+	unsigned int m_unHealthPacksMAX = 20;
+	unsigned int m_unMachineGunTowersMAX = 50;
+	unsigned int m_unMapleSyrupTowersMAX = 50;
+	unsigned int m_unHockeyStickTowersMAX = 50;
+	unsigned int m_unLaserTowersMAX = 50;
+	unsigned int m_unLavaTrapsMAX = 100;
+	unsigned int m_unSpikeTrapsMAX = 100;
+	unsigned int m_unDronesMAX = 25;
+
 };
 
