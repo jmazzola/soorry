@@ -198,6 +198,8 @@ void WorldManager::UnloadWorld()
 
 	// Clear out layers
 	m_vLayers.clear();
+	m_vInitWalls.clear();
+	m_vInitWindows.clear();
 
 	// Unload tilesetImage
 	SGD::GraphicsManager::GetInstance()->UnloadTexture(m_hTilesetImage);
