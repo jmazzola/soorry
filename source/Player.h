@@ -32,6 +32,7 @@ public:
 	Player();
 	~Player();
 
+	float m_fDroneRotation = 0;
 	/**********************************************************/
 	// Interface Methods
 	virtual void Update(float dt) override;
