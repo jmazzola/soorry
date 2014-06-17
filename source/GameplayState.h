@@ -182,9 +182,12 @@ private:
 
 	int m_nPauseMenuCursor;
 	int m_nPauseMenuTab;
-	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT };
+	enum PauseMenuOption { PAUSE_RESUME, PAUSE_OPTION, PAUSE_EXIT, PAUSE_TOTAL };
 	enum PauseMenuTab { TAB_MAIN, TAB_OPTION, TAB_EXIT };
-	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_FULLSCREEN, OPTION_GOBACK };
+	enum PauseMenuOptionsOption { OPTION_MUSIC, OPTION_SFX, OPTION_FULLSCREEN, OPTION_GOBACK, OPTION_TOTAL };
+
+	SGD::Point m_ptPausePositions[PAUSE_TOTAL];
+	SGD::Point m_ptOptionPositions[OPTION_TOTAL];
 
 	/**********************************************************/
 	// Audio

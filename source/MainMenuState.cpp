@@ -114,6 +114,13 @@ using namespace std;
 	m_bAccept = true;
 	m_bTHEBOOL = false;
 	m_vtStick = SGD::Vector { 0.0f , 0.0f };
+
+	// Button positions
+	m_ptButtonPositions[MENU_START] = SGD::Point(200, 200);
+	m_ptButtonPositions[MENU_HOWTOPLAY] = SGD::Point(150, 270);
+	m_ptButtonPositions[MENU_OPTIONS] = SGD::Point(200, 340);
+	m_ptButtonPositions[MENU_CREDITS] = SGD::Point(230, 410);
+	m_ptButtonPositions[MENU_EXIT] = SGD::Point(180, 480);
 }
 
 
@@ -232,6 +239,29 @@ using namespace std;
 #if ARCADE_MODE
 	m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
+
+	// Mouse Selection
+	if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+	{
+		for (int i = 0; i < MENU_TOTAL; i++)
+		{
+			if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pButton->GetSize())))
+			{
+				m_nCursor = i;
+			}
+		}
+	}
+	if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+	{
+		for (int i = 0; i < MENU_TOTAL; i++)
+		{
+			if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pButton->GetSize())))
+			{
+				m_bTHEBOOL = true;
+			}
+		}
+	}
+
 	// Select the item
 	if (m_bTHEBOOL)
 	{
@@ -380,29 +410,29 @@ using namespace std;
 		// TODO: Add Strings to STRING TABLE for easy localization
 		// Draw the buttons and text (Super JIT, later make a conditional for the selected color)
 		if (m_nCursor == MENU_START)
-			m_pButton->Draw("Play Game", { 200, 200 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 0
+			m_pButton->Draw("Play Game", m_ptButtonPositions[MENU_START], { 255, 0, 0 }, { 1, 1 }, 0);		// 0
 		else
-			m_pButton->Draw("Play Game", { 200, 200 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 0
+			m_pButton->Draw("Play Game", m_ptButtonPositions[MENU_START], { 0, 0, 0 }, { 1, 1 }, 0);		// 0
 
 		if (m_nCursor == MENU_HOWTOPLAY)
-			m_pButton->Draw("How to Play", { 150, 270 }, { 255, 0, 0 }, { 1, 1 }, 0);	// 1
+			m_pButton->Draw("How to Play", m_ptButtonPositions[MENU_HOWTOPLAY], { 255, 0, 0 }, { 1, 1 }, 0);	// 1
 		else
-			m_pButton->Draw("How to Play", { 150, 270 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 1
+			m_pButton->Draw("How to Play", m_ptButtonPositions[MENU_HOWTOPLAY], { 0, 0, 0 }, { 1, 1 }, 0);		// 1
 
 		if (m_nCursor == MENU_OPTIONS)
-			m_pButton->Draw("Options", { 200, 340 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 2
+			m_pButton->Draw("Options", m_ptButtonPositions[MENU_OPTIONS], { 255, 0, 0 }, { 1, 1 }, 0);		// 2
 		else
-			m_pButton->Draw("Options", { 200, 340 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 2
+			m_pButton->Draw("Options", m_ptButtonPositions[MENU_OPTIONS], { 0, 0, 0 }, { 1, 1 }, 0);			// 2
 
 		if (m_nCursor == MENU_CREDITS)
-			m_pButton->Draw("Credits", { 230, 410 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 3
+			m_pButton->Draw("Credits", m_ptButtonPositions[MENU_CREDITS], { 255, 0, 0 }, { 1, 1 }, 0);		// 3
 		else
-			m_pButton->Draw("Credits", { 230, 410 }, { 0, 0, 0 }, { 1, 1 }, 0);			// 3
+			m_pButton->Draw("Credits", m_ptButtonPositions[MENU_CREDITS], { 0, 0, 0 }, { 1, 1 }, 0);			// 3
 
 		if (m_nCursor == MENU_EXIT)
-			m_pButton->Draw("Exit Game", { 180, 480 }, { 255, 0, 0 }, { 1, 1 }, 0);		// 4
+			m_pButton->Draw("Exit Game", m_ptButtonPositions[MENU_EXIT], { 255, 0, 0 }, { 1, 1 }, 0);		// 4
 		else
-			m_pButton->Draw("Exit Game", { 180, 480 }, { 0, 0, 0 }, { 1, 1 }, 0);		// 4
+			m_pButton->Draw("Exit Game", m_ptButtonPositions[MENU_EXIT], { 0, 0, 0 }, { 1, 1 }, 0);		// 4
 	}
 	
 }

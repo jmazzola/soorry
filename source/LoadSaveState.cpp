@@ -128,6 +128,12 @@ using namespace std;
 	bool m_bAccept = true;
 	m_vtStick = SGD::Vector{0.0f, 0.0f};
 #endif
+
+	// Button positions
+	m_ptButtonPositions[MENU_SLOT1] = SGD::Point(180, 200);
+	m_ptButtonPositions[MENU_SLOT2] = SGD::Point(150, 290);
+	m_ptButtonPositions[MENU_SLOT3] = SGD::Point(190, 380);
+	m_ptButtonPositions[MENU_GOBACK] = SGD::Point(170, 470);
 }
 
 
@@ -227,6 +233,29 @@ using namespace std;
 #if ARCADE_MODE
 	 m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
 #endif
+
+	 // Mouse Selection
+	 if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+	 {
+		 for (int i = 0; i < MENU_TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.9f)))
+			 {
+				 m_nCursor = i;
+			 }
+		 }
+	 }
+	 if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+	 {
+		 for (int i = 0; i < MENU_TOTAL; i++)
+		 {
+			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.9f)))
+			 {
+				 m_bTHEBOOL = true;
+			 }
+		 }
+	 }
+
 	if (m_bTHEBOOL)
 	{
 		// If we're on the first slot and the file exists (not a new game)
@@ -375,53 +404,53 @@ using namespace std;
 		{
 			// Show that the save exists
 			if (m_nCursor == MENU_SLOT1)
-				m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 1 Save", m_ptButtonPositions[MENU_SLOT1], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Slot 1 Save", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 1 Save", m_ptButtonPositions[MENU_SLOT1], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 		else
 		{
 			// Prompt a new game.
 			if (m_nCursor == MENU_SLOT1)
-				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT1], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Make New Game", { 180, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT1], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
 		if (m_bFileExists[1])
 		{
 			if (m_nCursor == MENU_SLOT2)
-				m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 2 Save", m_ptButtonPositions[MENU_SLOT2], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Slot 2 Save", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 2 Save", m_ptButtonPositions[MENU_SLOT2], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 		else
 		{
 			if (m_nCursor == MENU_SLOT2)
-				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT2], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Make New Game", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT2], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
 		if (m_bFileExists[2])
 		{
 			if (m_nCursor == MENU_SLOT3)
-				m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 3 Save", m_ptButtonPositions[MENU_SLOT3], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Slot 3 Save", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Slot 3 Save", m_ptButtonPositions[MENU_SLOT3], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 		else
 		{
 			if (m_nCursor == MENU_SLOT3)
-				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT3], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 			else
-				m_pMainButton->Draw("Make New Game", { 190, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+				m_pMainButton->Draw("Make New Game", m_ptButtonPositions[MENU_SLOT3], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 		}
 
 		if (m_nCursor == MENU_GOBACK)
-			m_pMainButton->Draw("Go Back", { 170, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("Go Back", m_ptButtonPositions[MENU_GOBACK], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 		else
-			m_pMainButton->Draw("Go Back", { 170, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+			m_pMainButton->Draw("Go Back", m_ptButtonPositions[MENU_GOBACK], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 		// Render game info (basic info for now for selected option)
 		RenderAndLoadFileInfo(m_nCursor + 1);

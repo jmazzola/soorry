@@ -134,7 +134,8 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || 
+		(pInput->IsKeyPressed(SGD::Key::MouseLeft) && pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(SGD::Point(200, 500), m_pMainButton->GetSize()))))
 	{
 		// Since there's only one state..go back to main menu
 		pGame->Transition(MainMenuState::GetInstance());

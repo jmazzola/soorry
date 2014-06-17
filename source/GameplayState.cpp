@@ -749,6 +749,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	rzbn->SetEntityManager(m_pEntities);
 	rzbn->SetWorldManager(WorldManager::GetInstance());
 	rzbn->SetShop(m_pShop);
+
+	m_ptPausePositions[PAUSE_RESUME] = SGD::Point(170, 200);
+	m_ptPausePositions[PAUSE_OPTION] = SGD::Point(150, 290);
+	m_ptPausePositions[PAUSE_EXIT] = SGD::Point(165, 380);
+
+	m_ptOptionPositions[OPTION_MUSIC] = SGD::Point(140, 200);
+	m_ptOptionPositions[OPTION_SFX] = SGD::Point(120, 290);
+	m_ptOptionPositions[OPTION_FULLSCREEN] = SGD::Point(160, 380);
+	m_ptOptionPositions[OPTION_GOBACK] = SGD::Point(150, 470);
 }
 
 
@@ -1037,6 +1046,29 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
+
+				// Mouse Selection
+				if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+				{
+					for (int i = 0; i < PAUSE_TOTAL; i++)
+					{
+						if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+						{
+							m_nPauseMenuCursor = i;
+						}
+					}
+				}
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				{
+					for (int i = 0; i < PAUSE_TOTAL; i++)
+					{
+						if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
+						{
+							m_bTHEBOOL = true;
+						}
+					}
+				}
+
 				if (m_bTHEBOOL)
 				{
 					// Switch table for the item selected
@@ -1139,6 +1171,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
 #endif
+
+				
+
 				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
@@ -1504,19 +1539,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 				// Draw the options
 				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_RESUME)
-					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Resume Game", m_ptPausePositions[PAUSE_RESUME], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw("Resume Game", { 170, 200 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Resume Game", m_ptPausePositions[PAUSE_RESUME], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_OPTION)
-					m_pMainButton->Draw("Options", { 150, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Options", m_ptPausePositions[PAUSE_OPTION], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw("Options", { 150, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Options", m_ptPausePositions[PAUSE_OPTION], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
 				if (m_nPauseMenuCursor == PauseMenuOption::PAUSE_EXIT)
-					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Exit Game", m_ptPausePositions[PAUSE_EXIT], { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
-					m_pMainButton->Draw("Exit Game", { 165, 380 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+					m_pMainButton->Draw("Exit Game", m_ptPausePositions[PAUSE_EXIT], { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+
+				
 			}
 			else if (m_nPauseMenuTab == PauseMenuTab::TAB_OPTION)
 			{
@@ -1568,6 +1606,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
+				
 			}
 
 		}

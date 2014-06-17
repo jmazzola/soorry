@@ -107,7 +107,9 @@ private:
 
 	/**********************************************************/
 	// Enumerations
-	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_TOGGLEFULLSCREEN, MENU_STATS, MENU_GOBACK };
+	enum MenuOption { MENU_MUSICVOL, MENU_SFXVOL, MENU_TOGGLEFULLSCREEN, MENU_STATS, MENU_GOBACK, MENU_TOTAL };
+
+	SGD::Point m_ptButtonPositions[MENU_TOTAL];
 
 	/**********************************************************/
 	// Menu Items
