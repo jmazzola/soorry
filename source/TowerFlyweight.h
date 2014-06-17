@@ -16,6 +16,7 @@ public:
 	/**********************************************************/
 	// Interface Methods
 	void Load(string fileName);
+	void Unload();
 
 	/**********************************************************/
 	// Accessors
@@ -40,6 +41,10 @@ public:
 	SGD::HTexture GetRangeCirclesImage() const;
 	SGD::HAudio GetPurchaseSound() const;
 	SGD::HAudio GetClickSound() const;
+	SGD::HAudio GetSellSound() const;
+	SGD::HAudio GetMachineGunShotSound() const;
+	SGD::HAudio GetMapleSyrupShotSound() const;
+	SGD::HAudio GetHockeyStickSlashSound() const;
 
 	/**********************************************************/
 	// Mutators
@@ -72,5 +77,9 @@ protected:
 	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hPurchaseSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSellSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hMachineGunShotSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hMapleSyrupShotSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hHockeyStickSlashSound = SGD::INVALID_HANDLE;
 };
 

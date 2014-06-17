@@ -73,10 +73,14 @@ void MapleSyrupTower::Update(float dt)
 			CreateMapleSyrupBulletMessage* msg = new CreateMapleSyrupBulletMessage((int)(m_ptPosition.x + 8 + offset.x), (int)(m_ptPosition.y + 8 + offset.y), bulletVelocity, m_fSlowTime);
 			msg->QueueMessage();
 
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetMapleSyrupShotSound());
+
 			// Reset timer
 			m_fNextShotTimer = m_fFireRate;
 		}
 	}
+
+	Tower::Update(dt);
 }
 
 void MapleSyrupTower::Render()

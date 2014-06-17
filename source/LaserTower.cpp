@@ -11,6 +11,7 @@
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "BitmapFont.h"
 #include "Game.h"
+#include "GameplayState.h"
 
 
 LaserTower::LaserTower() : Listener(this)
@@ -74,8 +75,11 @@ void LaserTower::Update(float dt)
 		if (enemy)
 		{
 			enemy->SetCurrHealth(enemy->GetCurrHealth() - m_nDamage * dt);
+			GameplayState::GetInstance()->m_bPlayLaser = true;
 		}
 	}
+
+	Tower::Update(dt);
 }
 
 void LaserTower::Render()
