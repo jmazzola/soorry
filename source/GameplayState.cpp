@@ -315,6 +315,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hBackgroundMus	= pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 	m_hSandboxMusic		= pAudio->LoadAudio("resource/audio/Sandbox_Music.xwm");
+	m_hBeaverFeverMusic = pAudio->LoadAudio("resource/audio/Beaver_Fever_Music.xwm");
+	m_hRunningManMusic = pAudio->LoadAudio("resource/audio/Running_Man_Music.xwm");
 	m_hShopMusic		= pAudio->LoadAudio("resource/audio/shop_music.xwm");
 	m_hGunShoot			= pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
 	m_hRocketShoot		= pAudio->LoadAudio("resource/audio/rocketFire.wav");
@@ -719,6 +721,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
+		pAudio->PlayAudio(m_hBeaverFeverMusic, true);
 	}
 	if (m_nGamemode == SANDBOX_MODE)
 	{
@@ -726,7 +729,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
-
+		pAudio->PlayAudio(m_hRunningManMusic, true);
 	}
 
 	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
@@ -812,6 +815,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hBackgroundMus);
+	pAudio->UnloadAudio(m_hSandboxMusic);
+	pAudio->UnloadAudio(m_hBeaverFeverMusic);
+	pAudio->UnloadAudio(m_hRunningManMusic);
 	pAudio->StopAudio(m_hShopMusic);
 	pAudio->UnloadAudio(m_hShopMusic);
 	pAudio->UnloadAudio(m_hBulletHit);
@@ -1377,6 +1383,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		if (m_nGamemode == BEAVER_FEAVER_MODE)
 		{
+			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
+			{
+				pAudio->PlayAudio(m_hBeaverFeverMusic, true);
+			}
 		}
 		if (m_nGamemode == SANDBOX_MODE)
 		{
