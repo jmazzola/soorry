@@ -32,7 +32,7 @@ public:
 	int GetRLDamage() { return m_nRLDamage; }
 	int GetHTDamage() { return m_nHattrickDamage; }
 	SGD::HAudio GetChaChing() { return m_hChaChing; }
-	SGD::HAudio GetShopMusic() { return m_hShopMusic; }
+	SGD::HAudio GetAggggt() { return m_hAggggt; }
 	SGD::HAudio GetWelcome() { return m_hWelcome; }
 	// Mutators
 	void SetShotgunDamage(int dmg) { m_nShotgunDamage = dmg; }
@@ -40,7 +40,7 @@ public:
 	void SetRLDamage(int dmg) { m_nRLDamage = dmg; }
 	void SetHTDamage(int dmg) { m_nHattrickDamage = dmg; }
 	void SetChaChing(SGD::HAudio _chaching) { m_hChaChing = _chaching; }
-	void SetShopMusic(SGD::HAudio _ShopMusic) { m_hShopMusic = _ShopMusic; }
+	void SetShopMusic(SGD::HAudio _Aggggt) { m_hAggggt = _Aggggt; }
 	void SetWelcome(SGD::HAudio _Welcome) { m_hWelcome = _Welcome; }
 
 	// Enter
@@ -171,7 +171,7 @@ private:
 	SGD::HTexture m_hShopItems;		// TODO: Make shop sheet
 
 	//Audio
-	SGD::HAudio m_hShopMusic;
+	SGD::HAudio m_hAggggt;
 	SGD::HAudio m_hChaChing;
 	SGD::HAudio m_hWelcome;
 	// Menu cursor
