@@ -464,6 +464,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pShop = new Shop();
 	m_pShop->Enter(m_pPlayer);
 	m_pShop->LoadPrices(shopFileName);
+	m_pShop->SetChaChing(m_hChaChing);
 
 	// Set the zombie factory's player
 	zombieFactory->SetPlayer(m_pPlayer);
