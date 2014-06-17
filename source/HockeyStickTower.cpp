@@ -10,6 +10,8 @@
 #include "BitmapFont.h"
 #include "Game.h"
 
+#include "CreateParticleMessage.h"
+
 
 HockeyStickTower::HockeyStickTower()
 {
@@ -73,9 +75,21 @@ void HockeyStickTower::Update(float dt)
 				m_vEnemiesHit.push_back(EnemyHit(enemy));
 
 				enemy->SetCurrHealth(enemy->GetCurrHealth() - m_fDamage);
+
+				SGD::Vector spurtVector = { 0, -1 };
+				spurtVector.Rotate(m_fRotation);
+				spurtVector *= 300;
+
+				CreateParticleMessage* msg = new CreateParticleMessage("Blood_Spurt1", enemy, spurtVector, 16, 16);
+				msg->QueueMessage();
+
+				if (!SGD::AudioManager::GetInstance()->IsAudioPlaying(m_pTowerFlyweight->GetHockeyStickSlashSound()))
+					SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetHockeyStickSlashSound());
 			}
 		}
 	}
+
+	Tower::Update(dt);
 }
 
 void HockeyStickTower::Render()

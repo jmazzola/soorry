@@ -234,9 +234,6 @@
     <ClCompile Include="source\Shop.cpp">
       <Filter>Shop</Filter>
     </ClCompile>
-    <ClCompile Include="source\PurchaseMessage.cpp">
-      <Filter>Messages</Filter>
-    </ClCompile>
     <ClCompile Include="source\CreateProjectileMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
@@ -389,6 +386,9 @@
     </ClCompile>
     <ClCompile Include="source\HowToPlayState.cpp">
       <Filter>Game States</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PurchaseMessage.cpp">
+      <Filter>Zombie Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

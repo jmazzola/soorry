@@ -80,6 +80,8 @@ Player::Player () : Listener ( this )
 	m_fRunningManTimer = 2.0f;
 	m_fPickupMessageTimer = 0.0f;
 
+	m_unScore = 2500;
+
 	// Player Inventory
 	m_pInventory = new Inventory();
 	m_pInventory->SetBearTraps(100);
@@ -866,6 +868,7 @@ void Player::Update ( float dt )
 
 					if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
 					{
+						m_pSelectedTower->PlaySellSound();
 						m_unScore += m_pSelectedTower->GetSellValue();
 						StatTracker::GetInstance()->TowerExchange(false);
 						DestroyEntityMessage* msg = new DestroyEntityMessage(m_pSelectedTower);
