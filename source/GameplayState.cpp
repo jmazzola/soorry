@@ -986,7 +986,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	
 	// Start the wave if in build mode
-	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
+	if(zombieFactory->IsBuildMode() == true && !m_pShop->IsOpen() && !m_bIsPaused && (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::Back) || 
 		pInput->IsButtonPressed ( 1 , 6 )) )
 	{
 		zombieFactory->SetBuildTImeRemaining(0.0f);
