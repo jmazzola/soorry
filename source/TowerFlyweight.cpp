@@ -1,5 +1,7 @@
 #include "TowerFlyweight.h"
 
+#include "../SGD Wrappers/SGD_AudioManager.h"
+
 #include "../TinyXML/tinyxml.h"
 
 
@@ -246,6 +248,22 @@ void TowerFlyweight::Load(string fileName)
 
 #pragma endregion
 
+	// Load Sounds
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	m_hSellSound = pAudio->LoadAudio("resource/audio/doorClose.wav");
+	m_hMachineGunShotSound = pAudio->LoadAudio("resource/audio/machineGunShot.wav");
+	m_hMapleSyrupShotSound = pAudio->LoadAudio("resource/audio/mapleSyrupShot.wav");
+	m_hHockeyStickSlashSound = pAudio->LoadAudio("resource/audio/hockeyStickSlash.wav");
+}
+
+void TowerFlyweight::Unload()
+{
+	// Unload sounds
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	pAudio->UnloadAudio(m_hSellSound);
+	pAudio->UnloadAudio(m_hMachineGunShotSound);
+	pAudio->UnloadAudio(m_hMapleSyrupShotSound);
+	pAudio->UnloadAudio(m_hHockeyStickSlashSound);
 }
 
 /**********************************************************/
@@ -354,6 +372,26 @@ SGD::HAudio TowerFlyweight::GetPurchaseSound() const
 SGD::HAudio TowerFlyweight::GetClickSound() const
 {
 	return m_hClickSound;
+}
+
+SGD::HAudio TowerFlyweight::GetSellSound() const
+{
+	return m_hSellSound;
+}
+
+SGD::HAudio TowerFlyweight::GetMachineGunShotSound() const
+{
+	return m_hMachineGunShotSound;
+}
+
+SGD::HAudio TowerFlyweight::GetMapleSyrupShotSound() const
+{
+	return m_hMapleSyrupShotSound;
+}
+
+SGD::HAudio TowerFlyweight::GetHockeyStickSlashSound() const
+{
+	return m_hHockeyStickSlashSound;
 }
 
 /**********************************************************/

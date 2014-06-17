@@ -69,6 +69,8 @@ public:
 
 	Shop* GetShop() const { return m_pShop; }
 
+	bool m_bPlayLaser;
+
 	// Create and or save the game
 	void SaveGame();
 	void LoadGameFromSlot(int slot);
@@ -216,6 +218,8 @@ private:
 	SGD::HAudio m_hBeaverFeverMusic = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hSandboxMusic		= SGD::INVALID_HANDLE;
 	SGD::HAudio m_hRunningManMusic	= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hLaserSound = SGD::INVALID_HANDLE;
+
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;

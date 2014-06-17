@@ -866,6 +866,7 @@ void Player::Update ( float dt )
 
 					if (pInput->GetMousePosition().IsWithinRectangle(sellButton))
 					{
+						m_pSelectedTower->PlaySellSound();
 						m_unScore += m_pSelectedTower->GetSellValue();
 						StatTracker::GetInstance()->TowerExchange(false);
 						DestroyEntityMessage* msg = new DestroyEntityMessage(m_pSelectedTower);

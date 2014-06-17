@@ -172,7 +172,7 @@ bool WorldManager::LoadWorld(string fileName)
 	GenerateSolidsChart();
 
 	//pGameplay->SetLoadingBar(0.69f, "4 8 15 16 23 42");
-	pGameplay->SetLoadingBar(0.69f, "Not funny Justin");
+	pGameplay->SetLoadingBar(0.69f, "Loading Colliders");
 
 	// Add walls to top layer
 	for (unsigned int i = 0; i < m_vInitWalls.size(); i++)

@@ -268,6 +268,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- set up entities
 /*virtual*/ void GameplayState::Enter(void)
 {
+	m_bPlayLaser = false;
+
 	// Load the stats for the stattracker
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
@@ -337,7 +339,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hWelcomeShop		= pAudio->LoadAudio("resource/audio/Welcome_Shop1.wav");
 	m_hWinTheGame		= pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
 	m_hAmmoPickup		= pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
-
+	m_hLaserSound = pAudio->LoadAudio("resource/audio/laserBuzz.wav");
 
 	// 12%
 	SetLoadingBar(0.12f, "Loading Particles");
@@ -851,6 +853,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hWinTheGame);
 	pAudio->UnloadAudio(m_hWelcomeShop);
 		pAudio->UnloadAudio(m_hAmmoPickup);
+		pAudio->UnloadAudio(m_hLaserSound);
 
 		//Matt gets rid of the memorym_hWelcomeShop	 leaks
 		m_pParticleManager->unload(); 
@@ -859,6 +862,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	delete zombieFactory;
 
 	// Delete tower flyweight
+	m_pTowerFlyweight->Unload();
 	delete m_pTowerFlyweight;
 
 	// Release the player
@@ -1405,6 +1409,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 //	- update game entities
 /*virtual*/ void GameplayState::Update(float elapsedTime)
 {
+	m_bPlayLaser = false;
+
 	//if(SGD::GraphicsManager::GetInstance()->IsCursorShowing() == false)
 		//SGD::GraphicsManager::GetInstance()->TurnCursorOn();
 
@@ -1547,6 +1553,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		m_unFPS = m_unFrames;
 		m_unFrames = 0;
 		m_fFPSTimer = 1.0f;		// count down from 1 second
+	}
+
+	if (m_bPlayLaser == true && !pAudio->IsAudioPlaying(m_hLaserSound))
+	{
+		pAudio->PlayAudio(m_hLaserSound);
+	}
+	if (m_bPlayLaser == false)
+	{
+		pAudio->StopAudio(m_hLaserSound);
 	}
 }
 
