@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mode>
-  <world>resource/world/RunningWorld.xml</world>
+  <world>resource/world/worldWithShop.xml</world>
   <wave_data>resource/data/game_modes/arcade_mode/waveData.xml</wave_data>
   <player_stats>resource/data/game_modes/arcade_mode/playerStats.xml</player_stats>
   <enemy_stats>resource/data/game_modes/arcade_mode/enemyStats.xml</enemy_stats>

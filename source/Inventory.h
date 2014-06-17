@@ -56,8 +56,8 @@ private:
 	unsigned int m_unDrones;
 
 
-	unsigned int m_unWallsMAX = 100;
-	unsigned int m_unWindowsMAX = 100;
+	unsigned int m_unWallsMAX = 150;
+	unsigned int m_unWindowsMAX = 150;
 	unsigned int m_unBearTrapsMAX = 100;
 	unsigned int m_unMinesMAX = 100;
 	unsigned int m_unGrenadesMAX = 100;
