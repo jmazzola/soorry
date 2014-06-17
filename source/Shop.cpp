@@ -873,6 +873,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	Inventory* inventory = player->GetInventory();
 	Game* game = Game::GetInstance();
 	StatTracker* tracker = StatTracker::GetInstance();
+	int curMoney = player->GetScore();
 
 	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
 
@@ -923,21 +924,37 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	else if (shopSection == ITEMS)
 	{
 		if (parcel == ITEM_PRICE_WALL)
-			inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]);
+		{
+			if (inventory->SetWalls(inventory->GetWalls() + itemAmountToAdd[ITEM_PRICE_WALL]));
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
+
+		}
 		if (parcel == ITEM_PRICE_WINDOW)
-			inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]);
+		{
+			if(inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]));
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
+
+		}
 		if (parcel == BEARTRAP)
 		{
-			inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]);
-			tracker->TrapExchange(true);
+			if (inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]))
+				tracker->TrapExchange(true);
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
 		}
 		if (parcel == MINE)
 		{
-			inventory->SetMines(inventory->GetMines() + itemAmountToAdd[MINE]);
-			tracker->TrapExchange(true);
+			if (inventory->SetMines ( inventory->GetMines () + itemAmountToAdd[ MINE ] ))
+				tracker->TrapExchange ( true );
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
 		}
 		if (parcel == GRENADE)
-			inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]);
+			if (inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]));
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
 		if (parcel == AMMO)
 		{
 			// Refill the player's ammo
@@ -949,22 +966,30 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 		if (parcel == DRONE)
 		{
-			CreateDroneMessage* pMsg = new CreateDroneMessage();
-			pMsg->QueueMessage();
-			pMsg = nullptr;
-
-			inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]);
+			if (inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]))
+			{
+				CreateDroneMessage* pMsg = new CreateDroneMessage();
+				pMsg->QueueMessage();
+				pMsg = nullptr;
+			}
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
 		}
 
 		if (parcel == LAVATRAP)
 		{
-			inventory->SetLaserTowers(inventory->GetLavaTraps() + itemAmountToAdd[LAVATRAP]);
-			tracker->TrapExchange(true);
+			if(inventory->SetLavaTraps ( inventory->GetLavaTraps () + itemAmountToAdd[ LAVATRAP ] ))
+				tracker->TrapExchange ( true );
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
+
 		}
 		if (parcel == SPIKETRAP)
 		{
-			inventory->SetSpikeTraps(inventory->GetSpikeTraps() + itemAmountToAdd[SPIKETRAP]);
-			tracker->TrapExchange(true);
+			if(inventory->SetSpikeTraps ( inventory->GetSpikeTraps () + itemAmountToAdd[ SPIKETRAP ] ))
+				tracker->TrapExchange ( true );
+			else
+				player->SetScore(curMoney += itemPrices[parcel]);
 		}
 
 	}
@@ -999,13 +1024,29 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	if (shopSection == TOWERS)
 	{
 		if (parcel == TOWER_MG)
-			inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1);
+		{
+			if (inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_MAPLESYRUP)
-			inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1);
+		{
+			if (inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_HOCKEYSTICK)
-			inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1);
+		{
+			if (inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 		if (parcel == TOWER_LASER)
-			inventory->SetLaserTowers(inventory->GetLaserTowers() + 1);
+		{
+			if (inventory->SetLaserTowers(inventory->GetLaserTowers() + 1));
+			else
+				player->SetScore(curMoney += towerPrices[parcel]);
+		}
 
 	}
 }

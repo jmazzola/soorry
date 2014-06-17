@@ -260,9 +260,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\data\BitmapFont_Roboto.fnt" />
+    <None Include="resource\images\hud\crosshair.cur" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Soorry_StrawMan.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\images\SooryIcon.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7CA06067-BB63-4E55-992B-D50460B65D22}</ProjectGuid>
