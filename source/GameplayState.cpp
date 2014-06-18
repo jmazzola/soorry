@@ -1284,6 +1284,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 				}
 			}
+		
 		}
 
 #pragma endregion

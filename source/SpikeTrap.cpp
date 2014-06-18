@@ -4,7 +4,7 @@
 
 SpikeTrap::SpikeTrap ()
 {
-	m_fDamage = 5.5f;
+	m_fDamage = 0.5f;
 	m_fAttackCD = 1.0f;
 	m_fAttackTimer = 0.0f;
 	m_fHoldLength = 0.2f;

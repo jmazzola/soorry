@@ -376,9 +376,7 @@ bool Shop::Input()
 		// Sell a tower
 		if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::X))
 			Sell(m_nCursor, 3);
-
 	}
-
 	return true;
 }
 
@@ -532,8 +530,6 @@ void Shop::Render()
 			stuff = "Spike Traps: ";
 			stuff += std::to_string(inv->GetSpikeTraps());
 			m_pFont->Draw(stuff.c_str(), 414, 400, 0.4f, { 255, 255, 0 });
-
-
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
