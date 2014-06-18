@@ -261,8 +261,8 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 			int id = m_nColliderIDs[x][y] = m_pWorld->GetInstance()->GetColliderID(x, y);
 
 			SGD::Rectangle rect;
-			rect.left = x * 32 + 1;
-			rect.top = y * 32 + 1;
+			rect.left = (float)(x * 32 + 1);
+			rect.top = (float)(y * 32 + 1);
 			rect.right = rect.left + 30;
 			rect.bottom = rect.top + 30;
 
