@@ -551,10 +551,10 @@ void LoadSaveState::RenderAndLoadFileInfo(int slot)
 	pathtowrite += ".rzbn";
 
 	RZBN* rzbn = new RZBN();
-	
+
 	string returnStr;
 
-	switch (rzbn->LoadRZBNFile(pathtowrite))
+	switch (rzbn->LoadRZBNFile(pathtowrite, true))
 	{
 	case 0:
 		returnStr = "File couldn't load.";
@@ -657,7 +657,7 @@ void LoadSaveState::CheckForValidSaves()
 
 	// Create our directory
 	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
-
+	
 	RZBN* rzbn = new RZBN();
 
 	for (int i = 0; i < NUM_SLOTS; i++)
@@ -666,7 +666,7 @@ void LoadSaveState::CheckForValidSaves()
 		pathtowrite += "\\SoorrySave_0";
 		pathtowrite += std::to_string(i + 1);
 		pathtowrite += ".rzbn";
-		switch (rzbn->LoadRZBNFile(pathtowrite))
+		switch (rzbn->LoadRZBNFile(pathtowrite, true))
 		{
 		case 0:
 			m_bIsFileValid[i] = true;
