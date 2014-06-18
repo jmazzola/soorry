@@ -18,7 +18,7 @@ Projectile::Projectile()
 
 Projectile::~Projectile()
 {
-	//SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
+
 }
 
 
@@ -31,7 +31,7 @@ void Projectile::Update(float dt)
 
 	m_fLifeTime += dt;
 
-	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true) || m_fLifeTime > 5)
+	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true) || m_fLifeTime > 10)
 	{
 		if (this->GetType() == ENT_BULLET_ROCKET)
 		{

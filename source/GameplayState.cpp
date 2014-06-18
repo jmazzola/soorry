@@ -1442,7 +1442,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		if (m_nGamemode == RUNNING_MAN_MODE)
 		{
-
+			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
+			{
+				pAudio->PlayAudio(m_hRunningManMusic, true);
+			}
 		}
 		m_bEnterShop = false;
 	}
@@ -1454,6 +1457,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		if (m_nGamemode == BEAVER_FEAVER_MODE)
 		{
+			pAudio->StopAudio(m_hBeaverFeverMusic);
 		}
 		if (m_nGamemode == SANDBOX_MODE)
 		{
@@ -1461,7 +1465,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		if (m_nGamemode == RUNNING_MAN_MODE)
 		{
-
+			pAudio->StopAudio(m_hRunningManMusic);
 		}
 		pAudio->PlayAudio(m_hShopMusic);
 		if (m_bEnterShop == false)
