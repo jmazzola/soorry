@@ -195,7 +195,7 @@ void ZombieFactory::Update(float dt)
 				return;
 			}
 
-			m_fBuildTimeRemaining = (float)waveData[m_nWave - 1].buildTime;
+			m_fBuildTimeRemaining = 10.0f;
 
 			m_pSlowAlpha = nullptr;
 			m_pFastAlpha = nullptr;
