@@ -66,7 +66,7 @@ void Explosion::Render()
 
 SGD::Rectangle Explosion::GetRect() const
 {
-	return SGD::Rectangle();
+	return SGD::Rectangle(m_ptPosition.x + 16, m_ptPosition.y + 16, m_ptPosition.x + 48, m_ptPosition.y + 48);
 }
 
 /**********************************************************/
