@@ -62,6 +62,46 @@ void Shop::Enter(Entity* player)
 
 	m_nCursor = 0;
 	m_nMenuTab = MAIN_TAB;
+
+	menuRectangles[MainOptions::OPTIONS_WEAPONS] = SGD::Rectangle(SGD::Point(200, 150), SGD::Size(415, 50));
+	menuRectangles[MainOptions::OPTIONS_ITEMS] = SGD::Rectangle(SGD::Point(200, 200), SGD::Size(415, 50));
+	menuRectangles[MainOptions::OPTIONS_UPGRADES] = SGD::Rectangle(SGD::Point(200, 250), SGD::Size(415, 50));
+	menuRectangles[MainOptions::OPTIONS_FORTIFICATIONS] = SGD::Rectangle(SGD::Point(200, 300), SGD::Size(415, 50));
+	menuRectangles[MainOptions::OPTIONS_EXITSHOP] = SGD::Rectangle(SGD::Point(200, 350), SGD::Size(415, 50));
+
+	weaponRectangles[WEAP_AR] = SGD::Rectangle(SGD::Point(55, 70), SGD::Size(310, 40));
+	weaponRectangles[WEAP_SHOTGUN] = SGD::Rectangle(SGD::Point(55, 110), SGD::Size(310, 40));
+	weaponRectangles[WEAP_ROCKETLAUNCHER] = SGD::Rectangle(SGD::Point(55, 150), SGD::Size(310, 40));
+	weaponRectangles[WEAP_HATTRICK] = SGD::Rectangle(SGD::Point(55, 190), SGD::Size(310, 40));
+	weaponRectangles[WEAP_GOBACK] = SGD::Rectangle(SGD::Point(55, 230), SGD::Size(310, 40));
+
+	itemRectangles[ITEM_BEARTRAP] = SGD::Rectangle(SGD::Point(55, 70), SGD::Size(310, 40));
+	itemRectangles[ITEM_MINE] = SGD::Rectangle(SGD::Point(55, 110), SGD::Size(310, 40));
+	itemRectangles[ITEM_WALL] = SGD::Rectangle(SGD::Point(55, 150), SGD::Size(310, 40));
+	itemRectangles[ITEM_WINDOW] = SGD::Rectangle(SGD::Point(55, 190), SGD::Size(310, 40));
+	itemRectangles[ITEM_GRENADE] = SGD::Rectangle(SGD::Point(55, 230), SGD::Size(310, 40));
+	itemRectangles[ITEM_AMMO] = SGD::Rectangle(SGD::Point(55, 270), SGD::Size(310, 40));
+	itemRectangles[ITEM_DRONE] = SGD::Rectangle(SGD::Point(55, 310), SGD::Size(310, 40));
+	itemRectangles[ITEM_GOBACK] = SGD::Rectangle(SGD::Point(55, 350), SGD::Size(310, 40));
+
+	upgradeRectangles[UG_AR_DAMAGE] = SGD::Rectangle(SGD::Point(55, 70), SGD::Size(310, 40));
+	upgradeRectangles[UG_AR_ROF] = SGD::Rectangle(SGD::Point(55, 110), SGD::Size(310, 40));
+	upgradeRectangles[UG_AR_AMMO] = SGD::Rectangle(SGD::Point(55, 150), SGD::Size(310, 40));
+	upgradeRectangles[UG_SHOTGUN_DAMAGE] = SGD::Rectangle(SGD::Point(55, 190), SGD::Size(310, 40));
+	upgradeRectangles[UG_SHOTGUN_ROF] = SGD::Rectangle(SGD::Point(55, 230), SGD::Size(310, 40));
+	upgradeRectangles[UG_SHOTGUN_AMMO] = SGD::Rectangle(SGD::Point(55, 270), SGD::Size(310, 40));
+	upgradeRectangles[UG_LAUNCHER_DAMAGE] = SGD::Rectangle(SGD::Point(55, 310), SGD::Size(310, 40));
+	upgradeRectangles[UG_LAUNCHER_ROF] = SGD::Rectangle(SGD::Point(55, 350), SGD::Size(310, 40));
+	upgradeRectangles[UG_LAUNCHER_AMMO] = SGD::Rectangle(SGD::Point(55, 390), SGD::Size(310, 40));
+	upgradeRectangles[UG_GOBACK] = SGD::Rectangle(SGD::Point(55, 430), SGD::Size(310, 40));
+
+	fortificationRectangles[FORT_MG] = SGD::Rectangle(SGD::Point(55, 70), SGD::Size(310, 40));
+	fortificationRectangles[FORT_MAPLESYRUP] = SGD::Rectangle(SGD::Point(55, 110), SGD::Size(310, 40));
+	fortificationRectangles[FORT_LASER] = SGD::Rectangle(SGD::Point(55, 150), SGD::Size(310, 40));
+	fortificationRectangles[FORT_SPIKETRAP] = SGD::Rectangle(SGD::Point(55, 190), SGD::Size(310, 40));
+	fortificationRectangles[FORT_LAVATRAP] = SGD::Rectangle(SGD::Point(55, 230), SGD::Size(310, 40));
+	fortificationRectangles[FORT_HOCKEYSTICK] = SGD::Rectangle(SGD::Point(55, 270), SGD::Size(310, 40));
+	fortificationRectangles[FORT_GOBACK] = SGD::Rectangle(SGD::Point(55, 310), SGD::Size(310, 40));
 }
 //// enter shop DELETE ME AFTER SHOP FUNCTIONS PROPERLY
 //if (pInput->IsKeyPressed(SGD::Key::Backspace))
@@ -147,10 +187,33 @@ bool Shop::Input()
 				m_nCursor = MainOptions::OPTIONS_EXITSHOP;
 		}
 
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < OPTIONS_TOTAL; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(menuRectangles[i]))
+				{
+					m_nCursor = i;
+				}
+			}
+		}
+		bool m_bTHEBOOL = false;
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(menuRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
+		}
+
 		// --- Selecting an option ---
 		// If the enter key (PC) or A button (Xbox 360) are pressed
 		// Select the item
-		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || m_bTHEBOOL)
 		{
 			// Switch table for the item selected
 			switch (m_nCursor)
@@ -212,10 +275,33 @@ bool Shop::Input()
 				m_nCursor = WeaponsOptions::WEAPON_GOBACK;
 		}
 
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < TOTAL_WEAPONS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(weaponRectangles[i]))
+				{
+					m_nCursor = i;
+				}
+			}
+		}
+		bool m_bTHEBOOL = false;
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < TOTAL_WEAPONS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(weaponRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
+		}
+
 		// --- Selecting an option ---
 		// If the enter key (PC) or A button (Xbox 360) are pressed
 		// Select the item
-		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || m_bTHEBOOL)
 		{
 			// If we're going back
 			if (m_nCursor == WeaponsOptions::WEAPON_GOBACK)
@@ -261,10 +347,33 @@ bool Shop::Input()
 				m_nCursor = ItemsOptions::ITEM_GOBACK;
 		}
 
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < TOTAL_ITEMS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				{
+					m_nCursor = i;
+				}
+			}
+		}
+		bool m_bTHEBOOL = false;
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < TOTAL_ITEMS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
+		}
+
 		// --- Selecting an option ---
 		// If the enter key (PC) or A button (Xbox 360) are pressed
 		// Select the item
-		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || m_bTHEBOOL)
 		{
 			// If we're going back
 			if (m_nCursor == ItemsOptions::ITEM_GOBACK)
@@ -309,10 +418,33 @@ bool Shop::Input()
 				m_nCursor = UpgradesOptions::UG_GOBACK;
 		}
 
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < TOTAL_UPGRADES; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(upgradeRectangles[i]))
+				{
+					m_nCursor = i;
+				}
+			}
+		}
+		bool m_bTHEBOOL = false;
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < TOTAL_UPGRADES; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(upgradeRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
+		}
+
 		// --- Selecting an option ---
 		// If the enter key (PC) or A button (Xbox 360) are pressed
 		// Select the item
-		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || m_bTHEBOOL)
 		{
 			// If we're going back
 			if (m_nCursor == UpgradesOptions::UG_GOBACK)
@@ -356,6 +488,29 @@ bool Shop::Input()
 			// Wrap around the options
 			if (m_nCursor < FortificationOptions::FORT_MG)
 				m_nCursor = FortificationOptions::FORT_GOBACK;
+		}
+
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < TOTAL_TOWERS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				{
+					m_nCursor = i;
+				}
+			}
+		}
+		bool m_bTHEBOOL = false;
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < TOTAL_TOWERS; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
 		}
 
 		// --- Selecting an option ---
@@ -648,6 +803,7 @@ void Shop::Render()
 						break;
 					}
 
+
 					case WEAP_SHOTGUN:
 					{
 						if (dynamic_cast<Player*>(m_pPlayer)->HasShotty() || score < weapPrices[i])
@@ -841,6 +997,7 @@ void Shop::Render()
 			for (int i = 0; i < TOTAL_UPGRADES; i++)
 			{
 				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
+
 
 				if (m_nCursor == i && score < upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
