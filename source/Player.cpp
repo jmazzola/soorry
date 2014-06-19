@@ -80,22 +80,22 @@ Player::Player () : Listener ( this )
 	m_fRunningManTimer = 2.0f;
 	m_fPickupMessageTimer = 0.0f;
 
-	m_unScore = 2500;
+	m_unScore = 1000;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
-	m_pInventory->SetBearTraps(100);
-	m_pInventory->SetGrenades(10);
-	m_pInventory->SetHealthPacks(3);
-	m_pInventory->SetMines(1);
-	m_pInventory->SetWalls(100);
-	m_pInventory->SetWindows(100);
-	m_pInventory->SetMachineGunTowers(20);
-	m_pInventory->SetMapleSyrupTowers(20);
-	m_pInventory->SetHockeyStickTowers(20);
-	m_pInventory->SetLaserTowers(20);
-	m_pInventory->SetLavaTraps(5);
-	m_pInventory->SetSpikeTraps(5);
+	m_pInventory->SetBearTraps(0);
+	m_pInventory->SetGrenades(0);
+	m_pInventory->SetHealthPacks(0);
+	m_pInventory->SetMines(0);
+	m_pInventory->SetWalls(0);
+	m_pInventory->SetWindows(0);
+	m_pInventory->SetMachineGunTowers(0);
+	m_pInventory->SetMapleSyrupTowers(0);
+	m_pInventory->SetHockeyStickTowers(0);
+	m_pInventory->SetLaserTowers(0);
+	m_pInventory->SetLavaTraps(0);
+	m_pInventory->SetSpikeTraps(0);
 	m_pInventory->SetDroneCount(0);
 
 	m_bHasAssaultRifle = true;
