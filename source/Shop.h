@@ -18,6 +18,7 @@ using namespace std;
 class BitmapFont;
 class Inventory;
 class Entity;
+class TowerFlyweight;
 
 class Shop
 {
@@ -134,6 +135,7 @@ public:
 
 	// Mutators
 	void SetShopStatus(bool isOpen);
+	void SetTowerFlyweight(TowerFlyweight* towerFlyweight);
 
 private:
 
@@ -149,6 +151,7 @@ private:
 	SGD::Point weapTopLeft[TOTAL_WEAPONS];		// {Top, Left} of the weapon's picture
 	bool isWeapProgressive[TOTAL_WEAPONS];		// Does the price progressively increase?
 	bool isWeapBought[TOTAL_WEAPONS];
+	SGD::Rectangle weaponRectangles[TOTAL_WEAPONS];
 
 
 	// --- Items ---
@@ -159,6 +162,7 @@ private:
 	SGD::Point itemTopLeft[TOTAL_ITEMS];
 	bool isItemProgressive[TOTAL_ITEMS];
 	bool isItemMaxed[TOTAL_ITEMS];
+	SGD::Rectangle itemRectangles[TOTAL_ITEMS];
 
 
 	// --- Weapon Upgrades ---
@@ -169,6 +173,7 @@ private:
 	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
 	bool isUpgradeProgressive[TOTAL_UPGRADES];
 	bool isUpgradeMaxed[TOTAL_UPGRADES];
+	SGD::Rectangle upgradeRectangles[TOTAL_UPGRADES];
 
 
 	// --- Fortifications ---
@@ -179,6 +184,10 @@ private:
 	SGD::Point fortTopLeft[TOTAL_TOWERS];
 	bool isFortProgressive[TOTAL_TOWERS];
 	bool isFortMaxed[TOTAL_TOWERS];
+	SGD::Rectangle fortificationRectangles[TOTAL_TOWERS];
+
+
+	SGD::Rectangle menuRectangles[5];
 
 
 	// Textures
@@ -217,6 +226,7 @@ private:
 		ITEMS_TAB, 
 		UPGRADES_TAB, 
 		FORTIFICATIONS_TAB, 
+		
 	};
 
 	// Shop's main tab options
@@ -226,7 +236,8 @@ private:
 		OPTIONS_ITEMS, 
 		OPTIONS_UPGRADES, 
 		OPTIONS_FORTIFICATIONS, 
-		OPTIONS_EXITSHOP 
+		OPTIONS_EXITSHOP,
+		OPTIONS_TOTAL,
 	};
 
 
@@ -279,6 +290,6 @@ private:
 		FORT_GOBACK
 	};
 
-
+	TowerFlyweight* m_pTowerFlyweight;
 };
 
