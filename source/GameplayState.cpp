@@ -2554,7 +2554,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	{
 		// Adjust for projectile to come from center
 		playerCenter.x += 12;
-		playerCenter.y += 12;
+		playerCenter.y += 6;
 		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
@@ -2566,7 +2566,6 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec.Normalize();
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
-
 		tempProj->SetHitSound(m_hBulletHit);
 		tempProj->SetImpactSound(m_hBulletImpact);
 

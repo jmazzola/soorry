@@ -68,6 +68,7 @@ public:
 	bool HasRocketLauncher() const { return m_bHasRocketz; }
 	bool HasHatTrick() const { return m_bHasHatTrick; }
 
+	float GetRotation() const { return m_fRotation; }
 	/**********************************************************/
 	// Mutators
 	void SetMaxHealth(float maxHealth);
@@ -130,6 +131,7 @@ protected:
 	SGD::Vector m_vCamera;
 	SGD::HTexture m_hPlaceablesImage;
 	SGD::HTexture m_hRangeCirclesImage;
+	float m_fRotation;
 	
 	//Player sounds
 	SGD::HAudio m_hBlockPlace = SGD::INVALID_HANDLE;
@@ -164,5 +166,6 @@ private:
 	bool m_bHasShotty;
 	bool m_bHasRocketz;
 	bool m_bHasHatTrick;
+
 };
 
