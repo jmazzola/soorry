@@ -24,6 +24,12 @@
 #include "BitmapFont.h"
 
 #define SELL_DISCOUNT 0.75f
+#define BUY_INCREASE 0.75f
+
+#define AR_CURAMMO 200
+#define SH_CURAMMO 200
+#define RL_CURAMMO 20
+#define HT_CURAMMO 50
 
 // Enter
 void Shop::Enter(Entity* player)
@@ -98,7 +104,7 @@ bool Shop::IsOpen()
 
 unsigned int Shop::GetTowerPrice(int _tower)
 {
-	return towerPrices[_tower];
+	return fortPrices[_tower];
 }
 
 // SetShopStatus
@@ -165,9 +171,9 @@ bool Shop::Input()
 				m_nMenuTab = UPGRADES_TAB;
 				break;
 
-			case MainOptions::OPTIONS_TOWERS:
+			case MainOptions::OPTIONS_FORTIFICATIONS:
 				m_nCursor = 0;
-				m_nMenuTab = TOWERS_TAB;
+				m_nMenuTab = FORTIFICATIONS_TAB;
 				break;
 
 			case MainOptions::OPTIONS_EXITSHOP:
@@ -179,7 +185,7 @@ bool Shop::Input()
 		}
 	}
 
-	// Weapons Tab
+	// << Weapons Tab >>
 	else if (m_nMenuTab == WEAPONS_TAB)
 	{
 		// --- Scrolling through options ---
@@ -229,7 +235,7 @@ bool Shop::Input()
 		}
 
 	}
-	// Items Tab
+	// << Items Tab >>
 	else if (m_nMenuTab == ITEMS_TAB)
 	{
 		// --- Scrolling through options ---
@@ -242,7 +248,7 @@ bool Shop::Input()
 
 			// Wrap around the options
 			if (m_nCursor > ItemsOptions::ITEM_GOBACK)
-				m_nCursor = ItemsOptions::ITEM_WALL;
+				m_nCursor = ItemsOptions::ITEM_BEARTRAP;
 		}
 		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 		// Move the cursor (selected item) up
@@ -251,7 +257,7 @@ bool Shop::Input()
 			--m_nCursor;
 
 			// Wrap around the options
-			if (m_nCursor < ItemsOptions::ITEM_WALL)
+			if (m_nCursor < ItemsOptions::ITEM_BEARTRAP)
 				m_nCursor = ItemsOptions::ITEM_GOBACK;
 		}
 
@@ -277,7 +283,7 @@ bool Shop::Input()
 			}
 		}
 	}
-	// Upgrades Tab
+	// << Upgrades Tab >>
 	else if (m_nMenuTab == UPGRADES_TAB)
 	{
 		// --- Scrolling through options ---
@@ -290,7 +296,7 @@ bool Shop::Input()
 
 			// Wrap around the options
 			if (m_nCursor > UpgradesOptions::UG_GOBACK)
-				m_nCursor = UpgradesOptions::UG_SHOTGUN_ROF;
+				m_nCursor = UpgradesOptions::UG_AR_DAMAGE;
 		}
 		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 		// Move the cursor (selected item) up
@@ -299,7 +305,7 @@ bool Shop::Input()
 			--m_nCursor;
 
 			// Wrap around the options
-			if (m_nCursor < UpgradesOptions::UG_SHOTGUN_ROF)
+			if (m_nCursor < UpgradesOptions::UG_AR_DAMAGE)
 				m_nCursor = UpgradesOptions::UG_GOBACK;
 		}
 
@@ -326,8 +332,8 @@ bool Shop::Input()
 		}
 
 	}
-	// Towers Tab
-	else if (m_nMenuTab == TOWERS_TAB)
+	// << Fortifications Tab >>
+	else if (m_nMenuTab == FORTIFICATIONS_TAB)
 	{
 		// --- Scrolling through options ---
 		// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -338,8 +344,8 @@ bool Shop::Input()
 			++m_nCursor;
 
 			// Wrap around the options
-			if (m_nCursor > TowersOptions::TOWER_GOBACK)
-				m_nCursor = TowersOptions::TOWER_MG;
+			if (m_nCursor > FortificationOptions::FORT_GOBACK)
+				m_nCursor = FortificationOptions::FORT_MG;
 		}
 		// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 		// Move the cursor (selected item) up
@@ -348,8 +354,8 @@ bool Shop::Input()
 			--m_nCursor;
 
 			// Wrap around the options
-			if (m_nCursor < TowersOptions::TOWER_MG)
-				m_nCursor = TowersOptions::TOWER_GOBACK;
+			if (m_nCursor < FortificationOptions::FORT_MG)
+				m_nCursor = FortificationOptions::FORT_GOBACK;
 		}
 
 		// --- Selecting an option ---
@@ -358,10 +364,10 @@ bool Shop::Input()
 		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
 		{
 			// If we're going back
-			if (m_nCursor == TowersOptions::TOWER_GOBACK)
+			if (m_nCursor == FortificationOptions::FORT_GOBACK)
 			{
 				// Set it on the Items option
-				m_nCursor = MainOptions::OPTIONS_TOWERS;
+				m_nCursor = MainOptions::OPTIONS_FORTIFICATIONS;
 				// Go back to the main tab
 				m_nMenuTab = MAIN_TAB;
 			}
@@ -373,7 +379,7 @@ bool Shop::Input()
 					GivePurchase(m_nCursor, 3);
 			}
 		}
-		// Sell a tower
+		// Sell a fortification
 		if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::X))
 			Sell(m_nCursor, 3);
 
@@ -382,8 +388,150 @@ bool Shop::Input()
 	return true;
 }
 
+// UpdateItemStatus
+// - update if an item is maxed or bought
+// - change the item's name
+void Shop::UpdateItemStatus()
+{
+	// Grab the player
+	Player* player = dynamic_cast<Player*>(m_pPlayer);
+
+
+	// Update Weapon Names if they're bought
+
+	switch (m_nMenuTab)
+	{
+
+
+	case WEAPONS_TAB:
+	{
+		if (player->HasAR())
+		{
+			weapNames[WEAP_AR] = "Assault Rifle [BOUGHT]";
+			isWeapBought[WEAP_AR] = true;
+		}
+		if (player->HasShotty())
+		{
+			weapNames[WEAP_SHOTGUN] = "Shotgun [BOUGHT]";
+			isWeapBought[WEAP_SHOTGUN] = true;
+		}
+		if (player->HasRocketLauncher())
+		{
+			weapNames[WEAP_ROCKETLAUNCHER] = "RPG [BOUGHT]";
+			isWeapBought[WEAP_ROCKETLAUNCHER] = true;
+		}
+		if (player->HasHatTrick())
+		{
+			weapNames[WEAP_HATTRICK] = "Hat Trick [BOUGHT]";
+			isWeapBought[WEAP_HATTRICK] = true;
+		}
+	}
+
+		break;
+
+	case ITEMS_TAB:
+	{
+		Inventory* inv = player->GetInventory();
+
+		if (inv->GetWalls() >= inv->m_unWallsMAX)
+		{
+			itemNames[ITEM_WALL] = "Walls [MAXED OUT]";
+			isItemMaxed[ITEM_WALL] = true;
+		}
+
+		if (inv->GetWindows() >= inv->m_unWindowsMAX)
+		{
+			itemNames[ITEM_WINDOW] = "Windows [MAXED OUT]";
+			isItemMaxed[ITEM_WINDOW] = true;
+
+		}
+
+		if (inv->GetMines() >= inv->m_unMinesMAX)
+		{
+			itemNames[ITEM_MINE] = "A-Z Mine [MAXED OUT]";
+			isItemMaxed[ITEM_MINE] = true;
+
+		}
+
+		if (inv->GetGrenades() >= inv->m_unGrenadesMAX)
+		{
+			itemNames[ITEM_GRENADE] = "Frag Grenades [MAXED OUT]";
+			isItemMaxed[ITEM_GRENADE] = true;
+
+		}
+
+		if (inv->GetBearTraps() >= inv->m_unBearTrapsMAX)
+		{
+			itemNames[ITEM_BEARTRAP] = "Beartrap [MAXED OUT]";
+			isItemMaxed[ITEM_BEARTRAP] = true;
+		}
+
+		if (inv->GetDroneCount() >= inv->m_unDronesMAX)
+		{
+			itemNames[ITEM_DRONE] = "Drone [MAXED OUT]";
+			isItemMaxed[ITEM_DRONE] = true;
+
+		}
+	}
+		break;
+
+	case UPGRADES_TAB:
+	{
+
+	}
+		break;
+
+	case FORTIFICATIONS_TAB:
+	{
+		Inventory* inv = player->GetInventory();
+
+		if (inv->GetMachineGunTowers() >= inv->m_unMachineGunTowersMAX)
+		{
+			fortNames[FORT_MG] = "Machine Gun Tower [MAXED OUT]";
+			isFortMaxed[FORT_MG] = true;
+		}
+
+		if (inv->GetMapleSyrupTowers() >= inv->m_unMapleSyrupTowersMAX)
+		{
+			fortNames[FORT_MAPLESYRUP] = "Maple Syrup Tower [MAXED OUT]";
+			isFortMaxed[FORT_MAPLESYRUP] = true;
+
+		}
+
+		if (inv->GetHockeyStickTowers() >= inv->m_unHockeyStickTowersMAX)
+		{
+			fortNames[FORT_HOCKEYSTICK] = "Hockey Stick Tower [MAXED OUT]";
+			isFortMaxed[FORT_HOCKEYSTICK] = true;
+
+		}
+
+		if (inv->GetSpikeTraps() >= inv->m_unSpikeTrapsMAX)
+		{
+			fortNames[FORT_SPIKETRAP] = "Spike Trap [MAXED OUT]";
+			isFortMaxed[FORT_SPIKETRAP] = true;
+
+		}
+
+		if (inv->GetLavaTraps() >= inv->m_unLavaTrapsMAX)
+		{
+			fortNames[FORT_LAVATRAP] = "Lava Trap [MAXED OUT]";
+			isFortMaxed[FORT_LAVATRAP] = true;
+		}
+
+		if (inv->GetLaserTowers() >= inv->m_unLaserTowersMAX)
+		{
+			fortNames[FORT_LASER] = "Laser Tower [MAXED OUT]";
+			isFortMaxed[FORT_LASER] = true;
+
+		}
+	}
+		break;
+
+	}
+}
+
 // Render
-//	- draw the shop and it's items
+//	- draw the shop and it's items as well as it's descriptions
 void Shop::Render()
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
@@ -391,6 +539,10 @@ void Shop::Render()
 	// If it's open
 	if (IsOpen())
 	{
+
+		// Check and update the item's status
+		UpdateItemStatus();
+
 		if (m_nMenuTab == MAIN_TAB)
 		{
 			// Draw Main Tab background
@@ -412,19 +564,20 @@ void Shop::Render()
 			else
 				m_pFont->Draw("Upgrade Center", 200, 250, 1, { 0, 0, 0 });
 
-			if (m_nCursor == MainOptions::OPTIONS_TOWERS)
-				m_pFont->Draw("Tower Shop", 200, 300, 1, { 0, 255, 0 });
+			if (m_nCursor == MainOptions::OPTIONS_FORTIFICATIONS)
+				m_pFont->Draw("Fortification Depot", 200, 300, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Tower Shop", 200, 300, 1, { 0, 0, 0 });
+				m_pFont->Draw("Fortification Depot", 200, 300, 1, { 0, 0, 0 });
 
 			if (m_nCursor == MainOptions::OPTIONS_EXITSHOP)
-				m_pFont->Draw("Exit Mall", 200, 350, 1, { 0, 255, 0 });
+				m_pFont->Draw("Exit Shop", 200, 350, 1, { 0, 255, 0 });
 			else
-				m_pFont->Draw("Exit Mall", 200, 350, 1, { 0, 0, 0 });
+				m_pFont->Draw("Exit Shop", 200, 350, 1, { 0, 0, 0 });
 		}
 
 		else if (m_nMenuTab == WEAPONS_TAB)
 		{
+
 			// Draw the menu items background
 			pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
@@ -444,53 +597,83 @@ void Shop::Render()
 			SGD::Point shitfucks = weapTopLeft[m_nCursor];
 			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(weapTopLeft[m_nCursor], SGD::Size(100, 100)));
 
+			unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
+
 			// -- Draw the weapon's Names and highlighting --
 			for (int i = 0; i < TOTAL_WEAPONS; i++)
 			{
 				// If we're currently selected
 				if (m_nCursor == i)
 				{
-					// Draw it in green if we don't own it
+					// -- Draw it in green if we don't own it --
+
+					// Based on the cursor selection
 					switch (i)
 					{
-					case 0:
-						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-						break;
-					case 1:
+
+					case WEAP_AR:
 					{
-						if (dynamic_cast<Player*>(m_pPlayer)->HasShotty() == true)
+						// If we have the weapon and it's selected and we either have the weapon already OR we can't afford it.
+						if (dynamic_cast<Player*>(m_pPlayer)->HasAR() || score < weapPrices[i])
+							// Draw it in red to show it can't be bought.
 							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						else
+							// Draw it in green if it can bought
 							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-						break;
-					}
-					case 2:
-					{
-						if (dynamic_cast<Player*>(m_pPlayer)->HasRocketLauncher() == true)
-							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-						else
-							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-					}
-						break;
-					case 3:
-					{
-						if (dynamic_cast<Player*>(m_pPlayer)->HasHatTrick() == true)
-							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-						else
-							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-					}
-						break;
-					case 4:
-						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-						break;
-					default:
 						break;
 					}
 
+					case WEAP_SHOTGUN:
+					{
+						if (dynamic_cast<Player*>(m_pPlayer)->HasShotty() || score < weapPrices[i])
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+						else
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+						break;
+					}
+					case WEAP_ROCKETLAUNCHER:
+					{
+						if (dynamic_cast<Player*>(m_pPlayer)->HasRocketLauncher() || score < weapPrices[i])
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+						else
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+						break;
+					}
+
+					case WEAP_HATTRICK:
+					{
+						if (dynamic_cast<Player*>(m_pPlayer)->HasHatTrick() || score < weapPrices[i])
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+						else
+							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+						break;
+					}
+
+					case WEAP_GOBACK:
+					{
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+						break;
+					}
+
+					default:
+						break;
+
+					}
+
 				}
+
+				// NOT SELECTED
 				else
-					// Draw it in black
-					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+				{
+					// Draw it in gray if we're not selected and it can't be purchased
+					if (score < weapPrices[i] || isWeapBought[i])
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
+					else
+						// Draw it in black if it's available.
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+
+				}
+
 			}
 		}
 
@@ -501,20 +684,21 @@ void Shop::Render()
 
 			// Draw the stats of the items
 			Inventory* inv = dynamic_cast<Player*>(m_pPlayer)->GetInventory();
-			string stuff = "Walls: ";
-			stuff += std::to_string(inv->GetWalls());
+			string stuff;
+			stuff = "Beartraps: ";
+			stuff += std::to_string(inv->GetBearTraps());
 			m_pFont->Draw(stuff.c_str(), 414, 260, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "A-Z Mines: ";
+			stuff += std::to_string(inv->GetMines());
+			m_pFont->Draw(stuff.c_str(), 414, 280, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Walls: ";
+			stuff += std::to_string(inv->GetWalls());
+			m_pFont->Draw(stuff.c_str(), 414, 300, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Windows: ";
 			stuff += std::to_string(inv->GetWindows());
-			m_pFont->Draw(stuff.c_str(), 414, 280, 0.4f, { 255, 255, 0 });
-			stuff.clear();
-			stuff = "Beartraps: ";
-			stuff += std::to_string(inv->GetBearTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 300, 0.4f, { 255, 255, 0 });
-			stuff.clear();
-			stuff = "A-T Mines: ";
-			stuff += std::to_string(inv->GetMines());
 			m_pFont->Draw(stuff.c_str(), 414, 320, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Grenades: ";
@@ -525,15 +709,6 @@ void Shop::Render()
 			stuff += std::to_string(inv->GetDroneCount());
 			m_pFont->Draw(stuff.c_str(), 414, 360, 0.4f, { 255, 255, 0 });
 			stuff.clear();
-			stuff = "Lava Traps: ";
-			stuff += std::to_string(inv->GetLavaTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 380, 0.4f, { 255, 255, 0 });
-			stuff.clear();
-			stuff = "Spike Traps: ";
-			stuff += std::to_string(inv->GetSpikeTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 400, 0.4f, { 255, 255, 0 });
-
-
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
@@ -553,17 +728,32 @@ void Shop::Render()
 			// -- Draw the item's Names and highlighting --
 			for (int i = 0; i < TOTAL_ITEMS; i++)
 			{
-				// If we're currently selected
-				if (m_nCursor == i)
-					// Draw it in green
+				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
+				Inventory* inv = dynamic_cast<Player*>(m_pPlayer)->GetInventory();
+
+
+				// If our object is at max and we're selected
+				if (m_nCursor == i && isItemMaxed[i])
+					// Draw red
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+				else if (m_nCursor != i && isItemMaxed[i])
+					// Draw gray
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
+
+
+				else if (m_nCursor == i && score < itemPrices[i])
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+				else if (m_nCursor == i && score >= itemPrices[i])
 					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-				else
-					// Draw it in black
+
+				else if (m_nCursor != i && score >= itemPrices[i])
 					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+				else if (m_nCursor != i && score < itemPrices[i])
+					m_pFont->Draw(itemNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
+				
 			}
-
-
 		}
+
 		else if (m_nMenuTab == UPGRADES_TAB)
 		{
 			// Draw the menu items background
@@ -625,23 +815,28 @@ void Shop::Render()
 			// -- Draw the upgrades names and highlighting --
 			for (int i = 0; i < TOTAL_UPGRADES; i++)
 			{
-				// If we're currently selected
-				if (m_nCursor == i)
-					// Draw it in green
+				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
+
+				if (m_nCursor == i && score < upgradePrices[i])
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+				else if (m_nCursor == i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-				else
-					// Draw it in black
+
+				else if (m_nCursor != i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+				else if (m_nCursor != i && score < upgradePrices[i])
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 			}
 
 		}
-		else if (m_nMenuTab == TOWERS_TAB)
+		else if (m_nMenuTab == FORTIFICATIONS_TAB)
 		{
 			// Draw the towers items background
 			pGraphics->DrawTexture(m_hTowerMain, { 0, 0 });
 
 			// Draw the number of towers had
 			Inventory* inv = dynamic_cast<Player*>(m_pPlayer)->GetInventory();
+
 			string stuff = "MG Towers: ";
 			stuff += std::to_string(inv->GetMachineGunTowers());
 			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
@@ -657,32 +852,51 @@ void Shop::Render()
 			stuff = "Laser Towers: ";
 			stuff += std::to_string(inv->GetLaserTowers());
 			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
+			stuff = "Lava Traps: ";
+			stuff += std::to_string(inv->GetLavaTraps());
+			m_pFont->Draw(stuff.c_str(), 414, 376, 0.4f, { 255, 255, 0 });
+			stuff.clear();
+			stuff = "Spike Traps: ";
+			stuff += std::to_string(inv->GetSpikeTraps());
+			m_pFont->Draw(stuff.c_str(), 414, 396, 0.4f, { 255, 255, 0 });
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
-			m_pFont->Draw(towerDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(fortDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
 
 			// -- Draw the item's price --
 			string price = "Price: ";
-			price += std::to_string(towerPrices[m_nCursor]);
+			price += std::to_string(fortPrices[m_nCursor]);
 			m_pFont->Draw(price.c_str(), 573, 113, 0.5f, { 0, 0, 0 });
 
 			// -- Draw the tower's picture --
-			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(towerTopLeft[m_nCursor], SGD::Size(100, 100)));
+			pGraphics->DrawTextureSection(m_hShopItems, { 424, 60 }, SGD::Rectangle(fortTopLeft[m_nCursor], SGD::Size(100, 100)));
 
 			// -- Draw the item's Names and highlighting --
 			for (int i = 0; i < TOTAL_TOWERS; i++)
 			{
-				// If we're currently selected
-				if (m_nCursor == i)
-					// Draw it in green
-					m_pFont->Draw(towerNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
-				else
-					// Draw it in black
-					m_pFont->Draw(towerNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
+
+
+				// If our object is at max and we're selected
+				if (m_nCursor == i && isFortMaxed[i])
+					// Draw red
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.42f, { 255, 0, 0 });
+				else if (m_nCursor != i && isFortMaxed[i])
+					// Draw gray
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.42f, { 54, 54, 54 });
+
+				else if (m_nCursor == i && score < fortPrices[i])
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+				else if (m_nCursor == i && score >= fortPrices[i])
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
+				else if (m_nCursor != i && score >= fortPrices[i])
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
+				else if (m_nCursor != i && score < fortPrices[i])
+					m_pFont->Draw(fortNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 			}
 
 		}
@@ -701,7 +915,7 @@ bool Shop::Buy(int parcel, int shopSection)
 	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
-	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
+	enum { WEAPONS, ITEMS, UPGRADES, FORTIFICATIONS };
 
 	switch (shopSection)
 	{
@@ -768,14 +982,20 @@ bool Shop::Buy(int parcel, int shopSection)
 	}
 		break;
 
-	case TOWERS:
+	case FORTIFICATIONS:
 	{
-		// If the player has the money for the upgrade
-		if (curMoney >= (int)towerPrices[parcel])
+		// If the player has the money for the fortification
+		if (curMoney >= (int)fortPrices[parcel])
 		{
-			player->SetScore(curMoney -= towerPrices[parcel]);
-			tracker->SpendItUp(itemPrices[parcel]);
-			tracker->TowerExchange(true);
+			player->SetScore(curMoney -= fortPrices[parcel]);
+			tracker->SpendItUp(fortPrices[parcel]);
+
+			// Handle the stattracker
+			if (parcel == FORT_MG || parcel == FORT_MAPLESYRUP || parcel == FORT_HOCKEYSTICK || parcel == FORT_LASER)
+				tracker->TowerExchange(true);
+			else if (parcel == FORT_LAVATRAP || parcel == FORT_SPIKETRAP)
+				tracker->TrapExchange(true);
+
 			return true;
 		}
 		else
@@ -790,7 +1010,7 @@ bool Shop::Buy(int parcel, int shopSection)
 
 // Sell
 // - Remove the selected parcel
-// - Give back 75% of the original price
+// - Give back % of the original price
 // - Add money
 // [in] parcel - the number of the item
 // [in] shopSection - 0 (Weapons) 1 (Items) 2 (Upgrades) 3 (Towers)
@@ -801,7 +1021,7 @@ void Shop::Sell(int parcel, int shopSection)
 	StatTracker* tracker = StatTracker::GetInstance();
 	int curMoney = player->GetScore();
 
-	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
+	enum { WEAPONS, ITEMS, UPGRADES, FORTIFICATIONS };
 
 	switch (shopSection)
 	{
@@ -823,38 +1043,38 @@ void Shop::Sell(int parcel, int shopSection)
 	}
 		break;
 
-	case TOWERS:		// towers
+	case FORTIFICATIONS: // fortifications
 	{
 
-		if (parcel == TOWER_MG && inv->GetMachineGunTowers() > 0)
+		if (parcel == FORT_MG && inv->GetMachineGunTowers() > 0)
 		{
-			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			player->SetScore(curMoney += int(fortPrices[parcel] * SELL_DISCOUNT));
 			inv->SetMachineGunTowers(inv->GetMachineGunTowers() - 1);
 			tracker->TowerExchange(false);
 		}
 
-		if (parcel == TOWER_MAPLESYRUP && inv->GetMapleSyrupTowers() > 0)
+		if (parcel == FORT_MAPLESYRUP && inv->GetMapleSyrupTowers() > 0)
 		{
-			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			player->SetScore(curMoney += int(fortPrices[parcel] * SELL_DISCOUNT));
 			inv->SetMapleSyrupTowers(inv->GetMapleSyrupTowers() - 1);
 			tracker->TowerExchange(false);
 		}
 
-		if (parcel == TOWER_HOCKEYSTICK && inv->GetHockeyStickTowers() > 0)
+		if (parcel == FORT_HOCKEYSTICK && inv->GetHockeyStickTowers() > 0)
 		{
-			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			player->SetScore(curMoney += int(fortPrices[parcel] * SELL_DISCOUNT));
 			inv->SetHockeyStickTowers(inv->GetHockeyStickTowers() - 1);
 			tracker->TowerExchange(false);
 		}
 
-		if (parcel == TOWER_LASER && inv->GetLaserTowers() > 0)
+		if (parcel == FORT_LASER && inv->GetLaserTowers() > 0)
 		{
-			player->SetScore(curMoney += int(towerPrices[parcel] * SELL_DISCOUNT));
+			player->SetScore(curMoney += int(fortPrices[parcel] * SELL_DISCOUNT));
 			inv->SetLaserTowers(inv->GetLaserTowers() - 1);
 			tracker->TowerExchange(false);
 		}
 
-		if (parcel == TOWER_GOBACK)
+		if (parcel == FORT_GOBACK)
 			break;
 
 	}
@@ -880,15 +1100,19 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	// Grab the player's weapons (4)
 	Weapon* weapons = player->GetWeapons();
 
+
+	// << WEAPONS >>
+
 	if (shopSection == WEAPONS)
 	{
+
 		if (parcel == WEAP_AR)
 		{
 			if (player->HasAR())
 				return;
 
 			player->SetAR(true);
-			weapons[0].SetCurrAmmo(200);
+			weapons[0].SetCurrAmmo(AR_CURAMMO);
 
 		}
 
@@ -898,7 +1122,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 				return;
 
 			player->SetShotgun(true);
-			weapons[1].SetCurrAmmo(200);
+			weapons[1].SetCurrAmmo(SH_CURAMMO);
 		}
 
 		if (parcel == WEAP_ROCKETLAUNCHER)
@@ -907,7 +1131,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 				return;
 
 			player->SetRocketLauncher(true);
-			weapons[2].SetCurrAmmo(20);
+			weapons[2].SetCurrAmmo(RL_CURAMMO);
 		}
 
 		if (parcel == WEAP_HATTRICK)
@@ -916,11 +1140,12 @@ void Shop::GivePurchase(int parcel, int shopSection)
 				return;
 
 			player->SetHatTrick(true);
-			weapons[3].SetCurrAmmo(50);
+			weapons[3].SetCurrAmmo(HT_CURAMMO);
 		}
 	}
 
-	// If we're in the items
+	// << ITEMS >>
+
 	else if (shopSection == ITEMS)
 	{
 		if (parcel == ITEM_PRICE_WALL)
@@ -932,30 +1157,30 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		}
 		if (parcel == ITEM_PRICE_WINDOW)
 		{
-			if(inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]));
+			if (inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]));
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
 
 		}
-		if (parcel == BEARTRAP)
+		if (parcel == ITEM_BEARTRAP)
 		{
-			if (inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[BEARTRAP]))
+			if (inventory->SetBearTraps(inventory->GetBearTraps() + itemAmountToAdd[ITEM_BEARTRAP]))
 				tracker->TrapExchange(true);
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
 		}
-		if (parcel == MINE)
+		if (parcel == ITEM_MINE)
 		{
-			if (inventory->SetMines ( inventory->GetMines () + itemAmountToAdd[ MINE ] ))
-				tracker->TrapExchange ( true );
+			if (inventory->SetMines(inventory->GetMines() + itemAmountToAdd[ITEM_MINE]))
+				tracker->TrapExchange(true);
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
 		}
-		if (parcel == GRENADE)
-			if (inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[GRENADE]));
+		if (parcel == ITEM_GRENADE)
+			if (inventory->SetGrenades(inventory->GetGrenades() + itemAmountToAdd[ITEM_GRENADE]));
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
-		if (parcel == AMMO)
+		if (parcel == ITEM_AMMO)
 		{
 			// Refill the player's ammo
 			weapons[0].SetCurrAmmo(weapons[0].GetMaxAmmo());
@@ -964,9 +1189,9 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			weapons[3].SetCurrAmmo(weapons[3].GetMaxAmmo());
 		}
 
-		if (parcel == DRONE)
+		if (parcel == ITEM_DRONE)
 		{
-			if (inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[DRONE]))
+			if (inventory->SetDroneCount(inventory->GetDroneCount() + itemAmountToAdd[ITEM_DRONE]))
 			{
 				CreateDroneMessage* pMsg = new CreateDroneMessage();
 				pMsg->QueueMessage();
@@ -976,84 +1201,102 @@ void Shop::GivePurchase(int parcel, int shopSection)
 				player->SetScore(curMoney += itemPrices[parcel]);
 		}
 
-		if (parcel == LAVATRAP)
-		{
-			if(inventory->SetLavaTraps ( inventory->GetLavaTraps () + itemAmountToAdd[ LAVATRAP ] ))
-				tracker->TrapExchange ( true );
-			else
-				player->SetScore(curMoney += itemPrices[parcel]);
 
-		}
-		if (parcel == SPIKETRAP)
-		{
-			if(inventory->SetSpikeTraps ( inventory->GetSpikeTraps () + itemAmountToAdd[ SPIKETRAP ] ))
-				tracker->TrapExchange ( true );
-			else
-				player->SetScore(curMoney += itemPrices[parcel]);
-		}
 
 	}
+
+	// << UPGRADES >>
 
 	if (shopSection == UPGRADES)
 	{
 
 		if (parcel == UG_SHOTGUN_ROF)
 			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
+
 		if (parcel == UG_SHOTGUN_DAMAGE)
 			SetShotgunDamage(GetShotgunDamage() + upgradeAmountToAdd[UG_SHOTGUN_DAMAGE]);
+
 		if (parcel == UG_SHOTGUN_AMMO)
 			weapons[1].SetMaxAmmo(weapons[1].GetMaxAmmo() + upgradeAmountToAdd[UG_SHOTGUN_AMMO]);
 
+
 		if (parcel == UG_AR_ROF)
 			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
+
 		if (parcel == UG_AR_DAMAGE)
 			SetARDamage(GetARDamage() + upgradeAmountToAdd[UG_AR_DAMAGE]);
+
 		if (parcel == UG_AR_AMMO)
 			weapons[0].SetMaxAmmo(weapons[0].GetMaxAmmo() + upgradeAmountToAdd[UG_AR_AMMO]);
 
+
 		if (parcel == UG_LAUNCHER_ROF)
 			weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
+
 		if (parcel == UG_LAUNCHER_DAMAGE)
 			SetRLDamage(GetRLDamage() + upgradeAmountToAdd[UG_LAUNCHER_DAMAGE]);
+
 		if (parcel == UG_LAUNCHER_AMMO)
 			weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
 
-		if (parcel != UG_GOBACK)
-			upgradePrices[parcel] = (unsigned int)(upgradePrices[parcel] + upgradePrices[parcel] * SELL_DISCOUNT);
+
+		// Check if we have progressive prices
+		if (isUpgradeProgressive[parcel])
+			upgradePrices[parcel] = (unsigned int)(upgradePrices[parcel] + upgradePrices[parcel] * BUY_INCREASE);
 	}
+
+
+	// << FORTIFICATIONS >>
+
 	if (shopSection == TOWERS)
 	{
-		if (parcel == TOWER_MG)
+		if (parcel == FORT_MG)
 		{
 			if (inventory->SetMachineGunTowers(inventory->GetMachineGunTowers() + 1));
 			else
-				player->SetScore(curMoney += towerPrices[parcel]);
+				player->SetScore(curMoney += fortPrices[parcel]);
 		}
-		if (parcel == TOWER_MAPLESYRUP)
+		if (parcel == FORT_MAPLESYRUP)
 		{
 			if (inventory->SetMapleSyrupTowers(inventory->GetMapleSyrupTowers() + 1));
 			else
-				player->SetScore(curMoney += towerPrices[parcel]);
+				player->SetScore(curMoney += fortPrices[parcel]);
 		}
-		if (parcel == TOWER_HOCKEYSTICK)
+		if (parcel == FORT_HOCKEYSTICK)
 		{
 			if (inventory->SetHockeyStickTowers(inventory->GetHockeyStickTowers() + 1));
 			else
-				player->SetScore(curMoney += towerPrices[parcel]);
+				player->SetScore(curMoney += fortPrices[parcel]);
 		}
-		if (parcel == TOWER_LASER)
+		if (parcel == FORT_LASER)
 		{
 			if (inventory->SetLaserTowers(inventory->GetLaserTowers() + 1));
 			else
-				player->SetScore(curMoney += towerPrices[parcel]);
+				player->SetScore(curMoney += fortPrices[parcel]);
+		}
+
+		if (parcel == FORT_LAVATRAP)
+		{
+			if (inventory->SetLavaTraps(inventory->GetLavaTraps() + fortAmountToAdd[FORT_LAVATRAP]))
+				tracker->TrapExchange(true);
+			else
+				player->SetScore(curMoney += fortPrices[parcel]);
+
+		}
+		if (parcel == FORT_SPIKETRAP)
+		{
+			if (inventory->SetSpikeTraps(inventory->GetSpikeTraps() + fortAmountToAdd[FORT_SPIKETRAP]))
+				tracker->TrapExchange(true);
+			else
+				player->SetScore(curMoney += fortPrices[parcel]);
 		}
 
 	}
 }
 
 // LoadPrices
-// - load in the prices from an xml file
-// [in] xmlFileName - the xml file to load the prices from
+// - load in all the shop's data
+// [in] xmlFileName - the xml file to load the data from
 void Shop::LoadPrices(string xmlFileName)
 {
 	// Create a TinyXML document
@@ -1097,6 +1340,14 @@ void Shop::LoadPrices(string xmlFileName)
 		// Grab the top-left of the images
 		pWeapon->QueryFloatAttribute("top", &weapTopLeft[i].x);
 		pWeapon->QueryFloatAttribute("left", &weapTopLeft[i].y);
+
+		if (pWeapon->Attribute("isPro"))
+		{
+			// Grab if we're progressively increasing the price
+			int isPro = 0;
+			pWeapon->Attribute("isPro", &isPro);
+			(isPro) ? isWeapProgressive[i] = true : isWeapProgressive[i] = false;
+		}
 
 		// Move down to the next element of 'weapon'
 		pWeapon = pWeapon->NextSiblingElement("weapon");
@@ -1149,6 +1400,14 @@ void Shop::LoadPrices(string xmlFileName)
 		pItem->QueryFloatAttribute("top", &itemTopLeft[i].x);
 		pItem->QueryFloatAttribute("left", &itemTopLeft[i].y);
 
+		if (pItem->Attribute("isPro"))
+		{
+			// Grab if we're progressively increasing the price
+			int isPro = 0;
+			pItem->Attribute("isPro", &isPro);
+			(isPro) ? isItemProgressive[i] = true : isItemProgressive[i] = false;
+		}
+
 		// Move down to the next element of 'item'
 		pItem = pItem->NextSiblingElement("item");
 	}
@@ -1193,6 +1452,14 @@ void Shop::LoadPrices(string xmlFileName)
 		pUpgrade->QueryFloatAttribute("top", &upgradeTopLeft[i].x);
 		pUpgrade->QueryFloatAttribute("left", &upgradeTopLeft[i].y);
 
+		if (pUpgrade->Attribute("isPro"))
+		{
+			// Grab if we're progressively increasing the price
+			int isPro = 0;
+			pUpgrade->Attribute("isPro", &isPro);
+			(isPro) ? isUpgradeProgressive[i] = true : isUpgradeProgressive[i] = false;
+		}
+
 		// Go to the next upgrade
 		pUpgrade = pUpgrade->NextSiblingElement("weaponUpgrade");
 	}
@@ -1213,19 +1480,35 @@ void Shop::LoadPrices(string xmlFileName)
 	for (int i = 0; i < towerCount; i++)
 	{
 		// Store the name
-		towerNames[i] = pTower->Attribute("name");
+		fortNames[i] = pTower->Attribute("name");
 
 		// Store the price
 		int fuckTinyXML = 0;
 		pTower->Attribute("price", &fuckTinyXML);
-		towerPrices[i] = (unsigned int)fuckTinyXML;
+		fortPrices[i] = (unsigned int)fuckTinyXML;
 
 		// Store the description
-		towerDescs[i] = pTower->Attribute("description");
+		fortDescs[i] = pTower->Attribute("description");
 
 		// Grab the top-left of the images
-		pTower->QueryFloatAttribute("top", &towerTopLeft[i].x);
-		pTower->QueryFloatAttribute("left", &towerTopLeft[i].y);
+		pTower->QueryFloatAttribute("top", &fortTopLeft[i].x);
+		pTower->QueryFloatAttribute("left", &fortTopLeft[i].y);
+
+		if (pTower->Attribute("isPro"))
+		{
+			// Grab if we're progressively increasing the price
+			int isPro = 0;
+			pTower->Attribute("isPro", &isPro);
+			(isPro) ? isFortProgressive[i] = true : isFortProgressive[i] = false;
+		}
+
+		// If amount to add exists
+		if (pTower->Attribute("amountToAdd"))
+		{
+			int fuckTinyXML = 0;
+			pTower->Attribute("amountToAdd", &fuckTinyXML);
+			fortAmountToAdd[i] = (unsigned int)fuckTinyXML;
+		}
 
 		// Go to the next tower
 		pTower = pTower->NextSiblingElement("tower");
