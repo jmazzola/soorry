@@ -260,4 +260,5 @@ void AnimationManager::LoadAll()
 	LoadSprites("resource/animation/trickshot.xml");
 	LoadSprites("resource/animation/RocketCarry.xml");
 	LoadSprites("resource/animation/AssultCarry.xml");
+	LoadSprites("resource/animation/HatTrickCarry.xml");
 }
