@@ -170,6 +170,7 @@ private:
 	SGD::HTexture m_hPlaceablesImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hRangeCirclesImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hBuildModeHUD = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hUnderBackground = SGD::INVALID_HANDLE;
 
 	// Trap textures
 	SGD::HTexture m_hSpikeTrapBaseImage = SGD::INVALID_HANDLE;

@@ -309,7 +309,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hLavaTrapBaseImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapBase.png");
 	m_hLavaTrapFlameImage = pGraphics->LoadTexture("resource/images/towers/lavaTrapFlame.png");
 	m_hExplosionImage = pGraphics->LoadTexture("resource/animation/explosprite.png");
-
+	m_hUnderBackground = pGraphics->LoadTexture("resource/images/grunge.png");
 
 	// Load Audio
 	// 5%
@@ -830,7 +830,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hSpikeTrapSpikeImage);
 	pGraphics->UnloadTexture(m_hLavaTrapBaseImage);
 	pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
-
+	pGraphics->UnloadTexture(m_hUnderBackground);
 	pGraphics->UnloadTexture(m_hExplosionImage);
 
 	m_pAnimation->UnloadSprites();
@@ -1586,6 +1586,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
+	pGraphics->DrawTexture(m_hUnderBackground,{0,0});
+
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
 #endif
@@ -1595,7 +1597,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// Render test world
 		WorldManager::GetInstance()->Render(SGD::Point((float)Camera::x, (float)Camera::y));
 		Player* player = dynamic_cast<Player*>(m_pPlayer);
-
 
 		// Render the entities
 		m_pEntities->RenderAll();
