@@ -757,13 +757,20 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Turn the cursor on
 	//if(pGraphics->IsCursorShowing() == false)
 
-
+	
 	// Create snow
-	//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow",0,0);
-	CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
-	msg->QueueMessage();
-	msg = nullptr;
-
+	if (m_nGamemode == BEAVER_FEAVER_MODE)
+	{
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon", 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
+	else
+	{
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
 	m_bAccept = true;
