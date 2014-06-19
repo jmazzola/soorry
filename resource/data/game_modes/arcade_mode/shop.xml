@@ -35,12 +35,12 @@
 	</weaponUpgrades>
 
 	<towers count="7">
-		<tower name="Machine Gun Tower"						price="100"	description="Machine Gun Tower"  				top="100" left="1209" isPro ="0"/>
-		<tower name="Maple Syrup Tower"						price="150"	description="Maple Searup" 						top="0" left="1323" isPro ="0"/>
-    <tower name="Laser Tower"							price="300"	description="*laser noise*" 					top="0" left="1433" isPro ="0"/>
-    <tower name="Spike Trap +1"      price="750"     description="Add 1 Spike Trap" amountToAdd="1" top="0" left="658" isPro ="0"/>
-    <tower name="Lava Trap +1"      price="600"     description="Add 1 Lava Trap" amountToAdd="1"  top="100" left="558" isPro ="0"/>
-		<tower name="Hockey Stick Tower"					price="200"	description="GOOOOOOALL wrong sport." 			top="100" left="1323" isPro ="0"/>
+		<tower name="Machine Gun Tower"						price="500"	description="Machine Gun Tower"  				top="100" left="1209" isPro ="0"/>
+		<tower name="Maple Syrup Tower"						price="350"	description="Maple Searup" 						top="0" left="1323" isPro ="0"/>
+    <tower name="Laser Tower"							price="1500"	description="*laser noise*" 					top="0" left="1433" isPro ="0"/>
+    <tower name="Spike Trap"      price="750"     description="Add 1 Spike Trap" amountToAdd="1" top="0" left="658" isPro ="0"/>
+    <tower name="Lava Trap"      price="600"     description="Add 1 Lava Trap" amountToAdd="1"  top="100" left="558" isPro ="0"/>
+		<tower name="Hockey Stick Tower"					price="3000"	description="GOOOOOOALL wrong sport." 			top="100" left="1323" isPro ="0"/>
     <tower name="Go Back"							price="0"	description="Leave Tower Shop" 							top="100" left="658"/>
 	</towers>
   
