@@ -16,7 +16,9 @@
 #include <Windows.h>		// Win32 Application
 #include <vld.h>			// Visual Leak Detector!!!
 #include "Game.h"			// Our Game class
+#include "GameplayState.h"
 #include "../resource.h"
+#include <cassert>
 //*********************************************************************//
 // Preprocessor Constants
 #define WINDOW_CLASS_NAME	((const wchar_t*)L"Soorry")	// window class name
@@ -107,7 +109,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// Unregister the window class
 	UnregisterClassW( WINDOW_CLASS_NAME, hInstance );
-	
+
 	// Return message's Quit code to the OS
 	return (int)(msg.wParam);
 }
