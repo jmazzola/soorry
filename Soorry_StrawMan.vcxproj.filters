@@ -264,9 +264,6 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
-    <ClCompile Include="source\LoadingState.cpp">
-      <Filter>Game States</Filter>
-    </ClCompile>
     <ClCompile Include="source\Button.cpp">
       <Filter>Game States</Filter>
     </ClCompile>
@@ -591,9 +588,6 @@
       <Filter>Messages</Filter>
     </ClInclude>
     <ClInclude Include="source\LoadSaveState.h">
-      <Filter>Game States</Filter>
-    </ClInclude>
-    <ClInclude Include="source\LoadingState.h">
       <Filter>Game States</Filter>
     </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">

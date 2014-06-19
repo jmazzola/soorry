@@ -79,7 +79,7 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-	m_hBackground = pGraphics->LoadTexture("resource/images/menus/mainMenuBG.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_MainMenu.png");
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
