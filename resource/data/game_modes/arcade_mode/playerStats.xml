@@ -2,11 +2,11 @@
 <player_stats>
   <health value="80"/>
   <speed value="250"/>
-  <walls amount="100"/>
+  <walls amount="0"/>
   <windows amount="0"/>
   <bear_traps amount="0"/>
   <mines amount="0"/>
-  <machine_guns amount="100"/>
+  <machine_guns amount="0"/>
   <maple_syrups amount="0"/>
   <hockey_sticks amount="0"/>
   <lasers amount="0"/>
