@@ -2842,6 +2842,9 @@ Entity * GameplayState::CreateTrap(int _x, int _y, int _trapType) const
 		lava->SetPosition(SGD::Point((float)_x, (float)_y));
 		lava->SetBaseImage(m_hLavaTrapBaseImage);
 		lava->SetGunImage(m_hLavaTrapFlameImage);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Fire_Particle1", lava,0, 0);
+		lmsg->QueueMessage();
+		lmsg = nullptr;
 		return lava;
 
 	}
