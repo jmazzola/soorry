@@ -56,7 +56,7 @@ public:
 	bool SetDroneCount(unsigned int drones);
 
 
-	unsigned int m_unWallsMAX = WALLS_MAX;
+	unsigned int m_unWallsMAX = WALLS_MAX; 
 	unsigned int m_unWindowsMAX = WINDOWS_MAX;
 	unsigned int m_unBearTrapsMAX = BEARTRAPS_MAX;
 	unsigned int m_unMinesMAX = MINES_MAX;

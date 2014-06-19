@@ -9,7 +9,6 @@
 
 #include "Game.h"
 #include "MainMenuState.h"
-#include "LoadingState.h"
 #include "GameplayState.h"
 #include "ModePickerState.h"
 
