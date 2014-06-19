@@ -593,10 +593,10 @@ void Player::Update ( float dt )
 	if ((pInput->IsKeyPressed(SGD::Key::Four) == true || pInput->IsDPadPressed(0, SGD::DPad::Left)) && m_pZombieWave->IsBuildMode() == false && m_fSuperTimer <= 0.0f)
 	{
 		m_nCurrWeapon = TRICK_SHOT_GUN;
-		//m_pSprite = AnimationManager::GetInstance()->GetSprite("player");
-		//m_antsAnimation.m_fTimeOnFrame = 0;
-		//m_antsAnimation.m_nCurrFrame = 0;
-		//m_antsAnimation.m_nCurrAnimation = "player";
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("HatTrickCarry");
+		m_antsAnimation.m_fTimeOnFrame = 0;
+		m_antsAnimation.m_nCurrFrame = 0;
+		m_antsAnimation.m_nCurrAnimation = "HatTrickCarry";
 	}
 #endif
 
