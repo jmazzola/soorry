@@ -1441,42 +1441,42 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="63" index="179" collider="false">
+    <tile x="3" y="63" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="64" index="179" collider="false">
+    <tile x="3" y="64" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="65" index="179" collider="false">
+    <tile x="3" y="65" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="66" index="179" collider="false">
+    <tile x="3" y="66" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="67" index="179" collider="false">
+    <tile x="3" y="67" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="68" index="179" collider="false">
+    <tile x="3" y="68" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="69" index="179" collider="false">
+    <tile x="3" y="69" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="3" y="70" index="179" collider="false">
+    <tile x="3" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -1816,7 +1816,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="4" y="63" index="179" collider="false">
+    <tile x="4" y="63" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -1851,7 +1851,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="4" y="70" index="179" collider="false">
+    <tile x="4" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2226,7 +2226,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="5" y="70" index="179" collider="false">
+    <tile x="5" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2386,27 +2386,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="27" index="491" collider="false">
+    <tile x="6" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="28" index="491" collider="false">
+    <tile x="6" y="28" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="29" index="491" collider="false">
+    <tile x="6" y="29" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="30" index="491" collider="false">
+    <tile x="6" y="30" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="31" index="488" collider="false">
+    <tile x="6" y="31" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2436,7 +2436,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="37" index="179" collider="false">
+    <tile x="6" y="37" index="240" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2601,7 +2601,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="6" y="70" index="179" collider="false">
+    <tile x="6" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2761,7 +2761,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="27" index="491" collider="false">
+    <tile x="7" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2781,37 +2781,37 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="31" index="491" collider="false">
+    <tile x="7" y="31" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="32" index="491" collider="false">
+    <tile x="7" y="32" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="33" index="491" collider="false">
+    <tile x="7" y="33" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="34" index="491" collider="false">
+    <tile x="7" y="34" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="35" index="491" collider="false">
+    <tile x="7" y="35" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="36" index="491" collider="false">
+    <tile x="7" y="36" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="37" index="485" collider="false">
+    <tile x="7" y="37" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -2976,7 +2976,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="7" y="70" index="179" collider="false">
+    <tile x="7" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3136,7 +3136,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="8" y="27" index="491" collider="false">
+    <tile x="8" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3186,7 +3186,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="8" y="37" index="485" collider="false">
+    <tile x="8" y="37" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3351,7 +3351,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="8" y="70" index="179" collider="false">
+    <tile x="8" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3511,7 +3511,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="9" y="27" index="491" collider="false">
+    <tile x="9" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3561,7 +3561,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="9" y="37" index="491" collider="false">
+    <tile x="9" y="37" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3691,7 +3691,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="9" y="63" index="179" collider="false">
+    <tile x="9" y="63" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3726,7 +3726,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="9" y="70" index="179" collider="false">
+    <tile x="9" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3886,7 +3886,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="27" index="491" collider="false">
+    <tile x="10" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -3936,7 +3936,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="37" index="658" collider="false">
+    <tile x="10" y="37" index="179" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -4066,42 +4066,42 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="63" index="179" collider="false">
+    <tile x="10" y="63" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="64" index="179" collider="false">
+    <tile x="10" y="64" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="65" index="179" collider="false">
+    <tile x="10" y="65" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="66" index="179" collider="false">
+    <tile x="10" y="66" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="67" index="179" collider="false">
+    <tile x="10" y="67" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="68" index="179" collider="false">
+    <tile x="10" y="68" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="69" index="179" collider="false">
+    <tile x="10" y="69" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="10" y="70" index="179" collider="false">
+    <tile x="10" y="70" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -4261,7 +4261,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="11" y="27" index="491" collider="false">
+    <tile x="11" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -4311,7 +4311,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="11" y="37" index="491" collider="false">
+    <tile x="11" y="37" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -4636,7 +4636,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="12" y="27" index="491" collider="false">
+    <tile x="12" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -4686,7 +4686,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="12" y="37" index="485" collider="false">
+    <tile x="12" y="37" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -5011,7 +5011,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="27" index="491" collider="false">
+    <tile x="13" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -5031,37 +5031,37 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="31" index="491" collider="false">
+    <tile x="13" y="31" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="32" index="491" collider="false">
+    <tile x="13" y="32" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="33" index="491" collider="false">
+    <tile x="13" y="33" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="34" index="491" collider="false">
+    <tile x="13" y="34" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="35" index="491" collider="false">
+    <tile x="13" y="35" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="36" index="491" collider="false">
+    <tile x="13" y="36" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="13" y="37" index="485" collider="false">
+    <tile x="13" y="37" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -5386,27 +5386,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="27" index="491" collider="false">
+    <tile x="14" y="27" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="28" index="491" collider="false">
+    <tile x="14" y="28" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="29" index="491" collider="false">
+    <tile x="14" y="29" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="30" index="491" collider="false">
+    <tile x="14" y="30" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="31" index="488" collider="false">
+    <tile x="14" y="31" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -15771,57 +15771,57 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="4" index="489" collider="false">
+    <tile x="42" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="5" index="489" collider="false">
+    <tile x="42" y="5" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="6" index="489" collider="false">
+    <tile x="42" y="6" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="7" index="489" collider="false">
+    <tile x="42" y="7" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="8" index="486" collider="false">
+    <tile x="42" y="8" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="9" index="486" collider="false">
+    <tile x="42" y="9" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="10" index="486" collider="false">
+    <tile x="42" y="10" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="11" index="489" collider="false">
+    <tile x="42" y="11" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="12" index="489" collider="false">
+    <tile x="42" y="12" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="13" index="489" collider="false">
+    <tile x="42" y="13" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="42" y="14" index="489" collider="false">
+    <tile x="42" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16146,7 +16146,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="43" y="4" index="489" collider="false">
+    <tile x="43" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16196,7 +16196,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="43" y="14" index="489" collider="false">
+    <tile x="43" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16521,7 +16521,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="44" y="4" index="489" collider="false">
+    <tile x="44" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16571,7 +16571,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="44" y="14" index="489" collider="false">
+    <tile x="44" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16896,7 +16896,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="4" index="489" collider="false">
+    <tile x="45" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -16946,7 +16946,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="14" index="483" collider="false">
+    <tile x="45" y="14" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17101,17 +17101,17 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="45" index="490" collider="false">
+    <tile x="45" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="46" index="490" collider="false">
+    <tile x="45" y="46" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="47" index="490" collider="false">
+    <tile x="45" y="47" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17131,17 +17131,17 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="51" index="490" collider="false">
+    <tile x="45" y="51" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="52" index="490" collider="false">
+    <tile x="45" y="52" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="45" y="53" index="490" collider="false">
+    <tile x="45" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17271,7 +17271,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="46" y="4" index="489" collider="false">
+    <tile x="46" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17321,7 +17321,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="46" y="14" index="483" collider="false">
+    <tile x="46" y="14" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17476,7 +17476,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="46" y="45" index="490" collider="false">
+    <tile x="46" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17516,7 +17516,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="46" y="53" index="490" collider="false">
+    <tile x="46" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17646,7 +17646,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="47" y="4" index="489" collider="false">
+    <tile x="47" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17696,7 +17696,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="47" y="14" index="489" collider="false">
+    <tile x="47" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17851,7 +17851,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="47" y="45" index="490" collider="false">
+    <tile x="47" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -17891,7 +17891,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="47" y="53" index="490" collider="false">
+    <tile x="47" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18021,7 +18021,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="48" y="4" index="489" collider="false">
+    <tile x="48" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18071,7 +18071,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="48" y="14" index="489" collider="false">
+    <tile x="48" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18226,7 +18226,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="48" y="45" index="490" collider="false">
+    <tile x="48" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18266,7 +18266,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="48" y="53" index="490" collider="false">
+    <tile x="48" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18396,7 +18396,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="49" y="4" index="486" collider="false">
+    <tile x="49" y="4" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18446,7 +18446,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="49" y="14" index="489" collider="false">
+    <tile x="49" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18601,7 +18601,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="49" y="45" index="490" collider="false">
+    <tile x="49" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18641,7 +18641,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="49" y="53" index="490" collider="false">
+    <tile x="49" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18771,7 +18771,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="50" y="4" index="486" collider="false">
+    <tile x="50" y="4" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18821,7 +18821,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="50" y="14" index="656" collider="false">
+    <tile x="50" y="14" index="179" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18976,7 +18976,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="50" y="45" index="490" collider="false">
+    <tile x="50" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19016,7 +19016,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="50" y="53" index="490" collider="false">
+    <tile x="50" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19146,7 +19146,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="51" y="4" index="486" collider="false">
+    <tile x="51" y="4" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19196,7 +19196,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="51" y="14" index="489" collider="false">
+    <tile x="51" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19351,7 +19351,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="51" y="45" index="487" collider="false">
+    <tile x="51" y="45" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19391,7 +19391,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="51" y="53" index="487" collider="false">
+    <tile x="51" y="53" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19521,7 +19521,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="52" y="4" index="489" collider="false">
+    <tile x="52" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19571,7 +19571,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="52" y="14" index="489" collider="false">
+    <tile x="52" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19726,7 +19726,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="52" y="45" index="487" collider="false">
+    <tile x="52" y="45" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19766,7 +19766,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="52" y="53" index="487" collider="false">
+    <tile x="52" y="53" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19896,7 +19896,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="53" y="4" index="489" collider="false">
+    <tile x="53" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -19946,7 +19946,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="53" y="14" index="489" collider="false">
+    <tile x="53" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20101,7 +20101,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="53" y="45" index="490" collider="false">
+    <tile x="53" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20141,7 +20141,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="53" y="53" index="490" collider="false">
+    <tile x="53" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20271,7 +20271,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="54" y="4" index="489" collider="false">
+    <tile x="54" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20321,7 +20321,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="54" y="14" index="483" collider="false">
+    <tile x="54" y="14" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20476,7 +20476,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="54" y="45" index="490" collider="false">
+    <tile x="54" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20516,7 +20516,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="54" y="53" index="490" collider="false">
+    <tile x="54" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20646,7 +20646,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="55" y="4" index="489" collider="false">
+    <tile x="55" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20696,7 +20696,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="55" y="14" index="483" collider="false">
+    <tile x="55" y="14" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20851,7 +20851,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="55" y="45" index="490" collider="false">
+    <tile x="55" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -20891,7 +20891,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="55" y="53" index="490" collider="false">
+    <tile x="55" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21021,7 +21021,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="56" y="4" index="489" collider="false">
+    <tile x="56" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21071,7 +21071,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="56" y="14" index="489" collider="false">
+    <tile x="56" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21226,7 +21226,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="56" y="45" index="490" collider="false">
+    <tile x="56" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21266,7 +21266,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="56" y="53" index="490" collider="false">
+    <tile x="56" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21396,7 +21396,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="57" y="4" index="489" collider="false">
+    <tile x="57" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21446,7 +21446,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="57" y="14" index="489" collider="false">
+    <tile x="57" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21601,7 +21601,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="57" y="45" index="490" collider="false">
+    <tile x="57" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21641,7 +21641,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="57" y="53" index="490" collider="false">
+    <tile x="57" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21771,57 +21771,57 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="4" index="489" collider="false">
+    <tile x="58" y="4" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="5" index="489" collider="false">
+    <tile x="58" y="5" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="6" index="489" collider="false">
+    <tile x="58" y="6" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="7" index="489" collider="false">
+    <tile x="58" y="7" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="8" index="486" collider="false">
+    <tile x="58" y="8" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="9" index="486" collider="false">
+    <tile x="58" y="9" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="10" index="486" collider="false">
+    <tile x="58" y="10" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="11" index="489" collider="false">
+    <tile x="58" y="11" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="12" index="489" collider="false">
+    <tile x="58" y="12" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="13" index="489" collider="false">
+    <tile x="58" y="13" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="14" index="489" collider="false">
+    <tile x="58" y="14" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -21976,7 +21976,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="45" index="490" collider="false">
+    <tile x="58" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -22016,7 +22016,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="58" y="53" index="490" collider="false">
+    <tile x="58" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -22351,47 +22351,47 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="45" index="490" collider="false">
+    <tile x="59" y="45" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="46" index="490" collider="false">
+    <tile x="59" y="46" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="47" index="490" collider="false">
+    <tile x="59" y="47" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="48" index="483" collider="false">
+    <tile x="59" y="48" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="49" index="483" collider="false">
+    <tile x="59" y="49" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="50" index="483" collider="false">
+    <tile x="59" y="50" index="240" collider="false">
       <initial_trigger id="WINDOW" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="51" index="490" collider="false">
+    <tile x="59" y="51" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="52" index="490" collider="false">
+    <tile x="59" y="52" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="59" y="53" index="490" collider="false">
+    <tile x="59" y="53" index="240" collider="false">
       <initial_trigger id="WALL" />
       <collision_trigger id="" />
       <collision id="0" />
