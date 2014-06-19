@@ -776,9 +776,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 	else
 	{
-		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
+		/*CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
 		msg->QueueMessage();
-		msg = nullptr;
+		msg = nullptr;*/
 	}
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
@@ -2820,10 +2820,6 @@ Entity * GameplayState::CreateTrap(int _x, int _y, int _trapType) const
 		lava->SetPosition(SGD::Point((float)_x, (float)_y));
 		lava->SetBaseImage(m_hLavaTrapBaseImage);
 		lava->SetGunImage(m_hLavaTrapFlameImage);
-		//BUG: occasionally a fire particle is not spawned on the lava trap
-		CreateParticleMessage* msg = new CreateParticleMessage("Fire_Particle1", lava, 8, 8);
-		msg->SendMessageNow();
-		msg = nullptr;
 		return lava;
 
 	}

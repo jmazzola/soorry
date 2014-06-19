@@ -69,7 +69,6 @@
     <ClCompile Include="source\LaserTower.cpp" />
     <ClCompile Include="source\LavaTrap.cpp" />
     <ClCompile Include="source\Layer.cpp" />
-    <ClCompile Include="source\LoadingState.cpp" />
     <ClCompile Include="source\LoadSaveState.cpp" />
     <ClCompile Include="source\MachineGunBullet.cpp" />
     <ClCompile Include="source\MachineGunTower.cpp" />
@@ -187,7 +186,6 @@
     <ClInclude Include="source\LaserTower.h" />
     <ClInclude Include="source\LavaTrap.h" />
     <ClInclude Include="source\Layer.h" />
-    <ClInclude Include="source\LoadingState.h" />
     <ClInclude Include="source\LoadSaveState.h" />
     <ClInclude Include="source\MachineGunBullet.h" />
     <ClInclude Include="source\MachineGunTower.h" />

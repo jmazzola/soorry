@@ -363,7 +363,7 @@ bool Emitter::Update(float dt)
 		//NOTE: may cause bugs not sure
 		if (aliveParticles.size() == 0 && deadParticles.size() == 0)
 			return false;
-		for (float i = 0; i < spawnRate*dt; i++)
+		for (float i = 0; i < spawnRate; i++)
 		{
 			//create Particle then add it to the alive particles
 			//Take data from patricle flyweight and send it to the particle

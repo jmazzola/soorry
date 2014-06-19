@@ -1054,7 +1054,9 @@ void Player::Update ( float dt )
 				CreateTrapMessage* pmsg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_LAVA);
 				pmsg->QueueMessage();
-
+				CreateParticleMessage* lmsg = new CreateParticleMessage("Fire_Particle1", SGD::Point( (float)(pos.x * pWorld->GetTileWidth())-8, (float)(pos.y * pWorld->GetTileHeight() -8)), 8, 8);
+				lmsg->QueueMessage();
+				lmsg = nullptr;
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
