@@ -80,7 +80,7 @@ Player::Player () : Listener ( this )
 	m_fRunningManTimer = 2.0f;
 	m_fPickupMessageTimer = 0.0f;
 
-	m_unScore = 2500;
+	m_unScore = 1000;
 
 	// Player Inventory
 	m_pInventory = new Inventory();
