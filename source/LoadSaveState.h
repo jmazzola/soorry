@@ -112,9 +112,6 @@ private:
 	void RenderAndLoadFileInfo(int slot);
 	void CheckForValidSaves();
 
-	// Message Callback Function:
-	//static void MessageProc(const SGD::Message* pMsg);
-
 	bool m_bTHEBOOL;
 
 	bool m_bAccept;

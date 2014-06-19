@@ -235,7 +235,6 @@ int Enemy::GetType() const
 		if (spike->GetActive() == true)
 		{
 			m_nCurrHealth -= spike->GetDamage();
-			
 		}
 	}
 		break;
@@ -253,7 +252,7 @@ int Enemy::GetType() const
 			if ( shot )
 			{
 				CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , 8 , 8 );
-				msg->QueueMessage ();
+				msg->QueueMessage();
 				msg = nullptr;
 			}
 		

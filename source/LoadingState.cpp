@@ -62,11 +62,6 @@ using namespace std;
 	m_pEvents = SGD::EventManager::GetInstance();
 	m_pEvents->Initialize();
 
-	// Initialize the Message Manager
-	//m_pMessages = SGD::MessageManager::GetInstance();
-	//m_pMessages->Initialize(&MessageProc);
-
-
 	// Allocate the Entity Manager
 	m_pEntities = new EntityManager;
 

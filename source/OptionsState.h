@@ -53,7 +53,6 @@ public:
 	virtual void	Update	( float elapsedTime )	override;	// update game entities / animations
 	virtual void	Render	( void )				override;	// render game entities / menus
 
-
 	/**********************************************************/
 	// Load and Save XML
 	void LoadOptions(string xmlSavegame);
@@ -100,7 +99,6 @@ private:
 	/**********************************************************/
 	// Audio
 
-	
 	/**********************************************************/
 	// Factory Methods
 	Button* CreateButton() const;
@@ -121,8 +119,6 @@ private:
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
 
-	// Message Callback Function:
-	/*static void MessageProc( const SGD::Message* pMsg );*/
 };
 
 #endif //OPTIONSSTATE_H

@@ -2,10 +2,10 @@
 <ParticleManager>
   <emitter>
     <isLooping bool="1" />
-    <spawnRate rate="100" />
+    <spawnRate rate=".25" />
     <size width="16" height="16" />
-    <particles max="100" />
-    <shape number="0" />
+    <particles max="10" />
+    <shape number="1" />
   </emitter>
   <flyweight>
     <velocity startx="0" starty="-10.00" endx="0" endy="-50.00" spread="0" />

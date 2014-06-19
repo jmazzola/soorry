@@ -123,8 +123,6 @@ Emitter& Emitter::operator=(const Emitter& _assign)
 
 void Emitter::load()
 {
-	
-
 	if (allParticlesCreated != true)
 	{
 		for (unsigned int i = 0; i < maxParticles; i++)
@@ -358,7 +356,6 @@ void Emitter::load(SGD::Point _Pos, bool vector, SGD::Vector _direction)
 	}
 }
 
-
 bool Emitter::Update(float dt)
 {
 	if (isLooping)
@@ -437,7 +434,7 @@ bool Emitter::Update(float dt)
 	}
 	else
 	{
-		for (float i = 0; i < spawnRate*dt; i++)
+		for (int i = 0; i < (int)spawnRate; i++)
 		{
 			if (deadParticles.size() == 0)
 			{
@@ -477,6 +474,10 @@ bool Emitter::Update(float dt)
 
 void Emitter::Render()
 {
+	//SGD::Rectangle rect = { SGD::Point(position.x - Camera::x, position.y - Camera::y), SGD::Size(32, 32) };
+
+	//SGD::GraphicsManager::GetInstance()->DrawRectangle(rect, SGD::Color(255, 0, 0));
+
 	for (unsigned int i = 0; i < aliveParticles.size(); i++)
 	{
 		aliveParticles[i]->Render();

@@ -81,7 +81,4 @@ private:
 	/**********************************************************/
 	// Factory Methods
 
-
-	// Message Callback Function:
-	//static void MessageProc(const SGD::Message* pMsg);
 };
