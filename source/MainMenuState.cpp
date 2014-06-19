@@ -15,7 +15,6 @@
 #include "CreditsState.h"
 #include "GameplayState.h"
 #include "IntroState.h"
-#include "LoadingState.h"
 #include "LoadSaveState.h"
 #include "OptionsState.h"
 #include "StatsState.h"
