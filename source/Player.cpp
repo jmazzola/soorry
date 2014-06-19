@@ -9,6 +9,7 @@
 #include "Frame.h"
 #include "Sprite.h"
 #include "Game.h"
+#include "Shop.h"
 #include "WorldManager.h"
 #include "Weapon.h"
 #include "ShotgunPellet.h"
@@ -587,6 +588,7 @@ void Player::Update ( float dt )
 #if ARCADE_MODE
 	m_bTHEBOOL = !(pInput->IsButtonDown(0, 0) || pInput->IsButtonDown(1, 0)) && shoot != SGD::Vector{ 0.0f, 0.0f };
 #endif
+
 	//Shoot
 	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
 	{
@@ -718,7 +720,7 @@ void Player::Update ( float dt )
 		m_nCurrPlaceable = STRAP;
 #endif
 
-	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || trg > 0.1f) && m_pZombieWave->IsBuildMode() && Blockable(pos))	
+	if ((pInput->IsKeyDown(SGD::Key::MouseRight) == true || trg > 0.1f) && m_pZombieWave->IsBuildMode() && Blockable(pos) && !GameplayState::GetInstance()->GetShop()->IsOpen())
 	{
 		// Test rect
 		SGD::Rectangle rect;
@@ -1746,6 +1748,7 @@ bool Player::PlacementCheck ( SGD::Point mouse , bool isPassable)
 	bool b = WorldManager::GetInstance()->IsSolidAtPosition((int)mouse.x, (int)mouse.y) == false;
 	bool c = m_pEntityManager->CheckCollision({ mouse.x * GRIDWIDTH, mouse.y * GRIDHEIGHT, mouse.x * GRIDWIDTH + GRIDWIDTH, mouse.y * GRIDHEIGHT + GRIDHEIGHT }) == false;
 	bool d;
+	bool e = !GameplayState::GetInstance()->GetShop()->IsOpen();
 	if(isPassable == false)
 		d = CheckLegalPlacement(Node((int)(m_ptPosition.x + 16) / GRIDWIDTH, (int)(m_ptPosition.y + 16) / GRIDHEIGHT), Node((int)mouse.x, (int)mouse.y));
 	else
@@ -1754,7 +1757,8 @@ bool Player::PlacementCheck ( SGD::Point mouse , bool isPassable)
 	if (a
 		&& b
 		&& c
-		&& d)
+		&& d
+		&& e)
 	{
 		return true;
 	}
