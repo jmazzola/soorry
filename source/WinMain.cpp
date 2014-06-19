@@ -225,6 +225,14 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	case WM_MOUSEWHEEL:
 		Game::GetInstance()->MouseWheel(GET_WHEEL_DELTA_WPARAM(wParam));
 		break;
+
+	case WM_ACTIVATE:
+	{
+		GameplayState* gamep = GameplayState::GetInstance();
+		if (LOWORD(wParam) == WA_INACTIVE && !gamep->IsPaused())
+			gamep->SetPaused(true);
+		break;
+	}
 	
 	case WM_CLOSE:			// Window closed
 		DestroyWindow( hWnd );	// completely destroy the window
@@ -238,14 +246,14 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	case WM_SYSCHAR:
 		break;
 
-	case WM_ACTIVATE:		// Window activated / deactivated
-		if( LOWORD( wParam ) != WA_INACTIVE )	//	gaining focus (unpause)
-		{
-		}
-		else									//	losing focus (pause)
-		{
-		}
-		break;
+	//case WM_ACTIVATE:		// Window activated / deactivated
+	//	if( LOWORD( wParam ) != WA_INACTIVE )	//	gaining focus (unpause)
+	//	{
+	//	}
+	//	else									//	losing focus (pause)
+	//	{
+	//	}
+	//	break;
 
 	case WM_PAINT:			// Window needs repainting
 		ValidateRect( hWnd, nullptr );	// ignore painting
