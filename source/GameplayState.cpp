@@ -1478,7 +1478,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		if (m_nGamemode == RUNNING_MAN_MODE)
 		{
-			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
+			if (pAudio->IsAudioPlaying(m_hRunningManMusic) == false)
 			{
 				pAudio->PlayAudio(m_hRunningManMusic, true);
 			}
