@@ -76,7 +76,7 @@ using namespace std;
 
 	// Load Textures
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-	m_hBackground = pGraphics->LoadTexture("resource/images/menus/LoadSaveBG.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_LoadMenu2.png");
 	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
 
@@ -688,4 +688,12 @@ void LoadSaveState::CheckForValidSaves()
 	}
 
 	delete rzbn;
+}
+
+void LoadSaveState::DeleteSave(string name)
+{
+	if (name == "")
+		return;
+
+	remove(name.c_str());
 }

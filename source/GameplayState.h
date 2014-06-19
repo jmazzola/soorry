@@ -85,6 +85,8 @@ public:
 	void SetPaused(bool pause) { m_bIsPaused = pause; }
 	void MouseWheel(int direction);
 
+	void ResetEverything();
+
 	void SetLoadingBar(float percent, const char* message);
 	int droneCount = 0;
 
@@ -267,6 +269,7 @@ private:
 	float m_fLossTimer;
 	bool m_bHasLost;
 	bool m_bReplay;
+	bool m_bSelectedReplay;
 	bool m_bEnterShop = false;
 	bool m_bBuildStart = false;
 

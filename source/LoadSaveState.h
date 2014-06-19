@@ -50,6 +50,11 @@ public:
 
 	bool CheckSlotExists(int slot);
 
+	// Accessors
+	string returnGameSaveName(int slot) { return m_szSaveFiles[slot - 1]; }
+	
+	void DeleteSave(string name);
+
 private:
 
 	/**********************************************************/
