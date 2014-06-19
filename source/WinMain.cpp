@@ -16,7 +16,9 @@
 #include <Windows.h>		// Win32 Application
 #include <vld.h>			// Visual Leak Detector!!!
 #include "Game.h"			// Our Game class
+#include "GameplayState.h"
 #include "../resource.h"
+#include <cassert>
 //*********************************************************************//
 // Preprocessor Constants
 #define WINDOW_CLASS_NAME	((const wchar_t*)L"Soorry")	// window class name
@@ -107,7 +109,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// Unregister the window class
 	UnregisterClassW( WINDOW_CLASS_NAME, hInstance );
-	
+
 	// Return message's Quit code to the OS
 	return (int)(msg.wParam);
 }
@@ -223,6 +225,14 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	case WM_MOUSEWHEEL:
 		Game::GetInstance()->MouseWheel(GET_WHEEL_DELTA_WPARAM(wParam));
 		break;
+
+	case WM_ACTIVATE:
+	{
+		GameplayState* gamep = GameplayState::GetInstance();
+		if (LOWORD(wParam) == WA_INACTIVE && !gamep->IsPaused())
+			gamep->SetPaused(true);
+		break;
+	}
 	
 	case WM_CLOSE:			// Window closed
 		DestroyWindow( hWnd );	// completely destroy the window
@@ -236,14 +246,14 @@ LRESULT CALLBACK WindowProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	case WM_SYSCHAR:
 		break;
 
-	case WM_ACTIVATE:		// Window activated / deactivated
-		if( LOWORD( wParam ) != WA_INACTIVE )	//	gaining focus (unpause)
-		{
-		}
-		else									//	losing focus (pause)
-		{
-		}
-		break;
+	//case WM_ACTIVATE:		// Window activated / deactivated
+	//	if( LOWORD( wParam ) != WA_INACTIVE )	//	gaining focus (unpause)
+	//	{
+	//	}
+	//	else									//	losing focus (pause)
+	//	{
+	//	}
+	//	break;
 
 	case WM_PAINT:			// Window needs repainting
 		ValidateRect( hWnd, nullptr );	// ignore painting

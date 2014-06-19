@@ -270,6 +270,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	m_bPlayLaser = false;
 
+	m_bSelectedReplay = false;
+
 	// Load the stats for the stattracker
 	Game* pGame = Game::GetInstance();
 	m_pStatTracker = StatTracker::GetInstance();
@@ -351,6 +353,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Doughnut.xml");
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -757,11 +760,18 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	
 	// Create snow
-	if (m_nGamemode == BEAVER_FEAVER_MODE)
+	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon", 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
+	}
+	else if (m_nGamemode == BEAVER_FEAVER_MODE)
+	{
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Doughnut", 0, 0);
+		msg->QueueMessage();
+		msg = nullptr;
+
 	}
 	else
 	{
@@ -805,7 +815,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	rzbn->SetShop(m_pShop);
 	rzbn->SetWorldManager(WorldManager::GetInstance());
 	rzbn->SetZombieFactory(zombieFactory);
-	SaveGame();
+
+	// If we havent selected replay, save the game
+	/*if (!m_bSelectedReplay)
+		SaveGame();*/
 
 	m_pStatTracker->Save("resource/data/stats.xml");
 	// Release textures
@@ -1337,11 +1350,19 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			switch (m_bReplay)
 			{
 			case true:
+			{
+				// Delete the current save
+				string wtf = LoadSaveState::GetInstance()->returnGameSaveName(m_nCurrGameSlot);
+				LoadSaveState::GetInstance()->DeleteSave(wtf);
+
+				m_bSelectedReplay = true;
 				Game::GetInstance()->ChangeState(GameplayState::GetInstance());
 				return true;
 				break;
+			}
 
 			case false:
+				m_bSelectedReplay = false;
 				Game::GetInstance()->ChangeState(MainMenuState::GetInstance());
 				return true;
 				break;
@@ -2071,6 +2092,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Render the credits if you have won and faded to them
 	else if (m_bCreditsStarted == true)
 	{
+		string wtf = LoadSaveState::GetInstance()->returnGameSaveName(m_nCurrGameSlot);
+		LoadSaveState::GetInstance()->DeleteSave(wtf);
 		RenderCredits();
 	}
 	// Render the Replay menu if you have lost and faded to them
@@ -2363,6 +2386,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		g->m_fSlowHealth *= g->m_fHealthScaling;
 		g->m_fFastHealth *= g->m_fHealthScaling;
 		g->m_fBeaverHealth *= g->m_fHealthScaling;
+		g->SaveGame();
 	}
 		break;
 	case MessageID::MSG_CREATE_GRENADE:
