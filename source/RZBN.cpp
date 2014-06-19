@@ -333,7 +333,7 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	bool hasAR = m_pPlayer->HasAR();
 	bool hasSH = m_pPlayer->HasShotty();
 	bool hasRL = m_pPlayer->HasRocketLauncher();
-	bool hasHT = m_pPlayer->HasRocketLauncher();
+	bool hasHT = m_pPlayer->HasHatTrick();
 
 	file.write((char*)&hasAR, sizeof(bool));
 	file.write((char*)&hasSH, sizeof(bool));
