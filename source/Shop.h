@@ -18,6 +18,7 @@ using namespace std;
 class BitmapFont;
 class Inventory;
 class Entity;
+class TowerFlyweight;
 
 class Shop
 {
@@ -134,6 +135,7 @@ public:
 
 	// Mutators
 	void SetShopStatus(bool isOpen);
+	void SetTowerFlyweight(TowerFlyweight* towerFlyweight);
 
 private:
 
@@ -288,6 +290,6 @@ private:
 		FORT_GOBACK
 	};
 
-
+	TowerFlyweight* m_pTowerFlyweight;
 };
 

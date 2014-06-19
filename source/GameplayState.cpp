@@ -494,6 +494,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
+	m_pShop->SetTowerFlyweight(m_pTowerFlyweight);
 
 #pragma region Load Towers, Placeables and Drones [LONG CODE]
 	// Load the towers from save

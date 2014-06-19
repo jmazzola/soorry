@@ -17,6 +17,7 @@
 #include "StatTracker.h"
 #include "Drone.h"
 #include "CreateDroneMessage.h"
+#include "TowerFlyweight.h"
 
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
@@ -160,6 +161,7 @@ bool Shop::Input()
 {
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// Main Tab
 	if (m_nMenuTab == MAIN_TAB)
@@ -171,7 +173,8 @@ bool Shop::Input()
 		{
 			// TODO: Add sound fx for going up and down
 			++m_nCursor;
-
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+			
 			// Wrap around the options
 			if (m_nCursor > MainOptions::OPTIONS_EXITSHOP)
 				m_nCursor = MainOptions::OPTIONS_WEAPONS;
@@ -181,6 +184,7 @@ bool Shop::Input()
 		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 		{
 			--m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor < MainOptions::OPTIONS_WEAPONS)
@@ -194,7 +198,11 @@ bool Shop::Input()
 			{
 				if (pInput->GetMousePosition().IsWithinRectangle(menuRectangles[i]))
 				{
-					m_nCursor = i;
+					if (i != m_nCursor)
+					{
+						m_nCursor = i;
+						pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+					}
 				}
 			}
 		}
@@ -245,6 +253,7 @@ bool Shop::Input()
 				SetShopStatus(false);
 				break;
 			}
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 		}
 	}
 
@@ -258,6 +267,7 @@ bool Shop::Input()
 		{
 			// TODO: Add sound fx for going up and down
 			++m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor > WeaponsOptions::WEAPON_GOBACK)
@@ -269,6 +279,7 @@ bool Shop::Input()
 		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 		{
 			--m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor < WeaponsOptions::WEAPON_AR)
@@ -282,7 +293,11 @@ bool Shop::Input()
 			{
 				if (pInput->GetMousePosition().IsWithinRectangle(weaponRectangles[i]))
 				{
-					m_nCursor = i;
+					if (i != m_nCursor)
+					{
+						m_nCursor = i;
+						pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+					}
 				}
 			}
 		}
@@ -331,6 +346,7 @@ bool Shop::Input()
 		{
 			// TODO: Add sound fx for going up and down
 			++m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor > ItemsOptions::ITEM_GOBACK)
@@ -341,6 +357,7 @@ bool Shop::Input()
 		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 		{
 			--m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor < ItemsOptions::ITEM_BEARTRAP)
@@ -354,7 +371,11 @@ bool Shop::Input()
 			{
 				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
 				{
-					m_nCursor = i;
+					if (i != m_nCursor)
+					{
+						m_nCursor = i;
+						pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+					}
 				}
 			}
 		}
@@ -402,6 +423,7 @@ bool Shop::Input()
 		{
 			// TODO: Add sound fx for going up and down
 			++m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor > UpgradesOptions::UG_GOBACK)
@@ -412,6 +434,7 @@ bool Shop::Input()
 		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 		{
 			--m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor < UpgradesOptions::UG_AR_DAMAGE)
@@ -425,7 +448,11 @@ bool Shop::Input()
 			{
 				if (pInput->GetMousePosition().IsWithinRectangle(upgradeRectangles[i]))
 				{
-					m_nCursor = i;
+					if (i != m_nCursor)
+					{
+						m_nCursor = i;
+						pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+					}
 				}
 			}
 		}
@@ -474,6 +501,7 @@ bool Shop::Input()
 		{
 			// TODO: Add sound fx for going up and down
 			++m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor > FortificationOptions::FORT_GOBACK)
@@ -484,6 +512,7 @@ bool Shop::Input()
 		else if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 		{
 			--m_nCursor;
+			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 
 			// Wrap around the options
 			if (m_nCursor < FortificationOptions::FORT_MG)
@@ -495,9 +524,13 @@ bool Shop::Input()
 		{
 			for (int i = 0; i < TOTAL_TOWERS; i++)
 			{
-				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				if (pInput->GetMousePosition().IsWithinRectangle(fortificationRectangles[i]))
 				{
-					m_nCursor = i;
+					if (i != m_nCursor)
+					{
+						m_nCursor = i;
+						pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
+					}
 				}
 			}
 		}
@@ -506,7 +539,7 @@ bool Shop::Input()
 		{
 			for (int i = 0; i < TOTAL_TOWERS; i++)
 			{
-				if (pInput->GetMousePosition().IsWithinRectangle(itemRectangles[i]))
+				if (pInput->GetMousePosition().IsWithinRectangle(fortificationRectangles[i]))
 				{
 					m_bTHEBOOL = true;
 				}
@@ -516,7 +549,7 @@ bool Shop::Input()
 		// --- Selecting an option ---
 		// If the enter key (PC) or A button (Xbox 360) are pressed
 		// Select the item
-		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A))
+		if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || m_bTHEBOOL)
 		{
 			// If we're going back
 			if (m_nCursor == FortificationOptions::FORT_GOBACK)
@@ -1828,4 +1861,9 @@ void Shop::LoadPrices(string xmlFileName)
 		pTower = pTower->NextSiblingElement("tower");
 	}
 
+}
+
+void Shop::SetTowerFlyweight(TowerFlyweight* _towerFlyweight)
+{
+	m_pTowerFlyweight = _towerFlyweight;
 }
