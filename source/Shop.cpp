@@ -410,20 +410,45 @@ void Shop::UpdateItemStatus()
 			weapNames[WEAP_AR] = "Assault Rifle [BOUGHT]";
 			isWeapBought[WEAP_AR] = true;
 		}
+		else
+		{
+			weapNames[WEAP_AR] = "Assault Rifle";
+			isWeapBought[WEAP_AR] = false;
+		}
+
+
 		if (player->HasShotty())
 		{
 			weapNames[WEAP_SHOTGUN] = "Shotgun [BOUGHT]";
 			isWeapBought[WEAP_SHOTGUN] = true;
 		}
+		else
+		{
+			weapNames[WEAP_SHOTGUN] = "Shotgun";
+			isWeapBought[WEAP_SHOTGUN] = false;
+		}
+
 		if (player->HasRocketLauncher())
 		{
 			weapNames[WEAP_ROCKETLAUNCHER] = "RPG [BOUGHT]";
 			isWeapBought[WEAP_ROCKETLAUNCHER] = true;
 		}
+		else
+		{
+			weapNames[WEAP_ROCKETLAUNCHER] = "RPG";
+			isWeapBought[WEAP_ROCKETLAUNCHER] = false;
+		}
+
+
 		if (player->HasHatTrick())
 		{
 			weapNames[WEAP_HATTRICK] = "Hat Trick [BOUGHT]";
 			isWeapBought[WEAP_HATTRICK] = true;
+		}
+		else
+		{
+			weapNames[WEAP_HATTRICK] = "Hat Trick";
+			isWeapBought[WEAP_HATTRICK] = false;
 		}
 	}
 
@@ -913,6 +938,7 @@ bool Shop::Buy(int parcel, int shopSection)
 {
 	Player* player = dynamic_cast<Player*>(m_pPlayer);
 	StatTracker* tracker = StatTracker::GetInstance();
+	GameplayState* gamep = GameplayState::GetInstance();
 	int curMoney = player->GetScore();
 
 	enum { WEAPONS, ITEMS, UPGRADES, FORTIFICATIONS };
@@ -925,20 +951,100 @@ bool Shop::Buy(int parcel, int shopSection)
 		switch (parcel)
 		{
 		case 0:
-			return false;
+		{
+
+			// If we're playing beaver fever
+			if (gamep->GetGameMode() == 3 && !player->HasAR())
+			{
+				player->SetAR(true);
+				player->SetShotgun(false);
+				player->SetRocketLauncher(false);
+				player->SetHatTrick(false);
+
+				isWeapBought[WEAP_AR] = true;
+				isWeapBought[WEAP_SHOTGUN] = false;
+				isWeapBought[WEAP_ROCKETLAUNCHER] = false;
+				isWeapBought[WEAP_HATTRICK] = false;
+
+				break;
+			}
+
+			if (player->HasAR())
+				return false;
+
 			break;
+		}
+
 		case 1:
+		{
+			// If we're playing beaver fever
+			if (gamep->GetGameMode() == 3 && !player->HasShotty())
+			{
+				player->SetAR(false);
+				player->SetShotgun(true);
+				player->SetRocketLauncher(false);
+				player->SetHatTrick(false);
+
+
+				isWeapBought[WEAP_AR] = false;
+				isWeapBought[WEAP_SHOTGUN] = true;
+				isWeapBought[WEAP_ROCKETLAUNCHER] = false;
+				isWeapBought[WEAP_HATTRICK] = false;
+				break;
+			}
+
 			if (player->HasShotty() == true)
 				return false;
 			break;
+		}
+
 		case 2:
+		{
+				// If we're playing beaver fever
+				if (gamep->GetGameMode() == 3 && !player->HasRocketLauncher())
+				{
+					player->SetAR(false);
+					player->SetShotgun(false);
+					player->SetRocketLauncher(true);
+					player->SetHatTrick(false);
+
+
+					isWeapBought[WEAP_AR] = false;
+					isWeapBought[WEAP_SHOTGUN] = false;
+					isWeapBought[WEAP_ROCKETLAUNCHER] = true;
+					isWeapBought[WEAP_HATTRICK] = false;
+					break;
+				}
+
 			if (player->HasRocketLauncher() == true)
 				return false;
+
 			break;
+		}
+
 		case 3:
+		{
+				// If we're playing beaver fever
+				if (gamep->GetGameMode() == 3 && !player->HasHatTrick())
+				{
+					player->SetAR(false);
+					player->SetShotgun(false);
+					player->SetRocketLauncher(false);
+					player->SetHatTrick(true);
+
+					isWeapBought[WEAP_AR] = false;
+					isWeapBought[WEAP_SHOTGUN] = false;
+					isWeapBought[WEAP_ROCKETLAUNCHER] = false;
+					isWeapBought[WEAP_HATTRICK] = true;
+
+					break;
+				}
+
 			if (player->HasHatTrick() == true)
 				return false;
 			break;
+		}
+
 		}
 
 		if (curMoney >= (int)weapPrices[parcel])
@@ -1093,6 +1199,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	Inventory* inventory = player->GetInventory();
 	Game* game = Game::GetInstance();
 	StatTracker* tracker = StatTracker::GetInstance();
+	GameplayState* gamep = GameplayState::GetInstance();
 	int curMoney = player->GetScore();
 
 	enum { WEAPONS, ITEMS, UPGRADES, TOWERS };
@@ -1108,39 +1215,89 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 		if (parcel == WEAP_AR)
 		{
-			if (player->HasAR())
-				return;
+			
+			if (gamep->GetGameMode() == 3)
+			{
+				player->SetAR(true);
+				weapons[0].SetCurrAmmo(AR_CURAMMO);
+				weapons[1].SetCurrAmmo(0);
+				weapons[2].SetCurrAmmo(0);
+				weapons[3].SetCurrAmmo(0);
+			}
+			else
+			{
+				if (player->HasAR())
+					return;
 
-			player->SetAR(true);
-			weapons[0].SetCurrAmmo(AR_CURAMMO);
+				player->SetAR(true);
+				weapons[0].SetCurrAmmo(AR_CURAMMO);
+			}
+			
 
 		}
 
 		if (parcel == WEAP_SHOTGUN)
 		{
-			if (player->HasShotty())
-				return;
+			
+			if (gamep->GetGameMode() == 3)
+			{
+				player->SetShotgun(true);
+				weapons[0].SetCurrAmmo(0);
+				weapons[1].SetCurrAmmo(SH_CURAMMO);
+				weapons[2].SetCurrAmmo(0);
+				weapons[3].SetCurrAmmo(0);
+			}
+			else
+			{
+				if (player->HasShotty())
+					return;
 
-			player->SetShotgun(true);
-			weapons[1].SetCurrAmmo(SH_CURAMMO);
+				player->SetShotgun(true);
+				weapons[1].SetCurrAmmo(SH_CURAMMO);
+			}
 		}
 
 		if (parcel == WEAP_ROCKETLAUNCHER)
 		{
-			if (player->HasRocketLauncher())
-				return;
+			
+			if (gamep->GetGameMode() == 3)
+			{
+				player->SetRocketLauncher(true);
+				weapons[0].SetCurrAmmo(0);
+				weapons[1].SetCurrAmmo(0);
+				weapons[2].SetCurrAmmo(RL_CURAMMO);
+				weapons[3].SetCurrAmmo(0);
+			}
+			else
+			{
+				if (player->HasRocketLauncher())
+					return;
 
-			player->SetRocketLauncher(true);
-			weapons[2].SetCurrAmmo(RL_CURAMMO);
+				player->SetRocketLauncher(true);
+				weapons[2].SetCurrAmmo(RL_CURAMMO);
+			}
+
+
 		}
 
 		if (parcel == WEAP_HATTRICK)
 		{
-			if (player->HasHatTrick())
-				return;
+			if (gamep->GetGameMode() == 3)
+			{
+				player->SetHatTrick(true);
+				weapons[0].SetCurrAmmo(0);
+				weapons[1].SetCurrAmmo(0);
+				weapons[2].SetCurrAmmo(0);
+				weapons[3].SetCurrAmmo(HT_CURAMMO);
+			}
+			else
+			{
+				if (player->HasHatTrick())
+					return;
 
-			player->SetHatTrick(true);
-			weapons[3].SetCurrAmmo(HT_CURAMMO);
+				player->SetHatTrick(true);
+				weapons[3].SetCurrAmmo(HT_CURAMMO);
+			}
 		}
 	}
 
