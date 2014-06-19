@@ -1,5 +1,21 @@
 #pragma once
 #include <Windows.h>
+
+// Defines for easy balancing
+#define WALLS_MAX 100
+#define WINDOWS_MAX 110
+#define BEARTRAPS_MAX 50
+#define MINES_MAX 50
+#define GRENADES_MAX 22
+#define HEALTHPACKS_MAX 20
+#define TOWER_MG_MAX 50
+#define TOWER_MAPLE_MAX 50
+#define TOWER_HOCKEY_MAX 50
+#define TOWER_LASER_MAX 50
+#define LAVATRAP_MAX 100
+#define SPIKETRAP_MAX 100
+#define DRONE_MAX 5
+
 class Inventory
 {
 public:
@@ -39,6 +55,21 @@ public:
 	bool SetSpikeTraps(unsigned int spikeTraps);
 	bool SetDroneCount(unsigned int drones);
 
+
+	unsigned int m_unWallsMAX = WALLS_MAX;
+	unsigned int m_unWindowsMAX = WINDOWS_MAX;
+	unsigned int m_unBearTrapsMAX = BEARTRAPS_MAX;
+	unsigned int m_unMinesMAX = MINES_MAX;
+	unsigned int m_unGrenadesMAX = GRENADES_MAX;
+	unsigned int m_unHealthPacksMAX = HEALTHPACKS_MAX;
+	unsigned int m_unMachineGunTowersMAX = TOWER_MG_MAX;
+	unsigned int m_unMapleSyrupTowersMAX = TOWER_MAPLE_MAX;
+	unsigned int m_unHockeyStickTowersMAX = TOWER_HOCKEY_MAX;
+	unsigned int m_unLaserTowersMAX = TOWER_LASER_MAX;
+	unsigned int m_unLavaTrapsMAX = LAVATRAP_MAX;
+	unsigned int m_unSpikeTrapsMAX = SPIKETRAP_MAX;
+	unsigned int m_unDronesMAX = DRONE_MAX;
+
 private:
 
 	unsigned int m_unWalls;
@@ -54,20 +85,5 @@ private:
 	unsigned int m_unLavaTraps;
 	unsigned int m_unSpikeTraps;
 	unsigned int m_unDrones;
-
-
-	unsigned int m_unWallsMAX = 100;
-	unsigned int m_unWindowsMAX = 100;
-	unsigned int m_unBearTrapsMAX = 50;
-	unsigned int m_unMinesMAX = 50;
-	unsigned int m_unGrenadesMAX = 20;
-	unsigned int m_unHealthPacksMAX = 20;
-	unsigned int m_unMachineGunTowersMAX = 50;
-	unsigned int m_unMapleSyrupTowersMAX = 50;
-	unsigned int m_unHockeyStickTowersMAX = 50;
-	unsigned int m_unLaserTowersMAX = 50;
-	unsigned int m_unLavaTrapsMAX = 100;
-	unsigned int m_unSpikeTrapsMAX = 100;
-	unsigned int m_unDronesMAX = 5;
 };
 

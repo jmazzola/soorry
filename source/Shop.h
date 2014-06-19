@@ -68,6 +68,9 @@ public:
 	// Load Prices
 	void LoadPrices(string xmlFileName);
 
+	// UpdateNames
+	void UpdateItemStatus();
+
 	// -- Price enumeration --
 
 	// Weapon prices
@@ -82,46 +85,46 @@ public:
 	};
 
 	// Item prices
-	enum ItemPrices 
+	enum ItemPrices
 	{
-		ITEM_PRICE_WALL, 
-		ITEM_PRICE_WINDOW, 
-		BEARTRAP,
-		MINE, 
-		GRENADE, 
-		AMMO, 
-		DRONE,
-		LAVATRAP,
-		SPIKETRAP,
-		ITEMGB, 
-		TOTAL_ITEMS
+		BEARTRAP,			// Beartrap +1
+		MINE,				// A-Z Mine
+		ITEM_PRICE_WALL,		// Walls +50
+		ITEM_PRICE_WINDOW,	// Windows +10
+		GRENADE,			// Frag Grenades +3
+		AMMO,				// Refill Ammo
+		DRONE,				// Drone +1
+		ITEMGOBACK,			// Go Back
+		TOTAL_ITEMS,
 	};
 
 	// Upgrade prices
 	enum UpgradePrices
 	{ 
-		SHOTGUN_ROF, 
-		SHOTGUN_DMG,
-		SHOTGUN_MAXAMMO,
-		AR_ROF, 
-		AR_DMG, 
+		AR_DMG,
+		AR_ROF,
 		AR_MAXAMMO,
-		RL_ROF, 
+		SHOTGUN_DMG,
+		SHOTGUN_ROF,
+		SHOTGUN_MAXAMMO,
 		RL_DMG,
+		RL_ROF, 
 		RL_MAXAMMO,
-		UPGRADE_GOBACK, 
-		TOTAL_UPGRADES
+		UPGRADEGOBACK, 
+		TOTAL_UPGRADES,
 	};
 
-	// Tower prices
-	enum TowerPrices
+	// Fortification prices
+	enum FortificationPrices
 	{ 
-		MG, 
-		MAPLE_SYRUP, 
-		HOCKEY_STICK, 
-		LASER, 
-		TOWERGB, 
-		TOTAL_TOWERS
+		MG,
+		MAPLE_SYRUP,
+		LASER,
+		SPIKETRAP,
+		LAVATRAP,
+		HOCKEY_STICK,
+		TOWERGOBACK,
+		TOTAL_TOWERS,
 	};
 
 
@@ -139,11 +142,14 @@ private:
 	// Is the shop open?
 	bool m_bIsOpen;
 
-	// --- Weapons ---
-	string weapNames[TOTAL_WEAPONS];
-	string weapDescs[TOTAL_WEAPONS];
-	unsigned int weapPrices[TOTAL_WEAPONS];
-	SGD::Point weapTopLeft[TOTAL_WEAPONS];
+	// --- Weapons ---	
+	string weapNames[TOTAL_WEAPONS];			// Name of the weapon
+	string weapDescs[TOTAL_WEAPONS];			// Name of the description
+	unsigned int weapPrices[TOTAL_WEAPONS];		// Price of the weapon
+	SGD::Point weapTopLeft[TOTAL_WEAPONS];		// {Top, Left} of the weapon's picture
+	bool isWeapProgressive[TOTAL_WEAPONS];		// Does the price progressively increase?
+	bool isWeapBought[TOTAL_WEAPONS];
+
 
 	// --- Items ---
 	string itemNames[TOTAL_ITEMS];
@@ -151,6 +157,9 @@ private:
 	unsigned int itemPrices[TOTAL_ITEMS];
 	unsigned int itemAmountToAdd[TOTAL_ITEMS];
 	SGD::Point itemTopLeft[TOTAL_ITEMS];
+	bool isItemProgressive[TOTAL_ITEMS];
+	bool isItemMaxed[TOTAL_ITEMS];
+
 
 	// --- Weapon Upgrades ---
 	string upgradeNames[TOTAL_UPGRADES];
@@ -158,14 +167,19 @@ private:
 	unsigned int upgradePrices[TOTAL_UPGRADES];
 	unsigned int upgradeAmountToAdd[TOTAL_UPGRADES];
 	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
+	bool isUpgradeProgressive[TOTAL_UPGRADES];
+	bool isUpgradeMaxed[TOTAL_UPGRADES];
 
 
-	// --- Towers ---
-	string towerNames[TOTAL_TOWERS];
-	string towerDescs[TOTAL_TOWERS];
-	unsigned int towerPrices[TOTAL_TOWERS];
-	unsigned int towerAmountToAdd[TOTAL_TOWERS];
-	SGD::Point towerTopLeft[TOTAL_TOWERS];
+	// --- Fortifications ---
+	string fortNames[TOTAL_TOWERS];
+	string fortDescs[TOTAL_TOWERS];
+	unsigned int fortPrices[TOTAL_TOWERS];
+	unsigned int fortAmountToAdd[TOTAL_TOWERS];
+	SGD::Point fortTopLeft[TOTAL_TOWERS];
+	bool isFortProgressive[TOTAL_TOWERS];
+	bool isFortMaxed[TOTAL_TOWERS];
+
 
 	// Textures
 	// - Backgrounds
@@ -202,7 +216,7 @@ private:
 		WEAPONS_TAB,
 		ITEMS_TAB, 
 		UPGRADES_TAB, 
-		TOWERS_TAB 
+		FORTIFICATIONS_TAB, 
 	};
 
 	// Shop's main tab options
@@ -211,7 +225,7 @@ private:
 		OPTIONS_WEAPONS,
 		OPTIONS_ITEMS, 
 		OPTIONS_UPGRADES, 
-		OPTIONS_TOWERS, 
+		OPTIONS_FORTIFICATIONS, 
 		OPTIONS_EXITSHOP 
 	};
 
@@ -222,47 +236,47 @@ private:
 		WEAPON_SHOTGUN,
 		WEAPON_ROCKETLAUNCHER,
 		WEAPON_HATTRICK,
-		WEAPON_GOBACK
+		WEAPON_GOBACK,
 	};
 
 	// Shop's items tab options
 	enum ItemsOptions 
 	{ 
-		ITEM_WALL, 
-		ITEM_WINDOW, 
-		ITEM_BEARTRAP, 
-		ITEM_MINE, 
-		ITEM_GRENADE, 
-		ITEM_AMMO, 
+		ITEM_BEARTRAP,
+		ITEM_MINE,
+		ITEM_WALL,
+		ITEM_WINDOW,
+		ITEM_GRENADE,
+		ITEM_AMMO,
 		ITEM_DRONE,
-		ITEM_LAVATRAP,
-		ITEM_SPIKETRAP,
-		ITEM_GOBACK 
+		ITEM_GOBACK,
 	};
 
 	// Shop's upgrade tab options
 	enum UpgradesOptions
 	{
-		UG_SHOTGUN_ROF, 
-		UG_SHOTGUN_DAMAGE,
-		UG_SHOTGUN_AMMO,
-		UG_AR_ROF, 
-		UG_AR_DAMAGE, 
+		UG_AR_DAMAGE,
+		UG_AR_ROF,
 		UG_AR_AMMO,
-		UG_LAUNCHER_ROF, 
+		UG_SHOTGUN_DAMAGE,
+		UG_SHOTGUN_ROF, 
+		UG_SHOTGUN_AMMO,
 		UG_LAUNCHER_DAMAGE,
+		UG_LAUNCHER_ROF, 
 		UG_LAUNCHER_AMMO,
-		UG_GOBACK 
+		UG_GOBACK,
 	};
 
-	// Shop's towers tab options
-	enum TowersOptions 
+	// Shop's fortification tab options
+	enum FortificationOptions
 	{ 
-		TOWER_MG, 
-		TOWER_MAPLESYRUP, 
-		TOWER_HOCKEYSTICK, 
-		TOWER_LASER, 
-		TOWER_GOBACK
+		FORT_MG,
+		FORT_MAPLESYRUP,
+		FORT_LASER,
+		FORT_SPIKETRAP,
+		FORT_LAVATRAP,
+		FORT_HOCKEYSTICK,
+		FORT_GOBACK
 	};
 
 
