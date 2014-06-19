@@ -20,7 +20,7 @@ StatsState* StatsState::GetInstance(void)
 {
 	m_fScrollY = 250.0f;
 	SetTransition(false);
-	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/StatsScreen.png");
+	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/1405_RazorBalloon_Stats.png");
 	m_pStats = StatTracker::GetInstance();
 	m_pStats->Load("resource/data/stats.xml");
 

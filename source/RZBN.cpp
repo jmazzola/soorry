@@ -31,7 +31,7 @@
 #include <fstream>
 using namespace std;
 
-#define RZBN_VERSION 4
+#define RZBN_VERSION 5
 #define RZBN_MAGIC 0x4E425A52
 
 
@@ -78,6 +78,14 @@ int RZBN::LoadRZBNFile(string rzbnFilePath, bool isCheck)
 	file.read((char*)&gameMode, sizeof(int));
 	m_nGamemode = gameMode;
 
+	// Load in wave number
+	file.read((char*)&m_nWaveNum, sizeof(int));
+
+	// Load in money
+	int money;
+	file.read((char*)&money, sizeof(int));
+	m_nMoney = money;
+
 	if (isCheck)
 		return 0x1337;
 
@@ -96,14 +104,6 @@ int RZBN::LoadRZBNFile(string rzbnFilePath, bool isCheck)
 	// Load spawn point
 	file.read((char*)&m_fSpawnPointX, sizeof(float));
 	file.read((char*)&m_fSpawnPointY, sizeof(float));
-
-	// Load in wave number
-	file.read((char*)&m_nWaveNum, sizeof(int));
-
-	// Load in money
-	int money;
-	file.read((char*)&money, sizeof(int));
-	m_nMoney = money;
 
 	// Load in walls
 	file.read((char*)&m_nWalls, sizeof(unsigned int));
@@ -242,6 +242,14 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	int gameMode = GameplayState::GetInstance()->GetGameMode();
 	file.write((char*)&gameMode, sizeof(int));
 
+	// Set wave number
+	int waveNumber = m_pZomFactory->GetWave();
+	file.write((char*)&waveNumber, sizeof(int));
+
+	// Set money
+	int money = m_pPlayer->GetScore();
+	file.write((char*)&money, sizeof(int));
+
 
 	// -- Write the map --
 
@@ -279,13 +287,7 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	file.write((char*)&spawnPointX, sizeof(float));
 	file.write((char*)&spawnPointY, sizeof(float));
 
-	// Set wave number
-	int waveNumber = m_pZomFactory->GetWave();
-	file.write((char*)&waveNumber, sizeof(int));
 
-	// Set money
-	int money = m_pPlayer->GetScore();
-	file.write((char*)&money, sizeof(int));
 
 	Inventory* inv = m_pPlayer->GetInventory();
 

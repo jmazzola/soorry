@@ -587,6 +587,9 @@
     <ClInclude Include="source\DestroyEntityMessage.h">
       <Filter>Messages</Filter>
     </ClInclude>
+    <ClInclude Include="source\LoadSaveState.h">
+      <Filter>Game States</Filter>
+    </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">
       <Filter>TinyXML</Filter>
     </ClInclude>

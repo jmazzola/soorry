@@ -495,6 +495,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pTowerFlyweight->SetRangeCirclesImage(m_hRangeCirclesImage);
 	m_pTowerFlyweight->SetPurchaseSound(m_hPurchase);
 	m_pTowerFlyweight->SetClickSound(m_hClickSound);
+	m_pShop->SetTowerFlyweight(m_pTowerFlyweight);
 
 #pragma region Load Towers, Placeables and Drones [LONG CODE]
 	// Load the towers from save
@@ -1448,18 +1449,24 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	if (m_pShop->IsOpen() == false && pAudio->IsAudioPlaying(m_hBackgroundMus) == false)
+	if (m_pShop->IsOpen() == false 
+		&& pAudio->IsAudioPlaying(m_hBackgroundMus) == false)
 	{
 		pAudio->StopAudio(m_hShopMusic);
-		if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+		if (m_nGamemode == ARCADE_GAME_MODE 
+			|| m_nGamemode == HARDCORE_MODE)
 		{
-			pAudio->PlayAudio(m_hBackgroundMus, true);
+			pAudio->PlayAudio(
+				m_hBackgroundMus, 
+				true);
 		}
 		if (m_nGamemode == BEAVER_FEAVER_MODE)
 		{
 			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
 			{
-				pAudio->PlayAudio(m_hBeaverFeverMusic, true);
+				pAudio->PlayAudio(
+					m_hBeaverFeverMusic, 
+					true);
 			}
 		}
 		if (m_nGamemode == SANDBOX_MODE)
@@ -1478,9 +1485,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		m_bEnterShop = false;
 	}
-	else if (m_pShop->IsOpen() == true && pAudio->IsAudioPlaying(m_hBackgroundMus) == true)
+	else if (m_pShop->IsOpen() == true 
+		&& pAudio->IsAudioPlaying(m_hBackgroundMus) == true)
 	{
-		if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+		if (m_nGamemode == ARCADE_GAME_MODE 
+			|| m_nGamemode == HARDCORE_MODE)
 		{
 			pAudio->StopAudio(m_hBackgroundMus);
 		}
@@ -1508,7 +1517,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 	// If the game isn't paused and you haven't won and you haven't lost
-	if (m_bIsPaused == false && zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 && m_bHasLost == false)
+	if (m_bIsPaused == false 
+		&& zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 
+		&& m_bHasLost == false)
 	{																					 // Fuckin north I guess
 		// Update the entities															 // Fuckin north I guess
 		m_pEntities->UpdateAll(elapsedTime);											 // Fuckin north I guess
@@ -1522,12 +1533,24 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		zombieFactory->Update(elapsedTime);												 // Fuckin north I guess
 		// Fuckin north I guess
 		// Check collisions																 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_PICKUP);						 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PROJECTILES);				 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_PLACEABLE);					 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_DRONE);						 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_ENEMIES, BUCKET_TRAPS);						 // Fuckin north I guess
-		m_pEntities->CheckCollisions(BUCKET_PLAYER, BUCKET_SHOP);
+		m_pEntities->CheckCollisions(
+			BUCKET_PLAYER, 
+			BUCKET_PICKUP);						 // Fuckin north I guess
+		m_pEntities->CheckCollisions(
+			BUCKET_ENEMIES, 
+			BUCKET_PROJECTILES);				 // Fuckin north I guess
+		m_pEntities->CheckCollisions(
+			BUCKET_ENEMIES, 
+			BUCKET_PLACEABLE);					 // Fuckin north I guess
+		m_pEntities->CheckCollisions(
+			BUCKET_ENEMIES, 
+			BUCKET_DRONE);						 // Fuckin north I guess
+		m_pEntities->CheckCollisions(
+			BUCKET_ENEMIES, 
+			BUCKET_TRAPS);						 // Fuckin north I guess
+		m_pEntities->CheckCollisions(
+			BUCKET_PLAYER, 
+			BUCKET_SHOP);
 		//draw grid rectangle
 
 		// Update the stat tracker
@@ -2562,7 +2585,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	{
 		// Adjust for projectile to come from center
 		playerCenter.x += 12;
-		playerCenter.y += 12;
+		playerCenter.y += 6;
 		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
@@ -2574,7 +2597,6 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec.Normalize();
 		vec *= 1000;
 		tempProj->SetVelocity(vec);
-
 		tempProj->SetHitSound(m_hBulletHit);
 		tempProj->SetImpactSound(m_hBulletImpact);
 

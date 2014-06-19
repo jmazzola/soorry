@@ -1784,7 +1784,8 @@ void Player::Render ( void )
 	playerPos.y -= Camera::y;
 	SGD::Vector dir = pos - playerPos;
 	dir.Normalize();
-	float rot = SGD::Vector ( 0.0f , -1.0f ).ComputeSteering(dir);
+	float rot = SGD::Vector(0.0f, -1.0f).ComputeSteering(dir);
+	m_fRotation = SGD::Vector(0.0f, -1.0f).ComputeSteering(dir);
 	float rotation = 0;
 	if(rot > 0)
 		rotation = SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
@@ -1795,7 +1796,7 @@ void Player::Render ( void )
 	if(m_fSuperTimer > 0 && rand() % 2 == 0)
 		col = SGD::Color(255, 255, 0, 0);
 
-	AnimationManager::GetInstance ()->Render ( m_antsAnimation , m_ptPosition.x - Camera::x , m_ptPosition.y - Camera::y , rotation, center, col );
+	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y, rotation, center, col);
 
 	if(m_fPickupMessageTimer > 0)
 		SGD::GraphicsManager::GetInstance()->DrawString(m_sPickupMessage.c_str(), SGD::Point(m_ptPosition.x - Camera::x - 60, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
@@ -1845,19 +1846,19 @@ void Player::WeaponSwitch()
 		break;
 	case SHOT_GUN:
 	{
-		m_pSprite = AnimationManager::GetInstance()->GetSprite("RocketCarry");
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
 		m_antsAnimation.m_fTimeOnFrame = 0;
 		m_antsAnimation.m_nCurrFrame = 0;
-		m_antsAnimation.m_nCurrAnimation = "RocketCarry";
+		m_antsAnimation.m_nCurrAnimation = "CarryAR";
 
 	}
 		break;
 	case ROCKET_LAUNCHER:
 	{
-		m_pSprite = AnimationManager::GetInstance()->GetSprite("CarryAR");
+		m_pSprite = AnimationManager::GetInstance()->GetSprite("RocketCarry");
 		m_antsAnimation.m_fTimeOnFrame = 0;
 		m_antsAnimation.m_nCurrFrame = 0;
-		m_antsAnimation.m_nCurrAnimation = "CarryAR";
+		m_antsAnimation.m_nCurrAnimation = "RocketCarry";
 
 	}
 		break;
