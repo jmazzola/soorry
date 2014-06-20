@@ -604,51 +604,17 @@ void Shop::UpdateItemStatus()
 
 	case WEAPONS_TAB:
 	{
-		if (player->HasAR())
-		{
-			weapNames[WEAP_AR] = "Assault Rifle [BOUGHT]";
-			isWeapBought[WEAP_AR] = true;
-		}
-		else
-		{
-			weapNames[WEAP_AR] = "Assault Rifle";
-			isWeapBought[WEAP_AR] = false;
-		}
+		(player->HasAR()) ? weapNames[WEAP_AR] = "Assault Rifle [OWNED]" : weapNames[WEAP_AR] = "Assault Rifle";
+		isWeapBought[WEAP_AR] = (player->HasAR());
 
+		(player->HasShotty()) ? weapNames[WEAP_SHOTGUN] = "Shotgun [OWNED]" : weapNames[WEAP_SHOTGUN] = "Shotgun";
+		isWeapBought[WEAP_SHOTGUN] = (player->HasShotty());
 
-		if (player->HasShotty())
-		{
-			weapNames[WEAP_SHOTGUN] = "Shotgun [BOUGHT]";
-			isWeapBought[WEAP_SHOTGUN] = true;
-		}
-		else
-		{
-			weapNames[WEAP_SHOTGUN] = "Shotgun";
-			isWeapBought[WEAP_SHOTGUN] = false;
-		}
+		(player->HasRocketLauncher()) ? weapNames[WEAP_ROCKETLAUNCHER] = "RPG [OWNED]" : weapNames[WEAP_ROCKETLAUNCHER] = "RPG";
+		isWeapBought[WEAP_ROCKETLAUNCHER] = (player->HasRocketLauncher());
 
-		if (player->HasRocketLauncher())
-		{
-			weapNames[WEAP_ROCKETLAUNCHER] = "RPG [BOUGHT]";
-			isWeapBought[WEAP_ROCKETLAUNCHER] = true;
-		}
-		else
-		{
-			weapNames[WEAP_ROCKETLAUNCHER] = "RPG";
-			isWeapBought[WEAP_ROCKETLAUNCHER] = false;
-		}
-
-
-		if (player->HasHatTrick())
-		{
-			weapNames[WEAP_HATTRICK] = "Hat Trick [BOUGHT]";
-			isWeapBought[WEAP_HATTRICK] = true;
-		}
-		else
-		{
-			weapNames[WEAP_HATTRICK] = "Hat Trick";
-			isWeapBought[WEAP_HATTRICK] = false;
-		}
+		(player->HasHatTrick()) ? weapNames[WEAP_HATTRICK] = "Hat Trick [OWNED]" : weapNames[WEAP_HATTRICK] = "Hat Trick";
+		isWeapBought[WEAP_HATTRICK] = (player->HasHatTrick());
 	}
 
 		break;
@@ -657,45 +623,24 @@ void Shop::UpdateItemStatus()
 	{
 		Inventory* inv = player->GetInventory();
 
-		if (inv->GetWalls() >= inv->m_unWallsMAX)
-		{
-			itemNames[ITEM_WALL] = "Walls [MAXED OUT]";
-			isItemMaxed[ITEM_WALL] = true;
-		}
+		// The power of ternary operators and boolean returns ~ 
+		(inv->GetWalls() >= inv->m_unWallsMAX) ? itemNames[ITEM_WALL] = "Walls [MAXED]" : itemNames[ITEM_WALL] = "Walls +50";
+		isItemMaxed[ITEM_WALL] = (inv->GetWalls() >= inv->m_unWallsMAX);
 
-		if (inv->GetWindows() >= inv->m_unWindowsMAX)
-		{
-			itemNames[ITEM_WINDOW] = "Windows [MAXED OUT]";
-			isItemMaxed[ITEM_WINDOW] = true;
+		(inv->GetWindows() >= inv->m_unWindowsMAX) ? itemNames[ITEM_WINDOW] = "Windows [MAXED OUT]" : itemNames[ITEM_WINDOW] = "Windows +10";
+		isItemMaxed[ITEM_WINDOW] = (inv->GetWindows() >= inv->m_unWindowsMAX);
 
-		}
+		(inv->GetMines() >= inv->m_unMinesMAX) ? itemNames[ITEM_MINE] = "A-Z Mine [MAXED OUT]" : itemNames[ITEM_MINE] = "A-Z Mine +1";
+		isItemMaxed[ITEM_MINE] = (inv->GetMines() >= inv->m_unMinesMAX);
 
-		if (inv->GetMines() >= inv->m_unMinesMAX)
-		{
-			itemNames[ITEM_MINE] = "A-Z Mine [MAXED OUT]";
-			isItemMaxed[ITEM_MINE] = true;
+		(inv->GetGrenades() >= inv->m_unGrenadesMAX) ? itemNames[ITEM_GRENADE] = "Frag Grenades [MAXED OUT]" : itemNames[ITEM_GRENADE] = "Frag Grenades +3";
+		isItemMaxed[ITEM_GRENADE] = (inv->GetGrenades() >= inv->m_unGrenadesMAX);
 
-		}
+		(inv->GetBearTraps() >= inv->m_unBearTrapsMAX) ? itemNames[ITEM_BEARTRAP] = "Beartrap [MAXED OUT]" : itemNames[ITEM_BEARTRAP] = "Beartrap +1";
+		isItemMaxed[ITEM_BEARTRAP] = (inv->GetBearTraps() >= inv->m_unBearTrapsMAX);
 
-		if (inv->GetGrenades() >= inv->m_unGrenadesMAX)
-		{
-			itemNames[ITEM_GRENADE] = "Frag Grenades [MAXED OUT]";
-			isItemMaxed[ITEM_GRENADE] = true;
-
-		}
-
-		if (inv->GetBearTraps() >= inv->m_unBearTrapsMAX)
-		{
-			itemNames[ITEM_BEARTRAP] = "Beartrap [MAXED OUT]";
-			isItemMaxed[ITEM_BEARTRAP] = true;
-		}
-
-		if (inv->GetDroneCount() >= inv->m_unDronesMAX)
-		{
-			itemNames[ITEM_DRONE] = "Drone [MAXED OUT]";
-			isItemMaxed[ITEM_DRONE] = true;
-
-		}
+		(inv->GetDroneCount() >= inv->m_unDronesMAX) ? itemNames[ITEM_DRONE] = "Drone [MAXED OUT]" : itemNames[ITEM_DRONE] = "Drone +1";
+		isItemMaxed[ITEM_DRONE] = (inv->GetDroneCount() >= inv->m_unDronesMAX);
 	}
 		break;
 
@@ -709,45 +654,24 @@ void Shop::UpdateItemStatus()
 	{
 		Inventory* inv = player->GetInventory();
 
-		if (inv->GetMachineGunTowers() >= inv->m_unMachineGunTowersMAX)
-		{
-			fortNames[FORT_MG] = "Machine Gun Tower [MAXED OUT]";
-			isFortMaxed[FORT_MG] = true;
-		}
+		(inv->GetMachineGunTowers() >= inv->m_unMachineGunTowersMAX) ? fortNames[FORT_MG] = "Machine Gun Tower [MAXED OUT]" : fortNames[FORT_MG] = "Machine Gun Tower";
+		isFortMaxed[FORT_MG] = (inv->GetMachineGunTowers() >= inv->m_unMachineGunTowersMAX);
 
-		if (inv->GetMapleSyrupTowers() >= inv->m_unMapleSyrupTowersMAX)
-		{
-			fortNames[FORT_MAPLESYRUP] = "Maple Syrup Tower [MAXED OUT]";
-			isFortMaxed[FORT_MAPLESYRUP] = true;
+		(inv->GetMapleSyrupTowers() >= inv->m_unMapleSyrupTowersMAX) ? fortNames[FORT_MAPLESYRUP] = "Maple Syrup Tower [MAXED OUT]" : fortNames[FORT_MAPLESYRUP] = "Maple Syrup Tower";
+		isFortMaxed[FORT_MAPLESYRUP] = (inv->GetMapleSyrupTowers() >= inv->m_unMapleSyrupTowersMAX);
 
-		}
+		(inv->GetHockeyStickTowers() >= inv->m_unHockeyStickTowersMAX) ? fortNames[FORT_HOCKEYSTICK] = "Hockey Stick Tower [MAXED OUT]" : fortNames[FORT_HOCKEYSTICK] = "Hockey Stick Tower";
+		isFortMaxed[FORT_HOCKEYSTICK] = (inv->GetHockeyStickTowers() >= inv->m_unHockeyStickTowersMAX);
 
-		if (inv->GetHockeyStickTowers() >= inv->m_unHockeyStickTowersMAX)
-		{
-			fortNames[FORT_HOCKEYSTICK] = "Hockey Stick Tower [MAXED OUT]";
-			isFortMaxed[FORT_HOCKEYSTICK] = true;
+		(inv->GetLaserTowers() >= inv->m_unLaserTowersMAX) ? fortNames[FORT_LASER] = "Laser Tower [MAXED OUT]" : fortNames[FORT_LASER] = "Laser Tower";
+		isFortMaxed[FORT_LASER] = (inv->GetLaserTowers() >= inv->m_unLaserTowersMAX);
 
-		}
+		(inv->GetLavaTraps() >= inv->m_unLavaTrapsMAX) ? fortNames[FORT_LAVATRAP] = "Lava Trap [MAXED OUT]" : fortNames[FORT_LAVATRAP] = "Lava Trap +1";
+		isFortMaxed[FORT_LAVATRAP] = (inv->GetLavaTraps() >= inv->m_unLavaTrapsMAX);
 
-		if (inv->GetSpikeTraps() >= inv->m_unSpikeTrapsMAX)
-		{
-			fortNames[FORT_SPIKETRAP] = "Spike Trap [MAXED OUT]";
-			isFortMaxed[FORT_SPIKETRAP] = true;
+		(inv->GetSpikeTraps() >= inv->m_unSpikeTrapsMAX) ? fortNames[FORT_SPIKETRAP] = "Spike Trap [MAXED OUT]" : fortNames[FORT_SPIKETRAP] = "Spike Trap +1";
+		isFortMaxed[FORT_SPIKETRAP] = (inv->GetSpikeTraps() >= inv->m_unSpikeTrapsMAX);
 
-		}
-
-		if (inv->GetLavaTraps() >= inv->m_unLavaTrapsMAX)
-		{
-			fortNames[FORT_LAVATRAP] = "Lava Trap [MAXED OUT]";
-			isFortMaxed[FORT_LAVATRAP] = true;
-		}
-
-		if (inv->GetLaserTowers() >= inv->m_unLaserTowersMAX)
-		{
-			fortNames[FORT_LASER] = "Laser Tower [MAXED OUT]";
-			isFortMaxed[FORT_LASER] = true;
-
-		}
 	}
 		break;
 

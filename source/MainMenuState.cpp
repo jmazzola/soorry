@@ -86,7 +86,6 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	//Load music 
-	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
 
 	// Set the cursor's index to the first option
 	m_nCursor = 0;
@@ -110,8 +109,8 @@ using namespace std;
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	//Play Audio
-	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
-	pAudio->PlayAudio(m_hMenuMusic, true);
+	//int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	//pAudio->PlayAudio(m_hMenuMusic, true);
 	m_bAccept = true;
 	m_bTHEBOOL = false;
 	m_vtStick = SGD::Vector { 0.0f , 0.0f };
@@ -139,7 +138,6 @@ using namespace std;
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	//Release music
-	pAudio->UnloadAudio(m_hMenuMusic);
 
 	m_pButton->Terminate();
 	delete m_pButton;
