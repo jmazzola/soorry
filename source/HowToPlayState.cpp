@@ -17,6 +17,8 @@
 #include "MainMenuState.h"
 #include "GameplayState.h"
 
+#include "MenuFlyweight.h"
+
 
 /**************************************************************/
 // GetInstance
@@ -150,10 +152,12 @@
 {
 
 	Game* pGame = Game::GetInstance();
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
 	// Leave tutorial
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
-	if (pInput->IsKeyPressed(SGD::Key::Backspace))
+	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsKeyPressed(SGD::Key::Escape))
 	{
 		pGame->Transition(MainMenuState::GetInstance());
 		return true;
@@ -162,13 +166,19 @@
 	if (pInput->IsKeyPressed(SGD::Key::Left))
 	{
 		if (m_nTab != TUT_MAIN)
+		{
 			--m_nTab;
+			pAudio->PlayAudio(mf->GetPageTurnSound());
+		}
 	}
 	
 	if (pInput->IsKeyPressed(SGD::Key::Right))
 	{
 		if (m_nTab != TABS_TOTAL - 1)
+		{
 			++m_nTab;
+			pAudio->PlayAudio(mf->GetPageTurnSound());
+		}
 		else if (m_nTab == TABS_TOTAL - 1)
 		{
 			GameplayState::GetInstance()->SetCurrentGameSlot(1);

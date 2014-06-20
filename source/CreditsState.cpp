@@ -26,6 +26,8 @@
 
 #include "BitmapFont.h"
 
+#include "MenuFlyweight.h"
+
 #include "Entity.h"
 #include "EntityManager.h"
 
@@ -129,6 +131,7 @@ using namespace std;
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
 
 #if !ARCADE_MODE
 	// --- Selecting an option ---
@@ -139,6 +142,7 @@ using namespace std;
 	{
 		// Since there's only one state..go back to main menu
 		pGame->Transition(MainMenuState::GetInstance());
+		pAudio->PlayAudio(mf->GetClickSound());
 		return true;
 	}
 #endif

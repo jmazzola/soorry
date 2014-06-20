@@ -26,6 +26,8 @@
 #include "OptionsState.h"
 #include "IntroState.h"
 
+#include "MenuFlyweight.h"
+
 #include <ctime>
 #include <cstdlib>
 #include <cassert>
@@ -120,6 +122,8 @@ bool Game::Initialize(int width, int height)
 	// Store the current time (in milliseconds)
 	m_ulGameTime = GetTickCount();
 
+	m_pMenuFlyweight = new MenuFlyweight();
+	m_pMenuFlyweight->Load();
 
 	return true;	// success!
 }
@@ -282,6 +286,8 @@ void Game::Terminate(void)
 	delete m_pFont;
 	m_pFont = nullptr;
 
+	m_pMenuFlyweight->Unload();
+	delete m_pMenuFlyweight;
 
 	// Terminate & deallocate the SGD wrappers
 	m_pAudio->Terminate();
@@ -323,4 +329,9 @@ void Game::MouseWheel(int _direction)
 {
 	if (Game::GetInstance()->m_pCurrState == GameplayState::GetInstance())
 		GameplayState::GetInstance()->MouseWheel(_direction);
+}
+
+MenuFlyweight* Game::GetMenuFlyweight() const
+{
+	return m_pMenuFlyweight;
 }
