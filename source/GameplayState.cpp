@@ -531,6 +531,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+
 			}
 				break;
 
@@ -543,6 +545,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+
 			}
 				break;
 
@@ -554,6 +558,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				pmsg->SendMessageNow();
 				delete pmsg;
 				pmsg = nullptr;
+
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 
 			}
 				break;
