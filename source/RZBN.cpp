@@ -295,41 +295,41 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 	m_nWalls = inv->GetWalls();
 	file.write((char*)&m_nWalls, sizeof(int));
 
-	int windows = inv->GetWindows();
-	file.write((char*)&windows, sizeof(int));
+	m_nWindows = inv->GetWindows();
+	file.write((char*)&m_nWindows, sizeof(int));
 
-	int beartraps = inv->GetBearTraps();
-	file.write((char*)&beartraps, sizeof(int));
+	m_nBeartraps = inv->GetBearTraps();
+	file.write((char*)&m_nBeartraps, sizeof(int));
 
-	int mines = inv->GetMines();
-	file.write((char*)&mines, sizeof(int));
+	m_nMines = inv->GetMines();
+	file.write((char*)&m_nMines, sizeof(int));
 
-	int grenades = inv->GetGrenades();
-	file.write((char*)&grenades, sizeof(int));
+	m_nGrenades = inv->GetGrenades();
+	file.write((char*)&m_nGrenades, sizeof(int));
 
-	int healthpacks = inv->GetHealthPacks();
-	file.write((char*)&healthpacks, sizeof(int));
+	m_nHealthPacks = inv->GetHealthPacks();
+	file.write((char*)&m_nHealthPacks, sizeof(int));
 
-	int mgTowers = inv->GetMachineGunTowers();
-	file.write((char*)&mgTowers, sizeof(int));
+	m_nMGTowers = inv->GetMachineGunTowers();
+	file.write((char*)&m_nMGTowers, sizeof(int));
 
-	int mapleTowers = inv->GetMapleSyrupTowers();
-	file.write((char*)&mapleTowers, sizeof(int));
+	m_nMapleTowers = inv->GetMapleSyrupTowers();
+	file.write((char*)&m_nMapleTowers, sizeof(int));
 
-	int hockeyStick = inv->GetHockeyStickTowers();
-	file.write((char*)&hockeyStick, sizeof(int));
+	m_nHockeyTowers = inv->GetHockeyStickTowers();
+	file.write((char*)&m_nHockeyTowers, sizeof(int));
 
-	int laserTowers = inv->GetLaserTowers();
-	file.write((char*)&laserTowers, sizeof(int));
+	m_nLaserTowers = inv->GetLaserTowers();
+	file.write((char*)&m_nLaserTowers, sizeof(int));
 
-	int lavaTraps = inv->GetLavaTraps();
-	file.write((char*)&lavaTraps, sizeof(int));
+	m_nLavaTraps = inv->GetLavaTraps();
+	file.write((char*)&m_nLavaTraps, sizeof(int));
 
-	int spikeTraps = inv->GetSpikeTraps();
-	file.write((char*)&spikeTraps, sizeof(int));
+	m_nSpikeTraps = inv->GetSpikeTraps();
+	file.write((char*)&m_nSpikeTraps, sizeof(int));
 
-	int drones = inv->GetDroneCount();
-	file.write((char*)&drones, sizeof(int));
+	m_nDrones = inv->GetDroneCount();
+	file.write((char*)&m_nDrones, sizeof(int));
 
 	// -- Write weapon booleans --
 	bool hasAR = m_pPlayer->HasAR();

@@ -668,6 +668,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		inv->SetBearTraps(rzbn->m_nBeartraps);
 		inv->SetMines(rzbn->m_nMines);
 		inv->SetGrenades(rzbn->m_nGrenades);
+		inv->SetHealthPacks(rzbn->m_nHealthPacks);
 		inv->SetMachineGunTowers(rzbn->m_nMGTowers);
 		inv->SetMapleSyrupTowers(rzbn->m_nMapleTowers);
 		inv->SetHockeyStickTowers(rzbn->m_nHockeyTowers);
