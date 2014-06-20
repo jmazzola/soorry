@@ -37,17 +37,17 @@ SGD::Rectangle ShopEntity::GetRect() const
 
 void ShopEntity::Render()
 {
-	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
-	
-	SGD::Rectangle rect;
+	//SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
+	//
+	//SGD::Rectangle rect;
 
-	// The shop will always be a 6 x 5 area.
-	rect.left = GetX() - Camera::x;
-	rect.top = GetY() - Camera::y;
-	rect.right = rect.left + 32 * 6;
-	rect.bottom = rect.top + 32 * 5;
+	//// The shop will always be a 6 x 5 area.
+	//rect.left = GetX() - Camera::x;
+	//rect.top = GetY() - Camera::y;
+	//rect.right = rect.left + 32 * 6;
+	//rect.bottom = rect.top + 32 * 5;
 
-	pGraphics->DrawRectangle(rect, { 255, 0, 0 });
+	//pGraphics->DrawRectangle(rect, { 255, 0, 0 });
 
 }
 
