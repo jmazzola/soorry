@@ -744,7 +744,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_fLossTimer = 5.0f;
 
 	// Play the background music
-	if (m_nGamemode == ARCADE_GAME_MODE )
+	if (m_nGamemode == ARCADE_GAME_MODE)
 	{
 		pAudio->PlayAudio(m_hBackgroundMus, true);
 		pAudio->PlayAudio(m_hArcade);
@@ -1209,7 +1209,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
 #endif
-				
+
 
 				if (m_bTHEBOOL)
 				{
@@ -2046,7 +2046,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 
-					if (m_bBuildStart == false)
+					if (m_bBuildStart == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hArcade) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBeaverFever) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hRunning_Man) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHard_Core) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hSand_Box) == false)
 					{
 						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
 						m_bBuildStart = true;
@@ -2063,7 +2063,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 				{
 					m_bBuildStart = false;
-
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
@@ -3085,7 +3084,44 @@ void GameplayState::RenderCredits(void)
 
 	// Draw the credits
 	// TODO: Load in a text file
-	string credits = "SOORRY\n\n\ By Razor Balloon\n\n\ Part of Heavy Square Studios\n\n\ Associate Producers\n\ Sean Hathaway\n\ Robert Martinez\n\n\ Executive Producer\n\ John O' Leske\n\n\ World Software Engineer\n\ Justin Patterson\n\n\ AI Programmer\n\ Justin Patterson\n\n\ Particle Software Engineer\n\ Matthew Salow\n\n\ Audio Engineer\n\ Justin Patterson\n\ Matthew Salow\n\n\ Animation Software Engineer\n\ James Sylvester\n\ Ryan Simmons\n\n\ Game Core\n\ Justin Mazzola\n\n\ UI Programmer\n\ Justin Mazzola\n\n\ Mercenary Programmer\n\ Ryan Simmons\n\n\ Canadian Linguist\n\ Jordan Scelsa\n\n\ Voice Actor\n\ Matthew Salow as Terry\n\n\ Artists\n\ Gregory Bey\n\ Caris Frazier\n\ Justin Mazzola\n\ Justin Patterson\n\n\ Special Thanks\n\ Jordan Butler for ideas.\n\ Ryan Simmons' Bookbag for always being there";
+	string credits = "\t\tSOORRY\n\n";
+	credits += "\t\t\t\t\tBy Razor Balloon\n\n";
+	credits += "\t\t\t\t\tPart of Heavy Square Studios\n\n";
+	credits += "\t\t\t\t\tAssociate Producers\n";
+	credits += "\t\t\t\t\tSean Hathaway\n";
+	credits += "\t\t\t\t\tRobert Martinez\n\n";
+	credits += "\t\t\t\t\tExecutive Producer\n";
+	credits += "\t\t\t\t\tJohn O' Leske\n\n";
+	credits += "\t\t\t\t\tWorld Software Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tAI Programmer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tParticle Software Engineer\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAudio Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAnimation Software Engineer\n";
+	credits += "\t\t\t\t\tJames Sylvester\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tGame Core\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tUI Programmer\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tMercenary Programmer\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tCanadian Linguist\n";
+	credits += "\t\t\t\t\tJordan Scelsa\n\n";
+	credits += "\t\t\t\t\tVoice Actor\n";
+	credits += "\t\t\t\t\tMatthew Salow as Terry\n\n";
+	credits += "\t\t\t\t\tArtists\n";
+	credits += "\t\t\t\t\tGregory Bey\n";
+	credits += "\t\t\t\t\tCaris Frazier\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tSpecial Thanks\n";
+	credits += "\t\t\t\t\tJordan Butler for ideas.\n";
+	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there";
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
@@ -3146,7 +3182,7 @@ void GameplayState::RenderLoss(void)
 	else
 		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
-	
+
 }
 
 
