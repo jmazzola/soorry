@@ -167,5 +167,6 @@ private:
 	bool m_bHasRocketz;
 	bool m_bHasHatTrick;
 
+	float m_fCanBlood;
 };
 

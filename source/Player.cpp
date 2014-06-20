@@ -234,6 +234,8 @@ Player::Player () : Listener ( this )
 	m_vtStick = SGD::Vector{0.0f, 0.0f};
 
 	m_bIsNearShop = false;
+
+	m_fCanBlood = 0.0f;
 }
 
 
@@ -284,6 +286,9 @@ void Player::Update ( float dt )
 	m_fPickupMessageTimer -= dt;
 	float trg = pInput->GetTrigger(0);
 	m_fDroneRotation += dt * 2;
+
+	m_fCanBlood -= dt;
+
 	if(abs(trg) < 0.1)
 		trg = 0.0f;
 
@@ -507,7 +512,7 @@ void Player::Update ( float dt )
 	}
 	// Use Healthpack
 #if !ARCADE_MODE
-		m_bTHEBOOL = (pInput->IsKeyDown ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A ));
+		m_bTHEBOOL = (pInput->IsKeyPressed ( SGD::Key::Q ) == true || pInput->IsButtonPressed ( 0 , (unsigned int)SGD::Button::A ));
 #endif
 #if ARCADE_MODE
 		m_bTHEBOOL = pInput->IsButtonPressed(0, 3) || pInput->IsButtonPressed(1, 3);
@@ -748,6 +753,10 @@ void Player::Update ( float dt )
 		//Colliding with wall
 		else
 		{
+			if (pAudio->IsAudioPlaying(m_hBlockBreak) == false)
+			{
+				pAudio->PlayAudio(m_hBlockBreak);
+			}
 			if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 			{
 				pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
@@ -1063,7 +1072,6 @@ void Player::Update ( float dt )
 				CreateTrapMessage* pmsg = new CreateTrapMessage((int)(pos.x * pWorld->GetTileWidth()), (int)(pos.y * pWorld->GetTileHeight()),
 						CreateTrapMessage::TRAP_LAVA);
 				pmsg->QueueMessage();
-
 				pWorld->SetSolidAtPosition((int)pos.x, (int)pos.y, false);
 				if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBlockPlace) == false)
 				{
@@ -1473,9 +1481,16 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		float damage = *((float*)pEvent->GetData ());
 		m_nCurrHealth -= damage;
-		CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
-		msg->QueueMessage();
-		msg = nullptr;
+
+		if (m_fCanBlood <= 0.0f)
+		{
+			CreateParticleMessage* msg = new CreateParticleMessage("Blood_Particle1", this, 8, 8);
+			msg->QueueMessage();
+			msg = nullptr;
+
+			m_fCanBlood = 0.25f;
+		}
+
 		// Make sure we don't underflow
 		if ( m_nCurrHealth < 0.0f )
 			m_nCurrHealth = 0.0f;

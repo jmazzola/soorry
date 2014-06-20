@@ -12,10 +12,10 @@
 
 Drone::Drone()
 {
-	m_nDamage = 20;
+	m_nDamage = 10;
 	m_fNextShotTimer = 1;
 	m_fFireRate = 1;
-	m_fRange = 100.0f;
+	m_fRange = 75.0f;
 	SetSprite(AnimationManager::GetInstance()->GetSprite("drone"));
 	SetCurrFrame(0);
 	SetCurrAnimation("drone");

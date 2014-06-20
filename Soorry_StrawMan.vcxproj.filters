@@ -249,9 +249,6 @@
     <ClCompile Include="source\DestroyEntityMessage.cpp">
       <Filter>Messages</Filter>
     </ClCompile>
-    <ClCompile Include="source\LoadSaveState.cpp">
-      <Filter>Game States</Filter>
-    </ClCompile>
     <ClCompile Include="TinyXML\tinystr.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
@@ -386,6 +383,9 @@
     </ClCompile>
     <ClCompile Include="source\PurchaseMessage.cpp">
       <Filter>Zombie Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LoadSaveState.cpp">
+      <Filter>Game States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -730,6 +730,9 @@
     </ClInclude>
     <ClInclude Include="source\HowToPlayState.h">
       <Filter>Game Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LoadSaveState.h">
+      <Filter>Game States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

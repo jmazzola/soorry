@@ -12,14 +12,13 @@
 
 Projectile::Projectile()
 {
-	// sorry Matt, we don't want to load audio every time a projectile is made
-	//m_hHit = SGD::AudioManager::GetInstance()->LoadAudio("resource/audio/Bullet_Hit.wav");
+	m_fLifeTime = 0;
 }
 
 
 Projectile::~Projectile()
 {
-	//SGD::AudioManager::GetInstance()->UnloadAudio(m_hHit);
+
 }
 
 
@@ -30,14 +29,16 @@ void Projectile::Update(float dt)
 {
 	Entity::Update(dt);
 
-	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true))
+	m_fLifeTime += dt;
+
+	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true) || m_fLifeTime > 10)
 	{
 		if (this->GetType() == ENT_BULLET_ROCKET)
 		{
 			CreateExplosionMessage* msg = new CreateExplosionMessage(m_ptPosition.x + 8, m_ptPosition.y + 8, (float)m_nDamage, m_fRadius);
 			msg->QueueMessage();
 		}
-
+		
 		// Destroy the proj
 		DestroyEntityMessage* pMsg = new DestroyEntityMessage(this);
 		pMsg->QueueMessage();

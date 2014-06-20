@@ -4,16 +4,16 @@
     <isLooping bool="0" />
     <spawnRate rate="0" />
     <size width="32" height="32" />
-    <particles max="22" />
+    <particles max="100" />
     <shape number="0" />
   </emitter>
   <flyweight>
     <velocity startx="30.00" starty="30.00" endx="-30.00" endy="-30.00"  spread = "1" />
     <rotate startMax="0" startMin="0" endMax="0" endMin="0" />
-    <color startMaxA="255" startMinA="0" startR="255" startG="255" startB="255" endMaxA="0" endMinA="0" endR="255" endG="255" endB="255" />
-    <scale startx="1" starty="1" endx="0" endy="0" />
+    <color startMaxA="255" startMinA="0" startR="190" startG="190" startB="190" endMaxA="0" endMinA="0" endR="190" endG="190" endB="190" />
+    <scale startx="2" starty="2" endx="0" endy="0" />
     <size width="16" height="16" />
-    <lifetime max="1" min="0.5" />
+    <lifetime max=".5" min=".2" />
     <particleID>Dust_Particle1</particleID>
     <image name="Dust_Particle.png" />
   </flyweight>

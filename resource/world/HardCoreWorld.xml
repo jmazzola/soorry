@@ -3947,7 +3947,7 @@
       <collision id="0" />
     </tile>
     <tile x="10" y="39" index="179" collider="false">
-      <initial_trigger id="PLAYER_SPAWN" />
+      <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
@@ -18842,7 +18842,7 @@
       <collision id="0" />
     </tile>
     <tile x="50" y="18" index="179" collider="false">
-      <initial_trigger id="" />
+      <initial_trigger id="PLAYER_SPAWN" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>

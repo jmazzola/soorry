@@ -43,7 +43,10 @@ void Weapon::SetFireRate(float _FireRate)
 }
 void Weapon::SetCurrAmmo(int _CurrAmmo)
 {
-	m_nCurrentAmmo = _CurrAmmo;
+	if (_CurrAmmo > m_nMaxAmmo)
+		m_nCurrentAmmo = m_nMaxAmmo;
+	else 
+		m_nCurrentAmmo = _CurrAmmo;
 }
 void Weapon::SetMaxAmmo(int _MaxAmmo)
 {

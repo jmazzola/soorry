@@ -74,7 +74,7 @@ void ParticleManager::activate(std::string _emitterID, SGD::Point position, int 
 	Emitter* tempEmitter = new Emitter;
  	*tempEmitter = *loadedEmitters[_emitterID];
 	tempEmitter->offset = SGD::Point((float)_x, (float)_y);
-	SGD::Point pos = position;
+	SGD::Point pos = SGD::Point(position.x - _x,position.y - _y);
 	tempEmitter->load(pos, vector, _direction);
 	tempEmitter->emitterID = activeEmitters.size();
 	activeEmitters.push_back(tempEmitter);

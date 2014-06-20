@@ -19,7 +19,7 @@
   </fast_zombie>
   <beaver_zombie>
     <health value="80"/>
-    <speed value="300"/>
+    <speed value="350"/>
     <regeneration value="0"/>
     <health_chance value="0.01"/>
     <ammo_chance value="0.1"/>

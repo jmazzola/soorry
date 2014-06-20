@@ -583,9 +583,7 @@ bool Shop::Input()
 		// Sell a fortification
 		if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::X))
 			Sell(m_nCursor, 3);
-
 	}
-
 	return true;
 }
 
@@ -842,7 +840,7 @@ void Shop::Render()
 						// If we have the weapon and it's selected and we either have the weapon already OR we can't afford it.
 						if (dynamic_cast<Player*>(m_pPlayer)->HasAR() || score < weapPrices[i])
 							// Draw it in red to show it can't be bought.
-							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
 						else
 							// Draw it in green if it can bought
 							m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
@@ -897,11 +895,11 @@ void Shop::Render()
 						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 					else
 						// Draw it in black if it's available.
-						m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
-
-				}
+					m_pFont->Draw(weapNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
 
 			}
+
+		}
 		}
 
 		else if (m_nMenuTab == ITEMS_TAB)
@@ -1173,7 +1171,7 @@ bool Shop::Buy(int parcel, int shopSection)
 			}
 
 			if (player->HasAR())
-				return false;
+			return false;
 
 			break;
 		}
@@ -1301,7 +1299,7 @@ bool Shop::Buy(int parcel, int shopSection)
 
 			// Handle the stattracker
 			if (parcel == FORT_MG || parcel == FORT_MAPLESYRUP || parcel == FORT_HOCKEYSTICK || parcel == FORT_LASER)
-				tracker->TowerExchange(true);
+			tracker->TowerExchange(true);
 			else if (parcel == FORT_LAVATRAP || parcel == FORT_SPIKETRAP)
 				tracker->TrapExchange(true);
 
@@ -1431,13 +1429,13 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			}
 			else
 			{
-				if (player->HasAR())
-					return;
+			if (player->HasAR())
+				return;
 
-				player->SetAR(true);
+			player->SetAR(true);
 				weapons[0].SetCurrAmmo(AR_CURAMMO);
 			}
-			
+
 
 		}
 
@@ -1454,12 +1452,12 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			}
 			else
 			{
-				if (player->HasShotty())
-					return;
+			if (player->HasShotty())
+				return;
 
-				player->SetShotgun(true);
+			player->SetShotgun(true);
 				weapons[1].SetCurrAmmo(SH_CURAMMO);
-			}
+		}
 		}
 
 		if (parcel == WEAP_ROCKETLAUNCHER)
@@ -1475,12 +1473,12 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			}
 			else
 			{
-				if (player->HasRocketLauncher())
-					return;
+			if (player->HasRocketLauncher())
+				return;
 
-				player->SetRocketLauncher(true);
+			player->SetRocketLauncher(true);
 				weapons[2].SetCurrAmmo(RL_CURAMMO);
-			}
+		}
 
 
 		}
@@ -1497,13 +1495,13 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			}
 			else
 			{
-				if (player->HasHatTrick())
-					return;
+			if (player->HasHatTrick())
+				return;
 
-				player->SetHatTrick(true);
+			player->SetHatTrick(true);
 				weapons[3].SetCurrAmmo(HT_CURAMMO);
-			}
 		}
+	}
 	}
 
 	// << ITEMS >>
@@ -1519,7 +1517,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		}
 		if (parcel == ITEM_PRICE_WINDOW)
 		{
-			if (inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]));
+			if(inventory->SetWindows(inventory->GetWindows() + itemAmountToAdd[ITEM_PRICE_WINDOW]));
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
 
@@ -1534,7 +1532,7 @@ void Shop::GivePurchase(int parcel, int shopSection)
 		if (parcel == ITEM_MINE)
 		{
 			if (inventory->SetMines(inventory->GetMines() + itemAmountToAdd[ITEM_MINE]))
-				tracker->TrapExchange(true);
+				tracker->TrapExchange ( true );
 			else
 				player->SetScore(curMoney += itemPrices[parcel]);
 		}
@@ -1644,14 +1642,14 @@ void Shop::GivePurchase(int parcel, int shopSection)
 			else
 				player->SetScore(curMoney += fortPrices[parcel]);
 
-		}
+	}
 		if (parcel == FORT_SPIKETRAP)
 		{
 			if (inventory->SetSpikeTraps(inventory->GetSpikeTraps() + fortAmountToAdd[FORT_SPIKETRAP]))
 				tracker->TrapExchange(true);
 			else
 				player->SetScore(curMoney += fortPrices[parcel]);
-		}
+}
 
 	}
 }

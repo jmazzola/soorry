@@ -235,7 +235,6 @@ int Enemy::GetType() const
 		if (spike->GetActive() == true)
 		{
 			m_nCurrHealth -= spike->GetDamage();
-			
 		}
 	}
 		break;
@@ -249,14 +248,14 @@ int Enemy::GetType() const
 		break;
 	}
 		
-			const Entity* ent = dynamic_cast<const Entity*>(pOther);
-			if ( shot )
-			{
-				CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , 8 , 8 );
-				msg->QueueMessage ();
-				msg = nullptr;
-			}
-		
+	const Entity* ent = dynamic_cast<const Entity*>(pOther);
+	if ( shot )
+	{
+		CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , -8 , -8 );
+		msg->QueueMessage();
+		msg = nullptr;
+	}
+	
 }
 
 void Enemy::HandleEvent(const SGD::Event* pEvent)
