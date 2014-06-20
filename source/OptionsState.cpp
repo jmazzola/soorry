@@ -25,6 +25,8 @@
 #include "Entity.h"
 #include "EntityManager.h"
 
+#include "MenuFlyweight.h"
+
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
@@ -131,6 +133,7 @@ using namespace std;
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	MenuFlyweight* mf = pGame->GetMenuFlyweight();
 
 	// --- Scrolling through options ---
 	// If the down arrow (PC), or down dpad (Xbox 360) are pressed
@@ -157,6 +160,7 @@ using namespace std;
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
 		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
@@ -187,6 +191,7 @@ using namespace std;
 	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
 		if(m_nCursor == MENU_TOGGLEFULLSCREEN)
@@ -223,7 +228,11 @@ using namespace std;
 		 {
 			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.9f)))
 			 {
-				 m_nCursor = i;
+				 if (m_nCursor != i)
+				 {
+					m_nCursor = i;
+					pAudio->PlayAudio(mf->GetClickSound());
+				 }
 			 }
 		 }
 	 }
@@ -248,6 +257,7 @@ using namespace std;
 			{
 				// Toggle fullscreen
 				pGame->ToggleFullscreen();
+				pAudio->PlayAudio(mf->GetClickSound());
 			}
 				break;
 
@@ -255,6 +265,7 @@ using namespace std;
 			{
 				// Go to the stats screen
 				pGame->Transition(StatsState::GetInstance());
+				pAudio->PlayAudio(mf->GetClickSound());
 				// Exit immediately
 				return true;
 			}
@@ -267,6 +278,7 @@ using namespace std;
 
 					//Go to Main Menu
 					pGame->Transition(MainMenuState::GetInstance());
+					pAudio->PlayAudio(mf->GetClickSound());
 					// Exit immediately
 					return true;
 			}
@@ -290,6 +302,7 @@ using namespace std;
 		{
 			// Increase the music volume += 5
 			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) + 5);
+			pAudio->PlayAudio(mf->GetClickSound());
 		}
 			break;
 
@@ -297,6 +310,7 @@ using namespace std;
 		{
 			// Increase the sound effects volume += 5
 			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) + 5);
+			pAudio->PlayAudio(mf->GetClickSound());
 		}
 			break;
 		}
@@ -321,6 +335,7 @@ using namespace std;
 		{
 			// Increase the music volume -= 5
 			pAudio->SetMasterVolume(SGD::AudioGroup::Music, pAudio->GetMasterVolume(SGD::AudioGroup::Music) - 5);
+			pAudio->PlayAudio(mf->GetClickSound());
 		}
 			break;
 
@@ -328,6 +343,7 @@ using namespace std;
 		{
 			// Increase the sound effects volume -= 5
 			pAudio->SetMasterVolume(SGD::AudioGroup::SoundEffects, pAudio->GetMasterVolume(SGD::AudioGroup::SoundEffects) - 5);
+			pAudio->PlayAudio(mf->GetClickSound());
 		}
 			break;
 		}
