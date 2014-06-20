@@ -157,22 +157,51 @@
 
 	// Leave tutorial
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
+
+#if !ARCADE_MODE
 	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsKeyPressed(SGD::Key::Escape))
+#else
+	if (pInput->IsButtonPressed(0, 6))
+#endif
 	{
 		pGame->Transition(MainMenuState::GetInstance());
 		return true;
 	}
 
+#if ARCADE_MODE
+	m_vtStick = pInput->GetLeftJoystick(0);
+
+	if (abs(m_vtStick.x) < 0.2f)
+		m_vtStick.x = 0.0f;
+	if (abs(m_vtStick.y) < 0.2f)
+		m_vtStick.y = 0.0f;
+
+	if (m_vtStick == SGD::Vector{ 0.0f, 0.0f })
+		m_bAccept = true;
+#endif
+
+#if !ARCADE_MODE
 	if (pInput->IsKeyPressed(SGD::Key::Left))
+#else
+	if (m_vtStick.x < 0 && m_bAccept)
+#endif
 	{
 		if (m_nTab != TUT_MAIN)
 		{
 			--m_nTab;
 			pAudio->PlayAudio(mf->GetPageTurnSound());
+
+#if ARCADE_MODE
+			m_bAccept = false;
+#endif
 		}
 	}
 	
+#if !ARCADE_MODE
 	if (pInput->IsKeyPressed(SGD::Key::Right))
+#else
+	if (m_vtStick.x > 0 && m_bAccept)
+#endif
 	{
 		if (m_nTab != TABS_TOTAL - 1)
 		{
@@ -185,6 +214,10 @@
 			GameplayState::GetInstance()->SetGameMode(0);
 			pGame->ChangeState(GameplayState::GetInstance());
 		}
+
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 
 	return true;
