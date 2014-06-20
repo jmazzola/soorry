@@ -287,6 +287,8 @@ void Player::Update ( float dt )
 	float trg = pInput->GetTrigger(0);
 	m_fDroneRotation += dt * 2;
 
+	m_bAccept = true;
+
 	m_fCanBlood -= dt;
 
 	if(abs(trg) < 0.1)

@@ -91,15 +91,23 @@ using namespace std;
 	if(pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+#if !ARCADE_MODE
 	m_ptButtonPositions[MENU_MUSICVOL] = SGD::Point(140, 200);
 	m_ptButtonPositions[MENU_SFXVOL] = SGD::Point(120, 270);
 	m_ptButtonPositions[MENU_TOGGLEFULLSCREEN] = SGD::Point(160, 340);
 	m_ptButtonPositions[MENU_STATS] = SGD::Point(170, 410);
 	m_ptButtonPositions[MENU_GOBACK] = SGD::Point(150, 480);
+#endif
 
 #if ARCADE_MODE
 	m_bAccept = true;
 	m_vtStick = SGD::Vector { 0.0f , 0.0f };
+
+	m_ptButtonPositions[MENU_MUSICVOL] = SGD::Point(140, 200);
+	m_ptButtonPositions[MENU_SFXVOL] = SGD::Point(120, 270);
+	m_ptButtonPositions[MENU_TOGGLEFULLSCREEN] = SGD::Point(-1000, -1000);
+	m_ptButtonPositions[MENU_STATS] = SGD::Point(170, 340);
+	m_ptButtonPositions[MENU_GOBACK] = SGD::Point(150, 410);
 #endif
 }
 

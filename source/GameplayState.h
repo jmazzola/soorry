@@ -179,7 +179,7 @@ private:
 	SGD::HTexture m_hSpikeTrapSpikeImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
-
+	
 	SGD::HTexture m_hExplosionImage = SGD::INVALID_HANDLE;
 
 	/**********************************************************/

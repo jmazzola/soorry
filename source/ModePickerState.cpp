@@ -133,6 +133,10 @@
 		// Wrap around the options
 		if (m_nCursor > GOBACK)
 			m_nCursor = ARCADE;
+
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 	// If the up arrow (PC), or up dpad (Xbox 360) are pressed
 	// Move the cursor (selected item) up
@@ -150,6 +154,10 @@
 		// Wrap around the options
 		if (m_nCursor < ARCADE)
 			m_nCursor = GOBACK;
+
+#if ARCADE_MODE
+		m_bAccept = false;
+#endif
 	}
 
 	// --- Selecting an option ---
