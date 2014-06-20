@@ -668,6 +668,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		inv->SetBearTraps(rzbn->m_nBeartraps);
 		inv->SetMines(rzbn->m_nMines);
 		inv->SetGrenades(rzbn->m_nGrenades);
+		inv->SetHealthPacks(rzbn->m_nHealthPacks);
 		inv->SetMachineGunTowers(rzbn->m_nMGTowers);
 		inv->SetMapleSyrupTowers(rzbn->m_nMapleTowers);
 		inv->SetHockeyStickTowers(rzbn->m_nHockeyTowers);
@@ -829,7 +830,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	optionsRectangles[OPTION_MUSIC] = SGD::Rectangle(SGD::Point(140, 200), m_pMainButton->GetSize() * 0.9f);
 	optionsRectangles[OPTION_SFX] = SGD::Rectangle(SGD::Point(120, 290), m_pMainButton->GetSize() * 0.9f);
+#if !ARCADE_MODE
 	optionsRectangles[OPTION_FULLSCREEN] = SGD::Rectangle(SGD::Point(160, 380), m_pMainButton->GetSize() * 0.9f);
+#else
+	optionsRectangles[OPTION_FULLSCREEN] = SGD::Rectangle(SGD::Point(-1000, -1000), m_pMainButton->GetSize() * 0.9f);
+#endif
 	optionsRectangles[OPTION_GOBACK] = SGD::Rectangle(SGD::Point(150, 470), m_pMainButton->GetSize() * 0.9f);
 
 	lossRectangles[0] = SGD::Rectangle(SGD::Point(220, 200), m_pMainButton->GetSize() * 0.8f);

@@ -117,16 +117,16 @@ Player::Player () : Listener ( this )
 		//Assault rifle
 		if (m_bHasAssaultRifle)
 		{
-			tempWeapon.SetCurrAmmo(200);
 			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(200);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
 		}
 		else
 		{
-			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
@@ -135,8 +135,8 @@ Player::Player () : Listener ( this )
 	else
 	{
 		//Assault rifle in beaver mode!
-		tempWeapon.SetCurrAmmo(1000);
 		tempWeapon.SetMaxAmmo(1000);
+		tempWeapon.SetCurrAmmo(1000);
 		tempWeapon.SetFireRate(.02f);
 		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 		m_pWeapons[0] = tempWeapon;
@@ -147,16 +147,16 @@ Player::Player () : Listener ( this )
 		//Shotgun
 		if (m_bHasShotty)
 		{
-			tempWeapon.SetCurrAmmo(100);
 			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(100);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
 		}
 		else
 		{
-			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetMaxAmmo(500);
+			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
@@ -168,16 +168,16 @@ Player::Player () : Listener ( this )
 		//rocket launcher
 		if (m_bHasRocketz)
 		{
-			tempWeapon.SetCurrAmmo(20);
 			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetCurrAmmo(20);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
 		}
 		else
 		{
-			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetMaxAmmo(50);
+			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
@@ -189,16 +189,16 @@ Player::Player () : Listener ( this )
 		//Trick Shot
 		if (m_bHasHatTrick)
 		{
-			tempWeapon.SetCurrAmmo(75);
 			tempWeapon.SetMaxAmmo(75);
+			tempWeapon.SetCurrAmmo(75);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
 		}
 		else
 		{
-			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetMaxAmmo(75);
+			tempWeapon.SetCurrAmmo(0);
 			tempWeapon.SetFireRate(0.75f);
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
@@ -286,6 +286,8 @@ void Player::Update ( float dt )
 	m_fPickupMessageTimer -= dt;
 	float trg = pInput->GetTrigger(0);
 	m_fDroneRotation += dt * 2;
+
+	m_bAccept = true;
 
 	m_fCanBlood -= dt;
 

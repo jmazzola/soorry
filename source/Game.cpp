@@ -106,7 +106,7 @@ bool Game::Initialize(int width, int height)
 	}
 
 #if ARCADE_MODE
-	if(GetFullscreen() == false)
+	//if(GetFullscreen() == false)
 		ToggleFullscreen();
 #endif
 
@@ -142,8 +142,8 @@ int Game::Main(void)
 	}
 
 #if ARCADE_MODE
-	if(GetFullscreen() == false)
-		ToggleFullscreen();
+	//if(GetFullscreen() == false)
+		//ToggleFullscreen();
 #endif
 
 	// Current time

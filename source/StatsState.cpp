@@ -98,7 +98,9 @@ StatsState* StatsState::GetInstance(void)
 		 SGD::Rectangle(SGD::Point(200, 500), m_pMainButton->GetSize() * 0.9f)));
 #endif
 #if ARCADE_MODE
-	 m_bTHEBOOL = pInput->IsButtonPressed(0, 6) || pInput->IsButtonPressed(0, 0);
+	 m_bTHEBOOL = pInput->IsButtonPressed(0, 6) || pInput->IsButtonPressed(0, 0)
+		 || (pInput->IsKeyPressed(SGD::Key::MouseLeft) && pInput->GetMousePosition().IsWithinRectangle(
+		 SGD::Rectangle(SGD::Point(200, 500), m_pMainButton->GetSize() * 0.9f)));
 #endif 
 	 if (m_bTHEBOOL)
 	{
