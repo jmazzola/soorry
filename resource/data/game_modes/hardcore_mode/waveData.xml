@@ -72,4 +72,12 @@
     <beaver_zombies amount="1400"/>
     <spawn_interval value="0.01"/>
   </wave>
+  <wave>
+    <infinite_build_time value="false"/>
+    <build_time value="40"/>
+    <slow_zombies amount="1300"/>
+    <fast_zombies amount="1200"/>
+    <beaver_zombies amount="1600"/>
+    <spawn_interval value="0.01"/>
+  </wave>
 </waves>
