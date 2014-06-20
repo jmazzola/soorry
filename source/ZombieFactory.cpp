@@ -104,7 +104,6 @@ void ZombieFactory::Start()
 		m_fBuildTimeRemaining = m_fBuildTime;
 		m_fSpawnInterval = waveData[m_nWave - 1].spawnInterval;
 	}
-
 	else
 	{
 		m_fBuildTime = 10.0f;
