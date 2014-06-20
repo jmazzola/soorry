@@ -37,7 +37,6 @@
 #include <Windows.h>
 
 
-
 /**************************************************************/
 // Singleton
 //	- instantiate the static member
@@ -115,15 +114,14 @@ bool Game::Initialize(int width, int height)
 	m_pFont = new BitmapFont;
 	m_pFont->Initialize("resource/images/fonts/BitmapFont_Roboto_0.png", "resource/data/BitmapFont_Roboto.fnt");
 
+	m_pMenuFlyweight = new MenuFlyweight();
+	m_pMenuFlyweight->Load();
+
 	// Start the game in the Intro state
 	ChangeState(IntroState::GetInstance());
 
-
 	// Store the current time (in milliseconds)
 	m_ulGameTime = GetTickCount();
-
-	m_pMenuFlyweight = new MenuFlyweight();
-	m_pMenuFlyweight->Load();
 
 	return true;	// success!
 }
@@ -316,6 +314,18 @@ void Game::ChangeState(IGameState* pNewState)
 	// Exit the old state
 	if (m_pCurrState != nullptr)
 		m_pCurrState->Exit();
+
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
+
+	if (pNewState == GameplayState::GetInstance())
+	{
+		m_pAudio->StopAudio(mf->GetMenuMusic());
+	}
+	else if (pNewState != IntroState::GetInstance())
+	{
+		if (!m_pAudio->IsAudioPlaying(mf->GetMenuMusic()))
+			m_pAudio->PlayAudio(mf->GetMenuMusic(), true);
+	}
 
 	// Store the new state
 	m_pCurrState = pNewState;

@@ -26,6 +26,7 @@ public:
 	// Accessors
 	SGD::HAudio GetClickSound() const;
 	SGD::HAudio GetPageTurnSound() const;
+	SGD::HAudio GetMenuMusic() const;
 
 protected:
 
@@ -33,5 +34,6 @@ protected:
 	// Audio
 	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hPageTurnSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hMenuMusic = SGD::INVALID_HANDLE;
 };
 
