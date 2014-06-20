@@ -917,7 +917,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hRunning_Man);
 	pAudio->UnloadAudio(m_hHard_Core);
 
-	//Matt gets rid of the memorym_hWelcomeShop	 leaks
+	//Matt gets rid of the memory
 	m_pParticleManager->unload();
 
 	// Delete the zombie factory
