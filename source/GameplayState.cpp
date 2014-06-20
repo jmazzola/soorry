@@ -106,6 +106,8 @@
 #include <fstream>
 using namespace std;
 
+#include "MenuFlyweight.h"
+
 // Buckets
 #define BUCKET_TRAPS 0
 #define BUCKET_PLAYER 1
@@ -811,6 +813,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_ptOptionPositions[OPTION_SFX] = SGD::Point(120, 290);
 	m_ptOptionPositions[OPTION_FULLSCREEN] = SGD::Point(160, 380);
 	m_ptOptionPositions[OPTION_GOBACK] = SGD::Point(150, 470);
+
+	optionsRectangles[OPTION_MUSIC] = SGD::Rectangle(SGD::Point(140, 200), m_pMainButton->GetSize() * 0.9f);
+	optionsRectangles[OPTION_SFX] = SGD::Rectangle(SGD::Point(120, 290), m_pMainButton->GetSize() * 0.9f);
+	optionsRectangles[OPTION_FULLSCREEN] = SGD::Rectangle(SGD::Point(160, 380), m_pMainButton->GetSize() * 0.9f);
+	optionsRectangles[OPTION_GOBACK] = SGD::Rectangle(SGD::Point(150, 470), m_pMainButton->GetSize() * 0.9f);
+
+	lossRectangles[0] = SGD::Rectangle(SGD::Point(220, 200), m_pMainButton->GetSize() * 0.8f);
+	lossRectangles[1] = SGD::Rectangle(SGD::Point(200, 290), m_pMainButton->GetSize() * 0.8f);
 }
 
 
@@ -979,6 +989,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
 
 #if ARCADE_MODE
 	m_vtStick = pInput->GetLeftJoystick(0);
@@ -1065,7 +1076,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
-
+					pAudio->PlayAudio(mf->GetClickSound());
 
 
 					// Wrap around the options
@@ -1085,6 +1096,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
+					pAudio->PlayAudio(mf->GetClickSound());
 
 					// Wrap around the options
 					if (m_nPauseMenuCursor < PauseMenuOption::PAUSE_RESUME)
@@ -1112,7 +1124,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					{
 						if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptPausePositions[i], m_pMainButton->GetSize() * 0.9f)))
 						{
-							m_nPauseMenuCursor = i;
+							if (m_nPauseMenuCursor != i)
+							{
+								m_nPauseMenuCursor = i;
+								pAudio->PlayAudio(mf->GetClickSound());
+							}
 						}
 					}
 				}
@@ -1176,10 +1192,13 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
 #endif
+				
+
 				if (m_bTHEBOOL)
 				{
 					// TODO: Add sound fx for going up and down
 					++m_nPauseMenuCursor;
+					pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
 					if (m_nPauseMenuCursor == OPTION_FULLSCREEN)
@@ -1205,6 +1224,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (m_bTHEBOOL)
 				{
 					--m_nPauseMenuCursor;
+					pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
 					if (m_nPauseMenuCursor == OPTION_FULLSCREEN)
@@ -1224,13 +1244,12 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// If the right key (PC) or right dpad (Xbox 360) are pressed
 				// Increase the value
 #if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right);
+
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right) || pInput->IsKeyPressed(SGD::Key::MouseLeft);
 #endif
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.x > 0;
 #endif
-
-
 
 				if (m_bTHEBOOL)
 				{
@@ -1258,7 +1277,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// If the left key (PC) or left dpad (Xbox 360) are pressed
 				// Decrease the value
 #if !ARCADE_MODE
-				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left);
+				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left) || pInput->IsKeyPressed(SGD::Key::MouseRight);
 #endif
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.x < 0;
@@ -1295,6 +1314,32 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
+				// Mouse Selection
+				if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (pInput->GetMousePosition().IsWithinRectangle(optionsRectangles[i]))
+						{
+							if (m_nPauseMenuCursor != i)
+							{
+								m_nPauseMenuCursor = i;
+								pAudio->PlayAudio(mf->GetClickSound());
+							}
+						}
+					}
+				}
+				if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (pInput->GetMousePosition().IsWithinRectangle(optionsRectangles[i]))
+						{
+							m_bTHEBOOL = true;
+						}
+					}
+				}
+
 				if (m_bTHEBOOL)
 				{
 					switch (m_nPauseMenuCursor)
@@ -1325,7 +1370,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #pragma endregion
 
 #if !ARCADE_MODE
-	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A));
+	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || pInput->IsKeyPressed(SGD::Key::MouseLeft));
 #endif
 #if ARCADE_MODE
 	m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
@@ -1357,6 +1402,35 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 		m_bTHEBOOL = pInput->IsButtonPressed(0, 0) && m_bAccept;
 #endif
+
+		// Mouse Selection
+		if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(lossRectangles[i]))
+				{
+					bool epicBool = (i == 0);
+
+					if (epicBool != m_bReplay)
+					{
+						m_bReplay = epicBool;
+						pAudio->PlayAudio(mf->GetClickSound());
+					}
+				}
+			}
+		}
+		if (pInput->IsKeyPressed(SGD::Key::MouseLeft))
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				if (pInput->GetMousePosition().IsWithinRectangle(lossRectangles[i]))
+				{
+					m_bTHEBOOL = true;
+				}
+			}
+		}
+
 		if (m_bTHEBOOL)
 		{
 			switch (m_bReplay)
@@ -1717,6 +1791,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 255, 0, 0 }, { 0.9f, 0.9f }, 0);
 				else
 					m_pMainButton->Draw(sfxVol, { 120, 290 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
+
 
 #if !ARCADE_MODE
 				// If the game is in fullscreen
@@ -3086,7 +3161,7 @@ void GameplayState::RenderLoss(void)
 	else
 		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
-
+	
 }
 
 

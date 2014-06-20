@@ -27,6 +27,7 @@ void MenuFlyweight::Load()
 
 	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
 	m_hPageTurnSound = pAudio->LoadAudio("resource/audio/pageTurn.wav");
+	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
 }
 
 void MenuFlyweight::Unload()
@@ -35,6 +36,7 @@ void MenuFlyweight::Unload()
 
 	pAudio->UnloadAudio(m_hClickSound);
 	pAudio->UnloadAudio(m_hPageTurnSound);
+	pAudio->UnloadAudio(m_hMenuMusic);
 }
 
 /**********************************************************/
@@ -48,4 +50,9 @@ SGD::HAudio MenuFlyweight::GetClickSound() const
 SGD::HAudio MenuFlyweight::GetPageTurnSound() const
 {
 	return m_hPageTurnSound;
+}
+
+SGD::HAudio MenuFlyweight::GetMenuMusic() const
+{
+	return m_hMenuMusic;
 }

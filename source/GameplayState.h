@@ -305,7 +305,8 @@ private:
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
 
-	
+	SGD::Rectangle optionsRectangles[4];
+	SGD::Rectangle lossRectangles[2];
 };
 
 #endif //GAMEPLAYSTATE_H
