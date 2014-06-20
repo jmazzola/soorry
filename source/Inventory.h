@@ -2,18 +2,18 @@
 #include <Windows.h>
 
 // Defines for easy balancing
-#define WALLS_MAX 100
-#define WINDOWS_MAX 110
-#define BEARTRAPS_MAX 50
-#define MINES_MAX 50
-#define GRENADES_MAX 22
-#define HEALTHPACKS_MAX 20
-#define TOWER_MG_MAX 50
-#define TOWER_MAPLE_MAX 50
-#define TOWER_HOCKEY_MAX 50
-#define TOWER_LASER_MAX 50
-#define LAVATRAP_MAX 100
-#define SPIKETRAP_MAX 100
+#define WALLS_MAX 1000
+#define WINDOWS_MAX 1100
+#define BEARTRAPS_MAX 1000
+#define MINES_MAX 1000
+#define GRENADES_MAX 20
+#define HEALTHPACKS_MAX 5
+#define TOWER_MG_MAX 1000
+#define TOWER_MAPLE_MAX 1000
+#define TOWER_HOCKEY_MAX 1000
+#define TOWER_LASER_MAX 1000
+#define LAVATRAP_MAX 1000
+#define SPIKETRAP_MAX 1000
 #define DRONE_MAX 5
 
 class Inventory

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <player_stats>
   <health value="80"/>
-  <speed value="250"/>
+  <speed value="300"/>
   <walls amount="0"/>
   <windows amount="0"/>
   <bear_traps amount="0"/>
