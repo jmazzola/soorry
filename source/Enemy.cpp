@@ -251,7 +251,7 @@ int Enemy::GetType() const
 	const Entity* ent = dynamic_cast<const Entity*>(pOther);
 	if ( shot )
 	{
-		CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , 8 , 8 );
+		CreateParticleMessage* msg = new CreateParticleMessage ( "Blood_Spurt1" , this , ent->GetVelocity () , -8 , -8 );
 		msg->QueueMessage();
 		msg = nullptr;
 	}
