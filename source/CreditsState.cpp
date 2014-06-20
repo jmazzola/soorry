@@ -217,7 +217,8 @@ using namespace std;
 					  Game Core\n\
 					  Justin Mazzola\n\n\
 					  UI Programmer\n\
-					  Justin Mazzola\n\n\
+					  Justin Mazzola\n\
+					  Justin Patterson\n\n\
 					  Mercenary Programmer\n\
 					  Ryan Simmons\n\n\
 					  Canadian Linguist\n\

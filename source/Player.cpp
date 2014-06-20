@@ -1393,7 +1393,10 @@ void Player::PostRender()
 
 	// If we're next to the shop, show the popup
 	if (m_bIsNearShop && m_pZombieWave->IsBuildMode())
+	{
+		pGraphics->DrawRectangle(SGD::Rectangle(SGD::Point(154, 70), SGD::Size(478, 44)), { 80, 0, 0, 0 });
 		pFont->Draw("Press E to enter the shop", 180, 60, 0.8f, { 255, 255, 255 });
+	}
 
 
 	// Debugging
