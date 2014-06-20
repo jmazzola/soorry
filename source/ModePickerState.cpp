@@ -16,6 +16,7 @@
 #include "GameplayState.h"
 #include "LoadSaveState.h"
 
+#include "MenuFlyweight.h"
 
 #include "BitmapFont.h"
 #include "Button.h"
@@ -99,7 +100,7 @@
 	Game* pGame = Game::GetInstance();
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
 
 #if ARCADE_MODE
 	 m_vtStick = pInput->GetLeftJoystick(0);
@@ -127,6 +128,7 @@
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 		// Wrap around the options
 		if (m_nCursor > GOBACK)
@@ -143,6 +145,7 @@
 	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 		// Wrap around the options
 		if (m_nCursor < ARCADE)
@@ -166,7 +169,11 @@
 		 {
 			 if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pMainButton->GetSize() * 0.8f)))
 			 {
-				 m_nCursor = i;
+				 if (m_nCursor != i)
+				 {
+					m_nCursor = i;
+					pAudio->PlayAudio(mf->GetClickSound());
+				 }
 			 }
 		 }
 	 }

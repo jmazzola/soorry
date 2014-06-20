@@ -8,6 +8,8 @@
 
 #include "MenuFlyweight.h"
 
+#include "../SGD Wrappers/SGD_AudioManager.h"
+
 
 MenuFlyweight::MenuFlyweight()
 {
@@ -19,38 +21,31 @@ MenuFlyweight::~MenuFlyweight()
 }
 
 
+void MenuFlyweight::Load()
+{
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+
+	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
+	m_hPageTurnSound = pAudio->LoadAudio("resource/audio/pageTurn.wav");
+}
+
+void MenuFlyweight::Unload()
+{
+	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+
+	pAudio->UnloadAudio(m_hClickSound);
+	pAudio->UnloadAudio(m_hPageTurnSound);
+}
+
 /**********************************************************/
 // Accessors
 
-SGD::HAudio MenuFlyweight::GetClickUpSound() const
+SGD::HAudio MenuFlyweight::GetClickSound() const
 {
-	return m_hClickUpSound;
+	return m_hClickSound;
 }
 
-SGD::HAudio MenuFlyweight::GetClickDownSound() const
+SGD::HAudio MenuFlyweight::GetPageTurnSound() const
 {
-	return m_hClickDownSound;
-}
-
-SGD::HAudio MenuFlyweight::GetSelectSound() const
-{
-	return m_hSelectSound;
-}
-
-/**********************************************************/
-// Mutators
-
-void MenuFlyweight::SetClickUpSound(SGD::HAudio _clickUpSound)
-{
-	m_hClickUpSound = _clickUpSound;
-}
-
-void MenuFlyweight::SetClickDownSound(SGD::HAudio _clickDownSound)
-{
-	m_hClickDownSound = _clickDownSound;
-}
-
-void MenuFlyweight::SetSelectSound(SGD::HAudio _selectSound)
-{
-	m_hSelectSound = _selectSound;
+	return m_hPageTurnSound;
 }

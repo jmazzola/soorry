@@ -35,6 +35,8 @@
 
 #include "BitmapFont.h"
 
+#include "MenuFlyweight.h"
+
 #include "Entity.h"
 #include "EntityManager.h"
 #include "StatTracker.h"
@@ -157,6 +159,7 @@ using namespace std;
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
 	
 	// If we're transitioning, disable input
 	if (IsTransitioning())
@@ -202,6 +205,7 @@ using namespace std;
 	{
 		// TODO: Add sound fx for going up and down
 		++m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 		// Wrap around the options
 		if (m_nCursor > MENU_EXIT)
@@ -221,6 +225,7 @@ using namespace std;
 	if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
 	{
 		--m_nCursor;
+		pAudio->PlayAudio(mf->GetClickSound());
 
 		// Wrap around the options
 		if (m_nCursor < MENU_START)
@@ -246,7 +251,11 @@ using namespace std;
 		{
 			if (pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(m_ptButtonPositions[i], m_pButton->GetSize())))
 			{
-				m_nCursor = i;
+				if (m_nCursor != i)
+				{
+					m_nCursor = i;
+					pAudio->PlayAudio(mf->GetClickSound());
+				}
 			}
 		}
 	}

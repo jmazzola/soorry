@@ -442,8 +442,13 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 	{
 		for (int x = 0; x < pWorld->GetWorldWidth(); x++)
+		{
 			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
+			{
+				if (pWorld->IsSolidAtPosition(x, y) == false)
 				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
+	}
+		}
 	}
 
 
@@ -532,6 +537,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
+												  pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+
 			}
 				break;
 
@@ -544,6 +551,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
+												   pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+
 			}
 				break;
 
@@ -555,6 +564,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				pmsg->SendMessageNow();
 				delete pmsg;
 				pmsg = nullptr;
+
+											pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 
 			}
 				break;
@@ -2998,6 +3009,9 @@ void GameplayState::RenderCredits(void)
 																																																							  					  Justin Patterson\n\n\
 																																																												  					  Particle Software Engineer\n\
 																																																																	  					  Matthew Salow\n\n\
+					  Audio Engineer\n\
+					  Justin Patterson\n\
+					  Matthew Salow\n\n\
 																																																																						  					  Animation Software Engineer\n\
 																																																																											  					  James Sylvester\n\
 																																																																																  					  Ryan Simmons\n\n\
@@ -3009,12 +3023,16 @@ void GameplayState::RenderCredits(void)
 																																																																																																														  					  Ryan Simmons\n\n\
 																																																																																																																			  					  Canadian Linguist\n\
 																																																																																																																								  					  Jordan Scelsa\n\n\
+					  Voice Actor\n\
+					  Matthew Salow as Terry\n\n\
 																																																																																																																													  					  Artists\n\
 																																																																																																																																		  					  Gregory Bey\n\
 																																																																																																																																							  					  Caris Frazier\n\
-																																																																																																																																												  					  Justin Mazzola\n\n\
+					  Justin Mazzola\n\
+					  Justin Patterson\n\n\
 																																																																																																																																																	  					  Special Thanks\n\
-																																																																																																																																																						  					  Jordan Butler for ideas.";
+					  Jordan Butler for ideas.\n\
+					  Ryan Simmons' Bookbag";
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.

@@ -251,6 +251,7 @@ bool Shop::Input()
 				m_nCursor = 0;
 				m_nMenuTab = MAIN_TAB;
 				SetShopStatus(false);
+				pAudio->PlayAudio(m_pTowerFlyweight->GetSellSound());
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
@@ -325,6 +326,7 @@ bool Shop::Input()
 				m_nCursor = MainOptions::OPTIONS_WEAPONS;
 				// Go back to the main tab
 				m_nMenuTab = MAIN_TAB;
+				pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 			}
 			else
 			{
@@ -332,6 +334,8 @@ bool Shop::Input()
 				if (Buy(m_nCursor, 0))
 					// Give the item
 					GivePurchase(m_nCursor, 0);
+				else
+					pAudio->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 			}
 		}
 
@@ -403,6 +407,7 @@ bool Shop::Input()
 				m_nCursor = MainOptions::OPTIONS_ITEMS;
 				// Go back to the main tab
 				m_nMenuTab = MAIN_TAB;
+				pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 			}
 			else
 			{
@@ -410,6 +415,8 @@ bool Shop::Input()
 				if (Buy(m_nCursor, 1))
 					// Give the item
 					GivePurchase(m_nCursor, 1);
+				else
+					pAudio->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 			}
 		}
 	}
@@ -480,6 +487,7 @@ bool Shop::Input()
 				m_nCursor = MainOptions::OPTIONS_UPGRADES;
 				// Go back to the main tab
 				m_nMenuTab = MAIN_TAB;
+				pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 			}
 			else
 			{
@@ -487,6 +495,8 @@ bool Shop::Input()
 				if (Buy(m_nCursor, 2))
 					// Give the item
 					GivePurchase(m_nCursor, 2);
+				else
+					pAudio->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 			}
 		}
 
@@ -558,6 +568,7 @@ bool Shop::Input()
 				m_nCursor = MainOptions::OPTIONS_FORTIFICATIONS;
 				// Go back to the main tab
 				m_nMenuTab = MAIN_TAB;
+				pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
 			}
 			else
 			{
@@ -565,6 +576,8 @@ bool Shop::Input()
 				if (Buy(m_nCursor, 3))
 					// Give the item
 					GivePurchase(m_nCursor, 3);
+				else
+					pAudio->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 			}
 		}
 		// Sell a fortification
@@ -1394,6 +1407,8 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 	// Grab the player's weapons (4)
 	Weapon* weapons = player->GetWeapons();
+
+	SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 
 
 	// << WEAPONS >>

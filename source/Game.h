@@ -23,6 +23,7 @@ class IGameState;
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 
 class AnimationManager;
+class MenuFlyweight;
 
 /**************************************************************/
 // Game class
@@ -93,6 +94,8 @@ public:
 
 	void Transition(IGameState* to);
 
+	MenuFlyweight* GetMenuFlyweight() const;
+
 
 private:
 	/**********************************************************/
@@ -159,7 +162,7 @@ private:
 	bool m_bShowCollisionRects = false;
 	bool m_bShowPlayerPos = false;
 
-
+	MenuFlyweight* m_pMenuFlyweight;
 };
 
 #endif //GAME_H

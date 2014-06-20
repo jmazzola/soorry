@@ -251,6 +251,7 @@ void TowerFlyweight::Load(string fileName)
 	// Load Sounds
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	m_hSellSound = pAudio->LoadAudio("resource/audio/doorClose.wav");
+	m_hInvalidSound = pAudio->LoadAudio("resource/audio/invalidPurchase.wav");
 	m_hMachineGunShotSound = pAudio->LoadAudio("resource/audio/machineGunShot.wav");
 	m_hMapleSyrupShotSound = pAudio->LoadAudio("resource/audio/mapleSyrupShot.wav");
 	m_hHockeyStickSlashSound = pAudio->LoadAudio("resource/audio/hockeyStickSlash.wav");
@@ -261,6 +262,7 @@ void TowerFlyweight::Unload()
 	// Unload sounds
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 	pAudio->UnloadAudio(m_hSellSound);
+	pAudio->UnloadAudio(m_hInvalidSound);
 	pAudio->UnloadAudio(m_hMachineGunShotSound);
 	pAudio->UnloadAudio(m_hMapleSyrupShotSound);
 	pAudio->UnloadAudio(m_hHockeyStickSlashSound);
@@ -377,6 +379,11 @@ SGD::HAudio TowerFlyweight::GetClickSound() const
 SGD::HAudio TowerFlyweight::GetSellSound() const
 {
 	return m_hSellSound;
+}
+
+SGD::HAudio TowerFlyweight::GetInvalidSound() const
+{
+	return m_hInvalidSound;
 }
 
 SGD::HAudio TowerFlyweight::GetMachineGunShotSound() const

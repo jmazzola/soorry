@@ -284,7 +284,7 @@ void WorldManager::Render(SGD::Point _cameraPos)
 				// FOR DEBUG PURPOSES ONLY!
 				/*wostringstream id;
 				id << (m_bSolidsChart[x][y] == true) ? 1 : 0;
-				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth, y * (float)m_nTileHeight));*/
+				pGraphics->DrawString(id.str().c_str(), SGD::Point(x * (float)m_nTileWidth - _cameraPos.x, y * (float)m_nTileHeight - _cameraPos.y), SGD::Color(0, 0, 0));*/
 			}
 		}
 	}

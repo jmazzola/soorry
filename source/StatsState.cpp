@@ -92,8 +92,10 @@ StatsState* StatsState::GetInstance(void)
 	 }
 
 #if !ARCADE_MODE
-	 m_bTHEBOOL =  pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) ||
-				   pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B);
+	 m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonPressed(0, (unsigned int)SGD::Button::A) ||
+		 pInput->IsButtonPressed(0, (unsigned int)SGD::Button::B)
+		 || (pInput->IsKeyPressed(SGD::Key::MouseLeft) && pInput->GetMousePosition().IsWithinRectangle(
+		 SGD::Rectangle(SGD::Point(200, 500), m_pMainButton->GetSize() * 0.9f)));
 #endif
 #if ARCADE_MODE
 	 m_bTHEBOOL = pInput->IsButtonPressed(0, 6) || pInput->IsButtonPressed(0, 0);
