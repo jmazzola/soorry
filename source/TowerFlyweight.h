@@ -42,6 +42,7 @@ public:
 	SGD::HAudio GetPurchaseSound() const;
 	SGD::HAudio GetClickSound() const;
 	SGD::HAudio GetSellSound() const;
+	SGD::HAudio GetInvalidSound() const;
 	SGD::HAudio GetMachineGunShotSound() const;
 	SGD::HAudio GetMapleSyrupShotSound() const;
 	SGD::HAudio GetHockeyStickSlashSound() const;
@@ -78,6 +79,7 @@ protected:
 	SGD::HAudio m_hPurchaseSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hSellSound = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hInvalidSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hMachineGunShotSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hMapleSyrupShotSound = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hHockeyStickSlashSound = SGD::INVALID_HANDLE;
