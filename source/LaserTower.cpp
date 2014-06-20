@@ -37,7 +37,7 @@ void LaserTower::Update(float dt)
 		SGD::Point connectedPos = m_vConnectedTowers[i]->m_ptPosition;
 
 		SGD::Rectangle rect;
-		
+
 		if (m_ptPosition.x < connectedPos.x)
 		{
 			rect.left = m_ptPosition.x + 16;
@@ -183,27 +183,39 @@ int LaserTower::GetType() const
 
 void LaserTower::Upgrade(int _slot, unsigned int* _points)
 {
-	if (_slot == 0 && *_points >= (unsigned int)m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne) && m_nUpgradeOne < 3)
+	if (_slot == 0)
 	{
-		*_points -= m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne);
-		m_nSellValue += (int)(m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne) * 0.75f);
-		m_nUpgradeOne++;
-		m_nDamage = m_pTowerFlyweight->GetLaserDamage(m_nUpgradeOne);
+		if (*_points >= (unsigned int)m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne) && m_nUpgradeOne < 3)
+		{
+			*_points -= m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne);
+			m_nSellValue += (int)(m_pTowerFlyweight->GetLaserDamageUpgradeCost(m_nUpgradeOne) * 0.75f);
+			m_nUpgradeOne++;
+			m_nDamage = m_pTowerFlyweight->GetLaserDamage(m_nUpgradeOne);
 
-		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+		}
+
+		else
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 	}
 
-	else if (_slot == 1 && *_points >= (unsigned int)m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
+	else if (_slot == 1)
 	{
-		*_points -= m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo);
-		m_nSellValue += (int)(m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
-		m_nUpgradeTwo++;
-		m_nRange = m_pTowerFlyweight->GetLaserRange(m_nUpgradeTwo);
+		if (*_points >= (unsigned int)m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
+		{
+			*_points -= m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo);
+			m_nSellValue += (int)(m_pTowerFlyweight->GetLaserRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
+			m_nUpgradeTwo++;
+			m_nRange = m_pTowerFlyweight->GetLaserRange(m_nUpgradeTwo);
 
-		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
 
-		SGD::Event* pEvent = new SGD::Event("ASSESS_LASERS");
-		pEvent->QueueEvent();
+			SGD::Event* pEvent = new SGD::Event("ASSESS_LASERS");
+			pEvent->QueueEvent();
+		}
+
+		else
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 	}
 }
 

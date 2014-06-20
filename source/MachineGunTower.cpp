@@ -125,7 +125,7 @@ void MachineGunTower::DrawMenu()
 	pFont->Draw(damage, (int)pos.x + 8, (int)pos.y + 82, 0.35f, SGD::Color(255, 255, 255));
 
 	string fireRate = "Fire Rate: " + std::to_string(1 / m_pTowerFlyweight->GetMachineGunFireRate(m_nUpgradeOne));
-	
+
 	while (fireRate.size() > 15)
 		fireRate.erase(fireRate.begin() + 15);
 
@@ -145,7 +145,7 @@ void MachineGunTower::DrawMenu()
 
 	else
 		pGraphics->DrawRectangle(upgradeOneRect, SGD::Color(0, 0, 0, 0), SGD::Color(255, 255, 255), 2);
-		
+
 	int mid = (int)((upgradeOneRect.left + upgradeOneRect.right) / 2.0f);
 	const float scale = 0.35f;
 	if (m_nUpgradeOne < 3)
@@ -175,7 +175,7 @@ void MachineGunTower::DrawMenu()
 	int mid2 = (int)((upgradeTwoRect.left + upgradeTwoRect.right) / 2.0f);
 	if (m_nUpgradeTwo < 3)
 	{
-		
+
 		pFont->Draw("Upgrade", mid2 - (int)(pFont->GetTextWidth("Upgrade") * scale / 2), (int)upgradeTwoRect.top + 4, scale, SGD::Color(255, 255, 255));
 		pFont->Draw("Range", mid2 - (int)(pFont->GetTextWidth("Range") * scale / 2), (int)upgradeTwoRect.top + 21, scale, SGD::Color(255, 255, 255));
 		string cost = std::to_string(m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo));
@@ -193,25 +193,37 @@ int MachineGunTower::GetType() const
 
 void MachineGunTower::Upgrade(int _slot, unsigned int* _points)
 {
-	if (_slot == 0 && *_points >= (unsigned int)m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne) && m_nUpgradeOne < 3)
+	if (_slot == 0)
 	{
-		*_points -= m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne);
-		m_nSellValue += (int)(m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne) * 0.75f);
-		m_nUpgradeOne++;
-		m_nDamage = m_pTowerFlyweight->GetMachineGunDamage(m_nUpgradeOne);
-		m_fFireRate = m_pTowerFlyweight->GetMachineGunFireRate(m_nUpgradeOne);
+		if (*_points >= (unsigned int)m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne) && m_nUpgradeOne < 3)
+		{
+			*_points -= m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne);
+			m_nSellValue += (int)(m_pTowerFlyweight->GetMachineGunPowerUpgradeCost(m_nUpgradeOne) * 0.75f);
+			m_nUpgradeOne++;
+			m_nDamage = m_pTowerFlyweight->GetMachineGunDamage(m_nUpgradeOne);
+			m_fFireRate = m_pTowerFlyweight->GetMachineGunFireRate(m_nUpgradeOne);
 
-		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+		}
+
+		else
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 	}
 
-	else if (_slot == 1 && *_points >= (unsigned int)m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
+	else if (_slot == 1)
 	{
-		*_points -= m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo);
-		m_nSellValue += (int)(m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
-		m_nUpgradeTwo++;
-		m_nRange = m_pTowerFlyweight->GetMachineGunRange(m_nUpgradeTwo);
+		if (*_points >= (unsigned int)m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) && m_nUpgradeTwo < 3)
+		{
+			*_points -= m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo);
+			m_nSellValue += (int)(m_pTowerFlyweight->GetMachineGunRangeUpgradeCost(m_nUpgradeTwo) * 0.75f);
+			m_nUpgradeTwo++;
+			m_nRange = m_pTowerFlyweight->GetMachineGunRange(m_nUpgradeTwo);
 
-		SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetPurchaseSound());
+		}
+
+		else
+			SGD::AudioManager::GetInstance()->PlayAudio(m_pTowerFlyweight->GetInvalidSound());
 	}
 }
 

@@ -432,10 +432,13 @@ void Player::Update ( float dt )
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x -= m_fSpeed * dt;
 
-		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x < 0 )
+		if (pWorld->CheckCollision(this) == true)
 		{
-			m_ptPosition.x = oldpos;
+			//m_ptPosition.x = oldpos;
+			m_ptPosition.x = (int)(m_ptPosition.x / 32) * 32 + 32;
 		}
+		else if (m_ptPosition.x < 0)
+			m_ptPosition.x = 0;
 		else
 			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
@@ -450,8 +453,11 @@ void Player::Update ( float dt )
 		float oldpos = m_ptPosition.x;
 		m_ptPosition.x += m_fSpeed * dt;
 
-		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.x >= pWorld->GetWorldWidth () * pWorld->GetTileWidth () - pWorld->GetTileWidth () )
-			m_ptPosition.x = oldpos;
+		if (pWorld->CheckCollision(this) == true || m_ptPosition.x >= pWorld->GetWorldWidth() * pWorld->GetTileWidth() - pWorld->GetTileWidth())
+		{
+			//m_ptPosition.x = oldpos;
+			m_ptPosition.x = (int)(m_ptPosition.x / 32) * 32;
+		}
 		else
 			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
@@ -466,8 +472,13 @@ void Player::Update ( float dt )
 		float oldpos = m_ptPosition.y;
 		m_ptPosition.y -= m_fSpeed * dt;
 
-		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y < 0 )
-			m_ptPosition.y = oldpos;
+		if (pWorld->CheckCollision(this) == true)
+		{
+			//m_ptPosition.y = oldpos;
+			m_ptPosition.y = (int)(m_ptPosition.y / 32) * 32 + 32;
+		}
+		else if (m_ptPosition.y < 0)
+			m_ptPosition.y = 0;
 		else
 			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
@@ -483,7 +494,8 @@ void Player::Update ( float dt )
 		m_ptPosition.y += m_fSpeed * dt;
 
 		if ( pWorld->CheckCollision ( this ) == true || m_ptPosition.y >= pWorld->GetWorldHeight () * pWorld->GetTileHeight () - pWorld->GetTileHeight () )
-			m_ptPosition.y = oldpos;
+			//m_ptPosition.y = oldpos;'
+			m_ptPosition.y = (int)(m_ptPosition.y / 32) * 32;
 		else
 			StatTracker::GetInstance()->Walk(m_fSpeed*dt);
 		if ( pAudio->IsAudioPlaying ( m_hWalking ) == false )
