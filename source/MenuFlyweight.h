@@ -19,6 +19,9 @@ public:
 	MenuFlyweight();
 	~MenuFlyweight();
 
+	void Load();
+	void Unload();
+
 	/**********************************************************/
 	// Accessors
 	SGD::HAudio GetClickUpSound() const;
@@ -41,5 +44,6 @@ protected:
 	SGD::HAudio m_hClickUpSound;
 	SGD::HAudio m_hClickDownSound;
 	SGD::HAudio m_hSelectSound;
+	//SGD::HAudio m_hClickSound = SGD::INVALID_HANDLE;
 };
 
