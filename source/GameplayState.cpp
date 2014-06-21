@@ -294,7 +294,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	SetLoadingBar(0.0f, "Loading Textures");
 
 	// Load Tim
-	m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
+	//m_hPlayerImg = pGraphics->LoadTexture(L"resource/images/tim/tim.png");
 
 	// Load tower images
 	m_hMachineGunBaseImage = pGraphics->LoadTexture("resource/images/towers/machineGunBase.png");
@@ -792,7 +792,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
-	m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
+	//m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
 
 	// Turn the cursor on
 	//if(pGraphics->IsCursorShowing() == false)
