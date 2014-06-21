@@ -502,7 +502,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	LoadEnemyRecipes(enemyStatsFileName);
 
 	// 92%
-	SetLoadingBar(0.92f, "4 8 15 16 23 42");
+	SetLoadingBar(0.92f, "Loading Towers");
 
 	// Load tower flyweight
 	m_pTowerFlyweight = new TowerFlyweight;
@@ -792,7 +792,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
-	//m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 
 	// Turn the cursor on
 	//if(pGraphics->IsCursorShowing() == false)
