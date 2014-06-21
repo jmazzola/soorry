@@ -3167,7 +3167,7 @@ void GameplayState::RenderCredits(void)
 	// Render button
 	m_pMainButton->Draw("Main Menu", { 180, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
 
-	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
+	///m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
 
 	if (m_fCreditsTimer <= 5.0f)
 	{
