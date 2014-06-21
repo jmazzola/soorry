@@ -208,6 +208,7 @@ using namespace std;
 		// Wrap around the options
 		if (m_nCursor > MENU_EXIT)
 			m_nCursor = MENU_START;
+
 #if ARCADE_MODE
 		m_bAccept = false;
 #endif
@@ -220,7 +221,7 @@ using namespace std;
 	m_bTHEBOOL = m_vtStick.y < 0 && m_bAccept;
 #endif
 	// Move the cursor (selected item) up
-	if (pInput->IsKeyPressed(SGD::Key::Up) || pInput->IsDPadPressed(0, SGD::DPad::Up))
+	if (m_bTHEBOOL)
 	{
 		--m_nCursor;
 		pAudio->PlayAudio(mf->GetClickSound());

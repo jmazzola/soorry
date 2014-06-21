@@ -324,6 +324,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hBeaverFeverMusic = pAudio->LoadAudio("resource/audio/Beaver_Fever_Music.xwm");
 	m_hRunningManMusic = pAudio->LoadAudio("resource/audio/Running_Man_Music.xwm");
 	m_hShopMusic = pAudio->LoadAudio("resource/audio/shop_music.xwm");
+	m_hArcade = pAudio->LoadAudio("resource/audio/Arcade.wav");
+	m_hSand_Box = pAudio->LoadAudio("resource/audio/Sand_Box.wav");
+	m_hRunning_Man = pAudio->LoadAudio("resource/audio/Running_Man.wav");
+	m_hHard_Core = pAudio->LoadAudio("resource/audio/Hard_Core.wav");
 	m_hGunShoot = pAudio->LoadAudio("resource/audio/Gun_Sound.wav");
 	m_hRocketShoot = pAudio->LoadAudio("resource/audio/rocketFire.wav");
 	m_hShotgunShoot = pAudio->LoadAudio("resource/audio/shotgun_shot.wav");
@@ -344,6 +348,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hWinTheGame = pAudio->LoadAudio("resource/audio/Win_The_Game1.wav");
 	m_hAmmoPickup = pAudio->LoadAudio("resource/audio/Gun_Reload.wav");
 	m_hLaserSound = pAudio->LoadAudio("resource/audio/laserBuzz.wav");
+
 
 	// 12%
 	SetLoadingBar(0.12f, "Loading Particles");
@@ -448,8 +453,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			for (int y = 0; y < pWorld->GetWorldHeight(); y++)
 			{
 				if (pWorld->IsSolidAtPosition(x, y) == false)
-				pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
-	}
+					pWorld->SetColliderID(x, y, rzbn->m_nColliderIDs[x][y]);
+			}
 		}
 	}
 
@@ -526,7 +531,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
-			pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 			}
 				break;
 
@@ -539,7 +544,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
-												  pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 
 			}
 				break;
@@ -553,7 +558,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
-												   pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 
 			}
 				break;
@@ -567,7 +572,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				delete pmsg;
 				pmsg = nullptr;
 
-											pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
+				pWorld->SetSolidAtPosition((int)(rzbn->towerInfos[i].m_fTowerX / 32), (int)(rzbn->towerInfos[i].m_fTowerY / 32), true);
 
 			}
 				break;
@@ -644,6 +649,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 #pragma endregion 
 
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			m_pShop->upgradePrices[i] = rzbn->upgradePrices[i];
+		}
+	}
+
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });
@@ -663,6 +676,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		inv->SetBearTraps(rzbn->m_nBeartraps);
 		inv->SetMines(rzbn->m_nMines);
 		inv->SetGrenades(rzbn->m_nGrenades);
+		inv->SetHealthPacks(rzbn->m_nHealthPacks);
 		inv->SetMachineGunTowers(rzbn->m_nMGTowers);
 		inv->SetMapleSyrupTowers(rzbn->m_nMapleTowers);
 		inv->SetHockeyStickTowers(rzbn->m_nHockeyTowers);
@@ -739,24 +753,31 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_fLossTimer = 5.0f;
 
 	// Play the background music
-	if (m_nGamemode == ARCADE_GAME_MODE || m_nGamemode == HARDCORE_MODE)
+	if (m_nGamemode == ARCADE_GAME_MODE)
 	{
 		pAudio->PlayAudio(m_hBackgroundMus, true);
+		pAudio->PlayAudio(m_hArcade);
+	}
+	if (m_nGamemode == HARDCORE_MODE)
+	{
+		pAudio->PlayAudio(m_hBackgroundMus, true);
+		pAudio->PlayAudio(m_hHard_Core);
 	}
 	if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
 		pAudio->PlayAudio(m_hBeaverFeverMusic, true);
+		pAudio->PlayAudio(m_hBeaverFever);
 	}
 	if (m_nGamemode == SANDBOX_MODE)
 	{
 		pAudio->PlayAudio(m_hSandboxMusic, true);
+		pAudio->PlayAudio(m_hSand_Box);
 	}
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
 		pAudio->PlayAudio(m_hRunningManMusic, true);
+		pAudio->PlayAudio(m_hRunning_Man);
 	}
-
-	//OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	// HUD
 	m_hHUD = pGraphics->LoadTexture("resource/images/hud/hud.png");
@@ -777,9 +798,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Create snow
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
-	//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
-	//msg->QueueMessage();
-	//msg = nullptr;
+		//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
+		//msg->QueueMessage();
+		//msg = nullptr;
 	}
 	else if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
@@ -817,7 +838,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 	optionsRectangles[OPTION_MUSIC] = SGD::Rectangle(SGD::Point(140, 200), m_pMainButton->GetSize() * 0.9f);
 	optionsRectangles[OPTION_SFX] = SGD::Rectangle(SGD::Point(120, 290), m_pMainButton->GetSize() * 0.9f);
+#if !ARCADE_MODE
 	optionsRectangles[OPTION_FULLSCREEN] = SGD::Rectangle(SGD::Point(160, 380), m_pMainButton->GetSize() * 0.9f);
+#else
+	optionsRectangles[OPTION_FULLSCREEN] = SGD::Rectangle(SGD::Point(-1000, -1000), m_pMainButton->GetSize() * 0.9f);
+#endif
 	optionsRectangles[OPTION_GOBACK] = SGD::Rectangle(SGD::Point(150, 470), m_pMainButton->GetSize() * 0.9f);
 
 	lossRectangles[0] = SGD::Rectangle(SGD::Point(220, 200), m_pMainButton->GetSize() * 0.8f);
@@ -898,7 +923,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hWinTheGame);
 	pAudio->UnloadAudio(m_hWelcomeShop);
 	pAudio->UnloadAudio(m_hAmmoPickup);
-		pAudio->UnloadAudio(m_hLaserSound);
+	pAudio->UnloadAudio(m_hLaserSound);
+	pAudio->UnloadAudio(m_hArcade);
+	pAudio->UnloadAudio(m_hSand_Box);
+	pAudio->UnloadAudio(m_hRunning_Man);
+	pAudio->UnloadAudio(m_hHard_Core);
 
 	//Matt gets rid of the memorym_hWelcomeShop	 leaks
 	m_pParticleManager->unload();
@@ -1000,7 +1029,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	if(abs(m_vtStick.y) < 0.2f)
 		m_vtStick.y = 0.0f;
 
-	if(m_vtStick == SGD::Vector{0.0f, 0.0f})
+	if (m_vtStick == SGD::Vector{ 0.0f, 0.0f })
 		m_bAccept = true;
 #endif
 
@@ -1193,7 +1222,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 #if ARCADE_MODE
 				m_bTHEBOOL = m_bAccept && m_vtStick.y > 0;
 #endif
-				
+
 
 				if (m_bTHEBOOL)
 				{
@@ -1202,7 +1231,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
-					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+					if (m_nPauseMenuCursor == OPTION_FULLSCREEN)
 						m_nPauseMenuCursor++;
 #endif
 
@@ -1228,7 +1257,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					pAudio->PlayAudio(mf->GetClickSound());
 
 #if ARCADE_MODE
-					if(m_nPauseMenuCursor == OPTION_FULLSCREEN)
+					if (m_nPauseMenuCursor == OPTION_FULLSCREEN)
 						m_nPauseMenuCursor--;
 #endif
 
@@ -1313,7 +1342,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A);
 #endif
 #if ARCADE_MODE
-				m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+				m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
 				// Mouse Selection
 				if (pInput->GetMouseMovement() != SGD::Vector(0, 0))
@@ -1365,7 +1394,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					}
 				}
 			}
-		
+
 		}
 	}
 
@@ -1375,7 +1404,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || pInput->IsKeyPressed(SGD::Key::MouseLeft));
 #endif
 #if ARCADE_MODE
-	m_bTHEBOOL = pInput->IsButtonPressed(0,0);
+	m_bTHEBOOL = pInput->IsButtonPressed(0, 0);
 #endif
 	if (m_bCreditsStarted == true && m_bTHEBOOL)
 	{
@@ -1533,15 +1562,15 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	//SGD::InputManager::GetInstance()->CheckForNewControllers();
 	// when shop closes play game background music
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	if (m_pShop->IsOpen() == false 
+	if (m_pShop->IsOpen() == false
 		&& pAudio->IsAudioPlaying(m_hBackgroundMus) == false)
 	{
 		pAudio->StopAudio(m_hShopMusic);
-		if (m_nGamemode == ARCADE_GAME_MODE 
+		if (m_nGamemode == ARCADE_GAME_MODE
 			|| m_nGamemode == HARDCORE_MODE)
 		{
 			pAudio->PlayAudio(
-				m_hBackgroundMus, 
+				m_hBackgroundMus,
 				true);
 		}
 		if (m_nGamemode == BEAVER_FEAVER_MODE)
@@ -1549,7 +1578,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			if (pAudio->IsAudioPlaying(m_hBeaverFeverMusic) == false)
 			{
 				pAudio->PlayAudio(
-					m_hBeaverFeverMusic, 
+					m_hBeaverFeverMusic,
 					true);
 			}
 		}
@@ -1569,10 +1598,10 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 		m_bEnterShop = false;
 	}
-	else if (m_pShop->IsOpen() == true 
+	else if (m_pShop->IsOpen() == true
 		&& pAudio->IsAudioPlaying(m_hBackgroundMus) == true)
 	{
-		if (m_nGamemode == ARCADE_GAME_MODE 
+		if (m_nGamemode == ARCADE_GAME_MODE
 			|| m_nGamemode == HARDCORE_MODE)
 		{
 			pAudio->StopAudio(m_hBackgroundMus);
@@ -1601,8 +1630,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 	}
 	// If the game isn't paused and you haven't won and you haven't lost
-	if (m_bIsPaused == false 
-		&& zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1 
+	if (m_bIsPaused == false
+		&& zombieFactory->GetWave() != zombieFactory->GetTotalWaves() + 1
 		&& m_bHasLost == false)
 	{																					 // Fuckin north I guess
 		// Update the entities															 // Fuckin north I guess
@@ -1618,22 +1647,22 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// Fuckin north I guess
 		// Check collisions																 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_PLAYER, 
+			BUCKET_PLAYER,
 			BUCKET_PICKUP);						 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_ENEMIES, 
+			BUCKET_ENEMIES,
 			BUCKET_PROJECTILES);				 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_ENEMIES, 
+			BUCKET_ENEMIES,
 			BUCKET_PLACEABLE);					 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_ENEMIES, 
+			BUCKET_ENEMIES,
 			BUCKET_DRONE);						 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_ENEMIES, 
+			BUCKET_ENEMIES,
 			BUCKET_TRAPS);						 // Fuckin north I guess
 		m_pEntities->CheckCollisions(
-			BUCKET_PLAYER, 
+			BUCKET_PLAYER,
 			BUCKET_SHOP);
 		//draw grid rectangle
 
@@ -1714,7 +1743,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 {
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 
-	pGraphics->DrawTexture(m_hUnderBackground,{0,0});
+	pGraphics->DrawTexture(m_hUnderBackground, { 0, 0 });
 
 #if _DEBUG
 	pGraphics->DrawString("Gameplay State | Debugging", { 240, 0 }, { 255, 0, 255 });
@@ -2030,7 +2059,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 
-					if (m_bBuildStart == false)
+					if (m_bBuildStart == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hArcade) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBeaverFever) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hRunning_Man) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHard_Core) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hSand_Box) == false)
 					{
 						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
 						m_bBuildStart = true;
@@ -2047,7 +2076,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 				{
 					m_bBuildStart = false;
-
 
 					string enemiesRemaining = "Enemies Remaining: ";
 					m_pFont->Draw(enemiesRemaining.c_str(), 68, 66, 0.45f, { 255, 255, 255 });
@@ -2927,7 +2955,7 @@ Entity * GameplayState::CreateTrap(int _x, int _y, int _trapType) const
 		lava->SetPosition(SGD::Point((float)_x, (float)_y));
 		lava->SetBaseImage(m_hLavaTrapBaseImage);
 		lava->SetGunImage(m_hLavaTrapFlameImage);
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Fire_Particle1", lava,0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Fire_Particle1", lava, 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		return lava;
@@ -3069,44 +3097,44 @@ void GameplayState::RenderCredits(void)
 
 	// Draw the credits
 	// TODO: Load in a text file
-	string credits = "SOORRY\n\n\
-					 					  By Razor Balloon\n\n\
-										  					  Part of Heavy Square Studios\n\n\
-															  					  Associate Producers\n\
-																				  					  Sean Hathaway\n\
-																									  					  Robert Martinez\n\n\
-																														  					  Executive Producer\n\
-																																			  					  John O' Leske\n\n\
-																																								  				      World Software Engineer\n\
-																																													  					  Justin Patterson\n\n\
-																																																		  					  AI Programmer\n\
-																																																							  					  Justin Patterson\n\n\
-																																																												  					  Particle Software Engineer\n\
-																																																																	  					  Matthew Salow\n\n\
-					  Audio Engineer\n\
-					  Justin Patterson\n\
-					  Matthew Salow\n\n\
-																																																																						  					  Animation Software Engineer\n\
-																																																																											  					  James Sylvester\n\
-																																																																																  					  Ryan Simmons\n\n\
-																																																																																					  					  Game Core\n\
-																																																																																										  					  Justin Mazzola\n\n\
-																																																																																															  					  UI Programmer\n\
-																																																																																																				  					  Justin Mazzola\n\n\
-																																																																																																									  					  Mercenary Programmer\n\
-																																																																																																														  					  Ryan Simmons\n\n\
-																																																																																																																			  					  Canadian Linguist\n\
-																																																																																																																								  					  Jordan Scelsa\n\n\
-					  Voice Actor\n\
-					  Matthew Salow as Terry\n\n\
-																																																																																																																													  					  Artists\n\
-																																																																																																																																		  					  Gregory Bey\n\
-																																																																																																																																							  					  Caris Frazier\n\
-					  Justin Mazzola\n\
-					  Justin Patterson\n\n\
-																																																																																																																																																	  					  Special Thanks\n\
-					  Jordan Butler for ideas.\n\
-					  Ryan Simmons' Bookbag";
+	string credits = "\t\tSOORRY\n\n";
+	credits += "\t\t\t\t\tBy Razor Balloon\n\n";
+	credits += "\t\t\t\t\tPart of Heavy Square Studios\n\n";
+	credits += "\t\t\t\t\tAssociate Producers\n";
+	credits += "\t\t\t\t\tSean Hathaway\n";
+	credits += "\t\t\t\t\tRobert Martinez\n\n";
+	credits += "\t\t\t\t\tExecutive Producer\n";
+	credits += "\t\t\t\t\tJohn O' Leske\n\n";
+	credits += "\t\t\t\t\tWorld Software Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tAI Programmer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tParticle Software Engineer\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAudio Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAnimation Software Engineer\n";
+	credits += "\t\t\t\t\tJames Sylvester\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tGame Core\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tUI Programmer\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tMercenary Programmer\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tCanadian Linguist\n";
+	credits += "\t\t\t\t\tJordan Scelsa\n\n";
+	credits += "\t\t\t\t\tVoice Actor\n";
+	credits += "\t\t\t\t\tMatthew Salow as Terry\n\n";
+	credits += "\t\t\t\t\tArtists\n";
+	credits += "\t\t\t\t\tGregory Bey\n";
+	credits += "\t\t\t\t\tCaris Frazier\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tSpecial Thanks\n";
+	credits += "\t\t\t\t\tJordan Butler for ideas.\n";
+	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there";
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
@@ -3167,7 +3195,7 @@ void GameplayState::RenderLoss(void)
 	else
 		m_pMainButton->Draw("Main Menu, eh?", { 200, 290 }, { 0, 0, 0 }, { 0.8f, 0.8f }, 0);
 
-	
+
 }
 
 

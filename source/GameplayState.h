@@ -179,7 +179,7 @@ private:
 	SGD::HTexture m_hSpikeTrapSpikeImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapBaseImage = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hLavaTrapFlameImage = SGD::INVALID_HANDLE;
-
+	
 	SGD::HTexture m_hExplosionImage = SGD::INVALID_HANDLE;
 
 	/**********************************************************/
@@ -223,8 +223,11 @@ private:
 	SGD::HAudio m_hBeaverFeverMusic = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hSandboxMusic		= SGD::INVALID_HANDLE;
 	SGD::HAudio m_hRunningManMusic	= SGD::INVALID_HANDLE;
-	SGD::HAudio m_hLaserSound = SGD::INVALID_HANDLE;
-
+	SGD::HAudio m_hLaserSound		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hArcade			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSand_Box			= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hRunning_Man		= SGD::INVALID_HANDLE;
+	SGD::HAudio m_hHard_Core		= SGD::INVALID_HANDLE;
 	/**********************************************************/
 	// Factory Methods
 	Entity* CreateBeaverZombie(int _x, int _y) const;

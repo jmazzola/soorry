@@ -72,7 +72,6 @@ using namespace std;
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 	m_hMainMenuSnap = pGraphics->LoadTexture("resource/images/menus/MainMenuBG.png");
 
-
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
@@ -118,7 +117,6 @@ using namespace std;
 	m_pMainButton->Terminate();
 	delete m_pMainButton;
 	m_pMainButton = nullptr;
-
 }
 
 
@@ -137,7 +135,7 @@ using namespace std;
 	// --- Selecting an option ---
 	// If the enter key (PC) or A button (Xbox 360) are pressed
 	// Select the item
-	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) || 
+	if (pInput->IsKeyPressed(SGD::Key::Enter) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) ||
 		(pInput->IsKeyPressed(SGD::Key::MouseLeft) && pInput->GetMousePosition().IsWithinRectangle(SGD::Rectangle(SGD::Point(200, 500), m_pMainButton->GetSize()))))
 	{
 		// Since there's only one state..go back to main menu
@@ -149,11 +147,11 @@ using namespace std;
 
 #if ARCADE_MODE
 	if(pInput->IsButtonPressed(0, 0))
-	 {
-	 // Since there's only one state..go back to main menu
+	{
+		// Since there's only one state..go back to main menu
 		Game::GetInstance()->Transition(MainMenuState::GetInstance());
 		return true;
-	 }
+	}
 #endif
 	return true;	// keep playing
 }
@@ -194,45 +192,44 @@ using namespace std;
 
 	// Draw the credits
 	// TODO: Load in a text file
-	string credits = "SOORRY\n\n\
-					  By Razor Balloon\n\n\
-					  Part of Heavy Square Studios\n\n\
-					  Associate Producers\n\
-					  Sean Hathaway\n\
-					  Robert Martinez\n\n\
-					  Executive Producer\n\
-					  John O' Leske\n\n\
-				      World Software Engineer\n\
-					  Justin Patterson\n\n\
-					  AI Programmer\n\
-					  Justin Patterson\n\n\
-					  Particle Software Engineer\n\
-					  Matthew Salow\n\n\
-					  Audio Engineer\n\
-					  Justin Patterson\n\
-					  Matthew Salow\n\n\
-					  Animation Software Engineer\n\
-					  James Sylvester\n\
-					  Ryan Simmons\n\n\
-					  Game Core\n\
-					  Justin Mazzola\n\n\
-					  UI Programmer\n\
-					  Justin Mazzola\n\
-					  Justin Patterson\n\n\
-					  Mercenary Programmer\n\
-					  Ryan Simmons\n\n\
-					  Canadian Linguist\n\
-					  Jordan Scelsa\n\n\
-					  Voice Actor\n\
-					  Matthew Salow as Terry\n\n\
-					  Artists\n\
-					  Gregory Bey\n\
-					  Caris Frazier\n\
-					  Justin Mazzola\n\
-					  Justin Patterson\n\n\
-					  Special Thanks\n\
-					  Jordan Butler for ideas.\n\
-					  Ryan Simmons' Bookbag";
+	string credits = "\t\tSOORRY\n\n";
+	credits += "\t\t\t\t\tBy Razor Balloon\n\n";
+	credits += "\t\t\t\t\tPart of Heavy Square Studios\n\n";
+	credits += "\t\t\t\t\tAssociate Producers\n";
+	credits += "\t\t\t\t\tSean Hathaway\n";
+	credits += "\t\t\t\t\tRobert Martinez\n\n";
+	credits += "\t\t\t\t\tExecutive Producer\n";
+	credits += "\t\t\t\t\tJohn O' Leske\n\n";
+	credits += "\t\t\t\t\tWorld Software Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tAI Programmer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tParticle Software Engineer\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAudio Engineer\n";
+	credits += "\t\t\t\t\tJustin Patterson\n";
+	credits += "\t\t\t\t\tMatthew Salow\n\n";
+	credits += "\t\t\t\t\tAnimation Software Engineer\n";
+	credits += "\t\t\t\t\tJames Sylvester\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tGame Core\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tUI Programmer\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n\n";
+	credits += "\t\t\t\t\tMercenary Programmer\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tCanadian Linguist\n";
+	credits += "\t\t\t\t\tJordan Scelsa\n\n";
+	credits += "\t\t\t\t\tVoice Actor\n";
+	credits += "\t\t\t\t\tMatthew Salow as Terry\n\n";
+	credits += "\t\t\t\t\tArtists\n";
+	credits += "\t\t\t\t\tGregory Bey\n";
+	credits += "\t\t\t\t\tCaris Frazier\n";
+	credits += "\t\t\t\t\tJustin Mazzola\n";
+	credits += "\t\t\t\t\tJustin Patterson\n\n";
+	credits += "\t\t\t\t\tSpecial Thanks\n";
+	credits += "\t\t\t\t\tJordan Butler for ideas.\n";
+	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there";
 
 	// If we're transitioning
 	if (IsTransitioning())
