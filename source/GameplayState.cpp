@@ -2739,7 +2739,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= (float)(750 + rand() % 500);
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj->GetPosition(), 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		// Rotate bullet at random direction
