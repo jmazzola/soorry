@@ -266,179 +266,237 @@
 		{
 		case TUT_MAIN:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide1) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide1) == false && m_bSlide1 == false)
 			{
 				pAudio->StopAudio(m_hSlide2);
 				pAudio->PlayAudio(m_hSlide1);
+				m_bSlide1 = true;
+				m_bSlide2 = false;
 			}
 		}
 			break;
 		case TUT_INTRO2:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide2) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide2) == false && m_bSlide2 == false)
 			{
 				pAudio->StopAudio(m_hSlide3);
 				pAudio->StopAudio(m_hSlide1);
 				pAudio->PlayAudio(m_hSlide2);
+				m_bSlide2 = true;
+				m_bSlide1 = false;
+				m_bSlide3 = false;
 			}
 		}
 			break;
 		case TUT_INTRO3:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide3) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide3) == false && m_bSlide3 == false)
 			{
 				pAudio->StopAudio(m_hSlide2);
 				pAudio->StopAudio(m_hSlide4);
 				pAudio->PlayAudio(m_hSlide3);
+				m_bSlide3 = true;
+				m_bSlide2 = false;
+				m_bSlide4 = false;
 			}
 		}
 			break;
 		case TUT_INTRO4:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide4) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide4) == false && m_bSlide4 == false)
 			{
 				pAudio->StopAudio(m_hSlide3);
 				pAudio->StopAudio(m_hSlide5);
 				pAudio->PlayAudio(m_hSlide4);
+				m_bSlide4 = true;
+				m_bSlide3 = false;
+				m_bSlide5 = false;
 			}
 		}
 			break;
 		case TUT_PICKUPS:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide5) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide5) == false && m_bSlide5 == false)
 			{
 				pAudio->StopAudio(m_hSlide4);
 				pAudio->StopAudio(m_hSlide6);
 				pAudio->PlayAudio(m_hSlide5);
+				m_bSlide5 = true;
+				m_bSlide4 = false;
+				m_bSlide6 = false;
 			}
 		}
 			break;
 		case TUT_ENEMIES:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide6) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide6) == false && m_bSlide6 == false)
 			{
 				pAudio->StopAudio(m_hSlide5);
 				pAudio->StopAudio(m_hSlide7);
 				pAudio->PlayAudio(m_hSlide6);
+				m_bSlide6 = true;
+				m_bSlide5 = false;
+				m_bSlide7 = false;
 			}
 		}
 			break;
 		case TUT_MOVEMENT:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide7) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide7) == false && m_bSlide7 == false)
 			{
 				pAudio->StopAudio(m_hSlide6);
 				pAudio->StopAudio(m_hSlide8);
 				pAudio->PlayAudio(m_hSlide7);
+				m_bSlide7 = true;
+				m_bSlide8 = false;
+				m_bSlide6 = false;
 			}
 		}
 			break;
 		case TUT_BUILD1:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide8) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide8) == false && m_bSlide8 == false)
 			{
 				pAudio->StopAudio(m_hSlide7);
 				pAudio->StopAudio(m_hSlide9);
 				pAudio->PlayAudio(m_hSlide8);
+				m_bSlide8 = true;
+				m_bSlide7 = false;
+				m_bSlide9 = false;
 			}
+			
 		}
 			break;
 		case TUT_BUILD2:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide9) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide9) == false && m_bSlide9 == false)
 			{
 				pAudio->StopAudio(m_hSlide8);
 				pAudio->StopAudio(m_hSlide10);
 				pAudio->PlayAudio(m_hSlide9);
+				m_bSlide9 = true;
+				m_bSlide8 = false;
+				m_bSlide10 = false;
 			}
 		}
 			break;
 		case TUT_BUILD3:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide10) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide10) == false && m_bSlide10 == false)
 			{
 				pAudio->StopAudio(m_hSlide9);
 				pAudio->StopAudio(m_hSlide11);
 				pAudio->PlayAudio(m_hSlide10);
+				m_bSlide10 = true;
+				m_bSlide9 = false;
+				m_bSlide11 = false;
 			}
+			
 		}
 			break;
 		case TUT_BUILD4:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide11) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide11) == false && m_bSlide11 == false)
 			{
 				pAudio->StopAudio(m_hSlide10);
 				pAudio->StopAudio(m_hSlide12);
 				pAudio->PlayAudio(m_hSlide11);
+				m_bSlide11 = true;
+				m_bSlide10 = false;
+				m_bSlide12 = false;
 			}
+			
 		}
 			break;
 		case TUT_BUILD5:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide12) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide12) == false && m_bSlide12 == false)
 			{
 				pAudio->StopAudio(m_hSlide11);
 				pAudio->StopAudio(m_hSlide13);
 				pAudio->PlayAudio(m_hSlide12);
+				m_bSlide12 = true;
+				m_bSlide11 = false;
+				m_bSlide13 = false;
 			}
+			
 		}
 			break;
 		case TUT_SHOP:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide13) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide13) == false && m_bSlide13 == false)
 			{
 				pAudio->StopAudio(m_hSlide12);
 				pAudio->StopAudio(m_hSlide14);
 				pAudio->PlayAudio(m_hSlide13);
+				m_bSlide13 = true;
+				m_bSlide12 = false;
+				m_bSlide14 = false;
 			}
+			
 		}
 			break;
 		case TUT_TOWERS:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide14) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide14) == false && m_bSlide14 == false)
 			{
 				pAudio->StopAudio(m_hSlide13);
 				pAudio->StopAudio(m_hSlide15); 
 				pAudio->PlayAudio(m_hSlide14);
+				m_bSlide14 = true;
+				m_bSlide13 = false;
+				m_bSlide15 = false;
 			}
+			
 		}
 			break;
 		case TUT_SHOOTING:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide15) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide15) == false && m_bSlide15 == false)
 			{
 				pAudio->StopAudio(m_hSlide14);
 				pAudio->StopAudio(m_hSlide16);
 				pAudio->PlayAudio(m_hSlide15);
+				m_bSlide15 = true;
+				m_bSlide14 = false;
+				m_bSlide16 = false;
 			}
 		}
 			break;
 		case TUT_NADES:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide16) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide16) == false && m_bSlide16 == false)
 			{
 				pAudio->StopAudio(m_hSlide15);
 				pAudio->StopAudio(m_hSlide17);
 				pAudio->PlayAudio(m_hSlide16);
+				m_bSlide16 = true;
+				m_bSlide15 = false;
+				m_bSlide17 = false;
 			}
 		}
 			break;
 		case TUT_HEALING:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide17) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide17) == false && m_bSlide17 == false)
 			{
 				pAudio->StopAudio(m_hSlide16);
 				pAudio->StopAudio(m_hSlide18);
 				pAudio->PlayAudio(m_hSlide17);
+				m_bSlide17 = true;
+				m_bSlide16 = false;
+				m_bSlide18 = false;
 			}
 		}
 			break;
 		case TUT_THANKYOU:
 		{
-			if (pAudio->IsAudioPlaying(m_hSlide18) == false)
+			if (pAudio->IsAudioPlaying(m_hSlide18) == false && m_bSlide18 == false)
 			{
 				pAudio->StopAudio(m_hSlide17);
 				pAudio->PlayAudio(m_hSlide18);
+				m_bSlide18 = true;
+				m_bSlide17 = false;
 			}
 		}
 			break;
