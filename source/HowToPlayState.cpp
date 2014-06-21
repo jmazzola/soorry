@@ -73,14 +73,25 @@
 	m_pMainButton->SetSize({ 350, 70 });
 	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
-
-	m_hTutorial = pAudio->LoadAudio("resource/audio/Tutorial1.wav");
-	m_hTutorial2 = pAudio->LoadAudio("resource/audio/Tutorial2.wav");
-	m_hTutorial3 = pAudio->LoadAudio("resource/audio/Tutorial3.wav");
-	m_hTutorial4 = pAudio->LoadAudio("resource/audio/Tutorial4.wav");
-	m_hTutorial5 = pAudio->LoadAudio("resource/audio/Tutorial5.wav");
-	m_hTutorial6 = pAudio->LoadAudio("resource/audio/Tutorial6.wav");
-	m_hTutorial7 = pAudio->LoadAudio("resource/audio/Tutorial7.wav");
+	m_hSlide1	= pAudio->LoadAudio("resource/audio/Slides/Slide1.wav"	);
+	m_hSlide2	= pAudio->LoadAudio("resource/audio/Slides/Slide2.wav"	);
+	m_hSlide3	= pAudio->LoadAudio("resource/audio/Slides/Slide3.wav"	);
+	m_hSlide4	= pAudio->LoadAudio("resource/audio/Slides/Slide4.wav"	);
+	m_hSlide5	= pAudio->LoadAudio("resource/audio/Slides/Slide5.wav"	);
+	m_hSlide6	= pAudio->LoadAudio("resource/audio/Slides/Slide6.wav"	);
+	m_hSlide7	= pAudio->LoadAudio("resource/audio/Slides/Slide7.wav"	);
+	m_hSlide8	= pAudio->LoadAudio("resource/audio/Slides/Slide8.wav"	);
+	m_hSlide9	= pAudio->LoadAudio("resource/audio/Slides/Slide9.wav"	);
+	m_hSlide10	= pAudio->LoadAudio("resource/audio/Slides/Slide10.wav"	);
+	m_hSlide11	= pAudio->LoadAudio("resource/audio/Slides/Slide11.wav"	);
+	m_hSlide12	= pAudio->LoadAudio("resource/audio/Slides/Slide12.wav"	);
+	m_hSlide13	= pAudio->LoadAudio("resource/audio/Slides/Slide13.wav"	);
+	m_hSlide14	= pAudio->LoadAudio("resource/audio/Slides/Slide14.wav"	);
+	m_hSlide15	= pAudio->LoadAudio("resource/audio/Slides/Slide15.wav"	);
+	m_hSlide16	= pAudio->LoadAudio("resource/audio/Slides/Slide16.wav"	);
+	m_hSlide17	= pAudio->LoadAudio("resource/audio/Slides/Slide17.wav"	);
+	m_hSlide18	= pAudio->LoadAudio("resource/audio/Slides/Slide18.wav"	);
+	
 	m_hRock = pAudio->LoadAudio(L"resource/audio/Background_Music.xwm");
 
 	// Set the tab
@@ -128,13 +139,24 @@
 
 	// Release audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-	pAudio->UnloadAudio(m_hTutorial);
-	pAudio->UnloadAudio(m_hTutorial2);
-	pAudio->UnloadAudio(m_hTutorial3);
-	pAudio->UnloadAudio(m_hTutorial4);
-	pAudio->UnloadAudio(m_hTutorial5);
-	pAudio->UnloadAudio(m_hTutorial6);
-	pAudio->UnloadAudio(m_hTutorial7); 
+	pAudio->UnloadAudio(m_hSlide1);
+	pAudio->UnloadAudio(m_hSlide2);
+	pAudio->UnloadAudio(m_hSlide3);
+	pAudio->UnloadAudio(m_hSlide4);
+	pAudio->UnloadAudio(m_hSlide5);
+	pAudio->UnloadAudio(m_hSlide6);
+	pAudio->UnloadAudio(m_hSlide7);
+	pAudio->UnloadAudio(m_hSlide8);
+	pAudio->UnloadAudio(m_hSlide9);
+	pAudio->UnloadAudio(m_hSlide10);
+	pAudio->UnloadAudio(m_hSlide11);
+	pAudio->UnloadAudio(m_hSlide12);
+	pAudio->UnloadAudio(m_hSlide13);
+	pAudio->UnloadAudio(m_hSlide14);
+	pAudio->UnloadAudio(m_hSlide15);
+	pAudio->UnloadAudio(m_hSlide16);
+	pAudio->UnloadAudio(m_hSlide17);
+	pAudio->UnloadAudio(m_hSlide18);
 	pAudio->UnloadAudio(m_hRock);
 
 	// Terminate & deallocate menu items
@@ -238,8 +260,194 @@
 	}
 	else
 	{
+		SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
 
+		switch (m_nTab)
+		{
+		case TUT_MAIN:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide1) == false)
+			{
+				pAudio->StopAudio(m_hSlide2);
+				pAudio->PlayAudio(m_hSlide1);
+			}
+		}
+			break;
+		case TUT_INTRO2:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide2) == false)
+			{
+				pAudio->StopAudio(m_hSlide3);
+				pAudio->StopAudio(m_hSlide1);
+				pAudio->PlayAudio(m_hSlide2);
+			}
+		}
+			break;
+		case TUT_INTRO3:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide3) == false)
+			{
+				pAudio->StopAudio(m_hSlide2);
+				pAudio->StopAudio(m_hSlide4);
+				pAudio->PlayAudio(m_hSlide3);
+			}
+		}
+			break;
+		case TUT_INTRO4:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide4) == false)
+			{
+				pAudio->StopAudio(m_hSlide3);
+				pAudio->StopAudio(m_hSlide5);
+				pAudio->PlayAudio(m_hSlide4);
+			}
+		}
+			break;
+		case TUT_PICKUPS:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide5) == false)
+			{
+				pAudio->StopAudio(m_hSlide4);
+				pAudio->StopAudio(m_hSlide6);
+				pAudio->PlayAudio(m_hSlide5);
+			}
+		}
+			break;
+		case TUT_ENEMIES:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide6) == false)
+			{
+				pAudio->StopAudio(m_hSlide5);
+				pAudio->StopAudio(m_hSlide7);
+				pAudio->PlayAudio(m_hSlide6);
+			}
+		}
+			break;
+		case TUT_MOVEMENT:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide7) == false)
+			{
+				pAudio->StopAudio(m_hSlide6);
+				pAudio->StopAudio(m_hSlide8);
+				pAudio->PlayAudio(m_hSlide7);
+			}
+		}
+			break;
+		case TUT_BUILD1:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide8) == false)
+			{
+				pAudio->StopAudio(m_hSlide7);
+				pAudio->StopAudio(m_hSlide9);
+				pAudio->PlayAudio(m_hSlide8);
+			}
+		}
+			break;
+		case TUT_BUILD2:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide9) == false)
+			{
+				pAudio->StopAudio(m_hSlide8);
+				pAudio->StopAudio(m_hSlide10);
+				pAudio->PlayAudio(m_hSlide9);
+			}
+		}
+			break;
+		case TUT_BUILD3:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide10) == false)
+			{
+				pAudio->StopAudio(m_hSlide9);
+				pAudio->StopAudio(m_hSlide11);
+				pAudio->PlayAudio(m_hSlide10);
+			}
+		}
+			break;
+		case TUT_BUILD4:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide11) == false)
+			{
+				pAudio->StopAudio(m_hSlide10);
+				pAudio->StopAudio(m_hSlide12);
+				pAudio->PlayAudio(m_hSlide11);
+			}
+		}
+			break;
+		case TUT_BUILD5:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide12) == false)
+			{
+				pAudio->StopAudio(m_hSlide11);
+				pAudio->StopAudio(m_hSlide13);
+				pAudio->PlayAudio(m_hSlide12);
+			}
+		}
+			break;
+		case TUT_SHOP:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide13) == false)
+			{
+				pAudio->StopAudio(m_hSlide12);
+				pAudio->StopAudio(m_hSlide14);
+				pAudio->PlayAudio(m_hSlide13);
+			}
+		}
+			break;
+		case TUT_TOWERS:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide14) == false)
+			{
+				pAudio->StopAudio(m_hSlide13);
+				pAudio->StopAudio(m_hSlide15); 
+				pAudio->PlayAudio(m_hSlide14);
+			}
+		}
+			break;
+		case TUT_SHOOTING:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide15) == false)
+			{
+				pAudio->StopAudio(m_hSlide14);
+				pAudio->StopAudio(m_hSlide16);
+				pAudio->PlayAudio(m_hSlide15);
+			}
+		}
+			break;
+		case TUT_NADES:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide16) == false)
+			{
+				pAudio->StopAudio(m_hSlide15);
+				pAudio->StopAudio(m_hSlide17);
+				pAudio->PlayAudio(m_hSlide16);
+			}
+		}
+			break;
+		case TUT_HEALING:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide17) == false)
+			{
+				pAudio->StopAudio(m_hSlide16);
+				pAudio->StopAudio(m_hSlide18);
+				pAudio->PlayAudio(m_hSlide17);
+			}
+		}
+			break;
+		case TUT_THANKYOU:
+		{
+			if (pAudio->IsAudioPlaying(m_hSlide18) == false)
+			{
+				pAudio->StopAudio(m_hSlide17);
+				pAudio->PlayAudio(m_hSlide18);
+			}
+		}
+			break;
+		case TABS_TOTAL:
+		{
 
+		}
+			break;
+		}
 
 
 		// Reset the transition time to allow for transitions again

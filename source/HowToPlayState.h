@@ -81,13 +81,24 @@ private:
 
 	/**********************************************************/
 	// Audio
-	SGD::HAudio	m_hTutorial = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial2 = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial3 = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial4 = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial5 = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial6 = SGD::INVALID_HANDLE;
-	SGD::HAudio	m_hTutorial7 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide1 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide2 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide3 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide4 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide5 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide6 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide7 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide8 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide9 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide10 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide11 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide12 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide13 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide14 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide15 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide16 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide17 = SGD::INVALID_HANDLE;
+	SGD::HAudio m_hSlide18 = SGD::INVALID_HANDLE;
 	SGD::HAudio m_hRock = SGD::INVALID_HANDLE;
 
 	/**********************************************************/

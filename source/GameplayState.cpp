@@ -1845,7 +1845,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-
 			}
 
 		}
