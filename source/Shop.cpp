@@ -32,6 +32,7 @@
 #define RL_CURAMMO 20
 #define HT_CURAMMO 50
 
+
 // Enter
 void Shop::Enter(Entity* player)
 {
@@ -646,6 +647,35 @@ void Shop::UpdateItemStatus()
 
 	case UPGRADES_TAB:
 	{
+		Weapon* weapons = player->GetWeapons();
+
+		(weapons[0].GetMaxAmmo() >= weapons[0].GetMaxAmmoCap()) ? upgradeNames[UG_AR_AMMO] = "AR Max Ammo [MAXED OUT]" : upgradeNames[UG_AR_AMMO] = "AR Max Ammo +100";
+		isUpgradeMaxed[UG_AR_AMMO] = (weapons[0].GetMaxAmmo() >= weapons[0].GetMaxAmmoCap());
+
+		(weapons[1].GetMaxAmmo() >= weapons[1].GetMaxAmmoCap()) ? upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo [MAXED OUT]" : upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo +100";
+		isUpgradeMaxed[UG_SHOTGUN_AMMO] = (weapons[1].GetMaxAmmo() >= weapons[1].GetMaxAmmoCap());
+
+		(weapons[2].GetMaxAmmo() >= weapons[2].GetMaxAmmoCap()) ? upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo [MAXED OUT]" : upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo +100";
+		isUpgradeMaxed[UG_LAUNCHER_AMMO] = (weapons[2].GetMaxAmmo() >= weapons[2].GetMaxAmmoCap());
+
+
+		(weapons[0].GetFireRate() <= weapons[0].GetFireRateCap()) ? upgradeNames[UG_AR_ROF] = "AR Fire Rate [MAXED OUT]" : upgradeNames[UG_AR_ROF] = "AR Fire Rate +0.2";
+		isUpgradeMaxed[UG_AR_ROF] = (weapons[0].GetFireRate() <= weapons[0].GetFireRateCap());
+
+		(weapons[1].GetFireRate() <= weapons[1].GetFireRateCap()) ? upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate [MAXED OUT]" : upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate -0.1";
+		isUpgradeMaxed[UG_SHOTGUN_ROF] = (weapons[1].GetFireRate() <= weapons[1].GetFireRateCap());
+
+		(weapons[2].GetFireRate() <= weapons[2].GetFireRateCap()) ? upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate [MAXED OUT]" : upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate -0.2";
+		isUpgradeMaxed[UG_LAUNCHER_ROF] = (weapons[2].GetFireRate() <= weapons[2].GetFireRateCap());
+
+		(m_nARDamage >= m_nARDamageMax) ? upgradeNames[UG_AR_DAMAGE] = "AR Damage [MAXED OUT]" : upgradeNames[UG_AR_DAMAGE] = "AR Damage +20";
+		isUpgradeMaxed[UG_AR_DAMAGE] = (m_nARDamage >= m_nARDamageMax);
+
+		(m_nShotgunDamage >= m_nSHDamageMax) ? upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage [MAXED OUT]" : upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage +20";
+		isUpgradeMaxed[UG_SHOTGUN_DAMAGE] = (m_nShotgunDamage >= m_nSHDamageMax);
+
+		(m_nRLDamage >= m_nRLDamageMax) ? upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage [MAXED OUT]" : upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage +20";
+		isUpgradeMaxed[UG_LAUNCHER_DAMAGE] = (m_nRLDamage >= m_nRLDamageMax);
 
 	}
 		break;
@@ -967,14 +997,23 @@ void Shop::Render()
 				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
 
 
-				if (m_nCursor == i && score < upgradePrices[i])
+				// If our object is at max and we're selected
+				if (m_nCursor == i && isUpgradeMaxed[i])
+					// Draw red
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-				else if (m_nCursor == i && score >= upgradePrices[i])
+				else if (m_nCursor != i && isUpgradeMaxed[i])
+					// Draw gray
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
+
+
+				else if (m_nCursor == i && score < itemPrices[i])
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+				else if (m_nCursor == i && score >= itemPrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 
-				else if (m_nCursor != i && score >= upgradePrices[i])
+				else if (m_nCursor != i && score >= itemPrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
-				else if (m_nCursor != i && score < upgradePrices[i])
+				else if (m_nCursor != i && score < itemPrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 			}
 
@@ -1204,9 +1243,13 @@ bool Shop::Buy(int parcel, int shopSection)
 		// If the player has the money for the upgrade
 		if (curMoney >= (int)upgradePrices[parcel])
 		{
-			player->SetScore(curMoney -= upgradePrices[parcel]);
-			tracker->SpendItUp(itemPrices[parcel]);
-			return true;
+			if (!isUpgradeMaxed[parcel])
+			{
+				player->SetScore(curMoney -= upgradePrices[parcel]);
+				tracker->SpendItUp(itemPrices[parcel]);
+				return true;
+			}
+			return false;
 		}
 		else
 			return false;
@@ -1270,7 +1313,7 @@ void Shop::Sell(int parcel, int shopSection)
 
 	case UPGRADES:		// upgrades
 	{
-		player->SetScore(curMoney += int(upgradePrices[parcel] * SELL_DISCOUNT));
+		
 	}
 		break;
 
@@ -1494,38 +1537,41 @@ void Shop::GivePurchase(int parcel, int shopSection)
 	if (shopSection == UPGRADES)
 	{
 
-		if (parcel == UG_SHOTGUN_ROF)
-			weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
+		if (!isUpgradeMaxed[parcel])
+		{
+			if (parcel == UG_SHOTGUN_ROF)
+				weapons[1].SetFireRate(weapons[1].GetFireRate() - upgradeAmountToAdd[UG_SHOTGUN_ROF]);
 
-		if (parcel == UG_SHOTGUN_DAMAGE)
-			SetShotgunDamage(GetShotgunDamage() + upgradeAmountToAdd[UG_SHOTGUN_DAMAGE]);
+			if (parcel == UG_SHOTGUN_DAMAGE)
+				SetShotgunDamage(GetShotgunDamage() + (int)upgradeAmountToAdd[UG_SHOTGUN_DAMAGE]);
 
-		if (parcel == UG_SHOTGUN_AMMO)
-			weapons[1].SetMaxAmmo(weapons[1].GetMaxAmmo() + upgradeAmountToAdd[UG_SHOTGUN_AMMO]);
-
-
-		if (parcel == UG_AR_ROF)
-			weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
-
-		if (parcel == UG_AR_DAMAGE)
-			SetARDamage(GetARDamage() + upgradeAmountToAdd[UG_AR_DAMAGE]);
-
-		if (parcel == UG_AR_AMMO)
-			weapons[0].SetMaxAmmo(weapons[0].GetMaxAmmo() + upgradeAmountToAdd[UG_AR_AMMO]);
+			if (parcel == UG_SHOTGUN_AMMO)
+				weapons[1].SetMaxAmmo(weapons[1].GetMaxAmmo() + (int)upgradeAmountToAdd[UG_SHOTGUN_AMMO]);
 
 
-		if (parcel == UG_LAUNCHER_ROF)
-			weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
+			if (parcel == UG_AR_ROF)
+				weapons[0].SetFireRate(weapons[0].GetFireRate() - upgradeAmountToAdd[UG_AR_ROF]);
 
-		if (parcel == UG_LAUNCHER_DAMAGE)
-			SetRLDamage(GetRLDamage() + upgradeAmountToAdd[UG_LAUNCHER_DAMAGE]);
+			if (parcel == UG_AR_DAMAGE)
+				SetARDamage(GetARDamage() + (int)upgradeAmountToAdd[UG_AR_DAMAGE]);
 
-		if (parcel == UG_LAUNCHER_AMMO)
-			weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
+			if (parcel == UG_AR_AMMO)
+				weapons[0].SetMaxAmmo(weapons[0].GetMaxAmmo() + (int)upgradeAmountToAdd[UG_AR_AMMO]);
 
 
-		// Check if we have progressive prices
-		if (isUpgradeProgressive[parcel])
+			if (parcel == UG_LAUNCHER_ROF)
+				weapons[2].SetFireRate(weapons[2].GetFireRate() - upgradeAmountToAdd[UG_LAUNCHER_ROF]);
+
+			if (parcel == UG_LAUNCHER_DAMAGE)
+				SetRLDamage(GetRLDamage() + (int)upgradeAmountToAdd[UG_LAUNCHER_DAMAGE]);
+
+			if (parcel == UG_LAUNCHER_AMMO)
+				weapons[2].SetMaxAmmo(weapons[2].GetMaxAmmo() + (int)upgradeAmountToAdd[UG_LAUNCHER_AMMO]);
+		}
+
+
+		// Check if we have progressive prices and the upgrade isn't maxed
+		if (isUpgradeProgressive[parcel] && !isUpgradeMaxed[parcel])
 			upgradePrices[parcel] = (unsigned int)(upgradePrices[parcel] + upgradePrices[parcel] * BUY_INCREASE);
 	}
 
@@ -1725,9 +1771,7 @@ void Shop::LoadPrices(string xmlFileName)
 		// If amount to add exists
 		if (pUpgrade->Attribute("amountToAdd"))
 		{
-			int fuckTinyXML = 0;
-			pUpgrade->Attribute("amountToAdd", &fuckTinyXML);
-			upgradeAmountToAdd[i] = (unsigned int)fuckTinyXML;
+			pUpgrade->QueryFloatAttribute("amountToAdd", &upgradeAmountToAdd[i]);
 		}
 		else
 			upgradeAmountToAdd[i] = 0xDEAD;

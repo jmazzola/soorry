@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "DestroyEntityMessage.h"
 #include <vector>
+#include "CreateExplosionMessage.h"
 
 TrickShotBullet::TrickShotBullet () : SGD::Listener(this)
 {
@@ -70,6 +71,9 @@ void TrickShotBullet::Update ( float dt )
 	{
 		DestroyEntityMessage* pmsg = new DestroyEntityMessage(this);
 		pmsg->QueueMessage();
+
+		CreateExplosionMessage* exploMsg = new CreateExplosionMessage(m_ptPosition.x, m_ptPosition.y, 75, 64);
+		exploMsg->QueueMessage();
 	}
 }
 

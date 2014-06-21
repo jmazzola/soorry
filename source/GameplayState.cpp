@@ -359,6 +359,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Fire_Particle1.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Snow.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle2.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Doughnut.xml");
 	//Set background color
@@ -929,7 +930,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pAudio->UnloadAudio(m_hRunning_Man);
 	pAudio->UnloadAudio(m_hHard_Core);
 
-	//Matt gets rid of the memorym_hWelcomeShop	 leaks
+	//Matt gets rid of the memory
 	m_pParticleManager->unload();
 
 	// Delete the zombie factory
@@ -1853,7 +1854,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-
 			}
 
 		}
@@ -2697,18 +2697,20 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 0://Assault Rifle
 	{
 		// Adjust for projectile to come from center
-		playerCenter.x += 12;
-		playerCenter.y += 6;
+		playerCenter.x += 16;
+		playerCenter.y += 16;
 		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(playerCenter);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
 		SGD::Vector vec = pos - playerCenter;
 		vec.Normalize();
 		vec *= 1000;
+
+		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
+
 		tempProj->SetVelocity(vec);
 		tempProj->SetHitSound(m_hBulletHit);
 		tempProj->SetImpactSound(m_hBulletImpact);
@@ -2720,18 +2722,19 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 1://Shotgun
 	{
 		// Adjust for projectile to come from center
-		playerCenter.x += 12;
-		playerCenter.y += 12;
+		playerCenter.x += 16;
+		playerCenter.y += 16;
 		ShotgunPellet* tempProj = new ShotgunPellet;
 		tempProj->SetDamage(m_pShop->GetShotgunDamage());
 		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(playerCenter);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
 		SGD::Vector vec = pos - playerCenter;
 		vec.Normalize();
 		vec *= (float)(750 + rand() % 500);
+
+		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
 
 		// Rotate bullet at random direction
 		float degree = (-50 + rand() % 100) / 100.0f;
@@ -2745,20 +2748,22 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		break;
 	case 2://Rocket launcher
 	{
+			   playerCenter.x += 16;
+			   playerCenter.y += 16;
 		Rocket* tempProj = new Rocket;
 		tempProj->SetDamage(m_pShop->GetRLDamage());
 		tempProj->SetRadius(100.0f);
 		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(playerCenter);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
 		SGD::Vector vec = pos - playerCenter;
 		vec.Normalize();
-		vec *= 1000;
+		vec *= 200;
 		tempProj->SetVelocity(vec);
 		tempProj->SetImpactSound(m_hBulletImpact);
 		tempProj->SetHitSound(m_hBulletHit);
+		tempProj->SetPosition(playerCenter + SGD::Vector(7, -19).ComputeRotated(m_pPlayer->GetRotation()));
 
 		//ParticleManager::GetInstance()->activate("Smoke_Particle", tempProj, 0, 0);
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hRocketShoot);
@@ -2769,11 +2774,10 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 3://HatTrick
 	{
 		// Adjust for projectile to come from center
-		playerCenter.x += 8;
-		playerCenter.y += 8;
+		playerCenter.x += 16;
+		playerCenter.y += 16;
 		TrickShotBullet* tsb = new TrickShotBullet;
 		tsb->SetDamage(m_pShop->GetHTDamage());
-		tsb->SetPosition(playerCenter);
 		tsb->SetVelocity({ 0.0f, 0.0f });
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
@@ -2782,7 +2786,12 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec.Normalize();
 		vec *= 300;
 		tsb->SetForce(vec);
+		SGD::Point outPos = playerCenter + SGD::Vector(7, -20).ComputeRotated(m_pPlayer->GetRotation());
+		tsb->SetPosition(outPos);
 
+		CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle2", { outPos.x, outPos.y }, 16, 16);
+		msg->QueueMessage();
+		msg = nullptr;
 		// ADD SOUND
 
 		return tsb;
@@ -3134,7 +3143,8 @@ void GameplayState::RenderCredits(void)
 	credits += "\t\t\t\t\tJustin Patterson\n\n";
 	credits += "\t\t\t\t\tSpecial Thanks\n";
 	credits += "\t\t\t\t\tJordan Butler for ideas.\n";
-	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there";
+	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there\n\n";
+
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.
