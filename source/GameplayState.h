@@ -143,6 +143,7 @@ private:
 
 	SGD::HTexture m_hPauseMainBackground = SGD::INVALID_HANDLE;
 	SGD::HTexture m_hPauseOptionsBackground = SGD::INVALID_HANDLE;
+	SGD::HTexture m_hLosingBackground = SGD::INVALID_HANDLE;
 
 	SGD::HTexture m_hHUD = SGD::INVALID_HANDLE;
 

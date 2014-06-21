@@ -793,6 +793,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
+	m_hLosingBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_GameOver.png");
 
 	// Turn the cursor on
 	//if(pGraphics->IsCursorShowing() == false)
@@ -893,6 +894,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hLavaTrapFlameImage);
 	pGraphics->UnloadTexture(m_hUnderBackground);
 	pGraphics->UnloadTexture(m_hExplosionImage);
+	pGraphics->UnloadTexture(m_hLosingBackground);
 
 	m_pAnimation->UnloadSprites();
 	m_pAnimation = nullptr;
@@ -3194,10 +3196,9 @@ void GameplayState::RenderLoss(void)
 		pGraphics->TurnCursorOn();
 
 	// Draw the paused main menu background
-	pGraphics->DrawTexture(m_hBackground, { 0, 0 });
+	pGraphics->DrawTexture(m_hLosingBackground, { 0, 0 });
 
 	// Draw the game over at the top
-	m_pFont->Draw("Game Over", Game::GetInstance()->GetScreenWidth() / 2 - (int)(m_pFont->GetTextWidth("Game Over") * .75f), 100, 1.2f, SGD::Color(255, 0, 0, 0));
 
 	// Draw the options
 	if (m_bReplay == true)
