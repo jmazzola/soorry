@@ -234,7 +234,8 @@ int Enemy::GetType() const
 		// If the spikes are up do take damage
 		if (spike->GetActive() == true)
 		{
-			m_nCurrHealth -= spike->GetDamage();
+			if (!spike->GetSpiked())
+				m_nCurrHealth -= spike->GetDamage();
 		}
 	}
 		break;

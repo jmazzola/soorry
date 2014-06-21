@@ -22,6 +22,7 @@ public:
 	float GetHoldTimer( void ) const;
 	float GetHoldLength( void ) const;
 	float GetDamage(void) const;
+	bool GetSpiked() const;
 
 	/**********************************************************/
 	// Mutators
@@ -39,6 +40,6 @@ private:
 	float m_fHoldTimer;
 	float m_fHoldLength;
 	float m_fDamage;
-
+	bool m_bSpiked;
 };
 
