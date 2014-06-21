@@ -13456,27 +13456,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="35" y="66" index="83" collider="false">
+    <tile x="35" y="66" index="84" collider="false">
       <initial_trigger id="SHOP" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="35" y="67" index="83" collider="false">
+    <tile x="35" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="35" y="68" index="83" collider="false">
+    <tile x="35" y="68" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="35" y="69" index="83" collider="false">
+    <tile x="35" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="35" y="70" index="83" collider="false">
+    <tile x="35" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -13831,27 +13831,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="36" y="66" index="83" collider="false">
+    <tile x="36" y="66" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="36" y="67" index="83" collider="false">
+    <tile x="36" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="36" y="68" index="83" collider="false">
+    <tile x="36" y="68" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="36" y="69" index="83" collider="false">
+    <tile x="36" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="36" y="70" index="83" collider="false">
+    <tile x="36" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -14206,12 +14206,12 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="37" y="66" index="83" collider="false">
+    <tile x="37" y="66" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="37" y="67" index="83" collider="false">
+    <tile x="37" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -14221,12 +14221,12 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="37" y="69" index="83" collider="false">
+    <tile x="37" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="37" y="70" index="83" collider="false">
+    <tile x="37" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -14581,12 +14581,12 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="38" y="66" index="83" collider="false">
+    <tile x="38" y="66" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="38" y="67" index="83" collider="false">
+    <tile x="38" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -14596,12 +14596,12 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="38" y="69" index="83" collider="false">
+    <tile x="38" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="38" y="70" index="83" collider="false">
+    <tile x="38" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -14956,27 +14956,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="39" y="66" index="83" collider="false">
+    <tile x="39" y="66" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="39" y="67" index="83" collider="false">
+    <tile x="39" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="39" y="68" index="83" collider="false">
+    <tile x="39" y="68" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="39" y="69" index="83" collider="false">
+    <tile x="39" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="39" y="70" index="83" collider="false">
+    <tile x="39" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -15331,27 +15331,27 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="40" y="66" index="83" collider="false">
+    <tile x="40" y="66" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="40" y="67" index="83" collider="false">
+    <tile x="40" y="67" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="40" y="68" index="83" collider="false">
+    <tile x="40" y="68" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="40" y="69" index="83" collider="false">
+    <tile x="40" y="69" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="40" y="70" index="83" collider="false">
+    <tile x="40" y="70" index="84" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
