@@ -67,7 +67,6 @@ public:
 	bool HasShotty() const { return m_bHasShotty; }
 	bool HasRocketLauncher() const { return m_bHasRocketz; }
 	bool HasHatTrick() const { return m_bHasHatTrick; }
-
 	float GetRotation() const { return m_fRotation; }
 	/**********************************************************/
 	// Mutators
