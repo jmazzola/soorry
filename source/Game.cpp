@@ -164,8 +164,10 @@ int Game::Main(void)
 	}
 
 	// Toggle debugging mode
+#if _DEBUG
 	if (m_pInput->IsKeyPressed(SGD::Key::F1))
 		SetDebugging(!m_bDebugMode);
+#endif
 
 	
 #if !ARCADE_MODE

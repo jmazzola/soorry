@@ -792,6 +792,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
+	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/hattrickThumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 	m_hLosingBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_GameOver.png");
 
@@ -971,10 +972,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hARThumb);
 	pGraphics->UnloadTexture(m_hRLPic);
 	pGraphics->UnloadTexture(m_hRLThumb);
+	pGraphics->UnloadTexture(m_hFireAxeThumb);
 	pGraphics->UnloadTexture(m_hBackground);
 
 	// Unload Blank
-	pGraphics->UnloadTexture(m_hBackground);
+	//pGraphics->UnloadTexture(m_hBackground);
 
 	// Make sure pause isn't set
 	m_bIsPaused = false;
@@ -1868,9 +1870,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		}
 
 		// Render the FPS
+#if _DEBUG
 		string fps = "FPS: ";
 		fps += std::to_string(m_unFPS);
 		pGraphics->DrawString(fps.c_str(), { 20, 560 }, { 255, 0, 0 });
+#endif
 
 		// -- Render HUD --
 		if (!m_bIsPaused)
@@ -2024,9 +2028,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Hat Trick
 					if (player->HasHatTrick() && weapons[3].GetCurrAmmo() > 0)
-						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
+						pGraphics->DrawTextureSection(m_hFireAxeThumb, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)));
 					else if (player->HasHatTrick() && weapons[3].GetCurrAmmo() == 0)
-						pGraphics->DrawTextureSection(m_hBackground, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
+						pGraphics->DrawTextureSection(m_hFireAxeThumb, { 455, 498 }, SGD::Rectangle({ 0, 0 }, SGD::Size(56, 57)), 0, {}, { 255, 0, 0 });
 
 					switch (player->GetCurrWeapon())
 					{
