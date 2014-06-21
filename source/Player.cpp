@@ -777,16 +777,17 @@ void Player::Update ( float dt )
 		//Colliding with wall
 		else
 		{
-			if (pAudio->IsAudioPlaying(m_hBlockBreak) == false)
-			{
-				pAudio->PlayAudio(m_hBlockBreak);
-			}
+			
 			if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WALL)
 			{
 				pWorld->SetColliderID((int)pos.x, (int)pos.y, EMPTY);
 				CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WALL, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 				pmsg->QueueMessage();
 				pmsg = nullptr;
+				if (pAudio->IsAudioPlaying(m_hBlockBreak) == false)
+				{
+					pAudio->PlayAudio(m_hBlockBreak);
+				}
 			}
 			else if (pWorld->GetColliderID((int)pos.x, (int)pos.y) == WINDOW)
 			{
@@ -794,6 +795,10 @@ void Player::Update ( float dt )
 				CreatePickupMessage*  pmsg = new CreatePickupMessage(ENT_PICKUP_WINDOW, { pos.x*GRIDWIDTH, pos.y * GRIDHEIGHT });
 				pmsg->QueueMessage();
 				pmsg = nullptr;
+				if (pAudio->IsAudioPlaying(m_hBlockBreak) == false)
+				{
+					pAudio->PlayAudio(m_hBlockBreak);
+				}
 			}
 		}
 #endif

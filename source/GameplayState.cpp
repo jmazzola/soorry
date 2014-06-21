@@ -362,7 +362,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle2.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Doughnut.xml");
-	m_pParticleManager->loadEmitter("resource/particle/Muzzle_Flash1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Muzzle_Flash_Directional1.xml");
 
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -801,22 +801,21 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Create snow
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
-		//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
-		//msg->QueueMessage();
-		//msg = nullptr;
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
+		msg->QueueMessage();
+		msg = nullptr;
 	}
 	else if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Doughnut", 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-
 	}
 	else
 	{
-		/*CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
 		msg->QueueMessage();
-		msg = nullptr;*/
+		msg = nullptr;
 	}
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
@@ -1763,7 +1762,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// render particles
 		m_pParticleManager->Render();
 		// Draw health overlay
-		float currHealth = player->GetCurrHealth();
+		float currHealth = max(player->GetCurrHealth(), 30);
 		float maxHealth = player->GetMaxHealth();
 		if (currHealth != maxHealth)
 		{
@@ -2701,7 +2700,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		// Adjust for projectile to come from center
 		playerCenter.x += 16;
 		playerCenter.y += 16;
-		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
+		AssaultRifleBullet* tempProj = new AssaultRifleBullet; 
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2712,7 +2711,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= 1000;
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		tempProj->SetVelocity(vec);
@@ -2739,7 +2738,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= (float)(750 + rand() % 500);
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		// Rotate bullet at random direction

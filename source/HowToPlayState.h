@@ -122,5 +122,23 @@ private:
 	bool m_bTHEBOOL;
 	bool m_bAccept;
 	SGD::Vector m_vtStick;
-
+	//BOOLS
+	bool m_bSlide1 = false;
+	bool m_bSlide2 = false;
+	bool m_bSlide3 = false;
+	bool m_bSlide4 = false;
+	bool m_bSlide5 = false;
+	bool m_bSlide6 = false;
+	bool m_bSlide7 = false;
+	bool m_bSlide8 = false;
+	bool m_bSlide9 = false;
+	bool m_bSlide10 = false;
+	bool m_bSlide11 = false;
+	bool m_bSlide12 = false;
+	bool m_bSlide13 = false;
+	bool m_bSlide14 = false;
+	bool m_bSlide15 = false;
+	bool m_bSlide16 = false;
+	bool m_bSlide17 = false;
+	bool m_bSlide18 = false;
 };
