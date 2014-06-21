@@ -614,13 +614,6 @@
 		else if (m_nTab == TUT_THANKYOU)
 			pGraphics->DrawTexture(m_hTutFinal, SGD::Point{ 0, 0 });
 
-		// Draw what page we're on
-		string page = "Page ";
-		page += to_string(m_nTab + 1);
-		page += " / ";
-		page += to_string(TABS_TOTAL);
-		m_pFont->Draw(page.c_str(), 50, 282, 0.5f, { 0, 0, 0 });
-
 		/*if (m_nTab > TUT_INTRO4)
 		{
 			if (already)
