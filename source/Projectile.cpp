@@ -6,6 +6,7 @@
 #include "DestroyEntityMessage.h"
 #include "WorldManager.h"
 #include "CreateExplosionMessage.h"
+#include "CreateParticleMessage.h"
 
 #include "../SGD Wrappers/SGD_Event.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
@@ -13,6 +14,7 @@
 Projectile::Projectile()
 {
 	m_fLifeTime = 0;
+	m_fCanAccel = 0.0f;
 }
 
 
@@ -30,6 +32,22 @@ void Projectile::Update(float dt)
 	Entity::Update(dt);
 
 	m_fLifeTime += dt;
+	m_fCanAccel += dt;
+
+	if (this->GetType() == ENT_BULLET_ROCKET && m_fCanAccel >= 0.05f)
+	{
+		// Update speed
+		SGD::Vector toAdd = m_vtVelocity;
+		toAdd.Normalize();
+		toAdd *= 100.0f;
+		m_vtVelocity += toAdd;
+
+		m_fCanAccel = 0.0f;
+
+		CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle2", { m_ptPosition.x, m_ptPosition.y }, 16, 16);
+		msg->QueueMessage();
+		msg = nullptr;
+	}
 
 	if (WorldManager::GetInstance()->CheckCollision(GetRect(), true) || m_fLifeTime > 10)
 	{

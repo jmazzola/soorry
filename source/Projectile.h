@@ -47,6 +47,7 @@ protected:
 	float m_fLifeTime;
 	SGD::HAudio m_hHit;
 	SGD::HAudio m_hImpact;
+	float m_fCanAccel;
 	// Enemy
 	Enemy* m_pEnemy;
 };
