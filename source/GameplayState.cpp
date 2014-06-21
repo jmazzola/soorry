@@ -799,22 +799,21 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Create snow
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
-		//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
-		//msg->QueueMessage();
-		//msg = nullptr;
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
+		msg->QueueMessage();
+		msg = nullptr;
 	}
 	else if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Doughnut", 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-
 	}
 	else
 	{
-		/*CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
 		msg->QueueMessage();
-		msg = nullptr;*/
+		msg = nullptr;
 	}
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
