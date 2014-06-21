@@ -31,7 +31,7 @@
 #include <fstream>
 using namespace std;
 
-#define RZBN_VERSION 5
+#define RZBN_VERSION 6
 #define RZBN_MAGIC 0x4E425A52
 
 
@@ -208,6 +208,9 @@ int RZBN::LoadRZBNFile(string rzbnFilePath, bool isCheck)
 
 		trapInfos.push_back(trapInfo);
 	}
+
+	// Load Upgrade prices
+	file.read((char*)upgradePrices, sizeof(upgradePrices));
 
 	return 0x1337;
 
@@ -444,6 +447,9 @@ void RZBN::SaveRZBNFile(string rzbnFilePath)
 		float trapY = dynamic_cast<Entity*>(traps[i])->GetPosition().y;
 		file.write((char*)&trapY, sizeof(float));
 	}
+
+	unsigned int* up = gps->GetShop()->upgradePrices;
+	file.write((char*)up, 36);
 }
 
 

@@ -116,6 +116,8 @@ public:
 	int m_nRlMaxAmmo, m_nRlDamage; float m_fRlFirerate;
 	int m_nHtMaxAmmo, m_nHtDamage; float m_fHtFirerate;
 
+	unsigned int upgradePrices[9];
+
 	vector<TowerInfo> towerInfos;
 	vector<TrapInfo> trapInfos;
 };

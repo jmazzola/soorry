@@ -649,6 +649,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 #pragma endregion 
 
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			m_pShop->upgradePrices[i] = rzbn->upgradePrices[i];
+		}
+	}
+
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });
@@ -2689,18 +2697,21 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 	case 0://Assault Rifle
 	{
 		// Adjust for projectile to come from center
-		playerCenter.x += 12;
-		playerCenter.y += 6;
+		playerCenter.x += 16;
+		playerCenter.y += 16;
 		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
-		tempProj->SetPosition(playerCenter);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
 		pos.y += Camera::y;
 		SGD::Vector vec = pos - playerCenter;
 		vec.Normalize();
 		vec *= 1000;
+
+
+		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
+
 		tempProj->SetVelocity(vec);
 		tempProj->SetHitSound(m_hBulletHit);
 		tempProj->SetImpactSound(m_hBulletImpact);
@@ -3126,7 +3137,8 @@ void GameplayState::RenderCredits(void)
 	credits += "\t\t\t\t\tJustin Patterson\n\n";
 	credits += "\t\t\t\t\tSpecial Thanks\n";
 	credits += "\t\t\t\t\tJordan Butler for ideas.\n";
-	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there";
+	credits += "\t\t\t\t\tRyan Simmons' Bookbag for always being there\n\n";
+
 	m_pFont->Draw(credits, (int)m_ptTextPosition.x, (int)m_ptTextPosition.y, 0.5f, { 255, 0, 0 });
 
 	// Warning: SUPER JIT. THIS IS REALLY GHETTO.

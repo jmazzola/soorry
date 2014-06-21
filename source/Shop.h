@@ -181,9 +181,9 @@ private:
 	// --- Weapon Upgrades ---
 	string upgradeNames[TOTAL_UPGRADES];
 	string upgradeDescs[TOTAL_UPGRADES];
+public:
 	unsigned int upgradePrices[TOTAL_UPGRADES];
-	float upgradeAmountToAdd[TOTAL_UPGRADES];
-	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
+private:	float upgradeAmountToAdd[TOTAL_UPGRADES];	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
 	bool isUpgradeProgressive[TOTAL_UPGRADES];
 	bool isUpgradeMaxed[TOTAL_UPGRADES];
 	SGD::Rectangle upgradeRectangles[TOTAL_UPGRADES];
