@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <player_stats>
-  <health value="80"/>
+  <health value="100"/>
   <speed value="350"/>
   <walls amount="0"/>
   <windows amount="0"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enemy_stats>
-  <health_scaling value="1.1"/>
+  <health_scaling value="1.5"/>
   <slow_zombie>
     <health value="0"/>
     <speed value="0"/>
@@ -18,7 +18,7 @@
     <super_chance value="0"/>
   </fast_zombie>
   <beaver_zombie>
-    <health value="80"/>
+    <health value="200"/>
     <speed value="400"/>
     <regeneration value="0"/>
     <health_chance value="0.01"/>
