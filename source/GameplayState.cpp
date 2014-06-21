@@ -362,7 +362,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle2.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Doughnut.xml");
-	m_pParticleManager->loadEmitter("resource/particle/Muzzle_Flash1.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Muzzle_Flash_Directional1.xml");
 
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
@@ -2701,7 +2701,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		// Adjust for projectile to come from center
 		playerCenter.x += 16;
 		playerCenter.y += 16;
-		AssaultRifleBullet* tempProj = new AssaultRifleBullet;
+		AssaultRifleBullet* tempProj = new AssaultRifleBullet; 
 		tempProj->SetDamage(m_pShop->GetARDamage());
 		tempProj->SetLifeTime(5);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
@@ -2712,7 +2712,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= 1000;
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		tempProj->SetVelocity(vec);
