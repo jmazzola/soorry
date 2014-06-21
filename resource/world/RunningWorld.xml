@@ -5521,7 +5521,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="22" y="4" index="82" collider="false">
+    <tile x="22" y="4" index="659" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -5771,7 +5771,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="23" y="4" index="82" collider="false">
+    <tile x="23" y="4" index="660" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
