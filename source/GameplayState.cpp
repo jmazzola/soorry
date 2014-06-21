@@ -2787,8 +2787,12 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec.Normalize();
 		vec *= 300;
 		tsb->SetForce(vec);
-		tsb->SetPosition(playerCenter + SGD::Vector(7, -20).ComputeRotated(m_pPlayer->GetRotation()));
+		SGD::Point outPos = playerCenter + SGD::Vector(7, -20).ComputeRotated(m_pPlayer->GetRotation());
+		tsb->SetPosition(outPos);
 
+		CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle2", { outPos.x, outPos.y }, 16, 16);
+		msg->QueueMessage();
+		msg = nullptr;
 		// ADD SOUND
 
 		return tsb;
