@@ -1763,7 +1763,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 		// render particles
 		m_pParticleManager->Render();
 		// Draw health overlay
-		float currHealth = player->GetCurrHealth();
+		float currHealth = max(player->GetCurrHealth(), 30);
 		float maxHealth = player->GetMaxHealth();
 		if (currHealth != maxHealth)
 		{

@@ -4,11 +4,12 @@
 
 SpikeTrap::SpikeTrap ()
 {
-	m_fDamage = 0.5f;
+	m_fDamage = 50.0f;
 	m_fAttackCD = 1.0f;
 	m_fAttackTimer = 0.0f;
 	m_fHoldLength = 0.2f;
 	m_fHoldTimer = 0.0f;
+	m_bSpiked = true;
 }
 
 
@@ -18,6 +19,11 @@ SpikeTrap::~SpikeTrap ()
 
 void  SpikeTrap::Update ( float dt )
 {
+	if (m_fAttackTimer == m_fAttackCD)
+	{
+		m_bSpiked = true;
+	}
+
 	m_fAttackTimer -= dt;
 	m_fHoldTimer -= dt;
 
@@ -25,6 +31,7 @@ void  SpikeTrap::Update ( float dt )
 	{
 		m_fAttackTimer = m_fAttackCD;
 		m_fHoldTimer = m_fHoldLength;
+		m_bSpiked = false;
 	}
 }
 
@@ -92,6 +99,11 @@ float SpikeTrap::GetHoldLength ( void ) const
 float SpikeTrap::GetDamage ( void ) const
 {
 	return m_fDamage;
+}
+
+bool SpikeTrap::GetSpiked() const
+{
+	return m_bSpiked;
 }
 
 /**********************************************************/
