@@ -53,6 +53,13 @@ using namespace std;
 #define DEFAULT_MAPLE_SYRUP_RANGE 96.0f
 #define DEFAULT_HOCKEY_STICK_RANGE 48.0f
 
+#define AR_FIRERATE_CAP	.02f
+#define AR_MAXAMMO_CAP 1000
+#define SH_FIRERATE_CAP 0.1f
+#define SH_MAXAMMO_CAP 1000
+#define RL_FIRERATE_CAP 1.0f
+#define RL_MAXAMMO_CAP 100
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -117,16 +124,20 @@ Player::Player () : Listener ( this )
 		//Assault rifle
 		if (m_bHasAssaultRifle)
 		{
+			tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(200);
+			tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
@@ -135,8 +146,10 @@ Player::Player () : Listener ( this )
 	else
 	{
 		//Assault rifle in beaver mode!
+		tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 		tempWeapon.SetMaxAmmo(1000);
 		tempWeapon.SetCurrAmmo(1000);
+		tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 		tempWeapon.SetFireRate(.02f);
 		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 		m_pWeapons[0] = tempWeapon;
@@ -147,16 +160,20 @@ Player::Player () : Listener ( this )
 		//Shotgun
 		if (m_bHasShotty)
 		{
+			tempWeapon.SetMaxAmmoCap(SH_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(100);
+			tempWeapon.SetFireRateCap(SH_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(SH_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(SH_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
@@ -168,16 +185,20 @@ Player::Player () : Listener ( this )
 		//rocket launcher
 		if (m_bHasRocketz)
 		{
+			tempWeapon.SetMaxAmmoCap(RL_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(50);
 			tempWeapon.SetCurrAmmo(20);
+			tempWeapon.SetFireRateCap(RL_FIRERATE_CAP);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(RL_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(50);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(RL_FIRERATE_CAP);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
@@ -922,7 +943,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -946,7 +967,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -967,7 +988,7 @@ void Player::Update ( float dt )
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 				StatTracker::GetInstance()->WallExchange(true);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -988,7 +1009,7 @@ void Player::Update ( float dt )
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
 				StatTracker::GetInstance()->WindowExchange(true);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", {pos.x*32,pos.y*32}, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", {pos.x*32,pos.y*32}, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1008,7 +1029,7 @@ void Player::Update ( float dt )
 				{
 					SGD::AudioManager::GetInstance()->PlayAudio(m_hBlockPlace);
 				}
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1027,7 +1048,7 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetMapleSyrupTowers(m_pInventory->GetMapleSyrupTowers() - 1);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1046,7 +1067,7 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetHockeyStickTowers(m_pInventory->GetHockeyStickTowers() - 1);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1065,7 +1086,7 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLaserTowers(m_pInventory->GetLaserTowers() - 1);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1081,7 +1102,7 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetLavaTraps(m_pInventory->GetLavaTraps() - 1);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 
@@ -1099,7 +1120,7 @@ void Player::Update ( float dt )
 				}
 				// Decreasing the amount of machine gun towers left for the player
 				m_pInventory->SetSpikeTraps(m_pInventory->GetSpikeTraps() - 1);
-				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 8, 8);
+				CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle1", { pos.x * 32, pos.y * 32 }, 0, 0);
 				msg->QueueMessage();
 				msg = nullptr;
 			}
@@ -1807,7 +1828,7 @@ void Player::Render ( void )
 	SGD::Vector dir = pos - playerPos;
 	dir.Normalize();
 	float rot = SGD::Vector(0.0f, -1.0f).ComputeSteering(dir);
-	m_fRotation = SGD::Vector(0.0f, -1.0f).ComputeSteering(dir);
+	//m_fRotation = SGD::Vector(0.0f, -1.0f).ComputeSteering(dir);
 	float rotation = 0;
 	if(rot > 0)
 		rotation = SGD::Vector(0.0f, -1.0f).ComputeAngle(dir);
@@ -1819,6 +1840,8 @@ void Player::Render ( void )
 		col = SGD::Color(255, 255, 0, 0);
 
 	AnimationManager::GetInstance()->Render(m_antsAnimation, m_ptPosition.x - Camera::x, m_ptPosition.y - Camera::y, rotation, center, col);
+
+	m_fRotation = rotation;
 
 	if(m_fPickupMessageTimer > 0)
 		SGD::GraphicsManager::GetInstance()->DrawString(m_sPickupMessage.c_str(), SGD::Point(m_ptPosition.x - Camera::x - 60, m_ptPosition.y - 20 - Camera::y), SGD::Color(255, 0, 0));
