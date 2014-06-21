@@ -20,6 +20,15 @@ class Inventory;
 class Entity;
 class TowerFlyweight;
 
+#define SHOTGUN_DAMAGE 20
+#define AR_DAMAGE 20
+#define ROCKET_DAMAGE 150
+#define HATTRICK_DAMAGE 75
+
+#define SHOTGUN_DAMAGE_MAX 100
+#define AR_DAMAGE_MAX 100
+#define ROCKET_DAMAGE_MAX 200
+
 class Shop
 {
 
@@ -137,6 +146,10 @@ public:
 	void SetShopStatus(bool isOpen);
 	void SetTowerFlyweight(TowerFlyweight* towerFlyweight);
 
+	int m_nARDamageMax = SHOTGUN_DAMAGE_MAX;
+	int m_nSHDamageMax = AR_DAMAGE_MAX;
+	int m_nRLDamageMax = ROCKET_DAMAGE_MAX;
+
 private:
 
 	// Data members
@@ -169,7 +182,7 @@ private:
 	string upgradeNames[TOTAL_UPGRADES];
 	string upgradeDescs[TOTAL_UPGRADES];
 	unsigned int upgradePrices[TOTAL_UPGRADES];
-	unsigned int upgradeAmountToAdd[TOTAL_UPGRADES];
+	float upgradeAmountToAdd[TOTAL_UPGRADES];
 	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
 	bool isUpgradeProgressive[TOTAL_UPGRADES];
 	bool isUpgradeMaxed[TOTAL_UPGRADES];
@@ -213,10 +226,10 @@ private:
 	Entity* m_pPlayer;
 
 	// Weapon Attributes
-	int m_nShotgunDamage = 20;
-	int m_nARDamage = 20;
-	int m_nRLDamage = 150;
-	int m_nHattrickDamage = 75;
+	int m_nShotgunDamage = SHOTGUN_DAMAGE;
+	int m_nARDamage = AR_DAMAGE;
+	int m_nRLDamage = ROCKET_DAMAGE;
+	int m_nHattrickDamage = HATTRICK_DAMAGE;
 
 	// Shop tabs
 	enum ShopTabs 

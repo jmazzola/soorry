@@ -53,6 +53,13 @@ using namespace std;
 #define DEFAULT_MAPLE_SYRUP_RANGE 96.0f
 #define DEFAULT_HOCKEY_STICK_RANGE 48.0f
 
+#define AR_FIRERATE_CAP	.02f
+#define AR_MAXAMMO_CAP 1000
+#define SH_FIRERATE_CAP 0.1f
+#define SH_MAXAMMO_CAP 1000
+#define RL_FIRERATE_CAP 1.0f
+#define RL_MAXAMMO_CAP 100
+
 Player::Player () : Listener ( this )
 {
 	// Entity
@@ -117,16 +124,20 @@ Player::Player () : Listener ( this )
 		//Assault rifle
 		if (m_bHasAssaultRifle)
 		{
+			tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(200);
+			tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.2f);
 			tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 			m_pWeapons[0] = tempWeapon;
@@ -135,8 +146,10 @@ Player::Player () : Listener ( this )
 	else
 	{
 		//Assault rifle in beaver mode!
+		tempWeapon.SetMaxAmmoCap(AR_MAXAMMO_CAP);
 		tempWeapon.SetMaxAmmo(1000);
 		tempWeapon.SetCurrAmmo(1000);
+		tempWeapon.SetFireRateCap(AR_FIRERATE_CAP);
 		tempWeapon.SetFireRate(.02f);
 		tempWeapon.SetType(Guns::TYPE_ASSAULT_RIFLE);
 		m_pWeapons[0] = tempWeapon;
@@ -147,16 +160,20 @@ Player::Player () : Listener ( this )
 		//Shotgun
 		if (m_bHasShotty)
 		{
+			tempWeapon.SetMaxAmmoCap(SH_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(100);
+			tempWeapon.SetFireRateCap(SH_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(SH_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(500);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(SH_FIRERATE_CAP);
 			tempWeapon.SetFireRate(.5f);
 			tempWeapon.SetType(Guns::TYPE_SHOTGUN);
 			m_pWeapons[1] = tempWeapon;
@@ -168,16 +185,20 @@ Player::Player () : Listener ( this )
 		//rocket launcher
 		if (m_bHasRocketz)
 		{
+			tempWeapon.SetMaxAmmoCap(RL_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(50);
 			tempWeapon.SetCurrAmmo(20);
+			tempWeapon.SetFireRateCap(RL_FIRERATE_CAP);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
 		}
 		else
 		{
+			tempWeapon.SetMaxAmmoCap(RL_MAXAMMO_CAP);
 			tempWeapon.SetMaxAmmo(50);
 			tempWeapon.SetCurrAmmo(0);
+			tempWeapon.SetFireRateCap(RL_FIRERATE_CAP);
 			tempWeapon.SetFireRate(2);
 			tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
 			m_pWeapons[2] = tempWeapon;
