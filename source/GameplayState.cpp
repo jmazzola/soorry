@@ -649,6 +649,14 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	}
 #pragma endregion 
 
+	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			m_pShop->upgradePrices[i] = rzbn->upgradePrices[i];
+		}
+	}
+
 	// Set player's spawn point from save
 	if (LoadSaveState::GetInstance()->CheckSlotExists(m_nCurrGameSlot - 1))
 		m_pPlayer->SetPosition({ rzbn->m_fSpawnPointX, rzbn->m_fSpawnPointY });

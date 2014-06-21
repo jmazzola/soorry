@@ -168,7 +168,9 @@ private:
 	// --- Weapon Upgrades ---
 	string upgradeNames[TOTAL_UPGRADES];
 	string upgradeDescs[TOTAL_UPGRADES];
+public:
 	unsigned int upgradePrices[TOTAL_UPGRADES];
+private:
 	unsigned int upgradeAmountToAdd[TOTAL_UPGRADES];
 	SGD::Point upgradeTopLeft[TOTAL_UPGRADES];
 	bool isUpgradeProgressive[TOTAL_UPGRADES];
