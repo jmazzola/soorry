@@ -792,7 +792,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hARThumb = pGraphics->LoadTexture("resource/images/hud/arthumb.png");
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
-	//m_hBackground = pGraphics->LoadTexture("resource/images/menus/Blank.png");
+	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 
 	// Turn the cursor on
 	//if(pGraphics->IsCursorShowing() == false)
