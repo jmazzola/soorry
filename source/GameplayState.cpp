@@ -713,7 +713,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 		weapons[3].SetMaxAmmo(rzbn->m_nHtMaxAmmo);
 		weapons[3].SetFireRate(rzbn->m_fHtFirerate);
-		m_pShop->SetRLDamage(rzbn->m_nHtDamage);
+		m_pShop->SetHTDamage(rzbn->m_nHtDamage);
 
 	}
 

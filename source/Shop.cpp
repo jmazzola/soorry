@@ -1006,14 +1006,14 @@ void Shop::Render()
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 
 
-				else if (m_nCursor == i && score < itemPrices[i])
+				else if (m_nCursor == i && score < upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-				else if (m_nCursor == i && score >= itemPrices[i])
+				else if (m_nCursor == i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 
-				else if (m_nCursor != i && score >= itemPrices[i])
+				else if (m_nCursor != i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
-				else if (m_nCursor != i && score < itemPrices[i])
+				else if (m_nCursor != i && score < upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 			}
 

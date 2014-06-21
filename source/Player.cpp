@@ -179,6 +179,17 @@ Player::Player () : Listener ( this )
 			m_pWeapons[1] = tempWeapon;
 		}
 	}
+	else
+	{
+		// Shotgun in beaver mode!
+		tempWeapon.SetMaxAmmoCap(SH_MAXAMMO_CAP);
+		tempWeapon.SetMaxAmmo(500);
+		tempWeapon.SetCurrAmmo(0);
+		tempWeapon.SetFireRateCap(SH_FIRERATE_CAP);
+		tempWeapon.SetFireRate(.5f);
+		tempWeapon.SetType(Guns::TYPE_SHOTGUN);
+		m_pWeapons[1] = tempWeapon;
+	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
@@ -204,6 +215,17 @@ Player::Player () : Listener ( this )
 			m_pWeapons[2] = tempWeapon;
 		}
 	}
+	else
+	{
+		// RPG in beaver mode!
+		tempWeapon.SetMaxAmmoCap(RL_MAXAMMO_CAP);
+		tempWeapon.SetMaxAmmo(50);
+		tempWeapon.SetCurrAmmo(0);
+		tempWeapon.SetFireRateCap(RL_FIRERATE_CAP);
+		tempWeapon.SetFireRate(2);
+		tempWeapon.SetType(Guns::TYPE_ROCKET_LAUNCHER);
+		m_pWeapons[2] = tempWeapon;
+	}
 
 	if (GameplayState::GetInstance()->GetGameMode() != 3)
 	{
@@ -224,6 +246,14 @@ Player::Player () : Listener ( this )
 			tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
 			m_pWeapons[3] = tempWeapon;
 		}
+	}
+	else
+	{
+		tempWeapon.SetMaxAmmo(75);
+		tempWeapon.SetCurrAmmo(0);
+		tempWeapon.SetFireRate(0.75f);
+		tempWeapon.SetType(Guns::TYPE_TRICKSHOT);
+		m_pWeapons[3] = tempWeapon;
 	}
 
 #pragma endregion
