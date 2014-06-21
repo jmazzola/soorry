@@ -7,28 +7,28 @@
     <!-- Starting Values -->
     <damage value="50"/>
     <fire_rate value="2.2"/>
-    <range value="250"/>
+    <range value="128"/>
     
     <!-- Power Upgrade Values -->
     <power_upgrade>
       
       <!-- Tier 1 -->
       <tier_one>
-        <cost value="500"/>
+        <cost value="250"/>
         <damage value="75"/>
         <fire_rate value="1.6"/>
       </tier_one>
       
       <!-- Tier 2 -->
       <tier_two>
-        <cost value="1000"/>
+        <cost value="500"/>
         <damage value="100"/>
         <fire_rate value="1.0"/>
       </tier_two>
       
       <!-- Tier 3 -->
       <tier_three>
-        <cost value="1500"/>
+        <cost value="750"/>
         <damage value="200"/>
         <fire_rate value="0.25"/>
       </tier_three>
@@ -63,7 +63,7 @@
     <!-- Staring Values -->
     <effect_duration value="0.5"/>
     <fire_rate value="2.0"/>
-    <range value="128"/>
+    <range value="96"/>
     
     <!-- Power Upgrade Values -->
     <power_upgrade>
