@@ -659,7 +659,7 @@ void Shop::UpdateItemStatus()
 		isUpgradeMaxed[UG_LAUNCHER_AMMO] = (weapons[2].GetMaxAmmo() >= weapons[2].GetMaxAmmoCap());
 
 
-		(weapons[0].GetFireRate() <= weapons[0].GetFireRateCap()) ? upgradeNames[UG_AR_ROF] = "AR Fire Rate [MAXED OUT]" : upgradeNames[UG_AR_ROF] = "AR Fire Rate +0.2";
+		(weapons[0].GetFireRate() <= weapons[0].GetFireRateCap()) ? upgradeNames[UG_AR_ROF] = "AR Fire Rate [MAXED OUT]" : upgradeNames[UG_AR_ROF] = "AR Fire Rate -0.2";
 		isUpgradeMaxed[UG_AR_ROF] = (weapons[0].GetFireRate() <= weapons[0].GetFireRateCap());
 
 		(weapons[1].GetFireRate() <= weapons[1].GetFireRateCap()) ? upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate [MAXED OUT]" : upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate -0.1";
@@ -1006,14 +1006,14 @@ void Shop::Render()
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 
 
-				else if (m_nCursor == i && score < itemPrices[i])
+				else if (m_nCursor == i && score < upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
-				else if (m_nCursor == i && score >= itemPrices[i])
+				else if (m_nCursor == i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 255, 0 });
 
-				else if (m_nCursor != i && score >= itemPrices[i])
+				else if (m_nCursor != i && score >= upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 0, 0, 0 });
-				else if (m_nCursor != i && score < itemPrices[i])
+				else if (m_nCursor != i && score < upgradePrices[i])
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
 			}
 
