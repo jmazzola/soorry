@@ -2199,7 +2199,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 			pGraphics->DrawRectangle(
 				SGD::Rectangle(SGD::Point(0.0f, 0.0f), SGD::Point((float)pGame->GetScreenWidth(), (float)pGame->GetScreenHeight())),
 				SGD::Color(255 - (char)(m_fWinTimer * 51), 0, 0, 0));
-			SGD::AudioManager::GetInstance()->PlayAudio(m_hWinTheGame);
+			if (SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hWinTheGame) == false && m_bWin_Voice == false)
+			{
+				SGD::AudioManager::GetInstance()->PlayAudio(m_hWinTheGame);
+				m_bWin_Voice = true;
+			}
 			m_pFont->Draw("You Win!", (pGame->GetScreenWidth() / 2) - (m_pFont->GetTextWidth("You Win!")), pGame->GetScreenHeight() / 2 - 64, 2.0f, SGD::Color{ 255, 0, 0 });
 		}
 		// If you have lost render You Lose and go to replay menu
@@ -3165,7 +3169,7 @@ void GameplayState::RenderCredits(void)
 	// Render button
 	m_pMainButton->Draw("Main Menu", { 180, 500 }, { 255, 0, 0 }, { 1, 1 }, 0);
 
-	m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
+	///m_pFont->Draw("Credits", Game::GetInstance()->GetScreenWidth() / 2 - (int)((m_pFont->GetTextWidth("Credits") / 2) * 1.2f) - 20, 100, 1.2f, SGD::Color(255, 0, 0, 0));
 
 	if (m_fCreditsTimer <= 5.0f)
 	{

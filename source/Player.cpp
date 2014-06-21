@@ -88,10 +88,18 @@ Player::Player () : Listener ( this )
 	m_fRunningManTimer = 2.0f;
 	m_fPickupMessageTimer = 0.0f;
 
-	m_unScore = 1000;
+	if (GameplayState::GetInstance()->GetGameMode() == GameplayState::GetInstance()->BEAVER_FEAVER_MODE)
+	{
+		m_unScore = 5000;
+	}
+	else
+	{
+		m_unScore = 1000;
+	}
 
 	// Player Inventory
 	m_pInventory = new Inventory();
+
 	m_pInventory->SetBearTraps(0);
 	m_pInventory->SetGrenades(0);
 	m_pInventory->SetHealthPacks(0);

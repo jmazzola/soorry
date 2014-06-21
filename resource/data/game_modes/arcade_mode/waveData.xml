@@ -8,7 +8,6 @@
     <beaver_zombies amount="10"/>
     <spawn_interval value="0.2"/>
   </wave>
-  <!--
   <wave>
     <infinite_build_time value="false"/>
     <build_time value="30"/>
@@ -81,5 +80,4 @@
     <beaver_zombies amount="1400"/>
     <spawn_interval value="0.01"/>
   </wave>
-  -->
 </waves>

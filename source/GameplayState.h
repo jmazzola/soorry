@@ -276,6 +276,7 @@ private:
 	bool m_bSelectedReplay;
 	bool m_bEnterShop = false;
 	bool m_bBuildStart = false;
+	bool m_bWin_Voice = false;
 
 	// RZBN File Format
 	RZBN* rzbn;
