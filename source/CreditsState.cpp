@@ -93,7 +93,7 @@ using namespace std;
 	m_pMainButton->Initialize("resource/images/menus/1405_RazorBalloon_BlankButton2.png", m_pFont);
 
 #if ARCADE_MODE
-	m_vtStick = {0.0f, 0.0f};
+	m_vtStick = { 0.0f, 0.0f };
 	m_bAccept = true;
 #endif
 }
@@ -146,7 +146,7 @@ using namespace std;
 #endif
 
 #if ARCADE_MODE
-	if(pInput->IsButtonPressed(0, 0))
+	if (pInput->IsButtonPressed(0, 0))
 	{
 		// Since there's only one state..go back to main menu
 		Game::GetInstance()->Transition(MainMenuState::GetInstance());

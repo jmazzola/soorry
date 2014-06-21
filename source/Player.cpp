@@ -327,7 +327,7 @@ void Player::Update ( float dt )
 		SGD::Point a = m_ptLastPos;
 		SGD::Point b = m_ptPosition;
 		float distance = sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)));
-		if(distance < 70.0f)
+		if(distance < 70.0f && !GameplayState::GetInstance()->GetShop()->IsOpen())
 			m_nCurrHealth -= 5.0f;
 		m_ptLastPos = m_ptPosition;
 	}
@@ -390,7 +390,8 @@ void Player::Update ( float dt )
 		return;
 	}
 	// Regenerate health
-	m_nCurrHealth += 7.0f * dt;
+	if (m_pZombieWave->IsBuildMode() || GameplayState::GetInstance()->GetGameMode() == 4)
+		m_nCurrHealth += 7.0f * dt;
 	if ( m_nCurrHealth > m_nMaxHealth )
 		m_nCurrHealth = m_nMaxHealth;
 

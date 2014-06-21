@@ -362,6 +362,8 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_pParticleManager->loadEmitter("resource/particle/Dust_Particle2.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Balloon.xml");
 	m_pParticleManager->loadEmitter("resource/particle/Top_Down_Doughnut.xml");
+	m_pParticleManager->loadEmitter("resource/particle/Muzzle_Flash1.xml");
+
 	//Set background color
 	//SGD::GraphicsManager::GetInstance()->SetClearColor({ 0, 0, 0 });	// black
 
@@ -1854,7 +1856,6 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				else
 					m_pMainButton->Draw("Go Back", { 150, 470 }, { 0, 0, 0 }, { 0.9f, 0.9f }, 0);
 
-
 			}
 
 		}
@@ -2711,7 +2712,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= 1000;
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		lmsg->QueueMessage();
+		lmsg = nullptr;
 		tempProj->SetVelocity(vec);
 		tempProj->SetHitSound(m_hBulletHit);
 		tempProj->SetImpactSound(m_hBulletImpact);
@@ -2736,7 +2739,9 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= (float)(750 + rand() % 500);
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash1", tempProj->GetPosition(), 0, 0);
+		lmsg->QueueMessage();
+		lmsg = nullptr;
 		// Rotate bullet at random direction
 		float degree = (-50 + rand() % 100) / 100.0f;
 		vec.Rotate(degree);
@@ -2787,8 +2792,12 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec.Normalize();
 		vec *= 300;
 		tsb->SetForce(vec);
-		tsb->SetPosition(playerCenter + SGD::Vector(7, -20).ComputeRotated(m_pPlayer->GetRotation()));
+		SGD::Point outPos = playerCenter + SGD::Vector(7, -20).ComputeRotated(m_pPlayer->GetRotation());
+		tsb->SetPosition(outPos);
 
+		CreateParticleMessage* msg = new CreateParticleMessage("Dust_Particle2", { outPos.x, outPos.y }, 16, 16);
+		msg->QueueMessage();
+		msg = nullptr;
 		// ADD SOUND
 
 		return tsb;
