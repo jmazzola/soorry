@@ -49,24 +49,24 @@
 	m_pFont = pFont;
 
 	// Set background
-	m_hTutMain = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_01.png");
-	m_hTutTwo = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_02.png");
-	m_hTutThree = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_03.png");
-	m_hTutFour = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_04.png");
-	m_hTutFive = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_05.png");
-	m_hTutSix = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_06.png");
-	m_hTutSeven = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_07.png");
-	m_hTutEight = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_08.png");
-	m_hTutNine = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_09.png");
-	m_hTutNineB = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_09b.png");
-	m_hTut10 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_10.png");
-	m_hTut11 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_11.png");
-	m_hTut12 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_12.png");
-	m_hTut13 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_13.png");
-	m_hTut14 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_14.png");
-	m_hTut15 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_15.png");
-	m_hTut16 = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_16.png");
-	m_hTutFinal = pGraphics->LoadTexture("resource/images/menus/HowToPlayBG_Final.png");
+	m_hTutMain = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_01.png");
+	m_hTutTwo = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_02.png");
+	m_hTutThree = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_03.png");
+	m_hTutFour = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_04.png");
+	m_hTutFive = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_05.png");
+	m_hTutSix = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_06.png");
+	m_hTutSeven = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_07.png");
+	m_hTutEight = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_08.png");
+	m_hTutNine = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_09.png");
+	m_hTutNineB = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_10.png");
+	m_hTut10 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_11.png");
+	m_hTut11 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_12.png");
+	m_hTut12 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_13.png");
+	m_hTut13 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_14.png");
+	m_hTut14 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_15.png");
+	m_hTut15 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_16.png");
+	m_hTut16 = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_17.png");
+	m_hTutFinal = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_HowToPlay_18.png");
 
 	// Setup the main button (text)
 	m_pMainButton = CreateButton();
@@ -528,31 +528,31 @@
 
 		}
 		else if (m_nTab == TUT_MOVEMENT)
-			pGraphics->DrawTexture(m_hTutFive, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_BUILD1)
-			pGraphics->DrawTexture(m_hTutSix, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_BUILD2)
 			pGraphics->DrawTexture(m_hTutSeven, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_BUILD3)
+		else if (m_nTab == TUT_BUILD1)
 			pGraphics->DrawTexture(m_hTutEight, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_BUILD4)
+		else if (m_nTab == TUT_BUILD2)
 			pGraphics->DrawTexture(m_hTutNine, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_BUILD5)
+		else if (m_nTab == TUT_BUILD3)
 			pGraphics->DrawTexture(m_hTutNineB, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_SHOP)
+		else if (m_nTab == TUT_BUILD4)
 			pGraphics->DrawTexture(m_hTut10, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_TOWERS)
+		else if (m_nTab == TUT_BUILD5)
 			pGraphics->DrawTexture(m_hTut11, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_SHOOTING)
+		else if (m_nTab == TUT_SHOP)
 			pGraphics->DrawTexture(m_hTut12, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_NADES)
+		else if (m_nTab == TUT_TOWERS)
 			pGraphics->DrawTexture(m_hTut13, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_HEALING)
+		else if (m_nTab == TUT_SHOOTING)
 			pGraphics->DrawTexture(m_hTut14, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_PICKUPS)
+		else if (m_nTab == TUT_NADES)
 			pGraphics->DrawTexture(m_hTut15, SGD::Point{ 0, 0 });
-		else if (m_nTab == TUT_ENEMIES)
+		else if (m_nTab == TUT_HEALING)
 			pGraphics->DrawTexture(m_hTut16, SGD::Point{ 0, 0 });
+		else if (m_nTab == TUT_PICKUPS)
+			pGraphics->DrawTexture(m_hTutFive, SGD::Point{ 0, 0 });
+		else if (m_nTab == TUT_ENEMIES)
+			pGraphics->DrawTexture(m_hTutSix, SGD::Point{ 0, 0 });
 		else if (m_nTab == TUT_THANKYOU)
 			pGraphics->DrawTexture(m_hTutFinal, SGD::Point{ 0, 0 });
 
