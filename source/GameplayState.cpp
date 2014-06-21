@@ -502,7 +502,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	LoadEnemyRecipes(enemyStatsFileName);
 
 	// 92%
-	SetLoadingBar(0.92f, "4 8 15 16 23 42");
+	SetLoadingBar(0.92f, "Loading Towers");
 
 	// Load tower flyweight
 	m_pTowerFlyweight = new TowerFlyweight;
