@@ -5271,7 +5271,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="14" y="4" index="179" collider="false">
+    <tile x="14" y="4" index="1" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18041,7 +18041,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="48" y="8" index="84" collider="false">
+    <tile x="48" y="8" index="659" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
@@ -18416,7 +18416,7 @@
       <collision_trigger id="" />
       <collision id="0" />
     </tile>
-    <tile x="49" y="8" index="84" collider="false">
+    <tile x="49" y="8" index="660" collider="false">
       <initial_trigger id="" />
       <collision_trigger id="" />
       <collision id="0" />
