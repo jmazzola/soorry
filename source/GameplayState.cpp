@@ -801,22 +801,21 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	// Create snow
 	if (m_nGamemode == RUNNING_MAN_MODE)
 	{
-		//CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
-		//msg->QueueMessage();
-		//msg = nullptr;
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Balloon",0,0);
+		msg->QueueMessage();
+		msg = nullptr;
 	}
 	else if (m_nGamemode == BEAVER_FEAVER_MODE)
 	{
 		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Doughnut", 0, 0);
 		msg->QueueMessage();
 		msg = nullptr;
-
 	}
 	else
 	{
-		/*CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
+		CreateParticleMessage* msg = new CreateParticleMessage("Top_Down_Snow", 0, 0);
 		msg->QueueMessage();
-		msg = nullptr;*/
+		msg = nullptr;
 	}
 #if ARCADE_MODE
 	m_vtStick = {0.0f, 0.0f};
@@ -2739,7 +2738,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= (float)(750 + rand() % 500);
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj->GetPosition(), 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		// Rotate bullet at random direction
