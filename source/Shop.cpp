@@ -1028,26 +1028,26 @@ void Shop::Render()
 
 			string stuff = "MG Towers: ";
 			stuff += std::to_string(inv->GetMachineGunTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 256, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Syrup Towers: ";
 			stuff += std::to_string(inv->GetMapleSyrupTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 316, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 276, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Hockey Stick Towers: ";
 			stuff += std::to_string(inv->GetHockeyStickTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 336, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Laser Towers: ";
 			stuff += std::to_string(inv->GetLaserTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 316, 0.4f, { 255, 255, 0 });
 			stuff = "Lava Traps: ";
 			stuff += std::to_string(inv->GetLavaTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 376, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 336, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Spike Traps: ";
 			stuff += std::to_string(inv->GetSpikeTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 396, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
