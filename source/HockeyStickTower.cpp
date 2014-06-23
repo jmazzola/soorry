@@ -80,7 +80,7 @@ void HockeyStickTower::Update(float dt)
 				spurtVector.Rotate(m_fRotation);
 				spurtVector *= 300;
 
-				CreateParticleMessage* msg = new CreateParticleMessage("Blood_Spurt1", enemy, spurtVector, 16, 16);
+				CreateParticleMessage* msg = new CreateParticleMessage("Blood_Spurt1", enemy, spurtVector, 0, 0);
 				msg->QueueMessage();
 
 				if (!SGD::AudioManager::GetInstance()->IsAudioPlaying(m_pTowerFlyweight->GetHockeyStickSlashSound()))
