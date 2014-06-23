@@ -102,6 +102,8 @@
 	if (pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	m_bSlide1 = false;
+
 #if ARCADE_MODE
 	m_bAccept = true;
 	m_vtStick = SGD::Vector{ 0.0f, 0.0f };
