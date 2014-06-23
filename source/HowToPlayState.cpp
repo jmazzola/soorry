@@ -102,6 +102,8 @@
 	if (pGraphics->IsCursorShowing() == false)
 		pGraphics->TurnCursorOn();
 
+	m_bSlide1 = false;
+
 #if ARCADE_MODE
 	m_bAccept = true;
 	m_vtStick = SGD::Vector{ 0.0f, 0.0f };
@@ -203,7 +205,7 @@
 #endif
 
 #if !ARCADE_MODE
-	if (pInput->IsKeyPressed(SGD::Key::Left))
+	if (pInput->IsKeyPressed(SGD::Key::Left) || pInput->IsDPadPressed(0, SGD::DPad::Left))
 #else
 	if (m_vtStick.x < 0 && m_bAccept)
 #endif
@@ -220,7 +222,7 @@
 	}
 	
 #if !ARCADE_MODE
-	if (pInput->IsKeyPressed(SGD::Key::Right))
+	if (pInput->IsKeyPressed(SGD::Key::Right) || pInput->IsDPadPressed(0, SGD::DPad::Right))
 #else
 	if (m_vtStick.x > 0 && m_bAccept)
 #endif
