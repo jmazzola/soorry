@@ -1,5 +1,6 @@
 #include "Drone.h"
 #include "Player.h"
+#include "Inventory.h"
 #include "Enemy.h"
 #include "EntityManager.h"
 #include "CreateMachineGunBulletMessage.h"
@@ -41,6 +42,8 @@ void Drone::Update(float dt)
 		// Queue the message
 		pMsg->QueueMessage();
 		pMsg = nullptr;
+
+		m_pPlayer->GetInventory()->SetDroneCount(m_pPlayer->GetInventory()->GetDroneCount() - 1);
 	}
 
 	//radius from the center(player pos)
