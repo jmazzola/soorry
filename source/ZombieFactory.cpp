@@ -270,8 +270,8 @@ void ZombieFactory::Update(float dt)
 				}
 
 				// Make sure we're not spawning on top of something
-				if (m_pEntityManager->CheckCollision(SGD::Rectangle((float)spawnX, (float)spawnY, (float)(spawnX + 32), (float)(spawnY + 32))))
-					invalid = true;
+				/*if (m_pEntityManager->CheckCollision(SGD::Rectangle((float)spawnX, (float)spawnY, (float)(spawnX + 32), (float)(spawnY + 32))))
+					invalid = true;*/
 
 			} while (invalid);
 
