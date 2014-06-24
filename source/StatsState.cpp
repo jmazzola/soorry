@@ -8,6 +8,9 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
 #include "../SGD Wrappers/SGD_Geometry.h"
+#include "../SGD Wrappers/SGD_String.h"
+
+#include <ShlObj.h>
 
 StatsState* StatsState::GetInstance(void)
 {
@@ -22,7 +25,33 @@ StatsState* StatsState::GetInstance(void)
 	SetTransition(false);
 	m_hBackground = SGD::GraphicsManager::GetInstance()->LoadTexture("resource/images/menus/1405_RazorBalloon_Stats.png");
 	m_pStats = StatTracker::GetInstance();
-	m_pStats->Load("resource/data/stats.xml");
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "stats.xml";
+
+	m_pStats->Load(pathtowrite.c_str());
 
 	m_pFont = Game::GetInstance()->GetFont();
 

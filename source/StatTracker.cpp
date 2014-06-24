@@ -3,6 +3,7 @@
 #include "Game.h"
 #include <sstream>
 #include "../TinyXML/tinyxml.h"
+#include <Shlobj.h>
 
 // Helper Function because lazy
 void Increment(SGD::Point& pos, std::stringstream& display, int multi = 1)
@@ -42,7 +43,34 @@ void StatTracker::Reset( void )
 	m_uTotalKills						= 0;
 	m_uRoundsSurvived					= 0;
 	m_uConsecutiveRoundsSurvived		= 0;
-	Save("resource/data/stats.xml");
+
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "stats.xml";
+
+	Save(pathtowrite.c_str());
 }
 
 void StatTracker::Render(float y)

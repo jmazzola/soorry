@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <sstream>
+#include <Shlobj.h>
 using namespace std;
 
 
@@ -543,11 +544,37 @@ Button* OptionsState::CreateButton() const
 // [in] xmlSavegame - the file path to the savegame where you want to load it from
 void OptionsState::LoadOptions(string xmlSavegame)
 {
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "config.xml";
+
 	// Create a TinyXML document
 	TiXmlDocument doc;
 
 	// Attempt to load the file, if not gtfo
-	if (!doc.LoadFile(xmlSavegame.c_str()))
+	if (!doc.LoadFile(pathtowrite.c_str()))
 		return;
 
 	// Access the root element (volume)
@@ -578,6 +605,33 @@ void OptionsState::LoadOptions(string xmlSavegame)
 // [in] xmlSavegame - the file path to the savegame where you want to save to
 void OptionsState::SaveOptions(string xmlSavegame)
 {
+
+	HRESULT hr;
+	ostringstream stringstream;
+	char path[MAX_PATH];
+	LPWSTR wszPath = NULL;
+	size_t size;
+
+	// Get the path to the app data folder
+	hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, 0, &wszPath);
+
+	// Convert from LPWSTR to char[]
+	wcstombs_s(&size, path, MAX_PATH, wszPath, MAX_PATH);
+
+	// Convert char types
+	if (hr == S_OK)
+		stringstream << path;
+	string pathtowrite = stringstream.str();
+
+	// Add the company and game information
+	pathtowrite += "\\RazorBalloon\\";
+
+	// Create our directory
+	SHCreateDirectoryEx(NULL, pathtowrite.c_str(), 0);
+
+	// Create our save file
+	pathtowrite += "config.xml";
+
 	// Create a TinyXML doc
 	TiXmlDocument doc;
 
@@ -608,5 +662,5 @@ void OptionsState::SaveOptions(string xmlSavegame)
 	doc.LinkEndChild(pRoot);
 
 	// Save and write the savegame
-	doc.SaveFile(xmlSavegame.c_str());
+	doc.SaveFile(pathtowrite.c_str());
 }

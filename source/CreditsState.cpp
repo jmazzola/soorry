@@ -218,6 +218,13 @@ using namespace std;
 	credits += "\t\t\t\t\tJustin Mazzola\n\n";
 	credits += "\t\t\t\t\tMercenary Programmer\n";
 	credits += "\t\t\t\t\tRyan Simmons\n\n";
+	credits += "\t\t\t\t\tQA Core Team\n";
+	credits += "\t\t\t\t\tLast Light\n\n";
+	credits += "\t\t\t\t\tJordan Butler\n";
+	credits += "\t\t\t\t\tAndrew Clear\n";
+	credits += "\t\t\t\t\tWesley Copeland\n";
+	credits += "\t\t\t\t\tSpencer Hawkins\n";
+	credits += "\t\t\t\t\tRyan Simmons\n\n";
 	credits += "\t\t\t\t\tCanadian Linguist\n";
 	credits += "\t\t\t\t\tJordan Scelsa\n\n";
 	credits += "\t\t\t\t\tVoice Actor\n";
@@ -242,7 +249,7 @@ using namespace std;
 		// Draw the background
 		pGraphics->DrawTexture(m_hBackground, { 0, 0 });
 
-		m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 255, 0, 0 });
+		m_pFont->Draw(credits, (int)textPosition.x, (int)textPosition.y, 0.5f, { 0, 0, 0 });
 
 		// Draw rectangles to cut off the words to give an illusion of margins
 		pGraphics->DrawTextureSection(m_hBackground, { 0, 0 },
