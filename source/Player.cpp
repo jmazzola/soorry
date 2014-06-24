@@ -1576,7 +1576,7 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	}
 	if (pEvent->GetEventID() == "ESCAPE")
 	{
-		m_fEscapeTimer = 3;
+		m_fEscapeTimer = 1;
 	}
 }
 
