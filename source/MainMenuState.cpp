@@ -84,6 +84,7 @@ using namespace std;
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_MainMenu.png");
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
 
 	//Load music 
 
@@ -109,7 +110,7 @@ using namespace std;
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	//Play Audio
-	//int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	
 	//pAudio->PlayAudio(m_hMenuMusic, true);
 	m_bAccept = true;
 	m_bTHEBOOL = false;
@@ -121,6 +122,7 @@ using namespace std;
 	m_ptButtonPositions[MENU_OPTIONS] = SGD::Point(200, 340);
 	m_ptButtonPositions[MENU_CREDITS] = SGD::Point(230, 410);
 	m_ptButtonPositions[MENU_EXIT] = SGD::Point(180, 480);
+
 }
 
 

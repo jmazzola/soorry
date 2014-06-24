@@ -793,6 +793,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
 	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/hattrickThumb.png");
+	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/hattrickThumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 	m_hLosingBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_GameOver.png");
 
@@ -972,6 +973,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hARThumb);
 	pGraphics->UnloadTexture(m_hRLPic);
 	pGraphics->UnloadTexture(m_hRLThumb);
+	pGraphics->UnloadTexture(m_hFireAxePic);
 	pGraphics->UnloadTexture(m_hFireAxeThumb);
 	pGraphics->UnloadTexture(m_hBackground);
 
@@ -2169,7 +2171,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Get the weapons
 					Weapon* weapons = player->GetWeapons();
-					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
+					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
 
 					// Draw the picture of the selected pic
 					if (player->HasAR() && player->GetCurrWeapon() == 0)
@@ -2188,9 +2190,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
 
 					if (player->HasHatTrick() && player->GetCurrWeapon() == 3)
-						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(64, 64)));
 					else if (!player->HasHatTrick() && player->GetCurrWeapon() == 3)
-						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(64, 64)), 0, {}, { 0, 0, 0, 0 });
 
 
 					// Draw the ammo of the selected weapon
@@ -2735,7 +2737,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= 1000;
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, -1, 1);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		tempProj->SetVelocity(vec);
@@ -2753,6 +2755,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		playerCenter.y += 16;
 		ShotgunPellet* tempProj = new ShotgunPellet;
 		tempProj->SetDamage(m_pShop->GetShotgunDamage());
+
 		tempProj->SetLifeTime(5);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;

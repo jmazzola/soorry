@@ -97,6 +97,8 @@ public:
 	void SetHatTrick(bool h) { m_bHasHatTrick = h; }
 	void SetDelay(float e) { m_fEscapeTimer = e; }
 
+	bool hasClosedShop = false;
+
 protected:
 
 	/**********************************************************/
@@ -168,7 +170,7 @@ private:
 	bool m_bHasHatTrick;
 
 	float m_fCanBlood;
+	
 	float m_fEscapeTimer;
-
 };
 

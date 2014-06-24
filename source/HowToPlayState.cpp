@@ -41,7 +41,7 @@
 
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
+	
 	SetTransition(false);
 
 	// Setup BitmapFont
@@ -183,7 +183,7 @@
 	SGD::InputManager* pInput = SGD::InputManager::GetInstance();
 
 #if !ARCADE_MODE
-	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsKeyPressed(SGD::Key::Escape))
+	if (pInput->IsKeyPressed(SGD::Key::Backspace) || pInput->IsKeyPressed(SGD::Key::Escape) || pInput->IsButtonReleased(0, unsigned int(SGD::Button::B)))
 #else
 	if (pInput->IsButtonPressed(0, 6))
 #endif

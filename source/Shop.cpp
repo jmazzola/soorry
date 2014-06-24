@@ -253,7 +253,9 @@ bool Shop::Input()
 				m_nCursor = 0;
 				m_nMenuTab = MAIN_TAB;
 				SetShopStatus(false);
+				
 				dynamic_cast<Player*>(m_pPlayer)->SetDelay(1);
+				dynamic_cast<Player*>(m_pPlayer)->hasClosedShop = true;
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
@@ -765,7 +767,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the weapon's descriptions --
-			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the weapon's price --
 			string price = "Price: ";
@@ -895,7 +897,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
-			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the item's price --
 			string price = "Price: ";
@@ -982,7 +984,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the upgrade's descriptions --
-			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the upgrade's price --
 			string price = "Price: ";
@@ -1029,33 +1031,33 @@ void Shop::Render()
 
 			string stuff = "MG Towers: ";
 			stuff += std::to_string(inv->GetMachineGunTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 256, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Syrup Towers: ";
 			stuff += std::to_string(inv->GetMapleSyrupTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 316, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 276, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Hockey Stick Towers: ";
 			stuff += std::to_string(inv->GetHockeyStickTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 336, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 296, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Laser Towers: ";
 			stuff += std::to_string(inv->GetLaserTowers());
-			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 316, 0.4f, { 255, 255, 0 });
 			stuff = "Lava Traps: ";
 			stuff += std::to_string(inv->GetLavaTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 376, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 336, 0.4f, { 255, 255, 0 });
 			stuff.clear();
 			stuff = "Spike Traps: ";
 			stuff += std::to_string(inv->GetSpikeTraps());
-			m_pFont->Draw(stuff.c_str(), 414, 396, 0.4f, { 255, 255, 0 });
+			m_pFont->Draw(stuff.c_str(), 414, 356, 0.4f, { 255, 255, 0 });
 
 			// Draw the mun-knee
 			string money = "Money: " + std::to_string(dynamic_cast<Player*>(m_pPlayer)->GetScore());
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
-			m_pFont->Draw(fortDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(fortDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the item's price --
 			string price = "Price: ";
@@ -1117,71 +1119,24 @@ bool Shop::Buy(int parcel, int shopSection)
 		{
 		case 0:
 		{
-
-			// If we're playing beaver fever
-			if (gamep->GetGameMode() == 3 && !player->HasAR())
-			{
-				player->SetAR(true);
-				player->SetShotgun(false);
-				player->SetRocketLauncher(false);
-				player->SetHatTrick(false);
-
-				isWeapBought[WEAP_AR] = true;
-				isWeapBought[WEAP_SHOTGUN] = false;
-				isWeapBought[WEAP_ROCKETLAUNCHER] = false;
-				isWeapBought[WEAP_HATTRICK] = false;
-
-				break;
-			}
-
 			if (player->HasAR())
-			return false;
+				return false;
 
 			break;
 		}
 
 		case 1:
 		{
-			// If we're playing beaver fever
-			if (gamep->GetGameMode() == 3 && !player->HasShotty())
-			{
-				player->SetAR(false);
-				player->SetShotgun(true);
-				player->SetRocketLauncher(false);
-				player->SetHatTrick(false);
-
-
-				isWeapBought[WEAP_AR] = false;
-				isWeapBought[WEAP_SHOTGUN] = true;
-				isWeapBought[WEAP_ROCKETLAUNCHER] = false;
-				isWeapBought[WEAP_HATTRICK] = false;
-				break;
-			}
-
-			if (player->HasShotty() == true)
+			if (player->HasShotty())
 				return false;
+
 			break;
 		}
 
 		case 2:
 		{
-				// If we're playing beaver fever
-				if (gamep->GetGameMode() == 3 && !player->HasRocketLauncher())
-				{
-					player->SetAR(false);
-					player->SetShotgun(false);
-					player->SetRocketLauncher(true);
-					player->SetHatTrick(false);
-
-
-					isWeapBought[WEAP_AR] = false;
-					isWeapBought[WEAP_SHOTGUN] = false;
-					isWeapBought[WEAP_ROCKETLAUNCHER] = true;
-					isWeapBought[WEAP_HATTRICK] = false;
-					break;
-				}
-
-			if (player->HasRocketLauncher() == true)
+				
+			if (player->HasRocketLauncher())
 				return false;
 
 			break;
@@ -1189,24 +1144,9 @@ bool Shop::Buy(int parcel, int shopSection)
 
 		case 3:
 		{
-				// If we're playing beaver fever
-				if (gamep->GetGameMode() == 3 && !player->HasHatTrick())
-				{
-					player->SetAR(false);
-					player->SetShotgun(false);
-					player->SetRocketLauncher(false);
-					player->SetHatTrick(true);
-
-					isWeapBought[WEAP_AR] = false;
-					isWeapBought[WEAP_SHOTGUN] = false;
-					isWeapBought[WEAP_ROCKETLAUNCHER] = false;
-					isWeapBought[WEAP_HATTRICK] = true;
-
-					break;
-				}
-
-			if (player->HasHatTrick() == true)
+			if (player->HasHatTrick())
 				return false;
+
 			break;
 		}
 
@@ -1386,90 +1326,84 @@ void Shop::GivePurchase(int parcel, int shopSection)
 
 		if (parcel == WEAP_AR)
 		{
-			
-			if (gamep->GetGameMode() == 3)
+			player->SetAR(true);
+			isWeapBought[WEAP_AR] = true;
+
+			/*if (gamep->GetGameMode() == 3)
 			{
-				player->SetAR(true);
-				weapons[0].SetCurrAmmo(AR_CURAMMO);
-				weapons[1].SetCurrAmmo(0);
-				weapons[2].SetCurrAmmo(0);
-				weapons[3].SetCurrAmmo(0);
+			player->SetAR(true);
+			weapons[0].SetCurrAmmo(AR_CURAMMO);
+			weapons[1].SetCurrAmmo(0);
+			weapons[2].SetCurrAmmo(0);
+			weapons[3].SetCurrAmmo(0);
 			}
 			else
-			{
-			if (player->HasAR())
-				return;
+			{*/
 
-			player->SetAR(true);
-				weapons[0].SetCurrAmmo(AR_CURAMMO);
-			}
-
+			weapons[0].SetCurrAmmo(AR_CURAMMO);
 
 		}
 
 		if (parcel == WEAP_SHOTGUN)
 		{
-			
-			if (gamep->GetGameMode() == 3)
-			{
-				player->SetShotgun(true);
-				weapons[0].SetCurrAmmo(0);
-				weapons[1].SetCurrAmmo(SH_CURAMMO);
-				weapons[2].SetCurrAmmo(0);
-				weapons[3].SetCurrAmmo(0);
-			}
-			else
-			{
-			if (player->HasShotty())
-				return;
 
 			player->SetShotgun(true);
-				weapons[1].SetCurrAmmo(SH_CURAMMO);
-		}
+			isWeapBought[WEAP_SHOTGUN] = true;
+
+			/*if (gamep->GetGameMode() == 3)
+			{
+			player->SetShotgun(true);
+			weapons[0].SetCurrAmmo(0);
+			weapons[1].SetCurrAmmo(SH_CURAMMO);
+			weapons[2].SetCurrAmmo(0);
+			weapons[3].SetCurrAmmo(0);
+			}
+			else
+			{*/
+
+			weapons[1].SetCurrAmmo(SH_CURAMMO);
 		}
 
 		if (parcel == WEAP_ROCKETLAUNCHER)
 		{
-			
-			if (gamep->GetGameMode() == 3)
-			{
-				player->SetRocketLauncher(true);
-				weapons[0].SetCurrAmmo(0);
-				weapons[1].SetCurrAmmo(0);
-				weapons[2].SetCurrAmmo(RL_CURAMMO);
-				weapons[3].SetCurrAmmo(0);
-			}
-			else
-			{
-			if (player->HasRocketLauncher())
-				return;
 
 			player->SetRocketLauncher(true);
-				weapons[2].SetCurrAmmo(RL_CURAMMO);
-		}
+			isWeapBought[WEAP_ROCKETLAUNCHER] = true;
+
+			/*if (gamep->GetGameMode() == 3)
+			{
+			player->SetRocketLauncher(true);
+			weapons[0].SetCurrAmmo(0);
+			weapons[1].SetCurrAmmo(0);
+			weapons[2].SetCurrAmmo(RL_CURAMMO);
+			weapons[3].SetCurrAmmo(0);
+			}
+			else
+			{*/
+
+			weapons[2].SetCurrAmmo(RL_CURAMMO);
 
 
 		}
 
 		if (parcel == WEAP_HATTRICK)
 		{
-			if (gamep->GetGameMode() == 3)
+			player->SetHatTrick(true);
+			isWeapBought[WEAP_HATTRICK] = true;
+
+			/*if (gamep->GetGameMode() == 3)
 			{
-				player->SetHatTrick(true);
-				weapons[0].SetCurrAmmo(0);
-				weapons[1].SetCurrAmmo(0);
-				weapons[2].SetCurrAmmo(0);
-				weapons[3].SetCurrAmmo(HT_CURAMMO);
+			player->SetHatTrick(true);
+			weapons[0].SetCurrAmmo(0);
+			weapons[1].SetCurrAmmo(0);
+			weapons[2].SetCurrAmmo(0);
+			weapons[3].SetCurrAmmo(HT_CURAMMO);
 			}
 			else
-			{
-			if (player->HasHatTrick())
-				return;
+			{*/
 
-			player->SetHatTrick(true);
-				weapons[3].SetCurrAmmo(HT_CURAMMO);
+			weapons[3].SetCurrAmmo(HT_CURAMMO);
 		}
-	}
 	}
 
 	// << ITEMS >>

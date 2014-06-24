@@ -25,6 +25,7 @@
 #include "CreditsState.h"
 #include "OptionsState.h"
 #include "IntroState.h"
+#include "HowToPlayState.h"
 
 #include "MenuFlyweight.h"
 
@@ -318,8 +319,12 @@ void Game::ChangeState(IGameState* pNewState)
 		m_pCurrState->Exit();
 
 	MenuFlyweight* mf = Game::GetInstance()->GetMenuFlyweight();
-
+	
 	if (pNewState == GameplayState::GetInstance())
+	{
+		m_pAudio->StopAudio(mf->GetMenuMusic());
+	}
+	else if (pNewState == HowToPlayState::GetInstance())
 	{
 		m_pAudio->StopAudio(mf->GetMenuMusic());
 	}

@@ -7,7 +7,7 @@
 ***************************************************************/
 
 #include "MenuFlyweight.h"
-
+#include "OptionsState.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
 
 
@@ -28,6 +28,7 @@ void MenuFlyweight::Load()
 	m_hClickSound = pAudio->LoadAudio("resource/audio/click.wav");
 	m_hPageTurnSound = pAudio->LoadAudio("resource/audio/pageTurn.wav");
 	m_hMenuMusic = pAudio->LoadAudio(L"resource/audio/O Canada.xwm");
+	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 }
 
 void MenuFlyweight::Unload()

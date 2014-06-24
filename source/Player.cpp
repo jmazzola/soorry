@@ -268,7 +268,7 @@ Player::Player () : Listener ( this )
 
 
 	RegisterForEvent ( "TAKE_DAMAGE" );
-	RegisterForEvent("INCREASE_SCORE");
+	RegisterForEvent ( "INCREASE_SCORE" );
 	RegisterForEvent("ESCAPE");
 
 	// Create node chart
@@ -402,7 +402,7 @@ void Player::Update ( float dt )
 
 
 #if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop;
+	m_bTHEBOOL = (pInput->IsKeyPressed(SGD::Key::E) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A)) && (m_pZombieWave->IsBuildMode() && m_bIsNearShop && !hasClosedShop);
 #endif
 #if ARCADE_MODE
 		m_bTHEBOOL = (pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(1,2) ) && m_bAccept;
@@ -967,7 +967,7 @@ void Player::Update ( float dt )
 		}
 
 		// Place item
-		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && pInput->IsKeyDown(SGD::Key::MouseRight) == false || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
 			((PlacementCheck(pos) && m_nCurrPlaceable < 8) || (PlacementCheck(pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3)))) && m_fEscapeTimer <= 0)
 		{
 			// Bear trap
@@ -1200,6 +1200,8 @@ void Player::Update ( float dt )
 		Camera::y = (int)tempVector.y;
 	}
 	WeaponSwitch();
+	
+	hasClosedShop = false;
 	
 }
 
@@ -1577,7 +1579,7 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	if (pEvent->GetEventID() == "ESCAPE")
 	{
 		m_fEscapeTimer = 1;
-	}
+}
 }
 
 bool Player::Blockable ( SGD::Point mouse )

@@ -65,7 +65,6 @@ public:
 		m_pGraphics->ToggleFullScreen();
 	}
 
-
 	// Debug Mode Accessor:
 	bool IsDebugMode() { return m_bDebugMode; }
 	int GetDebugCurs() { return m_nDebugCurs; }
@@ -84,6 +83,7 @@ public:
 	void SetInfAmmo(bool inf) { m_bInfiniteAmmo = inf; }
 	void SetShowPos(bool pos) { m_bShowPlayerPos = pos; }
 
+	
 	void MouseWheel(int direction);
 
 	/**********************************************************/
