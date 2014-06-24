@@ -96,6 +96,8 @@ public:
 	void SetRocketLauncher(bool r) { m_bHasRocketz = r; }
 	void SetHatTrick(bool h) { m_bHasHatTrick = h; }
 
+	bool hasClosedShop = false;
+
 protected:
 
 	/**********************************************************/

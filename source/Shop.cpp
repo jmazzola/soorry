@@ -253,6 +253,7 @@ bool Shop::Input()
 				m_nMenuTab = MAIN_TAB;
 				SetShopStatus(false);
 				pAudio->PlayAudio(m_pTowerFlyweight->GetSellSound());
+				dynamic_cast<Player*>(m_pPlayer)->hasClosedShop = true;
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());

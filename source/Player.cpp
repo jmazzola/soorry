@@ -400,7 +400,7 @@ void Player::Update ( float dt )
 
 
 #if !ARCADE_MODE
-		m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::E) && m_pZombieWave->IsBuildMode() && m_bIsNearShop;
+	m_bTHEBOOL = pInput->IsKeyPressed(SGD::Key::E) || pInput->IsButtonReleased(0, (unsigned int)SGD::Button::A) && m_pZombieWave->IsBuildMode() && m_bIsNearShop && !hasClosedShop;
 #endif
 #if ARCADE_MODE
 		m_bTHEBOOL = (pInput->IsButtonPressed(0, 2) || pInput->IsButtonPressed(1,2) ) && m_bAccept;
@@ -1198,6 +1198,8 @@ void Player::Update ( float dt )
 		Camera::y = (int)tempVector.y;
 	}
 	WeaponSwitch();
+
+	hasClosedShop = false;
 	
 }
 
