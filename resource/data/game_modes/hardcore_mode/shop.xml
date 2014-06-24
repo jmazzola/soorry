@@ -41,7 +41,7 @@
     <tower name="Spike Trap"      price="300"     description="Add 1 Spike Trap" amountToAdd="1" top="0" left="658" isPro ="0"/>
     <tower name="Lava Trap"      price="280"     description="Add 1 Lava Trap" amountToAdd="1"  top="100" left="558" isPro ="0"/>
 		<tower name="Hockey Stick Tower"					price="900"	description="Slice and dice with the spirit of Canada!" 			top="100" left="1323" isPro ="0"/>
-    <tower name="Go Back"							price="0"	description="Leave Tower Shop" 							top="100" left="658"/>
+    <tower name="Go Back"							price="0"	description="Leave Fortication Depot" 							top="100" left="658"/>
 	</towers>
   
 </shop>
