@@ -2063,7 +2063,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				string waveNum = "Wave: ";
 				waveNum += std::to_string(zombieFactory->GetWave());
 				int m_nwaveNum = zombieFactory->GetWave();
-				if (m_nwaveNum >= 10)
+				if (m_nwaveNum >= 10 && m_nGamemode != SANDBOX_MODE)
 					m_pFont->Draw("Wave: 10", 64, 38, 0.5f, { 255, 255, 255 });
 				else
 					m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
