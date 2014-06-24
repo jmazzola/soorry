@@ -172,6 +172,7 @@ int Game::Main(void)
 
 	
 #if !ARCADE_MODE
+	
 	// Toggle fullscreen
 	if (m_pInput->IsKeyDown(SGD::Key::Alt) &&
 		m_pInput->IsKeyPressed(SGD::Key::Enter))
@@ -180,7 +181,6 @@ int Game::Main(void)
 		// Disable the 'Enter' input
 		return false;
 	}
-	
 
 	if(m_pInput->IsControllerConnected(0))
 	{
