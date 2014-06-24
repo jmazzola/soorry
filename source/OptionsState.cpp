@@ -570,6 +570,7 @@ void OptionsState::LoadOptions(string xmlSavegame)
 	// Set the sfx volume
 	SGD::AudioManager::GetInstance()->SetMasterVolume(SGD::AudioGroup::SoundEffects, atoi(sfxVolume));
 
+	
 }
 
 // SaveOptions
@@ -598,6 +599,10 @@ void OptionsState::SaveOptions(string xmlSavegame)
 	// Set the vol's attributes to the settings set by the player
 	pVol->SetAttribute("music", SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::Music));
 	pVol->SetAttribute("sfx", SGD::AudioManager::GetInstance()->GetMasterVolume(SGD::AudioGroup::SoundEffects));
+
+	TiXmlElement* pFullscreen = new TiXmlElement("fullscreen");
+	pRoot->LinkEndChild(pFullscreen);
+	pFullscreen->SetAttribute("on", Game::GetInstance()->GetFullscreen() ? 0 : 1);
 
 	// Attach the root to the doc
 	doc.LinkEndChild(pRoot);

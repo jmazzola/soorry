@@ -65,7 +65,6 @@ public:
 		m_pGraphics->ToggleFullScreen();
 	}
 
-
 	// Debug Mode Accessor:
 	bool IsDebugMode() { return m_bDebugMode; }
 	int GetDebugCurs() { return m_nDebugCurs; }

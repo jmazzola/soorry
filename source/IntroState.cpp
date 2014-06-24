@@ -25,6 +25,8 @@
 
 #include "BitmapFont.h"
 
+#include "../TinyXML/tinyxml.h"
+
 #include "Entity.h"
 #include "EntityManager.h"
 
@@ -89,6 +91,22 @@ using namespace std;
 	if(pGraphics->IsCursorShowing() == true)
 		pGraphics->TurnCursorOff();
 
+	// Create a TinyXML document
+	TiXmlDocument doc;
+
+	// Attempt to load the file, if not gtfo
+	if (!doc.LoadFile("resource/data/config.xml"))
+		return;
+
+	// Access the root element (volume)
+	TiXmlElement* pRoot = doc.RootElement();
+
+	TiXmlElement* pFullscreen = pRoot->FirstChildElement("fullscreen");
+	int fullscreen;
+	pFullscreen->Attribute("on", &fullscreen);
+
+	if (fullscreen == 1)
+		Game::GetInstance()->ToggleFullscreen();
 }
 
 
