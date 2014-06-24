@@ -94,7 +94,7 @@ Player::Player () : Listener ( this )
 	}
 	else
 	{
-		m_unScore = 10000;
+		m_unScore = 1000;
 	}
 
 	// Player Inventory
