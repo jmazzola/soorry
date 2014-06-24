@@ -116,9 +116,7 @@ StatsState* StatsState::GetInstance(void)
 #endif 
 	 if ( m_bTHEBOOL )
 	 {
-		 m_nResetStatsStatus++;
-		 if(m_nResetStatsStatus == AIGHTITSGONE)
-			 m_pStats->Reset();
+		m_pStats->Reset();
 	 }
 	
 	 return true;
@@ -174,7 +172,7 @@ StatsState* StatsState::GetInstance(void)
 			 SGD::Rectangle(0, 475, 800, 600), {}, {});
 
 		 // Render button
-#if !ARCADE_MODE
+#if 0
 			 SGD::Color color = (m_nCursor == 0) ? SGD::Color(255, 0, 0) : SGD::Color(0, 0, 0);
 			 if (m_nResetStatsStatus == AREYOUSURE)
 				 m_pMainButton->Draw("Reset Stats?", { 200, 420 }, color, { 0.9f, 0.9f }, 0);
