@@ -29,8 +29,8 @@ SGD::Rectangle ShopEntity::GetRect() const
 	SGD::Rectangle rect;
 	rect.left = m_nX;
 	rect.top = m_nY;
-	rect.right = rect.left + 32 * 6 + 50;
-	rect.bottom = rect.top + 32 * 5 + 50;
+	rect.right = rect.left + 32 * 6;
+	rect.bottom = rect.top + 32 * 5;
 
 	return rect;
 }

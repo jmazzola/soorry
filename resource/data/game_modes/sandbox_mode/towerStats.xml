@@ -125,19 +125,19 @@
       
       <!-- Tier 1 -->
       <tier_one>
-        <cost value="400"/>
+        <cost value="2500"/>
         <damage value="10.0"/>
       </tier_one>
       
       <!-- Tier 2 -->
       <tier_two>
-        <cost value="800"/>
+        <cost value="3200"/>
         <damage value="20.0"/>
       </tier_two>
       
       <!-- Tier 3 -->
       <tier_three>
-        <cost value="1200"/>
+        <cost value="5000"/>
         <damage value="45.0"/>
       </tier_three>
     </damage_upgrade>
@@ -147,19 +147,19 @@
 
       <!-- Tier 1 -->
       <tier_one>
-        <cost value="250"/>
+        <cost value="2000"/>
         <spin_rate value="12.0"/>
       </tier_one>
 
       <!-- Tier 2 -->
       <tier_two>
-        <cost value="500"/>
+        <cost value="3000"/>
         <spin_rate value="16.0"/>
       </tier_two>
 
       <!-- Tier 3 -->
       <tier_three>
-        <cost value="750"/>
+        <cost value="4500"/>
         <spin_rate value="24.0"/>
       </tier_three>
     </spin_rate_upgrade>
