@@ -54,7 +54,15 @@ void MachineGunTower::Update(float dt)
 		float bulletTime = distance / m_fBulletSpeed;
 
 		// Get estimated enemy position
-		SGD::Point estimatedPos = enemy->GetPosition() + enemy->GetVelocity() * bulletTime;
+		SGD::Point estimatedPos = enemy->GetPosition() + (enemy->GetVelocity() / dt) * bulletTime;
+
+		// Distance to estimated position
+		distance = SGD::Vector(estimatedPos - m_ptPosition).ComputeLength();
+		float estBulletTime = distance / m_fBulletSpeed;
+
+		float avg = (bulletTime + estBulletTime) / 2;
+
+		estimatedPos = enemy->GetPosition() + (enemy->GetVelocity() / dt) * avg;
 
 		bulletVelocity = estimatedPos - m_ptPosition;
 		bulletVelocity.Normalize();
