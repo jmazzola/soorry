@@ -253,9 +253,7 @@ bool Shop::Input()
 				m_nCursor = 0;
 				m_nMenuTab = MAIN_TAB;
 				SetShopStatus(false);
-				pAudio->PlayAudio(m_pTowerFlyweight->GetSellSound());
-				SGD::Event* pEvent = new SGD::Event("ESCAPE", nullptr, this);
-				pEvent->QueueEvent();
+				dynamic_cast<Player*>(m_pPlayer)->SetDelay(1);
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());

@@ -95,8 +95,8 @@ public:
 	void SetShotgun(bool sh) { m_bHasShotty = sh; }
 	void SetRocketLauncher(bool r) { m_bHasRocketz = r; }
 	void SetHatTrick(bool h) { m_bHasHatTrick = h; }
+	void SetDelay(float e) { m_fEscapeTimer = e; }
 
-	float m_fEscapeTimer;
 protected:
 
 	/**********************************************************/
@@ -168,6 +168,7 @@ private:
 	bool m_bHasHatTrick;
 
 	float m_fCanBlood;
+	float m_fEscapeTimer;
 
 };
 

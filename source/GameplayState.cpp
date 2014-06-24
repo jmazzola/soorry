@@ -1188,7 +1188,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					{
 						// Resume gameplay
 						m_bIsPaused = false;
-						m_pPlayer->m_fEscapeTimer = 1;
+						m_pPlayer->SetDelay(1);
 						break;
 					}
 						break;
@@ -2063,7 +2063,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				string waveNum = "Wave: ";
 				waveNum += std::to_string(zombieFactory->GetWave());
 				int m_nwaveNum = zombieFactory->GetWave();
-				if (m_nwaveNum >= 10 && m_nGamemode != SANDBOX_MODE)
+				if (m_nwaveNum >= zombieFactory->GetTotalWaves() && m_nGamemode != SANDBOX_MODE)
 					m_pFont->Draw("Wave: 10", 64, 38, 0.5f, { 255, 255, 255 });
 				else
 					m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
@@ -2071,7 +2071,16 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				if (zombieFactory->IsBuildMode())
 				{
 
-					if (m_bBuildStart == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hArcade) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBeaverFever) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hRunning_Man) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHard_Core) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hSand_Box) == false)
+					if (m_bBuildStart == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hArcade) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBeaverFever) == false 
+						&& SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hRunning_Man) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHard_Core) == false 
+						&& SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hSand_Box) == false && m_nwaveNum <= zombieFactory->GetTotalWaves())
+					{
+						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
+						m_bBuildStart = true;
+					}
+					else if (m_bBuildStart == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hArcade) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hBeaverFever) == false
+						&& SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hRunning_Man) == false && SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHard_Core) == false
+						&& SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hSand_Box) == false && m_nGamemode == SANDBOX_MODE)
 					{
 						SGD::AudioManager::GetInstance()->PlayAudio(m_hGoToShop);
 						m_bBuildStart = true;
