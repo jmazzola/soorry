@@ -22,6 +22,7 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
 #include "BitmapFont.h"
 
 #define SELL_DISCOUNT 0.75f
@@ -253,6 +254,9 @@ bool Shop::Input()
 				m_nMenuTab = MAIN_TAB;
 				SetShopStatus(false);
 				pAudio->PlayAudio(m_pTowerFlyweight->GetSellSound());
+				dynamic_cast<Player*>(m_pPlayer)->hasClosedShop = true;
+				SGD::Event* pEvent = new SGD::Event("ESCAPE", nullptr, this);
+				pEvent->QueueEvent();
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
@@ -764,7 +768,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the weapon's descriptions --
-			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(weapDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the weapon's price --
 			string price = "Price: ";
@@ -894,7 +898,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
-			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(itemDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the item's price --
 			string price = "Price: ";
@@ -981,7 +985,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the upgrade's descriptions --
-			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(upgradeDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the upgrade's price --
 			string price = "Price: ";
@@ -1054,7 +1058,7 @@ void Shop::Render()
 			m_pFont->Draw(money.c_str(), 565, 60, 0.4f, { 255, 255, 255 });
 
 			// -- Draw the item's descriptions --
-			m_pFont->Draw(fortDescs[m_nCursor].c_str(), 416, 208, 0.6f, { 0, 0, 0 });
+			m_pFont->Draw(fortDescs[m_nCursor].c_str(), 416, 208, 0.4f, { 0, 0, 0 });
 
 			// -- Draw the item's price --
 			string price = "Price: ";

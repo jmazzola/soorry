@@ -62,7 +62,7 @@ void Projectile::Update(float dt)
 		pMsg->QueueMessage();
 		pMsg = nullptr;
 
-		if (!SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHit))
+		if (!SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hHit) && m_fLifeTime <= 10)
 			SGD::AudioManager::GetInstance()->PlayAudio(m_hHit);
 	}
 }
