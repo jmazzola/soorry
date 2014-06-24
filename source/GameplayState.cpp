@@ -793,6 +793,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	m_hRLPic = pGraphics->LoadTexture("resource/images/hud/rpg.png");
 	m_hRLThumb = pGraphics->LoadTexture("resource/images/hud/rpgthumb.png");
 	m_hFireAxeThumb = pGraphics->LoadTexture("resource/images/hud/hattrickThumb.png");
+	m_hFireAxePic = pGraphics->LoadTexture("resource/images/hud/hattrickThumb.png");
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_CreditsMenu2.png");
 	m_hLosingBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_GameOver.png");
 
@@ -972,6 +973,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 	pGraphics->UnloadTexture(m_hARThumb);
 	pGraphics->UnloadTexture(m_hRLPic);
 	pGraphics->UnloadTexture(m_hRLThumb);
+	pGraphics->UnloadTexture(m_hFireAxePic);
 	pGraphics->UnloadTexture(m_hFireAxeThumb);
 	pGraphics->UnloadTexture(m_hBackground);
 
@@ -2160,7 +2162,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 
 					// Get the weapons
 					Weapon* weapons = player->GetWeapons();
-					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hBackground };
+					SGD::HTexture textures[4] = { m_hARPic, m_hShotgunPic, m_hRLPic, m_hFireAxePic };
 
 					// Draw the picture of the selected pic
 					if (player->HasAR() && player->GetCurrWeapon() == 0)
@@ -2179,9 +2181,9 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 						pGraphics->DrawTextureSection(textures[2], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
 
 					if (player->HasHatTrick() && player->GetCurrWeapon() == 3)
-						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)));
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(64, 64)));
 					else if (!player->HasHatTrick() && player->GetCurrWeapon() == 3)
-						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(115, 48)), 0, {}, { 0, 0, 0, 0 });
+						pGraphics->DrawTextureSection(textures[3], { 590, 500 }, SGD::Rectangle({ 0, 0 }, SGD::Size(64, 64)), 0, {}, { 0, 0, 0, 0 });
 
 
 					// Draw the ammo of the selected weapon
