@@ -601,27 +601,21 @@ void Shop::UpdateItemStatus()
 
 
 	// Update Weapon Names if they're bought
+	(player->HasAR()) ? weapNames[WEAP_AR] = "Assault Rifle [OWNED]" : weapNames[WEAP_AR] = "Assault Rifle";
+	isWeapBought[WEAP_AR] = (player->HasAR());
+
+	(player->HasShotty()) ? weapNames[WEAP_SHOTGUN] = "Shotgun [OWNED]" : weapNames[WEAP_SHOTGUN] = "Shotgun";
+	isWeapBought[WEAP_SHOTGUN] = (player->HasShotty());
+
+	(player->HasRocketLauncher()) ? weapNames[WEAP_ROCKETLAUNCHER] = "RPG [OWNED]" : weapNames[WEAP_ROCKETLAUNCHER] = "RPG";
+	isWeapBought[WEAP_ROCKETLAUNCHER] = (player->HasRocketLauncher());
+
+	(player->HasHatTrick()) ? weapNames[WEAP_HATTRICK] = "Hat Trick [OWNED]" : weapNames[WEAP_HATTRICK] = "Hat Trick";
+	isWeapBought[WEAP_HATTRICK] = (player->HasHatTrick());
+
 
 	switch (m_nMenuTab)
 	{
-
-
-	case WEAPONS_TAB:
-	{
-		(player->HasAR()) ? weapNames[WEAP_AR] = "Assault Rifle [OWNED]" : weapNames[WEAP_AR] = "Assault Rifle";
-		isWeapBought[WEAP_AR] = (player->HasAR());
-
-		(player->HasShotty()) ? weapNames[WEAP_SHOTGUN] = "Shotgun [OWNED]" : weapNames[WEAP_SHOTGUN] = "Shotgun";
-		isWeapBought[WEAP_SHOTGUN] = (player->HasShotty());
-
-		(player->HasRocketLauncher()) ? weapNames[WEAP_ROCKETLAUNCHER] = "RPG [OWNED]" : weapNames[WEAP_ROCKETLAUNCHER] = "RPG";
-		isWeapBought[WEAP_ROCKETLAUNCHER] = (player->HasRocketLauncher());
-
-		(player->HasHatTrick()) ? weapNames[WEAP_HATTRICK] = "Hat Trick [OWNED]" : weapNames[WEAP_HATTRICK] = "Hat Trick";
-		isWeapBought[WEAP_HATTRICK] = (player->HasHatTrick());
-	}
-
-		break;
 
 	case ITEMS_TAB:
 	{
@@ -652,33 +646,52 @@ void Shop::UpdateItemStatus()
 	{
 		Weapon* weapons = player->GetWeapons();
 
+		// Ammos
 		(weapons[0].GetMaxAmmo() >= weapons[0].GetMaxAmmoCap()) ? upgradeNames[UG_AR_AMMO] = "AR Max Ammo [MAXED OUT]" : upgradeNames[UG_AR_AMMO] = "AR Max Ammo +100";
 		isUpgradeMaxed[UG_AR_AMMO] = (weapons[0].GetMaxAmmo() >= weapons[0].GetMaxAmmoCap());
+		(!player->HasAR()) ? upgradeNames[UG_AR_AMMO] = "AR Max Ammo [N/A]" : upgradeNames[UG_AR_AMMO] = "AR Max Ammo +100";
 
 		(weapons[1].GetMaxAmmo() >= weapons[1].GetMaxAmmoCap()) ? upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo [MAXED OUT]" : upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo +100";
 		isUpgradeMaxed[UG_SHOTGUN_AMMO] = (weapons[1].GetMaxAmmo() >= weapons[1].GetMaxAmmoCap());
+		(!player->HasShotty()) ? upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo [N/A]" : upgradeNames[UG_SHOTGUN_AMMO] = "Shotgun Max Ammo +100";
 
 		(weapons[2].GetMaxAmmo() >= weapons[2].GetMaxAmmoCap()) ? upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo [MAXED OUT]" : upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo +100";
 		isUpgradeMaxed[UG_LAUNCHER_AMMO] = (weapons[2].GetMaxAmmo() >= weapons[2].GetMaxAmmoCap());
+		(!player->HasRocketLauncher()) ? upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo [N/A]" : upgradeNames[UG_LAUNCHER_AMMO] = "RPG Max Ammo +100";
 
 
+		// Fire Rate
 		(weapons[0].GetFireRate() <= weapons[0].GetFireRateCap()) ? upgradeNames[UG_AR_ROF] = "AR Fire Rate [MAXED OUT]" : upgradeNames[UG_AR_ROF] = "AR Fire Rate -0.2";
 		isUpgradeMaxed[UG_AR_ROF] = (weapons[0].GetFireRate() <= weapons[0].GetFireRateCap());
+		(!player->HasAR()) ? upgradeNames[UG_AR_ROF] = "AR Fire Rate [N/A]" : upgradeNames[UG_AR_ROF] = "AR Fire Rate -0.2";
+
 
 		(weapons[1].GetFireRate() <= weapons[1].GetFireRateCap()) ? upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate [MAXED OUT]" : upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate -0.1";
 		isUpgradeMaxed[UG_SHOTGUN_ROF] = (weapons[1].GetFireRate() <= weapons[1].GetFireRateCap());
+		(!player->HasShotty()) ? upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate [N/A]" : upgradeNames[UG_SHOTGUN_ROF] = "Shotgun Fire Rate -0.1";
+
 
 		(weapons[2].GetFireRate() <= weapons[2].GetFireRateCap()) ? upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate [MAXED OUT]" : upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate -0.2";
 		isUpgradeMaxed[UG_LAUNCHER_ROF] = (weapons[2].GetFireRate() <= weapons[2].GetFireRateCap());
+		(!player->HasRocketLauncher()) ? upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate [N/A]" : upgradeNames[UG_LAUNCHER_ROF] = "RPG Fire Rate -0.2";
 
+
+
+		// Damage
 		(m_nARDamage >= m_nARDamageMax) ? upgradeNames[UG_AR_DAMAGE] = "AR Damage [MAXED OUT]" : upgradeNames[UG_AR_DAMAGE] = "AR Damage +20";
 		isUpgradeMaxed[UG_AR_DAMAGE] = (m_nARDamage >= m_nARDamageMax);
+		(!player->HasAR()) ? upgradeNames[UG_AR_AMMO] = "AR Damage [N/A]" : upgradeNames[UG_AR_AMMO] = "AR Damage +20";
+
 
 		(m_nShotgunDamage >= m_nSHDamageMax) ? upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage [MAXED OUT]" : upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage +20";
 		isUpgradeMaxed[UG_SHOTGUN_DAMAGE] = (m_nShotgunDamage >= m_nSHDamageMax);
+		(!player->HasShotty()) ? upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage [N/A]" : upgradeNames[UG_SHOTGUN_DAMAGE] = "Shotgun Damage +20";
+
 
 		(m_nRLDamage >= m_nRLDamageMax) ? upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage [MAXED OUT]" : upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage +20";
 		isUpgradeMaxed[UG_LAUNCHER_DAMAGE] = (m_nRLDamage >= m_nRLDamageMax);
+		(!player->HasRocketLauncher()) ? upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage [N/A]" : upgradeNames[UG_LAUNCHER_DAMAGE] = "RPG Damage +20";
+
 
 	}
 		break;
@@ -999,11 +1012,65 @@ void Shop::Render()
 			{
 				unsigned int score = dynamic_cast<Player*>(m_pPlayer)->GetScore();
 
+				if (i == m_nCursor && m_nCursor == UG_AR_AMMO && !isWeapBought[WEAP_AR])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_AR_DAMAGE && !isWeapBought[WEAP_AR])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_AR_ROF && !isWeapBought[WEAP_AR])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_SHOTGUN_AMMO && !isWeapBought[WEAP_SHOTGUN])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_SHOTGUN_DAMAGE && !isWeapBought[WEAP_SHOTGUN])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_SHOTGUN_ROF && !isWeapBought[WEAP_SHOTGUN])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_LAUNCHER_AMMO && !isWeapBought[WEAP_ROCKETLAUNCHER])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_LAUNCHER_DAMAGE && !isWeapBought[WEAP_ROCKETLAUNCHER])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
+
+				if (i == m_nCursor && m_nCursor == UG_LAUNCHER_ROF && !isWeapBought[WEAP_ROCKETLAUNCHER])
+				{
+					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+					continue;
+				}
 
 				// If our object is at max and we're selected
 				if (m_nCursor == i && isUpgradeMaxed[i])
 					// Draw red
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 255, 0, 0 });
+
 				else if (m_nCursor != i && isUpgradeMaxed[i])
 					// Draw gray
 					m_pFont->Draw(upgradeNames[i].c_str(), 55, 70 + 40 * i, 0.5f, { 54, 54, 54 });
@@ -1181,6 +1248,24 @@ bool Shop::Buy(int parcel, int shopSection)
 		break;
 	case UPGRADES:
 	{
+		// Prevent weapon upgrades being purchased if they dont own the weapon
+
+		if (parcel == UG_AR_AMMO || parcel == UG_AR_DAMAGE || parcel == UG_AR_ROF)
+		{
+			if (!player->HasAR())
+				return false;
+
+		}
+		else if (parcel == UG_SHOTGUN_AMMO || parcel == UG_SHOTGUN_DAMAGE || parcel == UG_SHOTGUN_ROF)
+		{
+			if (!player->HasShotty())
+				return false;
+		}
+		else if (parcel == UG_LAUNCHER_AMMO || parcel == UG_LAUNCHER_DAMAGE || parcel == UG_LAUNCHER_ROF)
+		{
+			if (!player->HasRocketLauncher())
+				return false;
+		}
 		// If the player has the money for the upgrade
 		if (curMoney >= (int)upgradePrices[parcel])
 		{
