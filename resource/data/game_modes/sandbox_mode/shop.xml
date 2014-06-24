@@ -17,7 +17,7 @@
     <item name="Window +10" 		price="200" 		description="Add 10 Windows" 		amountToAdd="10" top="100" left="219"	isPro ="0"/>
 		<item name="Frag Grenade +3"	price="350" 		description="Add 3 Frag Grenades" 	amountToAdd="3"	 top="0" left="429"	isPro ="0"/>
 		<item name="Refill Ammo"		price="500"			description="Refill your clips" top="100" left="429" isPro ="0"/>
-    <item name="Drone +1"       price="2000"    description="Game of Drones." amountToAdd="1" top="0" left="558" isPro ="0"/>
+    <item name="Drone +1"       price="2000"    description="Add 1 Drone" amountToAdd="1" top="0" left="558" isPro ="0"/>
     <item name="Go Back"       	price="0"       	description="Leave the Items Store" top="100" left="658" />
 	</items>
 
@@ -35,12 +35,12 @@
 	</weaponUpgrades>
 
 	<towers count="7">
-		<tower name="Machine Gun Tower"						price="500"	description="Machine Gun Tower"  				top="100" left="1209" isPro ="0"/>
-		<tower name="Maple Syrup Tower"						price="350"	description="Maple Searup" 						top="0" left="1323" isPro ="0"/>
-    <tower name="Laser Tower"							price="1500"	description="*laser noise*" 					top="0" left="1433" isPro ="0"/>
-    <tower name="Spike Trap"      price="750"     description="Add 1 Spike Trap" amountToAdd="1" top="0" left="658" isPro ="0"/>
-    <tower name="Lava Trap"      price="600"     description="Add 1 Lava Trap" amountToAdd="1"  top="100" left="558" isPro ="0"/>
-		<tower name="Hockey Stick Tower"					price="3000"	description="GOOOOOOALL wrong sport." 			top="100" left="1323" isPro ="0"/>
+		<tower name="Machine Gun Tower"						price="250"	description="A tower that has a machine gun"  				top="100" left="1209" isPro ="0"/>
+		<tower name="Maple Syrup Tower"						price="160"	description="Slow down enemies with maple syrup" 						top="0" left="1323" isPro ="0"/>
+    <tower name="Laser Tower"							price="600"	description="Connect 2 or more to incinerate" 					top="0" left="1433" isPro ="0"/>
+    <tower name="Spike Trap"      price="300"     description="Add 1 Spike Trap" amountToAdd="1" top="0" left="658" isPro ="0"/>
+    <tower name="Lava Trap"      price="280"     description="Add 1 Lava Trap" amountToAdd="1"  top="100" left="558" isPro ="0"/>
+		<tower name="Hockey Stick Tower"					price="900"	description="Slice and dice with the spirit of Canada!" 			top="100" left="1323" isPro ="0"/>
     <tower name="Go Back"							price="0"	description="Leave Tower Shop" 							top="100" left="658"/>
 	</towers>
   
