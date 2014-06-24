@@ -344,7 +344,8 @@ void ModePickerState::DrawDescription(int mode)
 		m_pFont->Draw("Unlimited Blocks!", 560, 500, 0.3f, { 0, 0, 0 });
 		break;
 	case BEAVERFEVER:
-		m_pFont->Draw("1000 beavers. 1 awesome gun.", 560, 500, 0.3f, { 0, 0, 0 });
+		m_pFont->Draw("1000 beavers. What more", 560, 500, 0.3f, { 0, 0, 0 });
+		m_pFont->Draw("could you want?", 560, 522, 0.3f, { 0, 0, 0 });
 		break;
 	case RUNNINGMAN:
 		m_pFont->Draw("Keep moving. Or you'll die.", 560, 500, 0.3f, { 0, 0, 0 });
