@@ -9,6 +9,7 @@
 MachineGunBullet::MachineGunBullet()
 {
 	m_fLifetime = 1.5f;
+	m_bHit = false;
 }
 
 
@@ -78,6 +79,11 @@ int MachineGunBullet::GetDamage() const
 	return m_nDamage;
 }
 
+bool MachineGunBullet::IsHit() const
+{
+	return m_bHit;
+}
+
 /**********************************************************/
 // Mutators
 
@@ -89,4 +95,9 @@ void MachineGunBullet::SetDamage(int _damage)
 void MachineGunBullet::SetImage(SGD::HTexture _image)
 {
 	m_hImage = _image;
+}
+
+void MachineGunBullet::SetHit(bool _hit)
+{
+	m_bHit = _hit;
 }

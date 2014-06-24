@@ -215,8 +215,12 @@ int Enemy::GetType() const
 			break;
 	case ENT_MACHINE_GUN_BULLET:
 	{
-		m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
-		shot = true;
+								   if (dynamic_cast<const MachineGunBullet*>(pOther)->IsHit() == false)
+								   {
+										m_nCurrHealth -= dynamic_cast<const MachineGunBullet*>(pOther)->GetDamage();
+										dynamic_cast<MachineGunBullet*>(const_cast<IEntity*>(pOther))->SetHit(true);
+										shot = true;
+								   }
 	}
 			break;
 	case ENT_MAPLE_SYRUP_BULLET:
