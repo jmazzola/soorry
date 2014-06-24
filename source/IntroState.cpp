@@ -88,6 +88,7 @@ using namespace std;
 	// Hide the cursor for the intro
 	if(pGraphics->IsCursorShowing() == true)
 		pGraphics->TurnCursorOff();
+
 }
 
 

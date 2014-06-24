@@ -84,6 +84,7 @@ public:
 	void SetInfAmmo(bool inf) { m_bInfiniteAmmo = inf; }
 	void SetShowPos(bool pos) { m_bShowPlayerPos = pos; }
 
+	
 	void MouseWheel(int direction);
 
 	/**********************************************************/
