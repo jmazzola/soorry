@@ -3372,7 +3372,7 @@ void GameplayState::LoadEnemyRecipes(string fileName)
 
 void GameplayState::PlayAmmoPickup(void)
 {
-	if (m_hAmmoPickup != SGD::INVALID_HANDLE)
+	if (m_hAmmoPickup != SGD::INVALID_HANDLE && !SGD::AudioManager::GetInstance()->IsAudioPlaying(m_hAmmoPickup))
 		SGD::AudioManager::GetInstance()->PlayAudio(m_hAmmoPickup);
 }
 
