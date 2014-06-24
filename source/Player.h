@@ -98,6 +98,7 @@ public:
 
 	bool hasClosedShop = false;
 
+	float m_fEscapeTimer;
 protected:
 
 	/**********************************************************/
@@ -169,5 +170,6 @@ private:
 	bool m_bHasHatTrick;
 
 	float m_fCanBlood;
+
 };
 

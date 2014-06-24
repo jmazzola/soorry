@@ -1188,6 +1188,7 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 					{
 						// Resume gameplay
 						m_bIsPaused = false;
+						m_pPlayer->m_fEscapeTimer = 1;
 						break;
 					}
 						break;
@@ -2061,7 +2062,11 @@ Player*	GameplayState::CreatePlayer(string _playerStatsFileName) const
 				// -- Draw the wave number --
 				string waveNum = "Wave: ";
 				waveNum += std::to_string(zombieFactory->GetWave());
-				m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
+				int m_nwaveNum = zombieFactory->GetWave();
+				if (m_nwaveNum >= 10 && m_nGamemode != SANDBOX_MODE)
+					m_pFont->Draw("Wave: 10", 64, 38, 0.5f, { 255, 255, 255 });
+				else
+					m_pFont->Draw(waveNum.c_str(), 64, 38, 0.5f, { 255, 255, 255 });
 
 				if (zombieFactory->IsBuildMode())
 				{

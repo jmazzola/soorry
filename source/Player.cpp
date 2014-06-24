@@ -268,7 +268,8 @@ Player::Player () : Listener ( this )
 
 
 	RegisterForEvent ( "TAKE_DAMAGE" );
-	RegisterForEvent ( "INCREASE_SCORE" );
+	RegisterForEvent("INCREASE_SCORE");
+	RegisterForEvent("ESCAPE");
 
 	// Create node chart
 	WorldManager* pWorld = WorldManager::GetInstance ();
@@ -343,6 +344,7 @@ void Player::Update ( float dt )
 	m_fSuperTimer -= dt;
 	m_fRunningManTimer -= dt;
 	m_fPickupMessageTimer -= dt;
+	m_fEscapeTimer -= dt;
 	float trg = pInput->GetTrigger(0);
 	m_fDroneRotation += dt * 2;
 
@@ -664,7 +666,7 @@ void Player::Update ( float dt )
 #endif
 
 	//Shoot
-	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false)
+	if (m_pWeapons[m_nCurrWeapon].GetFireTimer() < 0 && m_pWeapons[m_nCurrWeapon].GetCurrAmmo() > 0 && m_pZombieWave->IsBuildMode() == false && m_fEscapeTimer <= 0)
 	{
 		// Left click
 		if (m_bTHEBOOL)
@@ -966,7 +968,7 @@ void Player::Update ( float dt )
 
 		// Place item
 		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
-			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3))) ))
+			((PlacementCheck(pos) && m_nCurrPlaceable < 8) || (PlacementCheck(pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3)))) && m_fEscapeTimer <= 0)
 		{
 			// Bear trap
 			if ( m_nCurrPlaceable == BEARTRAP && m_pInventory->GetBearTraps () > 0 )
@@ -1573,6 +1575,10 @@ void Player::HandleEvent ( const SGD::Event* pEvent )
 	{
 		int score = *((int*)pEvent->GetData ());
 		m_unScore += score;
+	}
+	if (pEvent->GetEventID() == "ESCAPE")
+	{
+		m_fEscapeTimer = 1;
 	}
 }
 

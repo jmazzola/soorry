@@ -22,6 +22,7 @@
 #include "../SGD Wrappers/SGD_InputManager.h"
 #include "../SGD Wrappers/SGD_GraphicsManager.h"
 #include "../SGD Wrappers/SGD_AudioManager.h"
+#include "../SGD Wrappers/SGD_Event.h"
 #include "BitmapFont.h"
 
 #define SELL_DISCOUNT 0.75f
@@ -254,6 +255,8 @@ bool Shop::Input()
 				SetShopStatus(false);
 				pAudio->PlayAudio(m_pTowerFlyweight->GetSellSound());
 				dynamic_cast<Player*>(m_pPlayer)->hasClosedShop = true;
+				SGD::Event* pEvent = new SGD::Event("ESCAPE", nullptr, this);
+				pEvent->QueueEvent();
 				break;
 			}
 			pAudio->PlayAudio(m_pTowerFlyweight->GetClickSound());
