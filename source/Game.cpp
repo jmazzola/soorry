@@ -195,7 +195,7 @@ int Game::Main(void)
 		if(abs(mouseUpdate.y) < 0.3f)
 			mouseUpdate.y = 0.0f;
 
-		POINT mouse;
+		SGD::Point mouse;
 		RECT window;
 		int X, Y;
 		X = 0;
@@ -207,7 +207,7 @@ int Game::Main(void)
 		GetWindowRect(hWnd, &window);
 
 		// Grab the mouse's actual position
-		GetCursorPos(&mouse);
+		mouse = m_pInput->GetMousePosition();
 		X = (int)(mouse.x + mouseUpdate.x);
 		Y = (int)(mouse.y + mouseUpdate.y);
 		
@@ -234,8 +234,8 @@ int Game::Main(void)
 			Y = window.bottom;
 
 		// Set the cursor position based on input and inside the window
-		if(GetActiveWindow() == hWnd)
-			SetCursorPos(X, Y);
+		if (GetActiveWindow() == hWnd)
+			m_pInput->SetMousePosition(mouse);
 	}
 #endif
 
