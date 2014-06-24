@@ -22,14 +22,17 @@ public:
 	/**********************************************************/
 	// Accessors
 	int GetDamage() const;
+	bool IsHit() const;
 
 	/**********************************************************/
 	// Mutators
 	void SetDamage(int damage);
 	void SetImage(SGD::HTexture image);
+	void SetHit(bool hit);
 
 protected:
 
+	bool m_bHit;
 	int m_nDamage;
 	float m_fLifetime;
 	SGD::HTexture m_hImage = SGD::INVALID_HANDLE;
