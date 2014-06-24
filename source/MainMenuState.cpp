@@ -40,6 +40,8 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "StatTracker.h"
+#include "ParticleManager.h"
+#include "CreateParticleMessage.h"
 
 #include <cstdlib>
 #include <cassert>
@@ -73,6 +75,9 @@ using namespace std;
 //	- set up entities
 /*virtual*/ void MainMenuState::Enter(void)
 {
+	// Initialize the Message Manager
+	m_pMessages = SGD::MessageManager::GetInstance();
+
 	// Game singleton
 	Game* pGame = Game::GetInstance();
 	StatTracker::GetInstance()->Load("resource/data/stats.xml");
@@ -84,7 +89,10 @@ using namespace std;
 	m_hBackground = pGraphics->LoadTexture("resource/images/menus/1405_RazorBalloon_MainMenu.png");
 	// Load Audio
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
+	int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
 
+	//Load the one particle effect
+	ParticleManager::GetInstance()->loadEmitter("resource/particle/Vertical_Snow.xml");
 	//Load music 
 
 	// Set the cursor's index to the first option
@@ -109,7 +117,7 @@ using namespace std;
 	OptionsState::GetInstance()->LoadOptions("resource/data/config.xml");
 
 	//Play Audio
-	//int vol = pAudio->GetMasterVolume(SGD::AudioGroup::Music);
+	
 	//pAudio->PlayAudio(m_hMenuMusic, true);
 	m_bAccept = true;
 	m_bTHEBOOL = false;
@@ -121,6 +129,9 @@ using namespace std;
 	m_ptButtonPositions[MENU_OPTIONS] = SGD::Point(200, 340);
 	m_ptButtonPositions[MENU_CREDITS] = SGD::Point(230, 410);
 	m_ptButtonPositions[MENU_EXIT] = SGD::Point(180, 480);
+	CreateParticleMessage* lmsg = new CreateParticleMessage("Vertical_Snow",SGD::Point(0,0), 0, 0);
+	lmsg->QueueMessage();
+	lmsg = nullptr;
 }
 
 

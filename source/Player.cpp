@@ -965,7 +965,7 @@ void Player::Update ( float dt )
 		}
 
 		// Place item
-		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
+		if ( m_bCanLeftClick && !cursorInMenu && m_nCurrPlaceable != -1 &&  (pInput->IsKeyDown ( SGD::Key::MouseLeft ) == true && pInput->IsKeyDown(SGD::Key::MouseRight) == false || pInput->GetTrigger(0) < -0.1f) && m_fPlaceTimer <= 0 && 
 			((PlacementCheck ( pos ) && m_nCurrPlaceable < 8) || (PlacementCheck( pos, true) && (m_nCurrPlaceable >= 8 || (m_nCurrPlaceable == 2 || m_nCurrPlaceable == 3))) ))
 		{
 			// Bear trap

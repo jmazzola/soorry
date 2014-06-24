@@ -41,7 +41,7 @@
 
 	SGD::GraphicsManager* pGraphics = SGD::GraphicsManager::GetInstance();
 	SGD::AudioManager* pAudio = SGD::AudioManager::GetInstance();
-
+	
 	SetTransition(false);
 
 	// Setup BitmapFont
