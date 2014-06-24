@@ -2728,7 +2728,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		vec *= 1000;
 
 		tempProj->SetPosition(playerCenter + SGD::Vector(0, -24).ComputeRotated(m_pPlayer->GetRotation()));
-		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, 0, 0);
+		CreateParticleMessage* lmsg = new CreateParticleMessage("Muzzle_Flash_Directional1", tempProj,vec, -1, 1);
 		lmsg->QueueMessage();
 		lmsg = nullptr;
 		tempProj->SetVelocity(vec);
@@ -2746,6 +2746,7 @@ Entity* GameplayState::CreateProjectile(int _Weapon) const
 		playerCenter.y += 16;
 		ShotgunPellet* tempProj = new ShotgunPellet;
 		tempProj->SetDamage(m_pShop->GetShotgunDamage());
+
 		tempProj->SetLifeTime(5);
 		SGD::Point pos = SGD::InputManager::GetInstance()->GetMousePosition();
 		pos.x += Camera::x;
