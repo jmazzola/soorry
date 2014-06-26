@@ -67,10 +67,13 @@ void MachineGunTower::Update(float dt)
 		bulletVelocity = estimatedPos - m_ptPosition;
 		bulletVelocity.Normalize();
 
-		if (orientation.ComputeSteering(bulletVelocity) > 0)
-			m_fRotation = orientation.ComputeAngle(bulletVelocity);
-		else
-			m_fRotation = -orientation.ComputeAngle(bulletVelocity);
+		if (bulletVelocity.x > -1000 && bulletVelocity.y > -1000)
+		{
+			if (orientation.ComputeSteering(bulletVelocity) > 0)
+				m_fRotation = orientation.ComputeAngle(bulletVelocity);
+			else
+				m_fRotation = -orientation.ComputeAngle(bulletVelocity);
+		}
 
 		// Shoot, if time
 		if (m_fNextShotTimer <= 0.0f)
